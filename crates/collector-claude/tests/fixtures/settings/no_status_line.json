@@ -1,0 +1,18 @@
+{
+  "theme": "dark",
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo pronto"
+          }
+        ]
+      }
+    ]
+  },
+  "zeta": 1.5,
+  "alfa": null
+}

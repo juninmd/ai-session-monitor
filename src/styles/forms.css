@@ -1,0 +1,193 @@
+/* Forms, source groups and the settings view. */
+.form,
+.field,
+.shim {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.form h3 {
+  font-size: var(--fs-md);
+  font-weight: 600;
+}
+
+/* A form that sets up one tool leads with that tool's logo. */
+.form h3.brand-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Out-ranks the per-logo scale in brand.css whatever the import order. */
+.form h3.brand-title .logo {
+  --logo-scale: 1;
+}
+
+.form label,
+.field-title {
+  color: var(--ink-2);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.field {
+  gap: 0.3rem;
+}
+
+.field-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.form input[type="url"],
+.form input[type="password"],
+.form input[type="text"] {
+  inline-size: 100%;
+  min-block-size: 2.125rem;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--control-line);
+  border-radius: var(--r-ctl);
+  background: var(--solid);
+  color: var(--ink);
+}
+
+.form input[aria-invalid="true"] {
+  border-color: var(--crit);
+  outline: 1px solid var(--crit);
+}
+
+.check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.check-row input {
+  flex: none;
+  inline-size: 1rem;
+  block-size: 1rem;
+  margin: 0.15rem 0 0;
+  accent-color: var(--accent);
+}
+
+.check-row label {
+  color: var(--ink);
+  font-weight: 400;
+}
+
+select {
+  min-block-size: 2rem;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--control-line);
+  border-radius: var(--r-ctl);
+  background: var(--raise);
+  color: var(--ink);
+}
+
+/* One collapsible group per data source. */
+.grp {
+  border-block-end: 1px solid var(--line);
+}
+
+.grp summary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-block-size: 2.25rem;
+  cursor: pointer;
+}
+
+.grp-name {
+  font-weight: 600;
+}
+
+.grp-state {
+  margin-inline-start: auto;
+  color: var(--ink-3);
+  font-size: var(--fs-sm);
+}
+
+.grp-state.on {
+  color: var(--ink-2);
+}
+
+.grp-body {
+  display: grid;
+  gap: 0.5rem;
+  padding-block: 0.25rem 0.75rem;
+}
+
+.adv {
+  display: grid;
+  gap: 0.5rem;
+  padding-block-start: 0.5rem;
+  border-block-start: 1px solid var(--line);
+}
+
+.adv summary {
+  display: flex;
+  align-items: center;
+  min-block-size: 1.75rem;
+  color: var(--ink-2);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.adv[open] summary {
+  color: var(--ink);
+}
+
+/* ---------- settings ---------- */
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.set-head {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.set-head h2 {
+  font-size: var(--fs-md);
+  font-weight: 600;
+}
+
+.sg {
+  display: grid;
+  gap: 0.15rem;
+  padding-block-start: 0.5rem;
+}
+
+.sg h3 {
+  margin-block-end: 0.1rem;
+  color: var(--ink-2);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.srow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-block-size: 2.25rem;
+  padding-block: 0.2rem;
+  border-block-end: 1px solid var(--line);
+}
+
+.srow:last-child {
+  border-block-end: 0;
+}
+
+.srow .lbl {
+  min-inline-size: 0;
+}
+
+.srow .lbl small {
+  display: block;
+}

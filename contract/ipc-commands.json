@@ -1,0 +1,19 @@
+{
+  "commands": [
+    "get_snapshot",
+    "refresh",
+    "get_settings",
+    "save_settings",
+    "secret_status",
+    "set_secret",
+    "clear_secret",
+    "claude_shim_status",
+    "install_claude_shim",
+    "uninstall_claude_shim",
+    "open_link",
+    "hide_flyout",
+    "set_flyout_height",
+    "quit_app"
+  ],
+  "events": ["snapshot", "settings-changed", "flyout-shown"]
+}

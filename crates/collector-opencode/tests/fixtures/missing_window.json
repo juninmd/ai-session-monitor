@@ -1,0 +1,14 @@
+{
+  "usage": {
+    "weekly": {
+      "status": "ok",
+      "percent": 34,
+      "resetsAt": "2027-01-18T00:00:00.000Z"
+    },
+    "monthly": {
+      "status": "ok",
+      "percent": 56,
+      "resetsAt": "2027-02-03T14:20:00.000Z"
+    }
+  }
+}

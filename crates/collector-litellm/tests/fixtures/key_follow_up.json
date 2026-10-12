@@ -1,0 +1,18 @@
+{
+  "key": "decoy-key-0003",
+  "info": {
+    "token": "decoy-token-0003",
+    "key_alias": "laptop-key",
+    "spend": 1.5,
+    "max_budget": null,
+    "budget_duration": null,
+    "budget_reset_at": null,
+    "expires": null,
+    "rpm_limit": 30,
+    "tpm_limit": null,
+    "max_parallel_requests": null,
+    "user_id": "user-aurora",
+    "team_id": "team-borealis",
+    "metadata": { "api_key": "decoy-metadata-key" }
+  }
+}

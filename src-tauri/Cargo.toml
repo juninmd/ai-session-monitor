@@ -1,0 +1,60 @@
+[package]
+name = "ai-session-monitor"
+description = "Tray flyout that shows how much of your AI coding sessions is left"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lib]
+name = "ai_session_monitor_lib"
+
+[build-dependencies]
+tauri-build = { version = "2.7.1", features = [] }
+serde_json.workspace = true
+
+[dependencies]
+tauri = { version = "2.12.1", features = ["tray-icon", "image-png"] }
+tauri-plugin-single-instance = "2.5.2"
+tauri-plugin-notification = "2.5.1"
+# Per-user Run key only; tauri-plugin-autostart would use the machine-wide key when elevated.
+auto-launch = "0.6.0"
+# keyring 4 split into a store-agnostic core and one crate per store; no regex search feature.
+keyring-core = "1.0.0"
+serde_json.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+usage-model.workspace = true
+usage-support.workspace = true
+app-core.workspace = true
+collector-claude = { workspace = true, optional = true }
+collector-codex = { workspace = true, optional = true }
+collector-antigravity = { workspace = true, optional = true }
+collector-litellm = { workspace = true, optional = true }
+collector-opencode = { workspace = true, optional = true }
+
+[target.'cfg(windows)'.dependencies]
+windows-native-keyring-store = { version = "1.1.0", default-features = false }
+# Reads the Run value apart from Task Manager's verdict, which auto-launch folds into is_enabled.
+# auto-launch already depends on this release, so the lockfile gains no package.
+windows-registry = "0.6.1"
+
+[features]
+# The real collectors. Turn off (--no-default-features) to build the shell without them.
+default = ["collectors"]
+collectors = [
+    "dep:collector-claude",
+    "dep:collector-codex",
+    "dep:collector-antigravity",
+    "dep:collector-litellm",
+    "dep:collector-opencode",
+]
+
+[dev-dependencies]
+tempfile.workspace = true
+# Paused virtual time for the supervisor's backoff tests.
+tokio = { workspace = true, features = ["test-util"] }
+
+[lints]
+workspace = true

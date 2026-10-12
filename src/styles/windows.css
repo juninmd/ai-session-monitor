@@ -1,0 +1,237 @@
+/* Quota windows: the hero, flat sections, per-model lists, pools, stats and chips. */
+.card {
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: var(--raise);
+  --ring-bg: var(--raise);
+}
+
+.flat {
+  display: grid;
+  gap: 0.45rem;
+  padding-block-start: 0.75rem;
+  border-block-start: 1px solid var(--line);
+  --ring-bg: var(--solid);
+}
+
+.win-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.win-title {
+  min-inline-size: 0;
+  font-size: var(--fs-base);
+  font-weight: 600;
+}
+
+.win-reset {
+  color: var(--ink-3);
+  font-size: var(--fs-sm);
+  white-space: nowrap;
+}
+
+.row-time {
+  font: 600 var(--fs-lg) / 1 var(--font-disp);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.row-time.small {
+  font-size: var(--fs-md);
+}
+
+.hero {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.hero[data-status="warn"] {
+  border-color: color-mix(in oklab, var(--warn) 38%, var(--line));
+  background: color-mix(in oklab, var(--warn) 9%, var(--raise));
+}
+
+.hero[data-status="crit"],
+.hero[data-status="out"] {
+  border-color: color-mix(in oklab, var(--crit) 38%, var(--line));
+  background: color-mix(in oklab, var(--crit) 9%, var(--raise));
+}
+
+.hero-time {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  padding-block: 0.15rem 0.1rem;
+  line-height: 1;
+}
+
+.hero-time .n {
+  font: 600 var(--fs-hero) / 1 var(--font-disp);
+  letter-spacing: -0.02em;
+}
+
+.hero-time .u {
+  margin-inline: 0.12rem 0.45rem;
+  color: var(--ink-2);
+  font: 500 1.0625rem / 1 var(--font-disp);
+}
+
+.hero-time .cap {
+  margin-inline-start: 0.2rem;
+  color: var(--ink-3);
+  font-size: var(--fs-base);
+}
+
+.hero-out {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-block: 0.15rem;
+  font: 600 1.75rem / 1.1 var(--font-disp);
+}
+
+.hero-out .ico {
+  inline-size: 24px;
+  block-size: 24px;
+  color: var(--crit);
+}
+
+.meter-foot {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.pace {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+  max-inline-size: 62%;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.pace .ico {
+  margin-block-start: 0.12rem;
+  color: var(--fill, var(--accent));
+}
+
+.pace-row {
+  max-inline-size: none;
+}
+
+/* Rows: name, gauge, percentage and (for pools) the time left. */
+.list {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.li {
+  display: grid;
+  grid-template-columns: 6.25rem minmax(0, 1fr) 2.5rem;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.li.with-time {
+  grid-template-columns: 5.5rem minmax(0, 1fr) 2.5rem 3.75rem;
+}
+
+.li-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.li-pct {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  text-align: end;
+}
+
+.li-time {
+  color: var(--ink-3);
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+.pool {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.stats dt {
+  color: var(--ink-3);
+  font-size: var(--fs-sm);
+}
+
+.stats dd {
+  font: 600 var(--fs-md) / 1.3 var(--font-disp);
+}
+
+.note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  color: var(--ink-3);
+  font-size: var(--fs-sm);
+  text-wrap: pretty;
+}
+
+.note .ico {
+  margin-block-start: 0.1rem;
+}
+
+/* Plan, source, age and the official / unofficial badge. */
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.55rem 0.15rem 0.45rem;
+  border-radius: 999px;
+  background: var(--raise-2);
+  color: var(--ink-2);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}
+
+.chip .ico {
+  inline-size: 12px;
+  block-size: 12px;
+}
+
+.chip.plain {
+  padding-inline: 0.6rem;
+}
+
+.chip.warnchip .ico {
+  color: var(--warn-fill);
+}
+
+.chip.off {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--line-2);
+}
+
+@media (forced-colors: active) {
+  .chip {
+    border: 1px solid CanvasText;
+  }
+}

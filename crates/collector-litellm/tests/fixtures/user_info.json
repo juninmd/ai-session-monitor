@@ -1,0 +1,32 @@
+{
+  "user_id": "user-aurora",
+  "user_info": {
+    "user_id": "user-aurora",
+    "user_alias": "Aurora",
+    "user_email": "decoy.aurora@example.test",
+    "spend": 40.0,
+    "max_budget": 200.0,
+    "budget_duration": "30d",
+    "budget_reset_at": "2026-11-01T00:00:00Z",
+    "rpm_limit": 120,
+    "tpm_limit": null,
+    "max_parallel_requests": null,
+    "metadata": { "api_key": "decoy-metadata-key" }
+  },
+  "keys": [
+    {
+      "token": "decoy-token-0101",
+      "key_alias": "decoy-other-key",
+      "spend": 9.99,
+      "max_budget": 1.0
+    }
+  ],
+  "teams": [
+    {
+      "team_id": "team-borealis",
+      "team_alias": "decoy-team-listing",
+      "spend": 4.0,
+      "max_budget": 5.0
+    }
+  ]
+}

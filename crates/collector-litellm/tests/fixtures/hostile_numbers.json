@@ -1,0 +1,21 @@
+{
+  "info": {
+    "key_alias": "hostile",
+    "spend": -5,
+    "max_budget": "50",
+    "budget_duration": 30,
+    "budget_reset_at": 1793491200,
+    "expires": false,
+    "rpm_limit": -1,
+    "tpm_limit": 1e300,
+    "max_parallel_requests": true,
+    "user_id": 7,
+    "team_id": ["team-borealis"],
+    "model_max_budget_usage": {
+      "text-spend": { "current_spend": "1", "budget_limit": 2 },
+      "negative-spend": { "current_spend": -1, "budget_limit": 2 },
+      "not-an-object": [],
+      "beyond-exact-range": { "current_spend": 1e300, "budget_limit": 1e301 }
+    }
+  }
+}

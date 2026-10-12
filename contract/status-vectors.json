@@ -1,0 +1,446 @@
+{
+  "now": 1800000000,
+  "windows": [
+    {
+      "name": "unknown percentage",
+      "windowMinutes": 300,
+      "usedPct": null,
+      "resetsInMin": 100,
+      "warnAt": 25,
+      "expected": {
+        "pace": "unknown",
+        "runwayMin": null,
+        "earlyMin": null,
+        "status": null
+      }
+    },
+    {
+      "name": "unknown window length keeps threshold status",
+      "windowMinutes": null,
+      "usedPct": 50,
+      "resetsInMin": 100,
+      "warnAt": 25,
+      "expected": {
+        "pace": "unknown",
+        "runwayMin": null,
+        "earlyMin": null,
+        "status": "ok"
+      }
+    },
+    {
+      "name": "no reset time still reports availability",
+      "windowMinutes": 300,
+      "usedPct": 80,
+      "resetsInMin": null,
+      "warnAt": 25,
+      "expected": {
+        "pace": "unknown",
+        "runwayMin": null,
+        "earlyMin": null,
+        "status": "warn"
+      }
+    },
+    {
+      "name": "expired window has no pace and no status",
+      "windowMinutes": 300,
+      "usedPct": 90,
+      "resetsInMin": -1,
+      "warnAt": 25,
+      "expected": {
+        "pace": "unknown",
+        "runwayMin": null,
+        "earlyMin": null,
+        "status": null
+      }
+    },
+    {
+      "name": "exhausted",
+      "windowMinutes": 300,
+      "usedPct": 100,
+      "resetsInMin": 47,
+      "warnAt": 25,
+      "expected": {
+        "pace": "out",
+        "runwayMin": null,
+        "earlyMin": null,
+        "status": "out"
+      }
+    },
+    {
+      "name": "over budget clamps to out",
+      "windowMinutes": 43200,
+      "usedPct": 130,
+      "resetsInMin": 8000,
+      "warnAt": 25,
+      "expected": {
+        "pace": "out",
+        "runwayMin": null,
+        "earlyMin": null,
+        "status": "out"
+      }
+    },
+    {
+      "name": "early by elapsed time",
+      "windowMinutes": 300,
+      "usedPct": 20,
+      "resetsInMin": 295,
+      "warnAt": 25,
+      "expected": {
+        "pace": "early",
+        "runwayMin": null,
+        "earlyMin": null,
+        "status": "ok"
+      }
+    },
+    {
+      "name": "early by low usage",
+      "windowMinutes": 300,
+      "usedPct": 2,
+      "resetsInMin": 100,
+      "warnAt": 25,
+      "expected": {
+        "pace": "early",
+        "runwayMin": null,
+        "earlyMin": null,
+        "status": "ok"
+      }
+    },
+    {
+      "name": "exactly at the early thresholds",
+      "windowMinutes": 300,
+      "usedPct": 3,
+      "resetsInMin": 290,
+      "warnAt": 25,
+      "expected": {
+        "pace": "fine",
+        "runwayMin": 323.33333333333337,
+        "earlyMin": null,
+        "status": "ok"
+      }
+    },
+    {
+      "name": "healthy pace",
+      "windowMinutes": 300,
+      "usedPct": 48,
+      "resetsInMin": 113,
+      "warnAt": 25,
+      "expected": {
+        "pace": "fine",
+        "runwayMin": 202.58333333333331,
+        "earlyMin": null,
+        "status": "ok"
+      }
+    },
+    {
+      "name": "weekly pace risk warns",
+      "windowMinutes": 10080,
+      "usedPct": 45,
+      "resetsInMin": 5980,
+      "warnAt": 25,
+      "expected": {
+        "pace": "risk",
+        "runwayMin": 5011.111111111111,
+        "earlyMin": 968.8888888888887,
+        "status": "warn"
+      }
+    },
+    {
+      "name": "short runway is critical",
+      "windowMinutes": 300,
+      "usedPct": 88,
+      "resetsInMin": 113,
+      "warnAt": 25,
+      "expected": {
+        "pace": "risk",
+        "runwayMin": 25.5,
+        "earlyMin": 87.5,
+        "status": "crit"
+      }
+    },
+    {
+      "name": "critical by availability",
+      "windowMinutes": 300,
+      "usedPct": 90,
+      "resetsInMin": 20,
+      "warnAt": 25,
+      "expected": {
+        "pace": "fine",
+        "runwayMin": 31.111111111111107,
+        "earlyMin": null,
+        "status": "crit"
+      }
+    },
+    {
+      "name": "just above the critical floor warns",
+      "windowMinutes": 300,
+      "usedPct": 89,
+      "resetsInMin": 20,
+      "warnAt": 25,
+      "expected": {
+        "pace": "fine",
+        "runwayMin": 34.60674157303371,
+        "earlyMin": null,
+        "status": "warn"
+      }
+    },
+    {
+      "name": "warning by availability",
+      "windowMinutes": 300,
+      "usedPct": 76,
+      "resetsInMin": 20,
+      "warnAt": 25,
+      "expected": {
+        "pace": "fine",
+        "runwayMin": 88.42105263157896,
+        "earlyMin": null,
+        "status": "warn"
+      }
+    },
+    {
+      "name": "exactly at the warning threshold",
+      "windowMinutes": 300,
+      "usedPct": 75,
+      "resetsInMin": 20,
+      "warnAt": 25,
+      "expected": {
+        "pace": "fine",
+        "runwayMin": 93.33333333333334,
+        "earlyMin": null,
+        "status": "warn"
+      }
+    },
+    {
+      "name": "just above the warning threshold",
+      "windowMinutes": 300,
+      "usedPct": 74,
+      "resetsInMin": 20,
+      "warnAt": 25,
+      "expected": {
+        "pace": "fine",
+        "runwayMin": 98.37837837837837,
+        "earlyMin": null,
+        "status": "ok"
+      }
+    },
+    {
+      "name": "custom warning threshold 50",
+      "windowMinutes": 300,
+      "usedPct": 55,
+      "resetsInMin": 100,
+      "warnAt": 50,
+      "expected": {
+        "pace": "fine",
+        "runwayMin": 163.63636363636363,
+        "earlyMin": null,
+        "status": "warn"
+      }
+    },
+    {
+      "name": "custom warning threshold 10",
+      "windowMinutes": 300,
+      "usedPct": 55,
+      "resetsInMin": 100,
+      "warnAt": 10,
+      "expected": {
+        "pace": "fine",
+        "runwayMin": 163.63636363636363,
+        "earlyMin": null,
+        "status": "ok"
+      }
+    },
+    {
+      "name": "risk slack: runway 0.9 min inside the slack still warns",
+      "windowMinutes": 300,
+      "usedPct": 68,
+      "resetsInMin": 100,
+      "warnAt": 25,
+      "expected": {
+        "pace": "risk",
+        "runwayMin": 94.11764705882352,
+        "earlyMin": 5.882352941176478,
+        "status": "warn"
+      }
+    },
+    {
+      "name": "risk slack: runway 0.4 min outside the slack is fine",
+      "windowMinutes": 300,
+      "usedPct": 67.7,
+      "resetsInMin": 100,
+      "warnAt": 25,
+      "expected": {
+        "pace": "fine",
+        "runwayMin": 95.42097488921712,
+        "earlyMin": null,
+        "status": "ok"
+      }
+    },
+    {
+      "name": "risk slack: runway exactly at reset minus slack is fine",
+      "windowMinutes": 205,
+      "usedPct": 50,
+      "resetsInMin": 105,
+      "warnAt": 25,
+      "expected": {
+        "pace": "fine",
+        "runwayMin": 100,
+        "earlyMin": null,
+        "status": "ok"
+      }
+    },
+    {
+      "name": "critical runway: 29.9 min is critical",
+      "windowMinutes": 300,
+      "usedPct": 87,
+      "resetsInMin": 100,
+      "warnAt": 25,
+      "expected": {
+        "pace": "risk",
+        "runwayMin": 29.885057471264368,
+        "earlyMin": 70.11494252873564,
+        "status": "crit"
+      }
+    },
+    {
+      "name": "critical runway: 30.1 min only warns",
+      "windowMinutes": 300,
+      "usedPct": 86.9,
+      "resetsInMin": 100,
+      "warnAt": 25,
+      "expected": {
+        "pace": "risk",
+        "runwayMin": 30.149597238204816,
+        "earlyMin": 69.85040276179518,
+        "status": "warn"
+      }
+    },
+    {
+      "name": "critical runway: exactly 30 min only warns",
+      "windowMinutes": 300,
+      "usedPct": 85,
+      "resetsInMin": 130,
+      "warnAt": 25,
+      "expected": {
+        "pace": "risk",
+        "runwayMin": 30,
+        "earlyMin": 100,
+        "status": "warn"
+      }
+    },
+    {
+      "name": "window that resets this very second is expired",
+      "windowMinutes": 300,
+      "usedPct": 50,
+      "resetsInMin": 0,
+      "warnAt": 25,
+      "expected": {
+        "pace": "unknown",
+        "runwayMin": null,
+        "earlyMin": null,
+        "status": null
+      }
+    }
+  ],
+  "summaries": [
+    {
+      "name": "lowest available usable window wins, expired ignored",
+      "state": "ready",
+      "stale": false,
+      "warnAt": 25,
+      "windows": [
+        {
+          "id": "claude_gpt:five_hour",
+          "windowMinutes": 300,
+          "usedPct": 39,
+          "resetsInMin": 132
+        },
+        {
+          "id": "gemini:five_hour",
+          "windowMinutes": 300,
+          "usedPct": 54,
+          "resetsInMin": 132
+        },
+        {
+          "id": "old",
+          "windowMinutes": 300,
+          "usedPct": 99,
+          "resetsInMin": -5
+        }
+      ],
+      "expected": {
+        "windowId": "gemini:five_hour",
+        "availablePct": 46,
+        "status": "ok"
+      }
+    },
+    {
+      "name": "tie on availability goes to the earliest reset",
+      "state": "ready",
+      "stale": false,
+      "warnAt": 25,
+      "windows": [
+        {
+          "id": "a",
+          "windowMinutes": 300,
+          "usedPct": 50,
+          "resetsInMin": 200
+        },
+        {
+          "id": "b",
+          "windowMinutes": 10080,
+          "usedPct": 50,
+          "resetsInMin": 100
+        }
+      ],
+      "expected": {
+        "windowId": "b",
+        "availablePct": 50,
+        "status": "ok"
+      }
+    },
+    {
+      "name": "stale view is not summarized",
+      "state": "ready",
+      "stale": true,
+      "warnAt": 25,
+      "windows": [
+        {
+          "id": "a",
+          "windowMinutes": 300,
+          "usedPct": 40,
+          "resetsInMin": 100
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "non-ready view is not summarized",
+      "state": "no_data",
+      "stale": false,
+      "warnAt": 25,
+      "windows": [
+        {
+          "id": "a",
+          "windowMinutes": 300,
+          "usedPct": 40,
+          "resetsInMin": 100
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "only unknown windows give no summary",
+      "state": "ready",
+      "stale": false,
+      "warnAt": 25,
+      "windows": [
+        {
+          "id": "a",
+          "windowMinutes": 300,
+          "usedPct": null,
+          "resetsInMin": 100
+        }
+      ],
+      "expected": null
+    }
+  ]
+}

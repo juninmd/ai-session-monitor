@@ -22,3 +22,30 @@ rustc-ice-*.txt
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+
+# JS / Vite
+node_modules
+dist
+.vite
+coverage
+*.tsbuildinfo
+
+# Local tooling output (never commit)
+.playwright-mcp/
+playwright-report
+test-results
+
+# Tauri generated schemas (rebuilt by tauri-build)
+src-tauri/gen/schemas
+
+# Packaged sidecar copies (built by the shell slice)
+src-tauri/binaries/
+
+# Secrets and local environment (never commit)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12

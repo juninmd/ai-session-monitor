@@ -1,0 +1,294 @@
+{
+  "generatedAt": 1800000000,
+  "views": [
+    {
+      "error": null,
+      "facts": [],
+      "id": "claude",
+      "meta": {},
+      "notices": [],
+      "plan": "Max 5x",
+      "readAt": 1799999970,
+      "source": {
+        "id": "statusline",
+        "official": true
+      },
+      "stale": false,
+      "state": "ready",
+      "windows": [
+        {
+          "amount": null,
+          "group": null,
+          "id": "five_hour",
+          "kind": "five_hour",
+          "label": null,
+          "resetsAt": 1800006780,
+          "usedPct": 48.0,
+          "windowMinutes": 300
+        },
+        {
+          "amount": null,
+          "group": null,
+          "id": "weekly",
+          "kind": "weekly",
+          "label": null,
+          "resetsAt": 1800358800,
+          "usedPct": 45.0,
+          "windowMinutes": 10080
+        }
+      ]
+    },
+    {
+      "error": null,
+      "facts": [],
+      "id": "codex",
+      "meta": {},
+      "notices": [],
+      "plan": null,
+      "readAt": null,
+      "source": null,
+      "stale": false,
+      "state": "needs_consent",
+      "windows": []
+    },
+    {
+      "error": {
+        "code": "network",
+        "params": {},
+        "retryable": true
+      },
+      "facts": [],
+      "id": "antigravity",
+      "meta": {},
+      "notices": [],
+      "plan": null,
+      "readAt": 1799999970,
+      "source": {
+        "id": "language_server",
+        "official": false
+      },
+      "stale": true,
+      "state": "ready",
+      "windows": [
+        {
+          "amount": null,
+          "group": "gemini",
+          "id": "gemini:five_hour",
+          "kind": "five_hour",
+          "label": "Gemini Pro / Flash",
+          "resetsAt": 1800007920,
+          "usedPct": 54.0,
+          "windowMinutes": 300
+        },
+        {
+          "amount": null,
+          "group": "claude_gpt",
+          "id": "claude_gpt:weekly",
+          "kind": "weekly",
+          "label": null,
+          "resetsAt": 1800240000,
+          "usedPct": 20.0,
+          "windowMinutes": 10080
+        }
+      ]
+    },
+    {
+      "error": null,
+      "facts": [
+        {
+          "id": "local_cost_5h",
+          "number": 0.0037,
+          "text": null,
+          "unit": "usd"
+        },
+        {
+          "id": "plan_note",
+          "number": null,
+          "text": "Go",
+          "unit": null
+        }
+      ],
+      "id": "opencode",
+      "meta": {},
+      "notices": [
+        {
+          "code": "opencode_window_idle",
+          "params": {},
+          "severity": "info"
+        }
+      ],
+      "plan": null,
+      "readAt": 1799999970,
+      "source": {
+        "id": "go_usage",
+        "official": false
+      },
+      "stale": false,
+      "state": "ready",
+      "windows": [
+        {
+          "amount": null,
+          "group": null,
+          "id": "rolling",
+          "kind": "five_hour",
+          "label": null,
+          "resetsAt": 1800015000,
+          "usedPct": 12.0,
+          "windowMinutes": 300
+        },
+        {
+          "amount": null,
+          "group": null,
+          "id": "weekly",
+          "kind": "weekly",
+          "label": null,
+          "resetsAt": 1800180000,
+          "usedPct": 34.0,
+          "windowMinutes": 10080
+        },
+        {
+          "amount": null,
+          "group": null,
+          "id": "monthly",
+          "kind": "monthly",
+          "label": null,
+          "resetsAt": 1800540000,
+          "usedPct": 100.0,
+          "windowMinutes": null
+        }
+      ]
+    },
+    {
+      "error": null,
+      "facts": [],
+      "id": "litellm",
+      "meta": {
+        "host": "gateway.example.dev",
+        "scope": "key"
+      },
+      "notices": [],
+      "plan": null,
+      "readAt": 1799999970,
+      "source": {
+        "id": "key_info",
+        "official": true
+      },
+      "stale": false,
+      "state": "ready",
+      "windows": [
+        {
+          "amount": {
+            "limit": 50.0,
+            "unit": "usd",
+            "used": 12.5
+          },
+          "group": null,
+          "id": "budget",
+          "kind": "budget",
+          "label": "team-a",
+          "resetsAt": 1801200000,
+          "usedPct": 25.0,
+          "windowMinutes": null
+        }
+      ]
+    },
+    {
+      "error": null,
+      "facts": [],
+      "id": "codex",
+      "meta": {},
+      "notices": [],
+      "plan": null,
+      "readAt": 1799999970,
+      "source": {
+        "id": "app_server",
+        "official": true
+      },
+      "stale": false,
+      "state": "ready",
+      "windows": [
+        {
+          "amount": null,
+          "group": null,
+          "id": "five_hour",
+          "kind": "five_hour",
+          "label": null,
+          "resetsAt": null,
+          "usedPct": null,
+          "windowMinutes": null
+        }
+      ]
+    },
+    {
+      "error": null,
+      "facts": [],
+      "id": "claude",
+      "meta": {},
+      "notices": [],
+      "plan": null,
+      "readAt": null,
+      "source": null,
+      "stale": false,
+      "state": "loading",
+      "windows": []
+    },
+    {
+      "error": null,
+      "facts": [],
+      "id": "antigravity",
+      "meta": {},
+      "notices": [],
+      "plan": null,
+      "readAt": null,
+      "source": null,
+      "stale": false,
+      "state": "disabled",
+      "windows": []
+    },
+    {
+      "error": null,
+      "facts": [],
+      "id": "litellm",
+      "meta": {},
+      "notices": [],
+      "plan": null,
+      "readAt": null,
+      "source": null,
+      "stale": false,
+      "state": "needs_setup",
+      "windows": []
+    },
+    {
+      "error": null,
+      "facts": [],
+      "id": "opencode",
+      "meta": {},
+      "notices": [],
+      "plan": null,
+      "readAt": null,
+      "source": null,
+      "stale": false,
+      "state": "no_data",
+      "windows": []
+    },
+    {
+      "error": {
+        "code": "unauthorized",
+        "params": {
+          "httpStatus": "401"
+        },
+        "retryable": false
+      },
+      "facts": [],
+      "id": "litellm",
+      "meta": {},
+      "notices": [],
+      "plan": null,
+      "readAt": null,
+      "source": null,
+      "stale": false,
+      "state": "error",
+      "windows": []
+    }
+  ]
+}

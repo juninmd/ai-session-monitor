@@ -1,0 +1,119 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: var(--fs-base);
+  line-height: 1.4;
+}
+
+/* The Tauri window is transparent so the OS can draw its backdrop behind the translucent flyout. */
+html[data-host="tauri"],
+html[data-host="tauri"] body {
+  background: transparent;
+}
+
+/* In a browser the flyout sits on a plain page so it can be reviewed on its own. */
+html[data-host="browser"] body {
+  min-block-size: 100vh;
+  padding: 1.5rem 1rem;
+}
+
+h1,
+h2,
+h3,
+p,
+ul,
+dl,
+dd,
+fieldset {
+  margin: 0;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+strong {
+  font-weight: 600;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+:where(button, a, input, select, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.ico {
+  flex: none;
+}
+
+.muted {
+  color: var(--ink-3);
+}
+
+.hint {
+  color: var(--ink-3);
+  font-size: var(--fs-sm);
+  text-wrap: pretty;
+}
+
+/* Text for screen readers only. */
+.vh {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Every disclosure draws its own chevron, so a summary always looks expandable. */
+summary {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  cursor: pointer;
+}
+
+summary::before {
+  content: "";
+  flex: none;
+  inline-size: 0.4rem;
+  block-size: 0.4rem;
+  margin-inline-end: 0.55rem;
+  border: solid currentcolor;
+  border-width: 0 1.5px 1.5px 0;
+  rotate: -45deg;
+}
+
+details[open] > summary::before {
+  rotate: 45deg;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  summary::before {
+    transition: rotate 0.15s;
+  }
+}

@@ -1,0 +1,29 @@
+[package]
+name = "statusline-shim"
+description = "Claude Code statusLine command: records rate_limits for the tray app, then chains to the user's previous command"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+# Not `statusline-shim`: the app sidecar of that name is copied over target/<profile> by tauri-build.
+[[bin]]
+name = "aism-statusline-shim"
+path = "src/main.rs"
+
+# Peer process for the end-to-end chain tests; Cargo exposes its path as CARGO_BIN_EXE_shim_chain_peer.
+[[bin]]
+name = "shim_chain_peer"
+path = "tests/support/chain_peer.rs"
+test = false
+
+# std + serde_json only: the shim runs on every Claude Code status line refresh.
+[dependencies]
+serde_json.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true

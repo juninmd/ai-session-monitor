@@ -1,0 +1,142 @@
+{
+  "customCa": {
+    "antigravity": {
+      "consent": false,
+      "enabled": true
+    },
+    "claude": {
+      "configDir": "D:\\profiles\\claude",
+      "enabled": true,
+      "oauthUsage": false,
+      "shimConsent": false
+    },
+    "codex": {
+      "binaryPath": null,
+      "consent": false,
+      "enabled": true
+    },
+    "general": {
+      "autostart": false,
+      "firstRunDone": false,
+      "intervalSecs": 60,
+      "notifyOnOut": false,
+      "notifyOnReset": false,
+      "timeFormat": "hm",
+      "traySource": "opencode",
+      "warnAtPct": 25,
+      "weekFormat": "hours"
+    },
+    "litellm": {
+      "authHeader": "Authorization",
+      "baseUrl": "https://gateway.example.dev/litellm",
+      "enabled": true,
+      "entityId": "team-a",
+      "pollIntervalSecs": 300,
+      "scope": "team",
+      "timeoutSecs": 10,
+      "tls": {
+        "mode": "custom_ca",
+        "pemPath": "C:\\certs\\corp.pem"
+      }
+    },
+    "opencode": {
+      "dataDir": null,
+      "enabled": true,
+      "localConsent": false
+    },
+    "version": 1
+  },
+  "default": {
+    "antigravity": {
+      "consent": false,
+      "enabled": true
+    },
+    "claude": {
+      "configDir": null,
+      "enabled": true,
+      "oauthUsage": false,
+      "shimConsent": false
+    },
+    "codex": {
+      "binaryPath": null,
+      "consent": false,
+      "enabled": true
+    },
+    "general": {
+      "autostart": false,
+      "firstRunDone": false,
+      "intervalSecs": 60,
+      "notifyOnOut": false,
+      "notifyOnReset": false,
+      "timeFormat": "hm",
+      "traySource": null,
+      "warnAtPct": 25,
+      "weekFormat": "hours"
+    },
+    "litellm": {
+      "authHeader": "Authorization",
+      "baseUrl": null,
+      "enabled": true,
+      "entityId": null,
+      "pollIntervalSecs": 300,
+      "scope": "key",
+      "timeoutSecs": 10,
+      "tls": {
+        "mode": "system"
+      }
+    },
+    "opencode": {
+      "dataDir": null,
+      "enabled": true,
+      "localConsent": false
+    },
+    "version": 1
+  },
+  "insecure": {
+    "antigravity": {
+      "consent": false,
+      "enabled": true
+    },
+    "claude": {
+      "configDir": null,
+      "enabled": true,
+      "oauthUsage": false,
+      "shimConsent": false
+    },
+    "codex": {
+      "binaryPath": null,
+      "consent": false,
+      "enabled": true
+    },
+    "general": {
+      "autostart": false,
+      "firstRunDone": false,
+      "intervalSecs": 60,
+      "notifyOnOut": false,
+      "notifyOnReset": false,
+      "timeFormat": "hm",
+      "traySource": null,
+      "warnAtPct": 25,
+      "weekFormat": "hours"
+    },
+    "litellm": {
+      "authHeader": "Authorization",
+      "baseUrl": null,
+      "enabled": true,
+      "entityId": null,
+      "pollIntervalSecs": 300,
+      "scope": "key",
+      "timeoutSecs": 10,
+      "tls": {
+        "host": "gateway.example.dev",
+        "mode": "insecure"
+      }
+    },
+    "opencode": {
+      "dataDir": null,
+      "enabled": true,
+      "localConsent": false
+    },
+    "version": 1
+  }
+}

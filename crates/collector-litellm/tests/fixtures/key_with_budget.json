@@ -1,0 +1,26 @@
+{
+  "key": "decoy-key-0001",
+  "info": {
+    "token": "decoy-token-0001",
+    "key_name": "sk-...decoy",
+    "key_alias": "ci-bot",
+    "spend": 12.5,
+    "max_budget": 50.0,
+    "budget_duration": "30d",
+    "budget_reset_at": "2026-11-01T00:00:00+00:00",
+    "expires": "2027-01-01T00:00:00+00:00",
+    "rpm_limit": 60,
+    "tpm_limit": 200000,
+    "max_parallel_requests": 4,
+    "user_id": "user-aurora",
+    "team_id": "team-borealis",
+    "models": ["gpt-fixture-a"],
+    "model_max_budget": {},
+    "metadata": {
+      "api_key": "decoy-metadata-key",
+      "owner_email": "decoy.owner@example.test"
+    },
+    "created_by": "decoy.owner@example.test",
+    "blocked": null
+  }
+}

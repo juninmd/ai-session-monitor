@@ -1,0 +1,42 @@
+# cargo-deny policy: licenses, sources and bans. CI runs `cargo deny check` next to the RustSec
+# audit (.github/workflows/ci.yml). Advisories fail the build; a waiver needs a reason and an expiry note.
+
+[graph]
+# The app ships for Windows only; Linux/macOS-only crates pulled in by Tauri are not shipped.
+targets = ["x86_64-pc-windows-msvc"]
+
+[advisories]
+ignore = []
+
+[licenses]
+# Permissive licenses only, plus MPL-2.0 (file-level copyleft, pulled by Tauri's HTML tooling and
+# never modified here). Copyleft such as GPL/AGPL is deliberately absent.
+allow = [
+    "0BSD",
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "CC0-1.0",
+    "CDLA-Permissive-2.0",
+    "ISC",
+    "MIT",
+    "MIT-0",
+    "MPL-2.0",
+    "Unicode-3.0",
+    "Unlicense",
+    "Zlib",
+]
+confidence-threshold = 0.93
+
+[bans]
+multiple-versions = "warn"
+# A bare "*" requirement would accept any future release; workspace path crates are exempt.
+wildcards = "deny"
+allow-wildcard-paths = true
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+allow-git = []

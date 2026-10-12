@@ -1,0 +1,125 @@
+/* Fill = what is still AVAILABLE. The tick marks how much of the window is left. A bar that
+   passes the tick means the pace reaches the reset; a bar short of it means it runs out first. */
+[data-status="ok"] {
+  --fill: var(--accent);
+}
+
+[data-status="warn"] {
+  --fill: var(--warn-fill);
+}
+
+[data-status="crit"],
+[data-status="out"] {
+  --fill: var(--crit);
+}
+
+.gauge {
+  position: relative;
+  display: block;
+  block-size: 0.625rem;
+  --track: color-mix(in oklab, var(--fill, var(--accent)) 22%, var(--ring-bg));
+}
+
+.gauge.sm {
+  block-size: 0.5rem;
+}
+
+.gauge meter {
+  appearance: none;
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  border: 0;
+  border-radius: var(--r-bar);
+  background: var(--track);
+  overflow: hidden;
+  vertical-align: top;
+}
+
+.gauge meter::-webkit-meter-bar {
+  block-size: 100%;
+  border: 0;
+  border-radius: var(--r-bar);
+  background: var(--track);
+}
+
+.gauge meter::-webkit-meter-optimum-value,
+.gauge meter::-webkit-meter-suboptimum-value,
+.gauge meter::-webkit-meter-even-less-good-value {
+  border-radius: 0 var(--r-bar) var(--r-bar) 0;
+  background: var(--fill, var(--accent));
+}
+
+.gauge meter::-moz-meter-bar {
+  border-radius: 0 var(--r-bar) var(--r-bar) 0;
+  background: var(--fill, var(--accent));
+}
+
+/* Unknown or already reset: an empty hatched track, never a 0 % bar. */
+.gauge-void {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  border-radius: var(--r-bar);
+  background:
+    repeating-linear-gradient(135deg, var(--line-2) 0 3px, transparent 3px 7px), var(--track);
+}
+
+.tick {
+  position: absolute;
+  inset-block: -0.25rem;
+  inset-inline-start: var(--x);
+  inline-size: 2px;
+  margin-inline-start: -1px;
+  border-radius: 1px;
+  background: var(--ink);
+  box-shadow: 0 0 0 2px var(--ring-bg);
+  pointer-events: none;
+}
+
+.sm .tick {
+  inset-block: -0.1875rem;
+}
+
+.tip {
+  position: absolute;
+  inset-block-end: calc(100% + 0.55rem);
+  inset-inline-start: 0;
+  z-index: 20;
+  inline-size: max-content;
+  max-inline-size: 15rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--r-ctl);
+  background: var(--ink);
+  color: var(--solid);
+  font-size: var(--fs-xs);
+  line-height: 1.4;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.gauge:hover .tip {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (forced-colors: active) {
+  .gauge meter::-webkit-meter-optimum-value,
+  .gauge meter::-webkit-meter-suboptimum-value,
+  .gauge meter::-webkit-meter-even-less-good-value {
+    background: Highlight;
+  }
+
+  .gauge meter::-moz-meter-bar {
+    background: Highlight;
+  }
+
+  .gauge-void {
+    border: 1px dashed CanvasText;
+  }
+
+  .tick {
+    background: CanvasText;
+  }
+}

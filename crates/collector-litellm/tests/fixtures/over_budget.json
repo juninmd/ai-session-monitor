@@ -1,0 +1,18 @@
+{
+  "key": "decoy-key-0004",
+  "info": {
+    "token": "decoy-token-0004",
+    "key_alias": "runaway-job",
+    "spend": 130.0,
+    "max_budget": 50.0,
+    "budget_duration": "1d",
+    "budget_reset_at": "2026-10-12T00:00:00Z",
+    "rpm_limit": null,
+    "tpm_limit": null,
+    "max_parallel_requests": null,
+    "expires": null,
+    "user_id": null,
+    "team_id": null,
+    "metadata": {}
+  }
+}

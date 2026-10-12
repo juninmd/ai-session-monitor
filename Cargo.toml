@@ -1,0 +1,46 @@
+[workspace]
+resolver = "3"
+members = ["crates/*", "src-tauri"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.95"
+license = "MIT"
+publish = false
+
+# Versions below were read from crates.io on 2026-10-10. Crates published within the last
+# week are deliberately not pinned in Cargo.lock (see docs/adr/0001-architecture.md).
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "sync", "process", "io-util", "fs"] }
+tempfile = "3"
+
+usage-model = { path = "crates/usage-model" }
+usage-support = { path = "crates/usage-support" }
+collector-claude = { path = "crates/collector-claude" }
+collector-codex = { path = "crates/collector-codex" }
+collector-antigravity = { path = "crates/collector-antigravity" }
+collector-litellm = { path = "crates/collector-litellm" }
+collector-opencode = { path = "crates/collector-opencode" }
+app-core = { path = "crates/app-core" }
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+unused_must_use = "deny"
+
+[workspace.lints.clippy]
+all = { level = "deny", priority = -1 }
+unwrap_used = "deny"
+expect_used = "warn"
+dbg_macro = "deny"
+print_stdout = "warn"
+print_stderr = "warn"
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+strip = true

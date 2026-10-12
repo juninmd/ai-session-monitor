@@ -1,0 +1,16 @@
+{
+  "model": "opus",
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh",
+    "padding": 2
+  },
+  "env": {
+    "PROJETO": "ação ✓ 日本"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git status)"
+    ]
+  }
+}
