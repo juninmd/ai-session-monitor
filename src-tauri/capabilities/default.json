@@ -1,0 +1,24 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "What the flyout webview may do: listen to backend events and call the app's own commands. No window, fs, shell or opener access.",
+  "windows": ["flyout"],
+  "permissions": [
+    "core:event:allow-listen",
+    "core:event:allow-unlisten",
+    "allow-get-snapshot",
+    "allow-refresh",
+    "allow-get-settings",
+    "allow-save-settings",
+    "allow-secret-status",
+    "allow-set-secret",
+    "allow-clear-secret",
+    "allow-claude-shim-status",
+    "allow-install-claude-shim",
+    "allow-uninstall-claude-shim",
+    "allow-open-link",
+    "allow-hide-flyout",
+    "allow-set-flyout-height",
+    "allow-quit-app"
+  ]
+}

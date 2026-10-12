@@ -1,0 +1,38 @@
+use tauri::{LogicalPosition, LogicalSize, PhysicalPosition, PhysicalSize, Position, Size};
+
+use super::*;
+
+#[test]
+fn a_physical_tray_rect_is_taken_as_is() {
+    let rect = tauri::Rect {
+        position: Position::Physical(PhysicalPosition::new(1700, 1048)),
+        size: Size::Physical(PhysicalSize::new(24, 24)),
+    };
+    assert_eq!(tray_rect(&rect, 1.5), Rect::new(1700, 1048, 24, 24));
+}
+
+#[test]
+fn a_logical_tray_rect_is_scaled_to_physical_pixels() {
+    let rect = tauri::Rect {
+        position: Position::Logical(LogicalPosition::new(1000.0, 700.0)),
+        size: Size::Logical(LogicalSize::new(16.0, 16.0)),
+    };
+    assert_eq!(tray_rect(&rect, 1.5), Rect::new(1500, 1050, 24, 24));
+}
+
+#[test]
+fn pixel_conversion_saturates_instead_of_wrapping() {
+    assert_eq!(px(1920), 1920);
+    assert_eq!(px(u32::MAX), i32::MAX);
+}
+
+#[test]
+fn the_flyout_is_the_window_the_config_declares() {
+    let config: serde_json::Value =
+        serde_json::from_str(include_str!("../../tauri.conf.json")).expect("json");
+    let window = &config["app"]["windows"][0];
+    assert_eq!(window["label"], LABEL);
+    assert_eq!(window["width"].as_f64(), Some(WIDTH_LOGICAL));
+    assert_eq!(window["height"].as_f64(), Some(INITIAL_HEIGHT_LOGICAL));
+    assert_eq!(window["visible"], false);
+}
