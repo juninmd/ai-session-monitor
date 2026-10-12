@@ -16,12 +16,14 @@ webview never shows raw error text.
 | `refresh` | `harness?: HarnessId` | - | Non-blocking. Asks the scheduler to collect now; the result arrives as a `snapshot` event. Rate-limited per harness (>= 10 s); a refused call is not an error. |
 | `get_settings` | - | `Settings` | |
 | `save_settings` | `settings: Settings` | `Settings` | Normalizes (clamps ranges), persists atomically, applies (interval, enabled harnesses, autostart, tray source) and emits `settings-changed`. Returns the normalized value. |
-| `secret_status` | - | `{ litellm, opencode }` | Booleans: a secret exists in the Credential Manager. Rejects with `internal` (`where = secret_store`) when the Credential Manager cannot be read; the UI keeps Settings usable and shows a notice. |
-| `set_secret` | `kind: 'litellm' | 'opencode'`, `value: string` | `SecretStatus` | Trims the value; an empty one rejects with `invalid_input` (`field = value`). The value is never logged or echoed. Triggers a refresh of that harness. |
+| `secret_status` | - | `{ litellm, opencode, kimi, zai }` | Booleans: a secret exists in the Credential Manager. Rejects with `internal` (`where = secret_store`) when the Credential Manager cannot be read; the UI keeps Settings usable and shows a notice. |
+| `set_secret` | `kind: 'litellm' | 'opencode' | 'kimi' | 'zai'`, `value: string` | `SecretStatus` | Trims the value; an empty one rejects with `invalid_input` (`field = value`). The value is never logged or echoed. Triggers a refresh of that harness. |
 | `clear_secret` | `kind` | `SecretStatus` | Idempotent. |
 | `claude_shim_status` | - | `ShimStatus` | Read-only look at Claude Code's settings.json. |
 | `install_claude_shim` | - | `ShimStatus` | Requires `claude.shimConsent`. Copies the shim to a stable path under the data dir and wraps any existing statusLine. |
 | `uninstall_claude_shim` | - | `ShimStatus` | Restores the previous statusLine exactly. |
+| `get_history` | `harness: HarnessId`, `limit?: 1..=8` | `HarnessHistory` | Past windows for the burndown: `{ harness, epochs: [{ windowId, resetsAt, points: [{ t, usedPct }] }] }`, the newest `limit` (default and maximum 8) epochs of each window, oldest first, at most 120 points each (thinned keeping the first, the last and the peak of each slice). Empty while `general.historyEnabled` is false. A `limit` outside 1..=8 rejects with `invalid_input` (`field = limit`). |
+| `clear_history` | - | - | Forgets every stored reading, in memory and on disk (the `history.corrupt.json` copy too). Idempotent. |
 | `open_link` | `link: ExternalLink` | - | Opens a fixed destination in the default browser. The webview cannot pass a URL. |
 | `hide_flyout` | - | - | |
 | `set_flyout_height` | `height: number` | - | Content height in CSS px; the shell clamps to the monitor work area and resizes keeping the anchor edge. |
@@ -47,10 +49,10 @@ webview never shows raw error text.
 
 ## View semantics
 
-- Tab order: `claude`, `codex`, `antigravity`, `opencode`, `litellm` (`HarnessId::ALL`).
+- Tab order: `claude`, `codex`, `antigravity`, `opencode`, `kimi`, `zai`, `litellm` (`HarnessId::ALL`).
 - `state`: `disabled` (user switched it off) | `needs_consent` (nothing is read until the user
   agrees) | `needs_setup` (configuration missing: LiteLLM URL/key, OpenCode key and no local
-  consent) | `loading` (first read in flight) | `ready` | `no_data` (the source works but has
+  consent, Kimi Code or z.ai key) | `loading` (first read in flight) | `ready` | `no_data` (the source works but has
   nothing yet) | `error`.
 - A `ready` view with `stale = true` keeps its windows and is shown desaturated (gauges faded, text keeps its contrast) and excluded from
   the tray summary. `error` is set in the `error` state and also on a stale `ready` view whose last
@@ -58,6 +60,9 @@ webview never shows raw error text.
 - `usedPct = null` is unknown and is never rendered as 0 %. Over-budget values above 100 are
   allowed and clamp to 0 % available. A window whose `resetsAt` passed is expired: shown as
   "reiniciou", no status, no pace.
+- `nextAttemptAt` (epoch seconds or `null`) is set only while a rate-limit cool-down holds the
+  source back (see Polling). The view keeps its last good windows, `stale = true` and the
+  `rate_limited` error; the UI says "nova tentativa em N min". Any later result clears it.
 - `readAt` is when the data was produced (file mtime, response time), not when we polled; the UI
   shows "lido há N min".
 - Status and pace come only from the shared rules (`usage-model::status`, `src/lib/usage.ts`).
@@ -80,13 +85,15 @@ Window ids and kinds, per source:
 | `codex` | by cadence: `five_hour`, `daily`, `weekly`, `monthly`; a cadence it cannot name stays `primary` / `secondary` with `windowMinutes` set | same, else `other` |
 | `antigravity` | `<pool>:five_hour`, `<pool>:weekly`, `<pool>:<slug>` (`label` = the bucket); pool is `gemini`, `claude_gpt`, a slug from the service, or `group_<n>` (0-based index) | `five_hour`, `weekly`, `other` |
 | `opencode` | `rolling`, `weekly`, `monthly` | `five_hour`, `weekly`, `monthly` |
+| `kimi` | `five_hour`, `weekly`, `monthly` (the body states the 5 h length; weekly and monthly have none, so no pace is computed for them); a stated 10080-minute `limits[]` entry is `limit_weekly` and is folded with the top-level `weekly` block into one window (the one that states a reset); other stated durations become `daily` or `window_<n>m` | `five_hour`, `daily`, `weekly`, `monthly`, `other` |
+| `zai` | `five_hour`, `daily`, `weekly`, `window_<n>m` (length = number x unit); `mcp` (monthly tool allowance, no stated length) | `five_hour`, `daily`, `weekly`, `monthly`, `other` |
 | `litellm` | `budget` (`label` = key alias); `limit:<duration>` (`label` = the raw duration); `model:<name>` (`group` and `label` = the model) | `budget` |
 
 Fact ids and units:
 
 | Source | Fact `id` (`unit`) |
 |---|---|
-| `codex` | `credits_balance` (`credits`) |
+| `codex` | `credits_balance` (`credits`); `reset_credits` (`resets`, the count of earned resets still available, `app_server` only; absent when the service gives no count) |
 | `opencode` | `local_cost_5h`, `local_cost_7d`, `local_cost_30d` (`usd`); `local_tokens_5h`, `local_tokens_7d` (`tokens`). Local list-price estimate, not quota. |
 | `litellm` | `rpm_limit`, `max_parallel_requests` (`requests`); `tpm_limit` (`tokens`); `expires` (`epoch_s`) |
 
@@ -135,7 +142,7 @@ may succeed by itself. Params are non-secret (`httpStatus`, `host`, ...).
 
 ### Field names in rejected commands
 
-`save_settings`, `set_secret` and `install_claude_shim` reject with `invalid_url` or `invalid_input`
+`save_settings`, `set_secret`, `install_claude_shim` and `get_history` reject with `invalid_url` or `invalid_input`
 and `params.field` naming the offending input (never its value). The UI shows field-level wording for
 the names marked UI; any other name gets the generic message. `install_claude_shim` also rejects a
 relative or NUL-bearing data or home directory as `invalid_input` with `field = configDir`; the
@@ -151,23 +158,36 @@ contract has no better name for it.
 | `save_settings` | `invalid_input` | `configDir`, `binaryPath`, `dataDir` (custom path not absolute, NUL, too long, or a UNC share, device-namespace or reserved device path; the extended-length form `\\?\C:\` stays valid) | yes |
 | `set_secret` | `invalid_input` | `value` (empty after trimming, or longer than 4096 characters) | yes |
 | `install_claude_shim` | `invalid_input` | `shimConsent` (consent not given) | yes |
+| `get_history` | `invalid_input` | `limit` (0 or above 8) | yes |
 
 OpenCode: 401/403 from the usage endpoint are reported as `unauthorized` with `ambiguous = true`
 because valid keys have been rejected by the service; the UI says "could not verify the key or the
 Go subscription" and offers the console link, never a certain "bad key".
+Kimi Code and z.ai follow the same rule (a z.ai failure can also arrive as `success: false` inside an HTTP 200 and is mapped by its `code`; the vendor `msg` is never shown). Their sources are `coding_usages` and `quota_limit`, both unofficial.
 
 ## Polling
 
-- `general.intervalSecs` (30..3600, default 60) drives local sources (Claude shim file, Codex,
+- `general.intervalSecs` (30..3600, default 60) is the base cadence; it drives local sources (Claude shim file, Codex,
   Antigravity, OpenCode local database) and also Claude when OAuth is on: the collector itself
   asks the OAuth endpoint no more than once per 300 s. LiteLLM uses `litellm.pollIntervalSecs`
   (>= 60, default 300). Scheduled OpenCode polls, which reach its Go endpoint, never run faster
   than 300 s; a manual refresh can (see the 10 s gap above).
-- Failures back off exponentially per harness up to 15 minutes; a successful read resets it. A
-  `retryAfterSecs` param is surfaced to the person but not honored by the scheduler. A Codex
+- Failures back off exponentially per harness up to 15 minutes; a successful read resets it. A Codex
   rollout fallback counts as a success (no error on the view), so it does not back off.
+- Rate-limit cool-down: an `error` view with code `rate_limited` leaves that harness alone for
+  `max(retryAfterSecs or 300 s, ordinary backoff, normal cadence)`, held to 30 minutes
+  (`timing::cooldown`). The hub keeps the last good view stale and sets `nextAttemptAt`. A manual
+  `refresh` is dropped during it like `REFRESH_MIN_GAP`, and the UI says why; a forced read (the
+  harness' own settings or secret changed) ends the cool-down.
+- Adaptive cadence (`general.adaptive`, default on): after a healthy read the next wait is
+  `base * (2 + unchanged reads in a row)`, held to 30 minutes and to 10 minutes before the
+  nearest reset, never below `base` (`timing::adaptive_wait`). `base` applies as is when any live
+  window has `usedPct` unknown, at or above 70 % (lower when the first alert threshold minus 10
+  is lower), or resets within 10 minutes, and when no live window exists. A failure backs off
+  from `base`, not from the stretched wait; a manual refresh and the OpenCode 300 s floor are
+  untouched. Turning the switch off brings a pending read back to `base`.
 - `timing::cadence` gives each harness its pace: `general.intervalSecs` for Claude, Codex and
-  Antigravity, `max(intervalSecs, 300 s)` for OpenCode, `litellm.pollIntervalSecs` for LiteLLM.
+  Antigravity, `max(intervalSecs, 300 s)` for OpenCode, Kimi Code and z.ai, `litellm.pollIntervalSecs` for LiteLLM.
 - A manual `refresh` is dropped when that harness started a collection less than 10 s ago
   (`REFRESH_MIN_GAP`).
 - Snapshot events: the webview registers the `snapshot` listener first, then calls
@@ -179,7 +199,11 @@ Go subscription" and offers the console link, never a certain "bad key".
 
 ## Notifications
 
-`general.notifyOnOut` and `general.notifyOnReset` (both off by default) switch the desktop toasts.
+`general.notifyOnOut` and `general.notifyOnReset` (both off by default) switch the desktop toasts;
+`general.alertThresholds` (default `[80, 95]`, empty = off) switches the usage-threshold toasts.
+`general.showUsed` (default `false`) is presentation only: the UI, the tray tooltip and the "limite disponível"
+toast print the used share instead of the available one; every payload keeps `usedPct`, and the tray icon arc
+stays on the available share.
 `app-core` plans them from snapshot changes and the shell shows them; title and body are
 ready-made pt-BR text and carry no path, key or raw error.
 
@@ -189,6 +213,14 @@ ready-made pt-BR text and carry no path, key or raw error.
   stays silent (the Claude status line only moves while Claude Code runs), the clock announces it
   once at `resetsAt` ("limite disponível", without a percentage). A reading that later confirms
   that reset does not notify a second time.
+- Usage threshold: a fresh, non-expired window with a known `usedPct` reaches a value in
+  `general.alertThresholds` (1..99, at most 4, sorted and unique after `normalize`). One toast per
+  crossing per window and reset epoch (state keyed by harness, window id and `resetsAt`, so a
+  reset re-arms it); a jump over several thresholds tells only the highest; unknown, stale and
+  expired readings never alert. The state lives in memory like the other notification state, so
+  the first reading of a window after a start (or a switch-on) only sets the baseline and a
+  restart never repeats a toast. A window with no `resetsAt` alerts once per level per run.
+  Text carries the harness, the window name and numbers only. `NotificationKind::ThresholdCrossed`.
 - Settings recovered: `settings.json` was unreadable, was kept as `settings.corrupt-<epoch>.json`
   and defaults are in effect. Shown once per start, before the first snapshot, whatever the two
   toggles say.
@@ -198,3 +230,14 @@ ready-made pt-BR text and carry no path, key or raw error.
 `%LOCALAPPDATA%\dev.aisessionmonitor.tray\` holds `settings.json` (non-secret), `claude\rate_limits.json`
 (written by the shim, `capturedAt` epoch seconds plus the raw `rate_limits` object), and `bin\`
 (the stable copy of the shim referenced from Claude Code's settings). Secrets are never written here.
+
+`history.json` is the burndown store: per harness and window id and reset time, a list of
+`[epoch seconds, used percentage]`. It holds no account, plan, label, path or error text. Rules, all
+in `crates/app-core/src/history`: only fresh, non-stale readings with a known percentage and a
+future reset are sampled (unknown is skipped, never stored as 0); a sample is kept when the value
+changed or 10 minutes passed; a reset restated up to 2 minutes apart stays the same epoch;
+readings older than 35 days go first, then the oldest beyond 20 000 points or 1 MiB. The file is
+written atomically at most once a minute and again at shutdown. A file that fails to parse, is
+over 2 MiB or has another `version` is renamed `history.corrupt.json` (one copy, replaced next
+time) and the history starts empty: no notice, no error text. `general.historyEnabled = false`
+stops recording and hides the history; it does not delete, `clear_history` does.

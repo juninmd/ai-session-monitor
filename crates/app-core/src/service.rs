@@ -7,8 +7,10 @@ use std::path::Path;
 use std::sync::Arc;
 use std::time::Duration;
 
+use usage_model::history::MAX_EPOCHS_PER_WINDOW;
 use usage_model::{
-    HarnessError, HarnessId, SecretKind, SecretStatus, Settings, ShimStatus, Snapshot,
+    HarnessError, HarnessHistory, HarnessId, SecretKind, SecretStatus, Settings, ShimStatus,
+    Snapshot,
 };
 
 use crate::clock::{Clock, SystemClock};
@@ -140,6 +142,8 @@ impl AppService {
         Ok(SecretStatus {
             litellm: self.exists(SecretKind::Litellm)?,
             opencode: self.exists(SecretKind::Opencode)?,
+            kimi: self.exists(SecretKind::Kimi)?,
+            zai: self.exists(SecretKind::Zai)?,
         })
     }
 
@@ -151,7 +155,12 @@ impl AppService {
     /// written kind is known, and the other one counts as unset when unreadable.
     fn status_after_write(&self, written: SecretKind, present: bool) -> SecretStatus {
         let has = |kind| if kind == written { present } else { self.exists(kind).unwrap_or(false) };
-        SecretStatus { litellm: has(SecretKind::Litellm), opencode: has(SecretKind::Opencode) }
+        SecretStatus {
+            litellm: has(SecretKind::Litellm),
+            opencode: has(SecretKind::Opencode),
+            kimi: has(SecretKind::Kimi),
+            zai: has(SecretKind::Zai),
+        }
     }
 
     /// Stores the trimmed value and re-reads that harness. The value is never logged or echoed.
@@ -174,6 +183,28 @@ impl AppService {
         self.shared.secrets.delete(kind)?;
         self.shared.request_forced(harness_of(kind));
         Ok(self.status_after_write(kind, false))
+    }
+
+    /// The newest `limit` (default and maximum 8) past epochs of each window of `harness`. Empty
+    /// while the history is switched off; what was stored stays until `clear_history`.
+    pub fn history(
+        &self,
+        harness: HarnessId,
+        limit: Option<u8>,
+    ) -> Result<HarnessHistory, HarnessError> {
+        let limit = limit.unwrap_or(MAX_EPOCHS_PER_WINDOW);
+        if limit == 0 || limit > MAX_EPOCHS_PER_WINDOW {
+            return Err(invalid_input("limit"));
+        }
+        if !self.shared.settings().general.history_enabled {
+            return Ok(HarnessHistory::empty(harness));
+        }
+        Ok(self.shared.history.query(harness, limit))
+    }
+
+    /// Forgets the stored history, in memory and on disk. Blocking: it touches the disk.
+    pub fn clear_history(&self) -> Result<(), HarnessError> {
+        self.shared.history.clear(self.shared.clock.now_secs())
     }
 
     pub fn claude_shim_status(&self) -> ShimStatus {
@@ -217,5 +248,7 @@ fn harness_of(kind: SecretKind) -> HarnessId {
     match kind {
         SecretKind::Litellm => HarnessId::Litellm,
         SecretKind::Opencode => HarnessId::Opencode,
+        SecretKind::Kimi => HarnessId::Kimi,
+        SecretKind::Zai => HarnessId::Zai,
     }
 }

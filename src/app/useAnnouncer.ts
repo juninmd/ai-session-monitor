@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { HarnessId, HarnessView } from '../lib/contract';
 import { announcementFor, type StatusKey, statusKeyOf } from './announce';
+import { showsUsed } from './quota';
 import { summaryOf } from './tabModel';
 import type { ViewContext } from './windowModel';
 
@@ -16,7 +17,13 @@ export function useAnnouncer(views: readonly HarnessView[], ctx: ViewContext): s
       const summary = summaryOf(view, ctx);
       const key = statusKeyOf(view, summary);
       next.set(view.id, key);
-      const sentence = announcementFor(view.id, previous.current.get(view.id), key, summary);
+      const sentence = announcementFor(
+        view.id,
+        previous.current.get(view.id),
+        key,
+        summary,
+        showsUsed(ctx.settings),
+      );
       if (sentence) sentences.push(sentence);
     }
     previous.current = next;

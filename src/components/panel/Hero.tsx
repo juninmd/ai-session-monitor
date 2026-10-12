@@ -1,4 +1,5 @@
 import { Fragment } from 'react';
+import { tq } from '../../app/quota';
 import {
   durationFormat,
   leftText,
@@ -10,6 +11,7 @@ import { t } from '../../i18n';
 import { durationParts, formatAmountValue, formatPercent, spokenDuration } from '../../i18n/format';
 import { Icon } from '../icons';
 import { AvailableLine } from './AvailableLine';
+import { EstimateMark } from './EstimateMark';
 import { Gauge } from './Gauge';
 import { PaceLine } from './PaceLine';
 
@@ -76,12 +78,14 @@ function AmountLeft({ model }: { model: WindowModel }) {
   const available = formatAmountValue(Math.max(0, amount.limit - amount.used), amount.unit);
   return (
     <p className="hero-time">
-      <span className="vh">{t('window.spoken_amount', { available, limit })}</span>
+      <span className="vh">
+        {tq('window.spoken_amount', model.showUsed, { available, used, limit })}
+      </span>
       <span className="n" aria-hidden="true">
-        {available}
+        {model.showUsed ? used : available}
       </span>
       <span className="cap" aria-hidden="true">
-        {t('window.available_of', { limit })}
+        {tq('window.available_of', model.showUsed, { limit })}
       </span>
     </p>
   );
@@ -118,7 +122,10 @@ export function Hero({ model, ctx, stale = false }: WindowProps) {
   return (
     <section className="card hero" data-status={model.status ?? 'none'}>
       <div className="win-head">
-        <h2 className="win-title">{model.title}</h2>
+        <h2 className="win-title">
+          {model.cadenceGuessed && <EstimateMark />}
+          {model.title}
+        </h2>
         <ResetText model={model} ctx={ctx} />
       </div>
       <HeroBody model={model} ctx={ctx} />

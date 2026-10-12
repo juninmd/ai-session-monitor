@@ -5,11 +5,14 @@ export const shellMessages = {
   'harness.codex': 'Codex',
   'harness.antigravity': 'Antigravity',
   'harness.opencode': 'OpenCode',
+  'harness.kimi': 'Kimi Code',
+  'harness.zai': 'z.ai',
   'harness.litellm': 'LiteLLM',
 
   'header.refresh': 'Atualizar agora',
   'header.settings': 'Configurações',
   'header.tray': 'Menor disponível: {pct}',
+  'header.tray_used': 'Maior uso: {pct}',
   'header.tray_none': 'Sem leitura disponível',
 
   'tabs.label': 'Ferramentas de IA',
@@ -22,6 +25,7 @@ export const shellMessages = {
   'tab.unknown': '—',
   'tab.no_windows': 'Sem cota',
   'tab.sr.pct': '{pct} disponível, {status}',
+  'tab.sr.pct_used': '{pct} usado, {status}',
   'tab.sr.connect': 'precisa ser conectado',
   'tab.sr.no_data': 'sem dados ainda',
   'tab.sr.disabled': 'desligado',
@@ -43,9 +47,12 @@ export const shellMessages = {
   'footer.quit': 'Sair',
 
   'live.warn': '{name}: atenção, {pct} disponível.',
+  'live.warn_used': '{name}: atenção, {pct} usado.',
   'live.crit': '{name}: crítico, {pct} disponível.',
+  'live.crit_used': '{name}: crítico, {pct} usado.',
   'live.out': '{name}: esgotado.',
   'live.ok': '{name}: {pct} disponível, sem alertas.',
+  'live.ok_used': '{name}: {pct} usado, sem alertas.',
   'live.error': '{name}: falha na leitura.',
   'live.stale': '{name}: dados desatualizados.',
 
@@ -74,9 +81,15 @@ export const shellMessages = {
   'stale.banner_noage': 'Mostrando os últimos números lidos.',
   'stale.failed': 'A última atualização falhou: {title}.',
 
+  'cooldown.next': 'A fonte pediu um intervalo entre as consultas. Nova tentativa em {wait}.',
+  'cooldown.refresh_blocked':
+    '{name}: a fonte pediu um intervalo, então a leitura manual espera. Nova tentativa em {wait}.',
+
   'action.retry': 'Tentar de novo',
   'action.settings': 'Abrir configurações',
-  'action.console': 'Abrir console do OpenCode',
+  'action.console.opencode': 'Abrir console do OpenCode',
+  'action.console.kimi': 'Abrir console do Kimi Code',
+  'action.console.zai': 'Abrir chaves do z.ai',
   'action.reinstall': 'Reinstalar',
   'action.failed': 'Não foi possível concluir a ação.',
 } as const satisfies Record<string, string>;

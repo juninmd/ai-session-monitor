@@ -10,16 +10,17 @@ interface GaugeProps {
 }
 
 /**
- * Fill = what is still AVAILABLE; the tick marks the share of the window that is left. An unknown
+ * Fill = the share printed beside it (available, or used under `showUsed`); the tick marks the share of the window that is left. An unknown
  * or already-reset window draws an empty hatched track, never a 0 % meter.
  */
 export function Gauge({ model, ctx, size = 'md', title }: GaugeProps) {
   const label = gaugeLabel(model, title);
+  const { warnAtPct } = ctx.settings.general;
   const tickStyle =
     model.tick === null ? undefined : ({ '--x': `${model.tick.toFixed(1)}%` } as CSSProperties);
   return (
     <span className={size === 'sm' ? 'gauge sm' : 'gauge'} data-status={model.status ?? 'none'}>
-      {model.available === null || model.expired ? (
+      {model.shown === null || model.expired ? (
         <span
           className="gauge-void"
           data-kind={model.expired ? 'expired' : 'unknown'}
@@ -30,10 +31,10 @@ export function Gauge({ model, ctx, size = 'md', title }: GaugeProps) {
         <meter
           min={0}
           max={100}
-          low={10}
-          high={ctx.settings.general.warnAtPct}
-          optimum={100}
-          value={Math.round(model.available)}
+          low={model.showUsed ? 100 - warnAtPct : 10}
+          high={model.showUsed ? 90 : warnAtPct}
+          optimum={model.showUsed ? 0 : 100}
+          value={Math.round(model.shown)}
           aria-label={label}
         />
       )}

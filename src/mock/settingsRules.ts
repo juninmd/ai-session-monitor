@@ -5,6 +5,12 @@ import { type HarnessError, LIMITS, type Settings } from '../lib/contract';
 const clamp = (n: number, range: { readonly min: number; readonly max: number }) =>
   Math.min(range.max, Math.max(range.min, Math.round(n)));
 
+/** Settings::normalize for the alert list: 1..99, sorted, unique, the four lowest. */
+export function normalizeThresholds(list: readonly number[]): number[] {
+  const valid = list.filter((n) => Number.isInteger(n) && n >= 1 && n <= 99);
+  return [...new Set(valid)].sort((a, b) => a - b).slice(0, 4);
+}
+
 export function normalizeSettings(settings: Settings): Settings {
   const { general, litellm } = settings;
   return {
@@ -13,6 +19,7 @@ export function normalizeSettings(settings: Settings): Settings {
       ...general,
       intervalSecs: clamp(general.intervalSecs, LIMITS.intervalSecs),
       warnAtPct: clamp(general.warnAtPct, LIMITS.warnAtPct),
+      alertThresholds: normalizeThresholds(general.alertThresholds),
     },
     litellm: {
       ...litellm,

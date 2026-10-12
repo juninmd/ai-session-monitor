@@ -62,6 +62,10 @@ export function HarnessFooter({ harness }: { harness: HarnessId }) {
           <OpencodeLinks showConsole={false} showBilling />
         </>
       );
+    case 'kimi':
+      return <Note>{t('kimi.note')}</Note>;
+    case 'zai':
+      return <Note>{t('zai.note')}</Note>;
     case 'litellm':
       return <LitellmEditor />;
     case 'claude':

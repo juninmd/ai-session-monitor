@@ -2,6 +2,7 @@ import type { Pool, PoolRow } from '../../app/layout';
 import { leftText, type ViewContext } from '../../app/windowModel';
 import { t } from '../../i18n';
 import { formatPercent } from '../../i18n/format';
+import { EstimateMark } from './EstimateMark';
 import { Gauge } from './Gauge';
 
 interface RowsProps {
@@ -14,11 +15,12 @@ interface RowsProps {
 
 function Row({ row, ctx, scope, withTime }: { row: PoolRow } & Omit<RowsProps, 'rows'>) {
   const { model, name } = row;
-  const pct = model.expired || model.available === null ? '—' : formatPercent(model.available);
+  const pct = model.expired || model.shown === null ? '—' : formatPercent(model.shown);
   const time = model.expired ? t('window.expired_short') : leftText(model, ctx);
   return (
     <li className={withTime ? 'li with-time' : 'li'} data-status={model.status ?? 'none'}>
       <span className="li-name" title={name}>
+        {model.cadenceGuessed && <EstimateMark />}
         {name}
       </span>
       <Gauge model={model} ctx={ctx} size="sm" title={scope ? `${scope}, ${name}` : name} />

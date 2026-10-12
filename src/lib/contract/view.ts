@@ -2,7 +2,15 @@
 // side fails parsing here until this file is updated (see contract/snapshot.json).
 import { z } from 'zod';
 
-export const HARNESS_IDS = ['claude', 'codex', 'antigravity', 'opencode', 'litellm'] as const;
+export const HARNESS_IDS = [
+  'claude',
+  'codex',
+  'antigravity',
+  'opencode',
+  'kimi',
+  'zai',
+  'litellm',
+] as const;
 export const HarnessIdSchema = z.enum(HARNESS_IDS);
 export type HarnessId = z.infer<typeof HarnessIdSchema>;
 
@@ -117,6 +125,7 @@ export const HarnessViewSchema = z.strictObject({
   facts: z.array(FactSchema),
   notices: z.array(NoticeSchema),
   error: HarnessErrorSchema.nullable(),
+  nextAttemptAt: z.number().int().nullable(),
   meta: z.record(z.string(), z.string()),
 });
 export type HarnessView = z.infer<typeof HarnessViewSchema>;

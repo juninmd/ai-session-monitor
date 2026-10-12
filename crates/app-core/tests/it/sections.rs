@@ -25,6 +25,14 @@ fn opencode(settings: &mut Settings) {
     settings.opencode.local_consent = true;
 }
 
+fn kimi(settings: &mut Settings) {
+    settings.kimi.enabled = false;
+}
+
+fn zai(settings: &mut Settings) {
+    settings.zai.enabled = false;
+}
+
 fn litellm(settings: &mut Settings) {
     settings.litellm.base_url = Some("https://litellm.example.test".to_owned());
 }
@@ -53,6 +61,23 @@ async fn editing_replaces_the_read_in_flight(id: HarnessId, edit: Edit) {
     assert_eq!(of(&shown.views, id).windows[0].used_pct, Some(22.0), "only the new answer lands");
 }
 
+/// These two sections hold only the switch: turning it off cancels the read and shows "disabled".
+async fn switching_off_drops_the_read_in_flight(id: HarnessId, edit: Edit) {
+    let slow = move |_: usize| Step::After(seconds(20), ready(id, 11.0));
+    let rig = rig().collector(FakeCollector::new(id, slow)).start().await;
+    rig.at(seconds(5)).await;
+    assert_eq!(rig.fake(id).in_flight(), 1, "control: the first read is still running");
+
+    rig.edit(edit);
+    crate::rig::settle().await;
+    assert_eq!(rig.fake(id).in_flight(), 0, "the read of a switched-off harness was cancelled");
+    rig.at(seconds(26)).await;
+    assert_eq!(of(&rig.service.snapshot().views, id).state, ViewState::Disabled);
+    for other in HarnessId::ALL.into_iter().filter(|other| *other != id) {
+        assert_eq!(rig.fake(other).count(), 1, "{id:?} was edited; {other:?} is left alone");
+    }
+}
+
 #[tokio::test(start_paused = true)]
 async fn the_claude_section_is_watched() {
     editing_replaces_the_read_in_flight(HarnessId::Claude, claude).await;
@@ -71,6 +96,16 @@ async fn the_antigravity_section_is_watched() {
 #[tokio::test(start_paused = true)]
 async fn the_opencode_section_is_watched() {
     editing_replaces_the_read_in_flight(HarnessId::Opencode, opencode).await;
+}
+
+#[tokio::test(start_paused = true)]
+async fn the_kimi_section_is_watched() {
+    switching_off_drops_the_read_in_flight(HarnessId::Kimi, kimi).await;
+}
+
+#[tokio::test(start_paused = true)]
+async fn the_zai_section_is_watched() {
+    switching_off_drops_the_read_in_flight(HarnessId::Zai, zai).await;
 }
 
 #[tokio::test(start_paused = true)]

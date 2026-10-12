@@ -8,8 +8,8 @@ import { createMockBackend } from '../../mock';
 import { ctxOf, NOW } from '../../test/helpers';
 import { PANEL_ID, TabStrip } from './TabStrip';
 
-const NAMES = ['Claude Code', 'Codex', 'Antigravity', 'OpenCode', 'LiteLLM'];
-const IDS: HarnessId[] = ['claude', 'codex', 'antigravity', 'opencode', 'litellm'];
+const NAMES = ['Claude Code', 'Codex', 'Antigravity', 'OpenCode', 'Kimi Code', 'z.ai', 'LiteLLM'];
+const IDS: HarnessId[] = ['claude', 'codex', 'antigravity', 'opencode', 'kimi', 'zai', 'litellm'];
 
 async function viewsOf(scenario: Parameters<typeof createMockBackend>[0] = {}) {
   const backend = createMockBackend({ now: () => NOW, ...scenario });
@@ -35,7 +35,7 @@ const tabs = () => screen.getAllByRole('tab');
 const selectedId = () => tabs().find((tab) => tab.getAttribute('aria-selected') === 'true')?.id;
 
 describe('TabStrip semantics', () => {
-  it('is one labelled tablist with the five tools in order', async () => {
+  it('is one labelled tablist with the seven tools in order', async () => {
     render(<Strip views={await viewsOf({ scenario: 'healthy' })} />);
     expect(screen.getByRole('tablist', { name: 'Ferramentas de IA' })).toBeInTheDocument();
     expect(tabs().map((tab) => tab.id)).toEqual(IDS.map((id) => `tab-${id}`));
@@ -64,9 +64,11 @@ describe('TabStrip semantics', () => {
   it('points every tab at the one panel, and only the selected tab is tabbable', async () => {
     render(<Strip views={await viewsOf()} />);
     for (const tab of tabs()) expect(tab).toHaveAttribute('aria-controls', PANEL_ID);
-    expect(tabs().map((tab) => tab.tabIndex)).toEqual([0, -1, -1, -1, -1]);
+    expect(tabs().map((tab) => tab.tabIndex)).toEqual([0, -1, -1, -1, -1, -1, -1]);
     expect(tabs().map((tab) => tab.getAttribute('aria-selected'))).toEqual([
       'true',
+      'false',
+      'false',
       'false',
       'false',
       'false',
@@ -107,7 +109,7 @@ describe('TabStrip semantics', () => {
 
   it('renders a placeholder as a loading tab', () => {
     render(<Strip views={IDS.map(placeholderView)} />);
-    expect(tabs()).toHaveLength(5);
+    expect(tabs()).toHaveLength(7);
   });
 });
 
@@ -157,7 +159,7 @@ describe('TabStrip keyboard model', () => {
   it('keeps the roving tabindex on the new tab', async () => {
     const { user } = await setup();
     await user.keyboard('{ArrowRight}');
-    expect(tabs().map((tab) => tab.tabIndex)).toEqual([-1, 0, -1, -1, -1]);
+    expect(tabs().map((tab) => tab.tabIndex)).toEqual([-1, 0, -1, -1, -1, -1, -1]);
   });
 
   it('leaves other keys to the browser', async () => {
@@ -172,5 +174,19 @@ describe('TabStrip keyboard model', () => {
     await user.click(screen.getByRole('tab', { name: /^OpenCode/ }));
     expect(onSelect).toHaveBeenLastCalledWith('opencode');
     expect(selectedId()).toBe('tab-opencode');
+  });
+});
+
+describe('TabStrip scrolling', () => {
+  it('scrolls the selected tab into view, also when the selection changes from outside', async () => {
+    const scroll = vi.spyOn(Element.prototype, 'scrollIntoView');
+    const views = await viewsOf({ scenario: 'healthy' });
+    const { rerender } = render(
+      <TabStrip views={views} selected="claude" ctx={ctxOf()} onSelect={() => {}} />,
+    );
+    rerender(<TabStrip views={views} selected="zai" ctx={ctxOf()} onSelect={() => {}} />);
+    expect(scroll).toHaveBeenLastCalledWith({ block: 'nearest', inline: 'nearest' });
+    expect(scroll.mock.contexts.at(-1)).toBe(document.getElementById('tab-zai'));
+    scroll.mockRestore();
   });
 });

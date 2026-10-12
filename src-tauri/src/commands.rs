@@ -1,4 +1,4 @@
-//! The 14 IPC commands of docs/ipc.md. Each hands over to `AppService` or the flyout and holds no
+//! The 16 IPC commands of docs/ipc.md. Each hands over to `AppService` or the flyout and holds no
 //! rule of its own. They are `async` on purpose: a sync command runs on the main thread, which
 //! must stay free for the window and the tray. Disk, registry and credential work goes through
 //! `blocking`.
@@ -8,8 +8,8 @@ use std::sync::Arc;
 use app_core::AppService;
 use tauri::{AppHandle, State};
 use usage_model::{
-    ErrorCode, ExternalLink, HarnessError, HarnessId, SecretKind, SecretStatus, Settings,
-    ShimStatus, Snapshot,
+    ErrorCode, ExternalLink, HarnessError, HarnessHistory, HarnessId, SecretKind, SecretStatus,
+    Settings, ShimStatus, Snapshot,
 };
 
 use crate::flyout::Flyout;
@@ -122,6 +122,21 @@ pub async fn install_claude_shim(service: Service<'_>) -> Result<ShimStatus, Har
 pub async fn uninstall_claude_shim(service: Service<'_>) -> Result<ShimStatus, HarnessError> {
     let service = Arc::clone(service.inner());
     blocking(move || service.uninstall_claude_shim()).await
+}
+
+#[tauri::command]
+pub async fn get_history(
+    service: Service<'_>,
+    harness: HarnessId,
+    limit: Option<u8>,
+) -> Result<HarnessHistory, HarnessError> {
+    service.history(harness, limit)
+}
+
+#[tauri::command]
+pub async fn clear_history(service: Service<'_>) -> Result<(), HarnessError> {
+    let service = Arc::clone(service.inner());
+    blocking(move || service.clear_history()).await
 }
 
 #[tauri::command]

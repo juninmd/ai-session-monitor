@@ -1,5 +1,6 @@
 import { paceLine, type ViewContext, type WindowModel } from '../../app/windowModel';
 import { Icon } from '../icons';
+import { EstimateMark } from './EstimateMark';
 
 interface PaceLineProps {
   model: WindowModel;
@@ -15,7 +16,10 @@ export function PaceLine({ model, ctx, onlyUrgent = false, className = 'pace' }:
   return (
     <p className={className}>
       <Icon name={line.icon} />
-      <span>{line.text}</span>
+      <span>
+        {line.estimate && <EstimateMark />}
+        {line.text}
+      </span>
     </p>
   );
 }

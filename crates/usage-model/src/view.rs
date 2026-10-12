@@ -226,6 +226,9 @@ pub struct HarnessView {
     /// Set in the `Error` state, and also on a `stale` `Ready` view whose last refresh failed (the
     /// windows are then the previous good ones).
     pub error: Option<HarnessError>,
+    /// Epoch seconds of the next attempt while a rate-limit cool-down holds this source back.
+    /// `None` otherwise (including ordinary backoff).
+    pub next_attempt_at: Option<i64>,
     /// Display-only strings (`alias`, `host`, `scope`, ...). Never secrets.
     pub meta: BTreeMap<String, String>,
 }
@@ -243,6 +246,7 @@ impl HarnessView {
             facts: Vec::new(),
             notices: Vec::new(),
             error: None,
+            next_attempt_at: None,
             meta: BTreeMap::new(),
         }
     }

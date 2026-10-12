@@ -13,6 +13,7 @@ export function placeholderView(id: HarnessId): HarnessView {
     facts: [],
     notices: [],
     error: null,
+    nextAttemptAt: null,
     meta: {},
   };
 }

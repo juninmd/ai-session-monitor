@@ -29,8 +29,10 @@ export const COLLECTORS = [
   'collector-antigravity',
   'collector-claude',
   'collector-codex',
+  'collector-kimi',
   'collector-litellm',
   'collector-opencode',
+  'collector-zai',
 ] as const;
 
 /** Everything a person can be shown comes from a collector or from the core that validates input. */

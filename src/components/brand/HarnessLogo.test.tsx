@@ -3,18 +3,22 @@ import { describe, expect, it } from 'vitest';
 import { HARNESS_IDS, type HarnessId } from '../../lib/contract';
 import { fingerprint, parseSvg, unsafeFindings } from '../../test/svg';
 import { HarnessLogo } from './HarnessLogo';
+import kimiFile from './original/kimi.mono.svg?raw';
+import zaiFile from './original/zai.mono.svg?raw';
 import antigravityFile from './vendor/antigravity.svg?raw';
 import claudeFile from './vendor/claude.svg?raw';
 import codexFile from './vendor/codex.svg?raw';
 import litellmFile from './vendor/litellm.mono.svg?raw';
 import opencodeFile from './vendor/opencode.mono.svg?raw';
 
-/** The sanitized upstream file each component was written from (docs/third-party-assets.md). */
+/** The file each component was written from: sanitized upstream art, or (kimi, zai) an original glyph. */
 const VENDORED: Record<HarnessId, string> = {
   claude: claudeFile,
   codex: codexFile,
   antigravity: antigravityFile,
   opencode: opencodeFile,
+  kimi: kimiFile,
+  zai: zaiFile,
   litellm: litellmFile,
 };
 
@@ -23,6 +27,8 @@ const TONE: Record<HarnessId, 'color' | 'mono'> = {
   codex: 'color',
   antigravity: 'color',
   opencode: 'mono',
+  kimi: 'mono',
+  zai: 'mono',
   litellm: 'mono',
 };
 
@@ -32,6 +38,8 @@ const DEFINED_IDS: Record<HarnessId, number> = {
   codex: 1,
   antigravity: 12,
   opencode: 0,
+  kimi: 0,
+  zai: 0,
   litellm: 0,
 };
 
@@ -53,7 +61,7 @@ describe('HarnessLogo', () => {
     expect(svg.querySelector('title')).toBeNull();
   });
 
-  it('gives the five tools five different marks', () => {
+  it('gives every tool its own mark', () => {
     const marks = HARNESS_IDS.map((id) => {
       const { container, unmount } = render(<HarnessLogo id={id} />);
       const mark = fingerprint(container.querySelector('svg') as Element).join('\n');

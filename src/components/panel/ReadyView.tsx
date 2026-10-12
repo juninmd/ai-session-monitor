@@ -8,6 +8,7 @@ import { Facts } from './Facts';
 import { FlatWindow } from './FlatWindow';
 import { ClaudeLocked, HarnessFooter } from './HarnessExtras';
 import { Hero } from './Hero';
+import { HistorySection } from './history/HistorySection';
 import { MetaChips } from './MetaChips';
 import { Notices } from './Notices';
 import { GroupList, PoolCard } from './PoolList';
@@ -52,6 +53,7 @@ export function ReadyView({ view, ctx }: { view: HarnessView; ctx: ViewContext }
       )}
       {claudeLocked && <ClaudeLocked />}
       <Facts view={view} nowSecs={ctx.nowSecs} />
+      <HistorySection key={view.id} view={view} ctx={ctx} />
       <Notices notices={view.notices} harness={view.id} placement="bottom" />
       <HarnessFooter harness={view.id} />
     </>

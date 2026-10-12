@@ -63,8 +63,12 @@ describe('catalog completeness', () => {
     expect(hasMessage(`status.${status}`)).toBe(true);
   });
 
-  it.each(['retry', 'settings', 'console', 'reinstall'])('labels action %s', (action) => {
+  it.each(['retry', 'settings', 'reinstall'])('labels action %s', (action) => {
     expect(hasMessage(`action.${action}`)).toBe(true);
+  });
+
+  it.each(['opencode', 'kimi', 'zai'])('names the console of %s', (harness) => {
+    expect(hasMessage(`action.console.${harness}`)).toBe(true);
   });
 });
 

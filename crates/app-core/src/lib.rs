@@ -13,6 +13,8 @@
 //! - Reset notifications. A window shown as out gets one [`NotificationKind::WindowReset`] at its
 //!   reset time even if its source stays silent (the Claude statusLine moves only while Claude
 //!   Code runs); a reading that later confirms the reset does not notify a second time.
+//! - Pacing. A rate-limited source is left alone for a cool-down and an unthreatening one is read
+//!   less often (`general.adaptive`); both live in the scheduler and `timing`, never in a collector.
 
 pub mod clock;
 pub mod collectors;
@@ -21,6 +23,7 @@ pub mod paths;
 pub mod secrets;
 pub mod service;
 
+mod history;
 mod hub;
 mod publish;
 mod relay;

@@ -169,6 +169,21 @@ with virtual time; this is the check in a real session.
       `ai-session-monitor: polling stopped: ...`. If it does, the app recovered by itself but
       something panicked: keep the line (it names the cause and carries no data) and file a bug.
 
+## Quota history
+
+- [ ] Debug build with `AISM_DATA_DIR` on a throwaway folder: after a few polls the tab's
+      "Histórico" (collapsed at first) opens with a chart, a "Pico de N% ..." sentence and "Ver em
+      tabela". `history.json` appears within about a minute and holds only ids, times and numbers.
+- [ ] Keyboard only: Tab reaches "Histórico", Enter or Space opens it, the window selector works,
+      "Ver em tabela" opens. Narrator reads the chart's title and description and the sentence.
+- [ ] Light and dark themes and high contrast: the current line stays heavier than the earlier
+      ones and keeps its "atual N%" label; with "reduzir animações" on, the chevron does not turn
+      smoothly.
+- [ ] Put garbage in `history.json` while the app is closed, then start it: no toast, the history
+      is empty, `history.corrupt.json` holds the bytes.
+- [ ] Settings, "Histórico de uso": switch it off and the section disappears from the tabs;
+      "Limpar histórico" asks first, then deletes `history.json`; Cancelar keeps it.
+
 ## Secrets
 
 Use a fake key. Run this section in the **release** build: a debug build with any `AISM_*`
@@ -176,7 +191,13 @@ switch keeps secrets in memory (`AISM_MEMORY_SECRETS`) and never reaches the Cre
 
 - [ ] Saving a LiteLLM key adds `ai-session-monitor/litellm` under Control Panel > Credential
       Manager > Windows Credentials > Generic, persistence "Local computer". Clearing removes it.
-      The OpenCode key uses `ai-session-monitor/opencode`.
+      The OpenCode key uses `ai-session-monitor/opencode`, Kimi Code `ai-session-monitor/kimi`
+      and z.ai `ai-session-monitor/zai`.
+- [ ] With seven tabs the strip scrolls sideways in the flyout: Tab lands on the selected tab,
+      the arrow keys move and wrap, the focused tab scrolls into view and shows a visible ring.
+- [ ] Kimi Code and z.ai tabs: with no key they show the setup card and the "não oficial" badge;
+      with a real key the windows match the vendor's own page; a wrong key reads "não foi possível
+      verificar a chave", not "chave errada". The console links open the vendor page.
 - [ ] The key appears nowhere else: not in `settings.json`, not in the webview devtools console,
       not in stderr.
 - [ ] A value the Credential Manager cannot hold (about 1,280 characters: it stores UTF-16 in a
@@ -235,3 +256,5 @@ enforces it; repeat it after a Tauri upgrade.
 - [ ] Dark and light system themes both render correctly.
 - [ ] No title bar, no taskbar button. Note whether the flyout appears in Alt+Tab.
 - [ ] Tab order and focus rings work with the keyboard; Escape closes.
+- [ ] With the strip scrolled, a tab selected from elsewhere (settings link, consent, stored tab on
+      start) scrolls into view and is never left offscreen.

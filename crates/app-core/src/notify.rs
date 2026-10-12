@@ -7,9 +7,11 @@ use usage_model::{HarnessId, Settings, Snapshot, ViewState};
 
 mod lapsed;
 mod text;
+mod threshold;
 
 pub(crate) use lapsed::{ResetKey, key_of, lapsed_resets, next_lapse, still_waiting};
 pub(crate) use text::settings_recovered;
+pub(crate) use threshold::ThresholdState;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum NotificationKind {
@@ -18,6 +20,8 @@ pub enum NotificationKind {
     /// A window that was out is available again: seen in a reading, or, when the source stays
     /// silent, announced once by the clock at the window's reset time.
     WindowReset,
+    /// A window's used percentage crossed one of `general.alertThresholds`.
+    ThresholdCrossed,
     /// The settings file was unusable and was set aside; defaults are in effect. `harness` and
     /// `window_id` carry no meaning for this kind (`Claude` and empty).
     SettingsRecovered,
@@ -61,7 +65,13 @@ pub fn plan(
                     planned.push(text::window_out(view.id, window, now_secs));
                 }
                 (false, true) if general.notify_on_reset => {
-                    planned.push(text::window_reset(view.id, window, now, now_secs));
+                    planned.push(text::window_reset(
+                        view.id,
+                        window,
+                        now,
+                        general.show_used,
+                        now_secs,
+                    ));
                 }
                 _ => {}
             }

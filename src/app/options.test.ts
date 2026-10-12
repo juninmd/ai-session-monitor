@@ -5,9 +5,12 @@ import {
   intervalLabel,
   LITELLM_POLL_PRESETS,
   numericOptions,
+  parseThresholdKey,
   percentLabel,
   secondsLabel,
   TIMEOUT_PRESETS,
+  thresholdKey,
+  thresholdOptions,
   WARN_PRESETS,
 } from './options';
 
@@ -50,5 +53,26 @@ describe('labels', () => {
     expect(intervalLabel(300)).toBe('5 min');
     expect(secondsLabel(10)).toBe('10 s');
     expect(percentLabel(25)).toBe('25%');
+  });
+});
+
+describe('alert thresholds', () => {
+  it('offer off, the two presets and nothing else for a preset value', () => {
+    for (const list of [[80, 95], [90], []]) {
+      expect(thresholdOptions(list).map((o) => o.label)).toEqual(['Desligado', '80% e 95%', '90%']);
+    }
+  });
+
+  it('keep a stored list that is none of the presets as "Personalizado"', () => {
+    const options = thresholdOptions([60, 85]);
+    expect(options.at(-1)).toEqual({ value: '60,85', label: 'Personalizado (60% e 85%)' });
+    expect(options).toHaveLength(4);
+  });
+
+  it('round-trip through the select value', () => {
+    for (const list of [[], [90], [80, 95], [10, 20, 30, 40]]) {
+      expect(parseThresholdKey(thresholdKey(list))).toEqual(list);
+    }
+    expect(thresholdKey([])).toBe('off');
   });
 });

@@ -16,6 +16,8 @@
     "allow-claude-shim-status",
     "allow-install-claude-shim",
     "allow-uninstall-claude-shim",
+    "allow-get-history",
+    "allow-clear-history",
     "allow-open-link",
     "allow-hide-flyout",
     "allow-set-flyout-height",

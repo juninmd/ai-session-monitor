@@ -193,6 +193,67 @@ fn a_new_interval_moves_the_pending_call_of_a_healthy_slot_only() {
     assert_eq!(delay(&unchanged, start), 61, "same cadence: untouched");
 }
 
+fn limited(retry_after: Option<&str>) -> Verdict {
+    let mut error = HarnessError::new(ErrorCode::RateLimited, true);
+    if let Some(value) = retry_after {
+        error = error.with_param("retryAfterSecs", value);
+    }
+    judge(&HarnessView::error(HarnessId::Claude, error))
+}
+
+#[test]
+fn a_rate_limit_answer_is_its_own_verdict_and_reads_retry_after_defensively() {
+    assert_eq!(limited(Some("120")), Verdict::Limited { retry_after_secs: Some(120) });
+    for junk in [None, Some("soon"), Some("-5"), Some("")] {
+        assert_eq!(limited(junk), Verdict::Limited { retry_after_secs: None }, "{junk:?}");
+    }
+    let unretryable = HarnessError::new(ErrorCode::RateLimited, false);
+    let verdict = judge(&HarnessView::error(HarnessId::Claude, unretryable));
+    assert!(matches!(verdict, Verdict::Limited { .. }), "a limit is a limit either way");
+}
+
+#[test]
+fn a_rate_limit_parks_the_slot_in_a_cool_down_that_blocks_manual_refresh() {
+    let now = Instant::now();
+    let mut slot = Slot::new(HarnessId::Claude, Some(stub()), true);
+    slot.due = Some(now);
+    slot.settle(limited(None), SIXTY, now);
+    assert_eq!((delay(&slot, now), slot.failures), (300, 1));
+    assert!(slot.cooling(now + secs(299)) && !slot.cooling(now + secs(300)));
+    assert!(!slot.may_refresh(now + secs(299)), "dropped during the cool-down");
+    assert!(slot.may_refresh(now + secs(300)));
+
+    slot.settle(Verdict::Healthy, SIXTY, now + secs(300));
+    assert_eq!(slot.cooldown_until, None, "a good read ends it");
+    slot.settle(limited(Some("900")), SIXTY, now);
+    slot.reset_failures();
+    assert!(!slot.cooling(now) && slot.failures == 0, "the user acting ends it too");
+}
+
+#[test]
+fn stretching_applies_to_healthy_slots_and_counts_unchanged_reads() {
+    let now = Instant::now();
+    let mut slot = armed(now);
+    slot.settle(Verdict::Healthy, SIXTY, now);
+    slot.stretch_to(secs(300), now);
+    assert_eq!(delay(&slot, now), 300);
+    slot.note_read(false);
+    slot.note_read(false);
+    assert_eq!(slot.idle_ticks, 2);
+    slot.note_read(true);
+    assert_eq!(slot.idle_ticks, 0);
+
+    let mut failed = armed(now);
+    failed.settle(failing(true), SIXTY, now);
+    failed.stretch_to(secs(1800), now);
+    assert_eq!(delay(&failed, now), 120, "a backoff is never replaced by a stretch");
+
+    let mut parked = armed(now);
+    parked.settle(Verdict::Parked, SIXTY, now);
+    parked.stretch_to(secs(1800), now);
+    assert_eq!(parked.due, None);
+}
+
 /// A collector that is never called: the slot only needs to know one exists.
 fn stub() -> Arc<dyn Collector> {
     use crate::collectors::CollectFuture;

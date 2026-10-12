@@ -3,6 +3,7 @@ import { useSettingsApi } from '../../app/settingsContext';
 import { t } from '../../i18n';
 import { PathField } from '../forms/PathField';
 import { SettingSwitch } from '../forms/SettingControls';
+import { VendorConsoleLink, VendorKey } from '../setup/KeyConnect';
 import { LitellmForm } from '../setup/LitellmForm';
 import { OpencodeKey, OpencodeLinks, OpencodeLocalSwitch } from '../setup/OpencodeParts';
 import { ClaudeGroup } from './ClaudeGroup';
@@ -72,6 +73,24 @@ function OpencodeGroup() {
   );
 }
 
+function KeyedGroup({ harness }: { harness: 'kimi' | 'zai' }) {
+  return (
+    <>
+      <SourceSwitch harness={harness} />
+      <VendorKey harness={harness} />
+      <VendorConsoleLink harness={harness} />
+    </>
+  );
+}
+
+function KimiGroup() {
+  return <KeyedGroup harness="kimi" />;
+}
+
+function ZaiGroup() {
+  return <KeyedGroup harness="zai" />;
+}
+
 function LitellmGroup() {
   return (
     <>
@@ -86,5 +105,7 @@ export const SOURCE_GROUPS = {
   codex: CodexGroup,
   antigravity: AntigravityGroup,
   opencode: OpencodeGroup,
+  kimi: KimiGroup,
+  zai: ZaiGroup,
   litellm: LitellmGroup,
 } as const;

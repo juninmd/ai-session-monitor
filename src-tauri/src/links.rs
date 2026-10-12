@@ -8,6 +8,8 @@ use usage_model::{ErrorCode, ExternalLink, HarnessError};
 #[cfg(test)]
 mod tests;
 
+/// Kimi and z.ai land on their key pages; both need a sign-in the vendor's site handles.
+///
 /// The OpenCode console has no deep link without the user's workspace id, so both console links
 /// land on the sign-in page, which forwards to the workspace.
 pub const fn url_for(link: ExternalLink) -> &'static str {
@@ -15,6 +17,8 @@ pub const fn url_for(link: ExternalLink) -> &'static str {
         ExternalLink::OpencodeGoConsole | ExternalLink::OpencodeBilling => {
             "https://opencode.ai/auth"
         }
+        ExternalLink::KimiConsole => "https://www.kimi.com/code/console",
+        ExternalLink::ZaiConsole => "https://z.ai/manage-apikey/apikey-list",
         ExternalLink::ProjectReadme => "https://github.com/juninmd/ai-session-monitor#readme",
     }
 }

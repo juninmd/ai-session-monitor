@@ -1,3 +1,4 @@
+import { tq } from '../../app/quota';
 import type { WindowModel } from '../../app/windowModel';
 import { t } from '../../i18n';
 import { formatPercent } from '../../i18n/format';
@@ -8,10 +9,10 @@ import { formatPercent } from '../../i18n/format';
  */
 export function AvailableLine({ model }: { model: WindowModel }) {
   if (model.expired) return null;
-  if (model.available === null) return <p className="muted">{t('window.unknown_pct')}</p>;
+  if (model.shown === null) return <p className="muted">{t('window.unknown_pct')}</p>;
   return (
     <p>
-      <strong>{formatPercent(model.available)}</strong> {t('window.available')}
+      <strong>{formatPercent(model.shown)}</strong> {tq('window.available', model.showUsed)}
     </p>
   );
 }

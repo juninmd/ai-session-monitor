@@ -1,6 +1,8 @@
+import { isEstimatedFact } from '../../app/estimate';
 import { hasMessage, t } from '../../i18n';
 import { formatFactValue } from '../../i18n/format';
 import type { Fact, HarnessView } from '../../lib/contract';
+import { EstimateMark } from './EstimateMark';
 
 /**
  * A fact's id is a message key; an id without a message shows as itself instead of vanishing.
@@ -31,7 +33,10 @@ export function Facts({ view, nowSecs }: { view: HarnessView; nowSecs: number })
         {view.facts.map((fact) => (
           <div key={fact.id}>
             <dt>{factLabel(fact, nowSecs)}</dt>
-            <dd>{formatFactValue(fact)}</dd>
+            <dd>
+              {isEstimatedFact(view, fact.id) && <EstimateMark />}
+              {formatFactValue(fact)}
+            </dd>
           </div>
         ))}
       </dl>

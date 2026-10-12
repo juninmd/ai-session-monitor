@@ -130,7 +130,7 @@ fn null_empty_and_foreign_windows_are_skipped() {
     }
     assert_eq!(
         parse_snapshot(&json!({})),
-        Some(Limits { windows: vec![], plan: None, credits: None })
+        Some(Limits { windows: vec![], plan: None, credits: None, reset_credits: None })
     );
     for value in [json!(null), json!([]), json!("x"), json!(1)] {
         assert_eq!(parse_snapshot(&value), None);
@@ -159,4 +159,68 @@ fn plan_reads_either_spelling_and_hides_unknown() {
     assert_eq!(plan(json!({"plan_type": "team"})).as_deref(), Some("Team"));
     assert_eq!(plan(json!({"planType": "unknown"})), None);
     assert_eq!(plan(json!({"planType": 5})), None);
+}
+
+#[test]
+fn swapped_slots_are_still_named_by_their_length() {
+    let swapped = windows(&json!({
+        "primary": {"usedPercent": 30, "windowDurationMins": 10080, "resetsAt": 1_792_011_600},
+        "secondary": {"usedPercent": 8, "windowDurationMins": 300, "resetsAt": 1_791_670_500}
+    }));
+    let by_id = |id: &str| swapped.iter().find(|window| window.id == id).map(|w| w.used_pct);
+    assert_eq!(by_id("weekly"), Some(Some(30.0)));
+    assert_eq!(by_id("five_hour"), Some(Some(8.0)));
+    assert_eq!(swapped.len(), 2);
+}
+
+#[test]
+fn a_weekly_only_secondary_without_length_is_not_taken_for_a_session() {
+    // Only `secondary` present and unlabelled: it keeps the weekly contract, no 5 h is invented.
+    let only = windows(&json!({"secondary": {"usedPercent": 4}}));
+    assert_eq!(only.len(), 1);
+    assert_eq!((only[0].id.as_str(), only[0].kind), ("weekly", WindowKind::Weekly));
+}
+
+#[test]
+fn unknown_extra_windows_are_ignored_not_promoted() {
+    let got = windows(&json!({
+        "primary": {"usedPercent": 1, "windowDurationMins": 10080},
+        "tertiary": {"usedPercent": 99, "windowDurationMins": 300},
+        "additional": [{"usedPercent": 98, "windowDurationMins": 300}]
+    }));
+    assert_eq!(got.len(), 1);
+    assert_eq!(got[0].id, "weekly");
+}
+
+#[test]
+fn reset_credit_count_reads_only_a_whole_non_negative_available_count() {
+    let count = |answer: Value| super::reset_credit_count(&answer);
+    let with = |value: Value| json!({"rateLimitResetCredits": value});
+    assert_eq!(count(with(json!({"availableCount": 3, "credits": null}))), Some(3));
+    assert_eq!(count(with(json!({"availableCount": 2.0}))), Some(2));
+    assert_eq!(count(with(json!({"availableCount": 0}))), Some(0), "a known zero is not unknown");
+    for unknown in [
+        json!({}),
+        with(json!(null)),
+        with(json!({})),
+        with(json!({"availableCount": null})),
+        with(json!({"availableCount": -1})),
+        with(json!({"availableCount": 1.5})),
+        with(json!({"availableCount": "3"})),
+        with(json!({"availableCount": 1_000_001})),
+        with(json!([3])),
+        with(json!(3)),
+        json!(null),
+    ] {
+        assert_eq!(count(unknown.clone()), None, "{unknown}");
+    }
+}
+
+#[test]
+fn reset_credit_details_are_never_read() {
+    let answer = json!({"rateLimitResetCredits": {
+        "availableCount": 1,
+        "credits": [{"id": "opaque-fixture-id", "title": "fixture", "status": "available"}]
+    }});
+    assert_eq!(super::reset_credit_count(&answer), Some(1));
 }

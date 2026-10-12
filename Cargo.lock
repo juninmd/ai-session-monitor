@@ -26,8 +26,10 @@ dependencies = [
  "collector-antigravity",
  "collector-claude",
  "collector-codex",
+ "collector-kimi",
  "collector-litellm",
  "collector-opencode",
+ "collector-zai",
  "keyring-core",
  "serde_json",
  "tauri",
@@ -670,6 +672,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "collector-kimi"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "tokio",
+ "usage-model",
+ "usage-support",
+]
+
+[[package]]
 name = "collector-litellm"
 version = "0.1.0"
 dependencies = [
@@ -690,6 +702,16 @@ dependencies = [
  "rusqlite",
  "serde_json",
  "tempfile",
+ "tokio",
+ "usage-model",
+ "usage-support",
+]
+
+[[package]]
+name = "collector-zai"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
  "tokio",
  "usage-model",
  "usage-support",

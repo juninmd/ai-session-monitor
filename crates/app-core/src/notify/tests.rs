@@ -232,6 +232,22 @@ fn the_reset_text_reports_what_is_free_and_when_the_next_reset_is() {
 }
 
 #[test]
+fn show_used_words_the_reset_text_by_what_was_used() {
+    let mut on = settings(false, true);
+    on.general.show_used = true;
+    let note = &plan(
+        &snapshot(Some(fresh(100.0))),
+        &snapshot(Some(Reading { resets_in: Some(5 * 3600), ..fresh(12.4) })),
+        &on,
+        NOW,
+    )[0];
+    assert_eq!(
+        note.body,
+        "A janela de 5 horas voltou a ter limite disponível (12% usado). Próximo reinício em 5 h."
+    );
+}
+
+#[test]
 fn texts_cope_with_budgets_labels_and_missing_reset_times() {
     let mut budget = UsageWindow::new("budget", WindowKind::Budget);
     budget.label = Some("  team-a\u{7}\n".into());

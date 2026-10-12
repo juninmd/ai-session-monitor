@@ -7,13 +7,16 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 ### Added
 
 - System-tray flyout (Tauri 2, Windows 11 first) with one tab per harness: Claude Code, Codex,
-  Antigravity, OpenCode and LiteLLM. Each tab shows the available share of every usage window, the
+  Antigravity, OpenCode, Kimi Code, z.ai and LiteLLM. Each tab shows the available share of every usage window, the
   time until it resets, a pace estimate, the data age and an official / unofficial source badge.
 - Claude Code: `rate_limits` from the `statusLine` JSON through an opt-in, reversible shim that
   chains any existing status line; optional OAuth usage (off by default, unofficial).
 - Codex: `codex app-server` rate limits with a rollout-file fallback.
 - Antigravity: local language-server quota pools (unofficial).
 - OpenCode: Go usage windows (unofficial) plus a read-only local cost and token estimate.
+- Kimi Code and z.ai (both unofficial, key pasted by you, kept in the Credential Manager): 5 h,
+  weekly and monthly windows from each vendor's usage endpoint. The tab strip scrolls horizontally
+  now that there are seven tabs.
 - LiteLLM: parametrizable base URL, scope (key, user, team), auth header, poll interval, timeout and
   TLS mode (system, custom CA, insecure for one confirmed host); API key kept in the Windows
   Credential Manager.
@@ -26,6 +29,31 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
   that read the collectors' sources so a new code cannot ship without a message.
 - A window that ran out gets its "limite disponível" notification at the reset time even when its
   source stays silent (the Claude status line only moves while Claude Code runs).
+- Rate-limit cool-down: a source that answers "too many requests" is left alone (its
+  `Retry-After`, 5 min by default, at most 30 min), keeps showing its last good numbers marked
+  stale, and the panel says when the next attempt is; a manual refresh during it is dropped and
+  the UI explains why.
+- Usage-threshold alerts: one desktop notification per window each time it crosses a configurable
+  used percentage (default 80 % and 95 %, up to four values, or off), re-armed at every reset.
+- Adaptive polling (setting "Ritmo adaptativo", on by default): a source far from its limit and
+  from its reset is read up to every 30 minutes; it goes back to the normal interval at 70 % used
+  or 10 minutes before a reset.
+- Quota burndown history ("Histórico" in each tab, collapsed by default): a local, bounded store
+  of used percentages per window (35 days, 20 000 points, 1 MiB; no account data), shown as an
+  inline SVG of the current window against the earlier ones with a text summary and a table.
+  New commands `get_history` and `clear_history`, the setting "Guardar o histórico de uso" and a
+  confirmed "Limpar histórico" button; a damaged file is set aside and the history restarts empty.
+- Codex: the count of earned rate-limit reset credits (`rateLimitResetCredits.availableCount` of
+  `account/rateLimits/read`) shows as a "Recargas de reset" fact. Only the count is read (strict:
+  absent, null, negative, fractional or absurd counts stay unknown); the detail rows and the
+  consume RPC are never touched.
+- Setting `general.showUsed` ("Mostrar cota como: disponível / usado"): the headline numbers,
+  gauges, tab chips, spoken labels, live announcements, the tray tooltip and the "limite
+  disponível" notification switch wording. Status colours, pace and stored numbers are unchanged.
+  The tray icon arc stays on the available share.
+- A "~" prefix, read aloud as "estimativa", on values that are estimates: the pace projection
+  ("No ritmo atual..."), the OpenCode local cost and token facts, and an Antigravity window whose
+  5 h / weekly name was guessed from its reset time.
 - Polling is supervised: if the scheduler dies, the shell restarts it (2 s doubling to 30 s).
 - A start that fails shows a notification with the step and the error code and exits with code 1,
   instead of vanishing from the tray.
@@ -71,7 +99,8 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Known limitations / follow-ups
 
-- `Retry-After` is surfaced to the person but not honored by the scheduler backoff.
+- `Retry-After` is honored only for rate-limit answers (the cool-down, capped at 30 min); other
+  retryable errors use the plain cadence backoff and do not read it.
 - Paths in a loaded `settings.json` are validated on save, not on load.
 - Large integers in settings are rewritten on save (JSON number round trip).
 - The Claude shim status is read before consent is given.

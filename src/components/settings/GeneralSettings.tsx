@@ -3,7 +3,10 @@ import {
   INTERVAL_PRESETS,
   intervalLabel,
   numericOptions,
+  parseThresholdKey,
   percentLabel,
+  thresholdKey,
+  thresholdOptions,
   WARN_PRESETS,
 } from '../../app/options';
 import { useSettingsApi } from '../../app/settingsContext';
@@ -18,6 +21,7 @@ import {
 } from '../../lib/contract';
 import type { Option } from '../forms/fields';
 import { SettingSegmented, SettingSelect, SettingSwitch } from '../forms/SettingControls';
+import { HistorySettings } from './HistorySettings';
 
 const patch = (settings: Settings, change: Partial<General>): Settings => ({
   ...settings,
@@ -33,6 +37,11 @@ const TIME_OPTIONS: readonly Option<TimeFormat>[] = [
 const WEEK_OPTIONS: readonly Option<WeekFormat>[] = [
   { value: 'hours', label: t('settings.week_hours') },
   { value: 'days_hours', label: t('settings.week_days_hours') },
+];
+
+const QUOTA_OPTIONS: readonly Option<'available' | 'used'>[] = [
+  { value: 'available', label: t('settings.show_available') },
+  { value: 'used', label: t('settings.show_used_opt') },
 ];
 
 const TRAY_OPTIONS: readonly Option<HarnessId | 'lowest'>[] = [
@@ -61,6 +70,13 @@ export function GeneralSettings() {
           apply={(current, intervalSecs) => patch(current, { intervalSecs })}
         />
         <SettingSwitch
+          id="set-adaptive"
+          label={t('settings.adaptive')}
+          hint={t('settings.adaptive_hint')}
+          checked={g.adaptive}
+          apply={(current, adaptive) => patch(current, { adaptive })}
+        />
+        <SettingSwitch
           id="set-autostart"
           label={t('settings.autostart')}
           checked={g.autostart}
@@ -75,6 +91,13 @@ export function GeneralSettings() {
           apply={(current, source) =>
             patch(current, { traySource: source === 'lowest' ? null : source })
           }
+        />
+        <SettingSegmented
+          id="set-show-used"
+          legend={t('settings.show_used')}
+          value={g.showUsed ? 'used' : 'available'}
+          options={QUOTA_OPTIONS}
+          apply={(current, mode) => patch(current, { showUsed: mode === 'used' })}
         />
         <SettingSegmented
           id="set-time-format"
@@ -107,6 +130,14 @@ export function GeneralSettings() {
           options={numericOptions(WARN_PRESETS, LIMITS.warnAtPct, g.warnAtPct, percentLabel)}
           apply={(current, warnAtPct) => patch(current, { warnAtPct })}
         />
+        <SettingSelect
+          id="set-thresholds"
+          label={t('settings.alert_thresholds')}
+          hint={t('settings.alert_thresholds_hint')}
+          value={thresholdKey(g.alertThresholds)}
+          options={thresholdOptions(g.alertThresholds)}
+          apply={(current, key) => patch(current, { alertThresholds: parseThresholdKey(key) })}
+        />
         <SettingSwitch
           id="set-notify-out"
           label={t('settings.notify_out')}
@@ -120,6 +151,7 @@ export function GeneralSettings() {
           apply={(current, notifyOnReset) => patch(current, { notifyOnReset })}
         />
       </section>
+      <HistorySettings enabled={g.historyEnabled} />
     </>
   );
 }

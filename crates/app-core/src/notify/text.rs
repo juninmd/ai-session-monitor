@@ -13,6 +13,8 @@ fn harness_name(id: HarnessId) -> &'static str {
         HarnessId::Codex => "Codex",
         HarnessId::Antigravity => "Antigravity",
         HarnessId::Opencode => "OpenCode",
+        HarnessId::Kimi => "Kimi Code",
+        HarnessId::Zai => "z.ai",
         HarnessId::Litellm => "LiteLLM",
     }
 }
@@ -36,6 +38,7 @@ pub(super) fn window_reset(
     harness: HarnessId,
     window: &UsageWindow,
     available_pct: f64,
+    show_used: bool,
     now_secs: i64,
 ) -> Notification {
     let (article, noun) = subject(window);
@@ -44,12 +47,36 @@ pub(super) fn window_reset(
         .map(|at| format!(" Próximo reinício em {}.", span(at - now_secs)))
         .unwrap_or_default();
     let free = available_pct.round().clamp(0.0, 100.0) as u8;
+    let share = if show_used { format!("{}% usado", 100 - free) } else { format!("{free}% livre") };
     Notification {
         kind: NotificationKind::WindowReset,
         harness,
         window_id: window.id.clone(),
         title: format!("{}: limite disponível", harness_name(harness)),
-        body: format!("{article} {noun} voltou a ter limite disponível ({free}% livre).{next}"),
+        body: format!("{article} {noun} voltou a ter limite disponível ({share}).{next}"),
+    }
+}
+
+/// A usage threshold was crossed; `level` is the threshold, `used` the reading that crossed it.
+pub(super) fn threshold(
+    harness: HarnessId,
+    window: &UsageWindow,
+    level: u8,
+    used: f64,
+    now_secs: i64,
+) -> Notification {
+    let (article, noun) = subject(window);
+    let reset = match window.resets_at {
+        Some(at) => format!("Reinicia em {}.", span(at - now_secs)),
+        None => "O horário de reinício não foi informado.".to_owned(),
+    };
+    let shown = used.round().clamp(0.0, 999.0) as u16;
+    Notification {
+        kind: NotificationKind::ThresholdCrossed,
+        harness,
+        window_id: window.id.clone(),
+        title: format!("{}: {level}% do limite usado", harness_name(harness)),
+        body: format!("{article} {noun} já usou {shown}%. {reset}"),
     }
 }
 

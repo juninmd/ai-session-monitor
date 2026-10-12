@@ -16,15 +16,25 @@
       "enabled": true
     },
     "general": {
+      "adaptive": true,
+      "alertThresholds": [
+        80,
+        95
+      ],
       "autostart": false,
       "firstRunDone": false,
+      "historyEnabled": true,
       "intervalSecs": 60,
       "notifyOnOut": false,
       "notifyOnReset": false,
+      "showUsed": false,
       "timeFormat": "hm",
       "traySource": "opencode",
       "warnAtPct": 25,
       "weekFormat": "hours"
+    },
+    "kimi": {
+      "enabled": true
     },
     "litellm": {
       "authHeader": "Authorization",
@@ -44,7 +54,10 @@
       "enabled": true,
       "localConsent": false
     },
-    "version": 1
+    "version": 1,
+    "zai": {
+      "enabled": true
+    }
   },
   "default": {
     "antigravity": {
@@ -63,15 +76,25 @@
       "enabled": true
     },
     "general": {
+      "adaptive": true,
+      "alertThresholds": [
+        80,
+        95
+      ],
       "autostart": false,
       "firstRunDone": false,
+      "historyEnabled": true,
       "intervalSecs": 60,
       "notifyOnOut": false,
       "notifyOnReset": false,
+      "showUsed": false,
       "timeFormat": "hm",
       "traySource": null,
       "warnAtPct": 25,
       "weekFormat": "hours"
+    },
+    "kimi": {
+      "enabled": true
     },
     "litellm": {
       "authHeader": "Authorization",
@@ -90,7 +113,10 @@
       "enabled": true,
       "localConsent": false
     },
-    "version": 1
+    "version": 1,
+    "zai": {
+      "enabled": true
+    }
   },
   "insecure": {
     "antigravity": {
@@ -109,15 +135,25 @@
       "enabled": true
     },
     "general": {
+      "adaptive": true,
+      "alertThresholds": [
+        80,
+        95
+      ],
       "autostart": false,
       "firstRunDone": false,
+      "historyEnabled": true,
       "intervalSecs": 60,
       "notifyOnOut": false,
       "notifyOnReset": false,
+      "showUsed": false,
       "timeFormat": "hm",
       "traySource": null,
       "warnAtPct": 25,
       "weekFormat": "hours"
+    },
+    "kimi": {
+      "enabled": true
     },
     "litellm": {
       "authHeader": "Authorization",
@@ -137,6 +173,9 @@
       "enabled": true,
       "localConsent": false
     },
-    "version": 1
+    "version": 1,
+    "zai": {
+      "enabled": true
+    }
   }
 }

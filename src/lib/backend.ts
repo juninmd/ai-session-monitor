@@ -10,6 +10,8 @@ import {
   type ExternalLink,
   type HarnessError,
   HarnessErrorSchema,
+  type HarnessHistory,
+  HarnessHistorySchema,
   type HarnessId,
   type SecretKind,
   type SecretStatus,
@@ -37,6 +39,10 @@ export interface Backend {
   claudeShimStatus(): Promise<ShimStatus>;
   installClaudeShim(): Promise<ShimStatus>;
   uninstallClaudeShim(): Promise<ShimStatus>;
+  /** Past windows of one harness: the newest `limit` epochs (at most 8) of each window. */
+  getHistory(harness: HarnessId, limit?: number): Promise<HarnessHistory>;
+  /** Forgets every stored reading. */
+  clearHistory(): Promise<void>;
   openLink(link: ExternalLink): Promise<void>;
   hideFlyout(): Promise<void>;
   /** Content height in CSS pixels; the backend clamps it to the work area. */
@@ -121,6 +127,11 @@ export function createTauriBackend(): Backend {
     claudeShimStatus: () => callParsed(ShimStatusSchema, COMMANDS.claudeShimStatus),
     installClaudeShim: () => callParsed(ShimStatusSchema, COMMANDS.installClaudeShim),
     uninstallClaudeShim: () => callParsed(ShimStatusSchema, COMMANDS.uninstallClaudeShim),
+    getHistory: (harness, limit) =>
+      callParsed(HarnessHistorySchema, COMMANDS.getHistory, { harness, limit }),
+    clearHistory: async () => {
+      await call(COMMANDS.clearHistory);
+    },
     openLink: async (link) => {
       await call(COMMANDS.openLink, { link });
     },

@@ -48,7 +48,10 @@ export const OPENCODE_DB_REASONS: readonly string[] = DB_REASONS;
 export const FACTS: Readonly<Record<HarnessId, readonly (readonly [id: string, unit: string])[]>> =
   {
     claude: [],
-    codex: [['credits_balance', 'credits']],
+    codex: [
+      ['credits_balance', 'credits'],
+      ['reset_credits', 'resets'],
+    ],
     antigravity: [],
     opencode: [
       ['local_cost_5h', 'usd'],
@@ -57,6 +60,8 @@ export const FACTS: Readonly<Record<HarnessId, readonly (readonly [id: string, u
       ['local_tokens_5h', 'tokens'],
       ['local_tokens_7d', 'tokens'],
     ],
+    kimi: [],
+    zai: [],
     litellm: [
       ['rpm_limit', 'requests'],
       ['tpm_limit', 'tokens'],
@@ -97,6 +102,7 @@ export const FIELDS = [
   'binaryPath',
   'dataDir',
   'shimConsent',
+  'limit',
 ] as const;
 
 /** Window ids the titles depend on, and the source crate whose code must still produce them. */

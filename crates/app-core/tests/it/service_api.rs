@@ -20,7 +20,7 @@ fn second_start(paths: AppPaths) -> Arc<AppService> {
 
 #[tokio::test(start_paused = true)]
 async fn a_fresh_install_has_the_defaults_and_writes_no_file_until_the_first_save() {
-    let rig = rig().build();
+    let rig = rig().pristine().build();
     let mut defaults = Settings::default();
     defaults.normalize();
 

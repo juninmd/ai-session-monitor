@@ -57,7 +57,7 @@ async fn nothing_happens_after_shutdown_and_the_api_stays_safe() {
 
     let saved = rig.edit(|s| s.general.interval_secs = 90);
     assert_eq!(rig.saved_settings(), saved, "saving still works, there is just nobody to apply it");
-    assert_eq!(rig.service.snapshot().views.len(), 5);
+    assert_eq!(rig.service.snapshot().views.len(), 7);
 }
 
 #[tokio::test(start_paused = true)]

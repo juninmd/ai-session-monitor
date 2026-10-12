@@ -16,8 +16,12 @@ export const GeneralSettingsSchema = z.strictObject({
   warnAtPct: z.number().int(),
   notifyOnOut: z.boolean(),
   notifyOnReset: z.boolean(),
+  alertThresholds: z.array(z.number().int().min(1).max(99)).max(4),
+  adaptive: z.boolean(),
+  historyEnabled: z.boolean(),
   timeFormat: TimeFormatSchema,
   weekFormat: WeekFormatSchema,
+  showUsed: z.boolean(),
   firstRunDone: z.boolean(),
 });
 export type GeneralSettings = z.infer<typeof GeneralSettingsSchema>;
@@ -50,6 +54,12 @@ export const OpencodeSettingsSchema = z.strictObject({
 });
 export type OpencodeSettings = z.infer<typeof OpencodeSettingsSchema>;
 
+export const KimiSettingsSchema = z.strictObject({ enabled: z.boolean() });
+export type KimiSettings = z.infer<typeof KimiSettingsSchema>;
+
+export const ZaiSettingsSchema = z.strictObject({ enabled: z.boolean() });
+export type ZaiSettings = z.infer<typeof ZaiSettingsSchema>;
+
 export const LITELLM_SCOPES = ['key', 'user', 'team'] as const;
 export const LitellmScopeSchema = z.enum(LITELLM_SCOPES);
 export type LitellmScope = z.infer<typeof LitellmScopeSchema>;
@@ -80,6 +90,8 @@ export const SettingsSchema = z.strictObject({
   codex: CodexSettingsSchema,
   antigravity: AntigravitySettingsSchema,
   opencode: OpencodeSettingsSchema,
+  kimi: KimiSettingsSchema,
+  zai: ZaiSettingsSchema,
   litellm: LitellmSettingsSchema,
 });
 export type Settings = z.infer<typeof SettingsSchema>;
@@ -102,14 +114,20 @@ export const defaultSettings: Settings = {
     warnAtPct: 25,
     notifyOnOut: false,
     notifyOnReset: false,
+    alertThresholds: [80, 95],
+    adaptive: true,
+    historyEnabled: true,
     timeFormat: 'hm',
     weekFormat: 'hours',
+    showUsed: false,
     firstRunDone: false,
   },
   claude: { enabled: true, shimConsent: false, oauthUsage: false, configDir: null },
   codex: { enabled: true, consent: false, binaryPath: null },
   antigravity: { enabled: true, consent: false },
   opencode: { enabled: true, localConsent: false, dataDir: null },
+  kimi: { enabled: true },
+  zai: { enabled: true },
   litellm: {
     enabled: true,
     baseUrl: null,

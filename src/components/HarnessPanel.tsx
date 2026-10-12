@@ -6,10 +6,11 @@ import { Notices } from './panel/Notices';
 import { ReadyView } from './panel/ReadyView';
 import { DisabledCard, NoDataCard, PanelSkeleton } from './panel/StateCards';
 import { AntigravityConnect, ClaudeConnect, CodexConnect } from './setup/ConnectCards';
+import { KeyConnect } from './setup/KeyConnect';
 import { LitellmForm } from './setup/LitellmForm';
 import { OpencodeConnect } from './setup/OpencodeConnect';
 
-/** Consent-gated sources ask first; LiteLLM and OpenCode need a key before anything is read. */
+/** Consent-gated sources ask first; LiteLLM, OpenCode, Kimi and z.ai need a key before anything is read. */
 function SetupSurface({ harness }: { harness: HarnessId }) {
   switch (harness) {
     case 'claude':
@@ -20,6 +21,10 @@ function SetupSurface({ harness }: { harness: HarnessId }) {
       return <AntigravityConnect />;
     case 'opencode':
       return <OpencodeConnect />;
+    case 'kimi':
+      return <KeyConnect harness="kimi" />;
+    case 'zai':
+      return <KeyConnect harness="zai" />;
     case 'litellm':
       return <LitellmForm />;
   }

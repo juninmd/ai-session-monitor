@@ -14,6 +14,8 @@ mod binding;
 const KEY: &str = "sk-fake-4f9a0c2e7b1d";
 const LITELLM: HarnessId = HarnessId::Litellm;
 const OPENCODE: HarnessId = HarnessId::Opencode;
+const KIMI: HarnessId = HarnessId::Kimi;
+const ZAI: HarnessId = HarnessId::Zai;
 
 fn only_field(name: &str) -> BTreeMap<String, String> {
     BTreeMap::from([("field".to_owned(), name.to_owned())])
@@ -27,7 +29,7 @@ async fn a_saved_secret_is_trimmed_stored_and_read_at_once_inside_the_refresh_ga
     let status = rig.service.set_secret(SecretKind::Litellm, format!("  {KEY}\n")).expect("stored");
     settle().await;
 
-    assert_eq!(status, SecretStatus { litellm: true, opencode: false });
+    assert_eq!(status, SecretStatus { litellm: true, ..SecretStatus::default() });
     let calls = rig.fake(LITELLM).calls();
     assert_eq!(calls.len(), 2, "read again one second after the first read");
     assert_eq!(
@@ -60,9 +62,44 @@ async fn each_secret_refreshes_only_its_own_harness() {
     let status = rig.service.set_secret(SecretKind::Opencode, KEY.to_owned()).expect("stored");
     settle().await;
 
-    assert_eq!(status, SecretStatus { litellm: false, opencode: true });
+    assert_eq!(status, SecretStatus { opencode: true, ..SecretStatus::default() });
     assert_eq!((rig.fake(OPENCODE).count(), rig.fake(LITELLM).count()), (2, 1));
     assert_eq!(rig.fake(OPENCODE).calls()[1].opencode_key.as_deref(), Some(KEY));
+}
+
+#[tokio::test(start_paused = true)]
+async fn the_kimi_and_zai_keys_refresh_only_their_own_harness_and_report_in_the_status() {
+    let rig = rig().start().await;
+    rig.at(seconds(1)).await;
+
+    let status = rig
+        .service
+        .set_secret(
+            SecretKind::Kimi,
+            format!(
+                " {KEY}
+"
+            ),
+        )
+        .expect("stored");
+    settle().await;
+    assert_eq!(status, SecretStatus { kimi: true, ..SecretStatus::default() });
+    assert_eq!(rig.fake(KIMI).count(), 2);
+    assert_eq!(rig.fake(KIMI).calls()[1].kimi_key.as_deref(), Some(KEY));
+    assert_eq!(rig.fake(KIMI).calls()[1].zai_key, None, "a key never reaches another tab's call");
+
+    let status = rig.service.set_secret(SecretKind::Zai, KEY.to_owned()).expect("stored");
+    settle().await;
+    assert_eq!(status, SecretStatus { kimi: true, zai: true, ..SecretStatus::default() });
+    assert_eq!((rig.fake(KIMI).count(), rig.fake(ZAI).count()), (2, 2));
+    assert_eq!(rig.fake(ZAI).calls()[1].zai_key.as_deref(), Some(KEY));
+    for id in [HarnessId::Claude, HarnessId::Codex, HarnessId::Antigravity, OPENCODE, LITELLM] {
+        assert_eq!(rig.fake(id).count(), 1, "{id:?} does not read these secrets");
+    }
+
+    assert!(!rig.service.clear_secret(SecretKind::Kimi).expect("cleared").kimi);
+    settle().await;
+    assert_eq!(rig.fake(KIMI).calls()[2].kimi_key, None);
 }
 
 #[tokio::test(start_paused = true)]
@@ -166,7 +203,7 @@ async fn a_write_that_went_through_is_not_reported_as_failed_because_the_other_s
 
     let set = rig.service.set_secret(SecretKind::Litellm, KEY.to_owned()).expect("it was stored");
     settle().await;
-    assert_eq!(set, SecretStatus { litellm: true, opencode: false });
+    assert_eq!(set, SecretStatus { litellm: true, ..SecretStatus::default() });
     assert_eq!(rig.fake(LITELLM).count(), 2, "and the harness was told to read it");
     assert_eq!(rig.fake(LITELLM).calls()[1].litellm_key.as_deref(), Some(KEY));
 
@@ -184,9 +221,13 @@ async fn the_status_after_a_write_names_the_secret_that_was_just_written_even_if
     let rig = rig().secret_store(store).build();
 
     let set = rig.service.set_secret(SecretKind::Litellm, KEY.to_owned()).expect("it was stored");
-    assert_eq!(set, SecretStatus { litellm: true, opencode: false }, "the write is the truth");
+    assert_eq!(
+        set,
+        SecretStatus { litellm: true, ..SecretStatus::default() },
+        "the write is the truth"
+    );
     let other = rig.service.set_secret(SecretKind::Opencode, KEY.to_owned()).expect("stored");
-    assert_eq!(other, SecretStatus { litellm: false, opencode: true });
+    assert_eq!(other, SecretStatus { opencode: true, ..SecretStatus::default() });
     let cleared = rig.service.clear_secret(SecretKind::Opencode).expect("removed");
     assert_eq!(cleared, SecretStatus::default());
 }

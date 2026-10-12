@@ -9,9 +9,9 @@ use serde_json::{Value, json};
 use usage_model::settings::{LitellmScope, TlsMode};
 use usage_model::view::WindowKind;
 use usage_model::{
-    Amount, AmountUnit, ErrorCode, ExternalLink, Fact, HarnessError, HarnessId, HarnessView,
-    Notice, SecretKind, SecretStatus, Settings, Severity, ShimState, ShimStatus, Snapshot, Source,
-    UsageWindow, ViewState,
+    Amount, AmountUnit, ErrorCode, ExternalLink, Fact, HarnessError, HarnessHistory, HarnessId,
+    HarnessView, HistoryEpoch, HistoryPoint, Notice, SecretKind, SecretStatus, Settings, Severity,
+    ShimState, ShimStatus, Snapshot, Source, UsageWindow, ViewState,
 };
 
 const NOW: i64 = 1_800_000_000;
@@ -86,7 +86,9 @@ fn sample_views() -> Vec<HarnessView> {
     claude_gpt.group = Some("claude_gpt".into());
     antigravity.windows = vec![gemini, claude_gpt];
     antigravity.stale = true;
-    antigravity.error = Some(HarnessError::new(ErrorCode::Network, true));
+    antigravity.error =
+        Some(HarnessError::new(ErrorCode::RateLimited, true).with_param("retryAfterSecs", "120"));
+    antigravity.next_attempt_at = Some(1_800_000_300);
 
     let mut opencode = ready(HarnessId::Opencode, "go_usage", false);
     opencode.windows = vec![
@@ -113,6 +115,27 @@ fn sample_views() -> Vec<HarnessView> {
         params: BTreeMap::new(),
     }];
 
+    let mut kimi = ready(HarnessId::Kimi, "coding_usages", false);
+    kimi.plan = Some("Intermediate".into());
+    kimi.windows = vec![
+        {
+            let mut five = window(WindowKind::FiveHour, "five_hour", Some(300), 25.0, 120);
+            five.amount =
+                Some(Amount { used: 50.0, limit: Some(200.0), unit: AmountUnit::Requests });
+            five
+        },
+        window(WindowKind::Weekly, "weekly", None, 25.0, 4_320),
+        window(WindowKind::Monthly, "monthly", None, 40.0, 20_000),
+    ];
+
+    let mut zai = ready(HarnessId::Zai, "quota_limit", false);
+    zai.plan = Some("Pro".into());
+    zai.windows = vec![
+        window(WindowKind::FiveHour, "five_hour", Some(300), 12.0, 120),
+        window(WindowKind::Weekly, "weekly", Some(10_080), 40.0, 4_320),
+        window(WindowKind::Monthly, "mcp", None, 25.0, 20_000),
+    ];
+
     let mut litellm = ready(HarnessId::Litellm, "key_info", true);
     let mut budget = window(WindowKind::Budget, "budget", None, 25.0, 20_000);
     budget.label = Some("team-a".into());
@@ -129,12 +152,21 @@ fn sample_views() -> Vec<HarnessView> {
         HarnessView::needs_consent(HarnessId::Codex),
         antigravity,
         opencode,
+        kimi,
+        zai,
         litellm,
         unknown_pct,
         HarnessView::loading(HarnessId::Claude),
         HarnessView::disabled(HarnessId::Antigravity),
         HarnessView::needs_setup(HarnessId::Litellm),
         HarnessView::with_state(HarnessId::Opencode, ViewState::NoData),
+        HarnessView::needs_setup(HarnessId::Kimi),
+        HarnessView::error(
+            HarnessId::Zai,
+            HarnessError::new(ErrorCode::Unauthorized, false)
+                .with_param("httpStatus", "401")
+                .with_param("ambiguous", "true"),
+        ),
         HarnessView::error(
             HarnessId::Litellm,
             HarnessError::new(ErrorCode::Unauthorized, false).with_param("httpStatus", "401"),
@@ -168,6 +200,21 @@ fn settings_shapes_are_pinned() {
     );
 }
 
+fn sample_history() -> HarnessHistory {
+    let point = |minutes: i64, used_pct: f64| HistoryPoint { t: NOW + minutes * 60, used_pct };
+    HarnessHistory {
+        harness: HarnessId::Claude,
+        epochs: vec![
+            HistoryEpoch {
+                window_id: "five_hour".into(),
+                resets_at: NOW + 60,
+                points: vec![point(-300, 0.0), point(-120, 41.5), point(0, 78.0)],
+            },
+            HistoryEpoch { window_id: "weekly".into(), resets_at: NOW + 3_600, points: Vec::new() },
+        ],
+    }
+}
+
 #[test]
 fn ipc_payload_shapes_are_pinned() {
     let shims: Vec<ShimStatus> = ShimState::ALL
@@ -181,11 +228,12 @@ fn ipc_payload_shapes_are_pinned() {
     check_golden(
         "ipc.json",
         &json!({
-            "secretStatus": SecretStatus { litellm: true, opencode: false },
+            "secretStatus": SecretStatus { litellm: true, opencode: false, kimi: true, zai: false },
             "secretKinds": SecretKind::ALL,
             "externalLinks": ExternalLink::ALL,
             "shimStates": ShimState::ALL,
             "shimStatuses": shims,
+            "history": sample_history(),
         }),
     );
 }

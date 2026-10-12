@@ -18,7 +18,12 @@ describe('useSettingsState', () => {
   it('loads settings and which secrets exist', async () => {
     const { result } = await load({ scenario: 'healthy' });
     expect(result.current.settings.general.firstRunDone).toBe(true);
-    expect(result.current.secrets).toEqual({ litellm: true, opencode: true });
+    expect(result.current.secrets).toEqual({
+      litellm: true,
+      opencode: true,
+      kimi: true,
+      zai: true,
+    });
     expect(result.current.loadError).toBeNull();
   });
 
@@ -177,14 +182,24 @@ describe('useSettingsState', () => {
       await waitFor(() => expect(result.current.loaded).toBe(true));
       expect(result.current.loadError).toBeNull();
       expect(result.current.settings.general.firstRunDone).toBe(true);
-      expect(result.current.secrets).toEqual({ litellm: false, opencode: false });
+      expect(result.current.secrets).toEqual({
+        litellm: false,
+        opencode: false,
+        kimi: false,
+        zai: false,
+      });
     });
 
     it('reads the secrets again on reload and drops the failure', async () => {
       const { result } = await start();
       act(() => result.current.reload());
       await waitFor(() => expect(result.current.secretsError).toBeNull());
-      expect(result.current.secrets).toEqual({ litellm: true, opencode: true });
+      expect(result.current.secrets).toEqual({
+        litellm: true,
+        opencode: true,
+        kimi: true,
+        zai: true,
+      });
     });
 
     it('stops reporting it once a save finds the store readable again', async () => {
@@ -194,7 +209,12 @@ describe('useSettingsState', () => {
         await result.current.save((s) => ({ ...s, general: { ...s.general, autostart: true } }));
       });
       expect(result.current.secretsError).toBeNull();
-      expect(result.current.secrets).toEqual({ litellm: true, opencode: true });
+      expect(result.current.secrets).toEqual({
+        litellm: true,
+        opencode: true,
+        kimi: true,
+        zai: true,
+      });
     });
 
     it('stops reporting it once a key is stored, because the store answered', async () => {

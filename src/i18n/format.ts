@@ -218,6 +218,8 @@ export function formatFactValue(fact: Fact): string {
         return formatAmountValue(fact.number, 'credits');
       case 'epoch_s':
         return formatDateTime(fact.number);
+      case 'resets':
+        return `${formatNumber(fact.number)} ${fact.number === 1 ? 'disponível' : 'disponíveis'}`;
       case null:
         return formatNumber(fact.number);
       default:

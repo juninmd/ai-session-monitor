@@ -25,6 +25,8 @@ collector-codex = { path = "crates/collector-codex" }
 collector-antigravity = { path = "crates/collector-antigravity" }
 collector-litellm = { path = "crates/collector-litellm" }
 collector-opencode = { path = "crates/collector-opencode" }
+collector-kimi = { path = "crates/collector-kimi" }
+collector-zai = { path = "crates/collector-zai" }
 app-core = { path = "crates/app-core" }
 
 [workspace.lints.rust]

@@ -61,6 +61,23 @@ fn kinds_do_not_share_a_slot() {
 fn credential_manager_targets_are_namespaced_per_kind() {
     assert_eq!(target_name(SERVICE, SecretKind::Litellm), "ai-session-monitor/litellm");
     assert_eq!(target_name(SERVICE, SecretKind::Opencode), "ai-session-monitor/opencode");
+    assert_eq!(target_name(SERVICE, SecretKind::Kimi), "ai-session-monitor/kimi");
+    assert_eq!(target_name(SERVICE, SecretKind::Zai), "ai-session-monitor/zai");
+}
+
+#[test]
+fn every_kind_has_its_own_slot_in_the_store() {
+    let (_, store) = mock_store();
+    for kind in SecretKind::ALL {
+        store.set(kind, &format!("value-of-{}", kind.as_str())).expect("set");
+    }
+    for kind in SecretKind::ALL {
+        let got = store.get(kind).expect("get").expect("some");
+        assert_eq!(got.expose(), format!("value-of-{}", kind.as_str()));
+    }
+    store.delete(SecretKind::Kimi).expect("delete");
+    assert!(store.get(SecretKind::Kimi).expect("get").is_none());
+    assert!(store.get(SecretKind::Zai).expect("get").is_some());
 }
 
 #[test]

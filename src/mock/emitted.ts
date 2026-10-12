@@ -75,7 +75,7 @@ export function codexEmitted(env: Env): HarnessView {
         resetsInMin: 9000,
       }),
     ],
-    facts: [fact('credits_balance', 40, 'credits')],
+    facts: [fact('credits_balance', 40, 'credits'), fact('reset_credits', 1, 'resets')],
     notices: [notice('codex_rollout_fallback', 'info', { reason: 'binary_not_found' })],
   });
 }

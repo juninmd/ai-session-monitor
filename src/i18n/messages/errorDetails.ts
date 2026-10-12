@@ -67,4 +67,5 @@ export const errorDetailMessages = {
   'field.binaryPath': 'caminho do executável do Codex',
   'field.dataDir': 'pasta de dados do OpenCode',
   'field.shimConsent': 'consentimento para instalar o comando',
+  'field.limit': 'quantidade de janelas passadas',
 } as const satisfies Record<string, string>;

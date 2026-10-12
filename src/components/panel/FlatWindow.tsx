@@ -3,6 +3,7 @@ import { t } from '../../i18n';
 import { formatAmountValue, formatPercent, spokenDuration } from '../../i18n/format';
 import { Icon } from '../icons';
 import { AvailableLine } from './AvailableLine';
+import { EstimateMark } from './EstimateMark';
 import { Gauge } from './Gauge';
 import { PaceLine } from './PaceLine';
 
@@ -40,7 +41,10 @@ export function FlatWindow({ model, ctx, stale = false }: FlatWindowProps) {
   return (
     <section className="flat" data-status={model.status ?? 'none'}>
       <div className="win-head">
-        <h3 className="win-title">{model.title}</h3>
+        <h3 className="win-title">
+          {model.cadenceGuessed && <EstimateMark />}
+          {model.title}
+        </h3>
         <RowTime model={model} ctx={ctx} />
       </div>
       <Gauge model={model} ctx={ctx} />
