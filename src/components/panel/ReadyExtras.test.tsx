@@ -159,9 +159,9 @@ describe('closing notes per source', () => {
     expect(backend.openedLinks).toEqual(['opencode_billing']);
   });
 
-  it('remind Antigravity users to keep the IDE open', () => {
+  it('tell Antigravity users the IDE only needs to be open without the CLI', () => {
     ready(antigravityView(env, 'ok'));
-    expect(screen.getByText(/Mantenha o Antigravity aberto/)).toBeVisible();
+    expect(screen.getByText(/nada precisa estar aberto/)).toBeVisible();
   });
 
   it('let LiteLLM users edit the connection in place', async () => {

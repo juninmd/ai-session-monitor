@@ -59,8 +59,9 @@ export const settingsMessages = {
   'codex.binary_placeholder': 'C:\\Users\\voce\\AppData\\Roaming\\npm\\codex.cmd',
   'codex.binary_save': 'Salvar caminho',
 
-  'antigravity.consent': 'Permitir a leitura do servidor local da IDE',
+  'antigravity.consent': 'Permitir a leitura do Antigravity (CLI ou IDE)',
   'antigravity.consent_hint':
-    'Leitura não oficial: lê a linha de comando do processo da IDE e conversa só com 127.0.0.1.',
-  'antigravity.note': 'A leitura vem do servidor local da IDE. Mantenha o Antigravity aberto.',
+    'Leitura não oficial: pode rodar o agy instalado só para ler /usage (sem gastar tokens nem ler dados de login) e/ou ler o servidor local da IDE, que só conversa com 127.0.0.1.',
+  'antigravity.note':
+    'A leitura vem do agy instalado (nada precisa estar aberto) ou, sem ele, do servidor local da IDE: aí mantenha o Antigravity aberto.',
 } as const satisfies Record<string, string>;

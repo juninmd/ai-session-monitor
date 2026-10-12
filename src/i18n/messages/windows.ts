@@ -81,6 +81,7 @@ export const windowMessages = {
   'source.app_server': 'codex app-server',
   'source.rollout': 'última sessão gravada',
   'source.language_server': 'servidor local da IDE',
+  'source.agy_cli': 'CLI do Antigravity',
   'source.key_info': 'API do LiteLLM',
   'source.go_usage': 'API de uso do Go',
   'source.local_db': 'banco local',

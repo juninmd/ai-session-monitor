@@ -1,0 +1,45 @@
+{
+  "conversation_id": "",
+  "status": "SUCCESS",
+  "response": "Gemini Models\tWeekly Limit Remaining\t89%\t2026-10-18T13:54:46Z\nGemini Models\tFive Hour Limit Remaining\t61%\t2026-10-12T07:49:11Z",
+  "duration_seconds": 0,
+  "num_turns": 0,
+  "usage": { "input_tokens": 0, "output_tokens": 0 },
+  "command": {
+    "name": "usage",
+    "data": {
+      "description": "Fabricated fixture, not a real account.",
+      "groups": [
+        {
+          "name": "Gemini Models",
+          "description": "Models within this group: Gemini Flash, Gemini Pro",
+          "buckets": [
+            {
+              "id": "gemini-weekly",
+              "name": "Weekly Limit Remaining",
+              "description": "Resets weekly.",
+              "window": "weekly",
+              "remaining_fraction": 0.8939893245697021,
+              "reset_time": "2026-10-18T13:54:46Z"
+            },
+            {
+              "id": "gemini-5h",
+              "name": "Five Hour Limit Remaining",
+              "window": "5h",
+              "remaining_fraction": 0.6123980283737183,
+              "reset_time": "2026-10-12T07:49:11Z"
+            }
+          ]
+        },
+        {
+          "name": "Claude and GPT models",
+          "description": "Models within this group: Claude Opus, Claude Sonnet, GPT-OSS",
+          "buckets": [
+            { "id": "3p-weekly", "window": "weekly", "remaining_fraction": 0.145, "reset_time": "2026-10-16T01:08:56Z" },
+            { "id": "3p-5h", "window": "5h", "remaining_fraction": 1, "reset_time": "2026-10-12T08:48:58Z" }
+          ]
+        }
+      ]
+    }
+  }
+}

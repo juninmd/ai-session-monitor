@@ -14,7 +14,7 @@ use usage_model::{Ctx, HarnessView};
 
 use super::{Config, collect_with};
 use crate::discovery::Target;
-use crate::fake::{FakeServer, Script, StaticDiscovery};
+use crate::fake::{AbsentCli, FakeServer, Script, ScriptedCli, StaticDiscovery};
 use crate::fixtures::{NOW, text};
 use crate::rpc::Limits;
 
@@ -47,7 +47,7 @@ async fn poll_with(
     discovery: &StaticDiscovery,
     config: &Config,
 ) -> HarnessView {
-    collect_with(settings, &ctx(), discovery, config).await
+    collect_with(settings, &ctx(), discovery, &AbsentCli, config).await
 }
 
 /// An Antigravity stand-in over plain HTTP serving these fixtures (`summary: None` is the IDE).
