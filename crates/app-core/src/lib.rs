@@ -23,6 +23,7 @@ pub mod paths;
 pub mod secrets;
 pub mod service;
 
+mod history;
 mod hub;
 mod publish;
 mod relay;

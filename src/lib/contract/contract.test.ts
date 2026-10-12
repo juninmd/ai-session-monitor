@@ -13,6 +13,7 @@ import {
   EVENTS,
   ExternalLinkSchema,
   HARNESS_IDS,
+  HarnessHistorySchema,
   SecretKindSchema,
   SecretStatusSchema,
   SettingsSchema,
@@ -80,5 +81,16 @@ describe('ipc.json', () => {
     expect(ipc.shimStates).toEqual([...SHIM_STATES]);
     expect(ipc.externalLinks).toEqual(ExternalLinkSchema.options);
     expect(ipc.secretKinds).toEqual(SecretKindSchema.options);
+  });
+
+  it('parses the history sample and rejects fields or values the contract does not allow', () => {
+    expect(HarnessHistorySchema.parse(ipc.history)).toEqual(ipc.history);
+    const epoch = ipc.history.epochs[0];
+    const bad = (change: object) =>
+      HarnessHistorySchema.safeParse({ ...ipc.history, epochs: [{ ...epoch, ...change }] }).success;
+    expect(bad({ label: 'team-a' })).toBe(false);
+    expect(bad({ points: [{ t: 1, usedPct: null }] })).toBe(false);
+    expect(bad({ points: [{ t: 1, usedPct: 101 }] })).toBe(false);
+    expect(bad({ points: Array.from({ length: 121 }, (_, t) => ({ t, usedPct: 1 })) })).toBe(false);
   });
 });

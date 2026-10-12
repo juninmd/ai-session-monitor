@@ -21,6 +21,7 @@ mod expiry;
 mod failures;
 mod first_snapshot;
 mod forced;
+mod history;
 mod live_settings;
 mod notifications;
 mod recovery;

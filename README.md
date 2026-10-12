@@ -21,6 +21,7 @@ atual). Valor desconhecido aparece como desconhecido, nunca como 0 %.
 - O app **só lê**: nunca escreve em um provedor, nunca renova tokens e nunca usa cookies de navegador.
 - As únicas credenciais guardadas são as chaves de API do LiteLLM e do OpenCode Go que você colar;
   ficam no **Gerenciador de Credenciais do Windows**, nunca em arquivo, log ou na interface.
+- O histórico de uso (seção "Histórico" de cada aba) fica só neste computador, em `history.json`: porcentagens e horários por janela, por 35 dias, sem conta nem rótulos. Dá para desligar e apagar em Configurações.
 - A interface web não faz requisições de rede; todo HTTP sai do Rust (somente https, sem
   redirecionamentos, com limites de tamanho e tempo). Ela só pode ouvir eventos do app, nunca emitir.
 

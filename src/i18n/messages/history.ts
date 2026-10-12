@@ -1,0 +1,35 @@
+// Quota history: the "Histórico" section of a panel and its switch in the settings.
+export const historyMessages = {
+  'history.title': 'Histórico',
+  'history.window': 'Janela',
+  'history.loading': 'Carregando o histórico',
+  'history.failed': 'Não foi possível carregar o histórico agora.',
+  'history.empty': 'Ainda sem histórico. As leituras aparecem aqui conforme o monitor roda.',
+  'history.chart_title': 'Uso de {title} ao longo da janela',
+  'history.chart_desc':
+    'Horizontal: do início da janela até o reinício. Vertical: uso de 0 a 100%. A linha forte é a janela atual e as fracas são as anteriores.',
+  'history.axis_start': 'início',
+  'history.axis_end': 'reinício',
+  'history.label_current': 'atual {pct}',
+  'history.label_past': 'anteriores',
+  'history.peak_now': 'Pico de {pct} {when} nesta janela.',
+  'history.no_current': 'Ainda sem leituras nesta janela.',
+  'history.past_one': 'Janela anterior: pico de {peaks}.',
+  'history.past_many': '{n} janelas anteriores: picos de {peaks}.',
+  'history.table_toggle': 'Ver em tabela',
+  'history.table_caption': 'Picos de uso por janela',
+  'history.col_reset': 'Reinício',
+  'history.col_peak': 'Pico',
+  'history.col_readings': 'Leituras',
+  'history.row_current': '{when} (atual)',
+
+  'settings.history': 'Histórico de uso',
+  'settings.history_enabled': 'Guardar o histórico de uso',
+  'settings.history_hint':
+    'Grava neste computador só porcentagens e horários de cada janela, por 35 dias. Nada sai daqui. Desligar para de gravar; apagar é pelo botão abaixo.',
+  'settings.history_clear': 'Limpar histórico',
+  'settings.history_clear_confirm': 'Apagar todo o histórico salvo? Isso não pode ser desfeito.',
+  'settings.history_clear_yes': 'Apagar',
+  'settings.history_clear_no': 'Cancelar',
+  'settings.history_cleared': 'Histórico apagado.',
+} as const satisfies Record<string, string>;

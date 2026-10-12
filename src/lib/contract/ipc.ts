@@ -44,6 +44,8 @@ export const COMMANDS = {
   claudeShimStatus: 'claude_shim_status',
   installClaudeShim: 'install_claude_shim',
   uninstallClaudeShim: 'uninstall_claude_shim',
+  getHistory: 'get_history',
+  clearHistory: 'clear_history',
   openLink: 'open_link',
   hideFlyout: 'hide_flyout',
   setFlyoutHeight: 'set_flyout_height',

@@ -3,6 +3,7 @@
 
 pub mod ctx;
 pub mod harness;
+pub mod history;
 pub mod ipc;
 pub mod settings;
 pub mod status;
@@ -10,6 +11,7 @@ pub mod view;
 
 pub use ctx::Ctx;
 pub use harness::HarnessId;
+pub use history::{HarnessHistory, HistoryEpoch, HistoryPoint};
 pub use ipc::{ExternalLink, SecretKind, SecretStatus, ShimState, ShimStatus};
 pub use settings::Settings;
 pub use status::{Pace, Status, Summary};

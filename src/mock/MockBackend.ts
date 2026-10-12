@@ -6,8 +6,11 @@ import { type Backend, BackendError, type Unsubscribe } from '../lib/backend';
 import {
   type ExternalLink,
   type HarnessError,
+  type HarnessHistory,
   type HarnessId,
+  HarnessIdSchema,
   type HarnessView,
+  MAX_EPOCHS_PER_WINDOW,
   type SecretKind,
   type SecretStatus,
   SecretStatusSchema,
@@ -19,6 +22,7 @@ import {
   SnapshotSchema,
 } from '../lib/contract';
 import type { Env } from './fixtures';
+import { demoHistory } from './history';
 import { type ScenarioName, startFor, viewsFor } from './scenarios';
 import { normalizeSettings, validateSettings } from './settingsRules';
 
@@ -51,6 +55,7 @@ export class MockBackend implements Backend {
   private secrets: SecretStatus;
   private shim: ShimStatus;
   private firstSessionSeen: boolean;
+  private historyCleared = false;
   /** Refreshes asked of Claude while it waits for a first session; the second one finds data. */
   private waitingRefreshes = 0;
   private readonly refreshedAt = new Map<HarnessId, number>();
@@ -155,6 +160,25 @@ export class MockBackend implements Backend {
       this.shim = ShimStatusSchema.parse({ ...this.shim, state: 'not_installed', chained: false });
       queueMicrotask(() => this.emitSnapshot());
       return { ...this.shim };
+    });
+
+  getHistory = (harness: HarnessId, limit: number = MAX_EPOCHS_PER_WINDOW) =>
+    this.call('get_history', (): HarnessHistory => {
+      const id = HarnessIdSchema.safeParse(harness);
+      if (!id.success) throw reject('invalid_input', { field: 'harness' });
+      if (!Number.isInteger(limit) || limit < 1 || limit > MAX_EPOCHS_PER_WINDOW)
+        throw reject('invalid_input', { field: 'limit' });
+      const view = this.snapshot().views.find((candidate) => candidate.id === id.data);
+      const empty = { harness: id.data, epochs: [] };
+      const silent =
+        this.scenario === 'fresh' || this.historyCleared || !this.settings.general.historyEnabled;
+      if (view === undefined || view.state !== 'ready' || silent) return empty;
+      return demoHistory(view, this.clock(), limit);
+    });
+
+  clearHistory = () =>
+    this.call('clear_history', () => {
+      this.historyCleared = true;
     });
 
   openLink = (link: ExternalLink) =>

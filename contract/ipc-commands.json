@@ -10,6 +10,8 @@
     "claude_shim_status",
     "install_claude_shim",
     "uninstall_claude_shim",
+    "get_history",
+    "clear_history",
     "open_link",
     "hide_flyout",
     "set_flyout_height",

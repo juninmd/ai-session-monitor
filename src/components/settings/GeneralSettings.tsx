@@ -21,6 +21,7 @@ import {
 } from '../../lib/contract';
 import type { Option } from '../forms/fields';
 import { SettingSegmented, SettingSelect, SettingSwitch } from '../forms/SettingControls';
+import { HistorySettings } from './HistorySettings';
 
 const patch = (settings: Settings, change: Partial<General>): Settings => ({
   ...settings,
@@ -138,6 +139,7 @@ export function GeneralSettings() {
           apply={(current, notifyOnReset) => patch(current, { notifyOnReset })}
         />
       </section>
+      <HistorySettings enabled={g.historyEnabled} />
     </>
   );
 }

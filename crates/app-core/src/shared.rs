@@ -9,6 +9,7 @@ use usage_model::{Ctx, HarnessError, HarnessId, Settings};
 
 use crate::clock::Clock;
 use crate::collectors::{Adapters, ClaudeShim, Collector};
+use crate::history::HistoryStore;
 use crate::hub::Hub;
 use crate::paths::AppPaths;
 use crate::relay::Relay;
@@ -45,6 +46,7 @@ pub(crate) struct Shared {
     pub(crate) shim: Arc<dyn ClaudeShim>,
     pub(crate) clock: Arc<dyn Clock>,
     pub(crate) store: SettingsStore,
+    pub(crate) history: HistoryStore,
     /// Orders `settings_changed` events across threads (see `Relay`).
     pub(crate) relay: Relay,
     /// Wakes the scheduler: a request is pending or the hub changed.
@@ -69,6 +71,7 @@ impl Shared {
     ) -> Result<Self, HarnessError> {
         let store = SettingsStore::new(paths.settings_file());
         let loaded = store.load(clock.now_secs())?;
+        let history = HistoryStore::load(paths.history_file(), clock.now_secs());
         let hub = Hub::new(&loaded.settings);
         let Adapters { collectors, claude_shim } = adapters;
         let mut by_harness: Vec<Option<Arc<dyn Collector>>> = vec![None; HARNESSES];
@@ -85,6 +88,7 @@ impl Shared {
             shim: claude_shim,
             clock,
             store,
+            history,
             relay: Relay::default(),
             wake: Notify::new(),
             collectors: by_harness,

@@ -9,9 +9,9 @@ use serde_json::{Value, json};
 use usage_model::settings::{LitellmScope, TlsMode};
 use usage_model::view::WindowKind;
 use usage_model::{
-    Amount, AmountUnit, ErrorCode, ExternalLink, Fact, HarnessError, HarnessId, HarnessView,
-    Notice, SecretKind, SecretStatus, Settings, Severity, ShimState, ShimStatus, Snapshot, Source,
-    UsageWindow, ViewState,
+    Amount, AmountUnit, ErrorCode, ExternalLink, Fact, HarnessError, HarnessHistory, HarnessId,
+    HarnessView, HistoryEpoch, HistoryPoint, Notice, SecretKind, SecretStatus, Settings, Severity,
+    ShimState, ShimStatus, Snapshot, Source, UsageWindow, ViewState,
 };
 
 const NOW: i64 = 1_800_000_000;
@@ -170,6 +170,21 @@ fn settings_shapes_are_pinned() {
     );
 }
 
+fn sample_history() -> HarnessHistory {
+    let point = |minutes: i64, used_pct: f64| HistoryPoint { t: NOW + minutes * 60, used_pct };
+    HarnessHistory {
+        harness: HarnessId::Claude,
+        epochs: vec![
+            HistoryEpoch {
+                window_id: "five_hour".into(),
+                resets_at: NOW + 60,
+                points: vec![point(-300, 0.0), point(-120, 41.5), point(0, 78.0)],
+            },
+            HistoryEpoch { window_id: "weekly".into(), resets_at: NOW + 3_600, points: Vec::new() },
+        ],
+    }
+}
+
 #[test]
 fn ipc_payload_shapes_are_pinned() {
     let shims: Vec<ShimStatus> = ShimState::ALL
@@ -188,6 +203,7 @@ fn ipc_payload_shapes_are_pinned() {
             "externalLinks": ExternalLink::ALL,
             "shimStates": ShimState::ALL,
             "shimStatuses": shims,
+            "history": sample_history(),
         }),
     );
 }

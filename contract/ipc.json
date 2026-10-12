@@ -4,6 +4,34 @@
     "opencode_billing",
     "project_readme"
   ],
+  "history": {
+    "epochs": [
+      {
+        "points": [
+          {
+            "t": 1799982000,
+            "usedPct": 0.0
+          },
+          {
+            "t": 1799992800,
+            "usedPct": 41.5
+          },
+          {
+            "t": 1800000000,
+            "usedPct": 78.0
+          }
+        ],
+        "resetsAt": 1800000060,
+        "windowId": "five_hour"
+      },
+      {
+        "points": [],
+        "resetsAt": 1800003600,
+        "windowId": "weekly"
+      }
+    ],
+    "harness": "claude"
+  },
   "secretKinds": [
     "litellm",
     "opencode"

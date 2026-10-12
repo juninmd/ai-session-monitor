@@ -94,6 +94,7 @@ impl Scheduler {
         }
         // Dropping the tasks is not enough to say they are gone; wait, but only briefly.
         let _ = timeout(STOP_GRACE, self.tasks.shutdown()).await;
+        self.shared.history.flush(self.shared.clock.now_secs());
     }
 
     fn announce_recovery(&self) {
@@ -180,8 +181,9 @@ impl Scheduler {
             HarnessView::error(id, error)
         });
         let verdict = judge(&view);
-        let changed = self.shared.with_hub(|hub| hub.apply(view));
         let settings = self.shared.settings();
+        self.record_history(&view, &settings);
+        let changed = self.shared.with_hub(|hub| hub.apply(view));
         let base = timing::cadence(id, &settings);
         let now = Instant::now();
         self.slots[idx].settle(verdict, base, now);
@@ -190,6 +192,16 @@ impl Scheduler {
             Verdict::Limited { .. } => self.announce_cooldown(idx, now),
             Verdict::Parked | Verdict::Failed { .. } => {}
         }
+    }
+
+    /// A small, rare write on the loop itself: once a minute at most, for a file under 1 MiB.
+    fn record_history(&self, view: &HarnessView, settings: &Settings) {
+        if !settings.general.history_enabled {
+            return;
+        }
+        let now = self.shared.clock.now_secs();
+        self.shared.history.record(view, now);
+        self.shared.history.flush_if_due(now);
     }
 
     fn serve_requests(&mut self) {

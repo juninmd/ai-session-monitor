@@ -10,6 +10,7 @@ publish.workspace = true
 [dependencies]
 usage-model.workspace = true
 usage-support.workspace = true
+serde.workspace = true
 serde_json.workspace = true
 tokio.workspace = true
 # Host extraction for the settings validator; already in the tree through reqwest (MIT OR Apache-2.0).
@@ -17,7 +18,6 @@ url = "2.5.8"
 
 [dev-dependencies]
 # The recording sink serializes what it was told, to check that no secret is in any payload.
-serde.workspace = true
 tempfile.workspace = true
 # Paused virtual time for the scheduler tests.
 tokio = { workspace = true, features = ["test-util"] }

@@ -71,6 +71,13 @@ describe('commands', () => {
       undefined,
       ipc.shimStatuses[0],
     ],
+    [
+      'getHistory',
+      () => backend.getHistory('claude', 4),
+      COMMANDS.getHistory,
+      { harness: 'claude', limit: 4 },
+      ipc.history,
+    ],
   ] as const)(
     '%s calls its command and parses the reply',
     async (_n, run, command, args, reply) => {
@@ -97,6 +104,7 @@ describe('commands', () => {
       { height: 512 },
     ],
     ['quit', () => backend.quit(), COMMANDS.quitApp, undefined],
+    ['clearHistory', () => backend.clearHistory(), COMMANDS.clearHistory, undefined],
   ] as const)('%s sends the right arguments', async (_n, run, command, args) => {
     invoke.mockResolvedValue(null);
     await run();

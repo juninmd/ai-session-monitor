@@ -22,6 +22,8 @@ webview never shows raw error text.
 | `claude_shim_status` | - | `ShimStatus` | Read-only look at Claude Code's settings.json. |
 | `install_claude_shim` | - | `ShimStatus` | Requires `claude.shimConsent`. Copies the shim to a stable path under the data dir and wraps any existing statusLine. |
 | `uninstall_claude_shim` | - | `ShimStatus` | Restores the previous statusLine exactly. |
+| `get_history` | `harness: HarnessId`, `limit?: 1..=8` | `HarnessHistory` | Past windows for the burndown: `{ harness, epochs: [{ windowId, resetsAt, points: [{ t, usedPct }] }] }`, the newest `limit` (default and maximum 8) epochs of each window, oldest first, at most 120 points each (thinned keeping the first, the last and the peak of each slice). Empty while `general.historyEnabled` is false. A `limit` outside 1..=8 rejects with `invalid_input` (`field = limit`). |
+| `clear_history` | - | - | Forgets every stored reading, in memory and on disk (the `history.corrupt.json` copy too). Idempotent. |
 | `open_link` | `link: ExternalLink` | - | Opens a fixed destination in the default browser. The webview cannot pass a URL. |
 | `hide_flyout` | - | - | |
 | `set_flyout_height` | `height: number` | - | Content height in CSS px; the shell clamps to the monitor work area and resizes keeping the anchor edge. |
@@ -138,7 +140,7 @@ may succeed by itself. Params are non-secret (`httpStatus`, `host`, ...).
 
 ### Field names in rejected commands
 
-`save_settings`, `set_secret` and `install_claude_shim` reject with `invalid_url` or `invalid_input`
+`save_settings`, `set_secret`, `install_claude_shim` and `get_history` reject with `invalid_url` or `invalid_input`
 and `params.field` naming the offending input (never its value). The UI shows field-level wording for
 the names marked UI; any other name gets the generic message. `install_claude_shim` also rejects a
 relative or NUL-bearing data or home directory as `invalid_input` with `field = configDir`; the
@@ -154,6 +156,7 @@ contract has no better name for it.
 | `save_settings` | `invalid_input` | `configDir`, `binaryPath`, `dataDir` (custom path not absolute, NUL, too long, or a UNC share, device-namespace or reserved device path; the extended-length form `\\?\C:\` stays valid) | yes |
 | `set_secret` | `invalid_input` | `value` (empty after trimming, or longer than 4096 characters) | yes |
 | `install_claude_shim` | `invalid_input` | `shimConsent` (consent not given) | yes |
+| `get_history` | `invalid_input` | `limit` (0 or above 8) | yes |
 
 OpenCode: 401/403 from the usage endpoint are reported as `unauthorized` with `ambiguous = true`
 because valid keys have been rejected by the service; the UI says "could not verify the key or the
@@ -221,3 +224,14 @@ ready-made pt-BR text and carry no path, key or raw error.
 `%LOCALAPPDATA%\dev.aisessionmonitor.tray\` holds `settings.json` (non-secret), `claude\rate_limits.json`
 (written by the shim, `capturedAt` epoch seconds plus the raw `rate_limits` object), and `bin\`
 (the stable copy of the shim referenced from Claude Code's settings). Secrets are never written here.
+
+`history.json` is the burndown store: per harness and window id and reset time, a list of
+`[epoch seconds, used percentage]`. It holds no account, plan, label, path or error text. Rules, all
+in `crates/app-core/src/history`: only fresh, non-stale readings with a known percentage and a
+future reset are sampled (unknown is skipped, never stored as 0); a sample is kept when the value
+changed or 10 minutes passed; a reset restated up to 2 minutes apart stays the same epoch;
+readings older than 35 days go first, then the oldest beyond 20 000 points or 1 MiB. The file is
+written atomically at most once a minute and again at shutdown. A file that fails to parse, is
+over 2 MiB or has another `version` is renamed `history.corrupt.json` (one copy, replaced next
+time) and the history starts empty: no notice, no error text. `general.historyEnabled = false`
+stops recording and hides the history; it does not delete, `clear_history` does.

@@ -57,6 +57,8 @@ pub fn run() {
             commands::claude_shim_status,
             commands::install_claude_shim,
             commands::uninstall_claude_shim,
+            commands::get_history,
+            commands::clear_history,
             commands::open_link,
             commands::hide_flyout,
             commands::set_flyout_height,

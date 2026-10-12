@@ -35,6 +35,11 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 - Adaptive polling (setting "Ritmo adaptativo", on by default): a source far from its limit and
   from its reset is read up to every 30 minutes; it goes back to the normal interval at 70 % used
   or 10 minutes before a reset.
+- Quota burndown history ("Histórico" in each tab, collapsed by default): a local, bounded store
+  of used percentages per window (35 days, 20 000 points, 1 MiB; no account data), shown as an
+  inline SVG of the current window against the earlier ones with a text summary and a table.
+  New commands `get_history` and `clear_history`, the setting "Guardar o histórico de uso" and a
+  confirmed "Limpar histórico" button; a damaged file is set aside and the history restarts empty.
 - Polling is supervised: if the scheduler dies, the shell restarts it (2 s doubling to 30 s).
 - A start that fails shows a notification with the step and the error code and exits with code 1,
   instead of vanishing from the tray.

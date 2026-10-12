@@ -13,4 +13,8 @@ impl AppPaths {
     pub fn settings_file(&self) -> PathBuf {
         self.data_dir.join("settings.json")
     }
+
+    pub fn history_file(&self) -> PathBuf {
+        self.data_dir.join("history.json")
+    }
 }

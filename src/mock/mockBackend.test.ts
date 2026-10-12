@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { BackendError } from '../lib/backend';
-import type { HarnessId, HarnessView } from '../lib/contract';
+import { HarnessHistorySchema, type HarnessId, type HarnessView } from '../lib/contract';
 import { NOW } from '../test/helpers';
 import { failed, problem } from './fixtures';
 import { createMockBackend } from './index';
@@ -182,5 +182,51 @@ describe('commands without a visible result', () => {
     expect(done).not.toHaveBeenCalled();
     await vi.advanceTimersByTimeAsync(1);
     expect(done).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('history', () => {
+  it('serves demo history that matches the contract for the demo and none for a fresh install', async () => {
+    const demo = await make({ scenario: 'demo' }).getHistory('claude');
+    expect(HarnessHistorySchema.parse(demo)).toEqual(demo);
+    expect(demo.epochs.length).toBeGreaterThan(8);
+    expect(await make({ scenario: 'fresh' }).getHistory('claude')).toEqual({
+      harness: 'claude',
+      epochs: [],
+    });
+  });
+
+  it('ends the current epoch at the reading the panel shows', async () => {
+    const backend = make({ scenario: 'demo' });
+    const window = (await viewOf(backend, 'claude')).windows[0];
+    const epochs = (await backend.getHistory('claude', 1)).epochs.filter(
+      (epoch) => epoch.windowId === window?.id,
+    );
+    expect(epochs).toHaveLength(1);
+    expect(epochs[0]?.resetsAt).toBe(window?.resetsAt);
+    expect(epochs[0]?.points.at(-1)?.usedPct).toBe(window?.usedPct);
+  });
+
+  it('refuses a limit outside 1..8 and clears on request', async () => {
+    const backend = make({ scenario: 'demo' });
+    for (const bad of [0, 9, 1.5]) {
+      const error = await backend.getHistory('claude', bad).catch((failure: unknown) => failure);
+      expect((error as BackendError).error).toMatchObject({
+        code: 'invalid_input',
+        params: { field: 'limit' },
+      });
+    }
+    await backend.clearHistory();
+    expect((await backend.getHistory('claude')).epochs).toEqual([]);
+  });
+
+  it('serves nothing while the setting is off', async () => {
+    const backend = make({ scenario: 'demo' });
+    const settings = await backend.getSettings();
+    await backend.saveSettings({
+      ...settings,
+      general: { ...settings.general, historyEnabled: false },
+    });
+    expect((await backend.getHistory('claude')).epochs).toEqual([]);
   });
 });

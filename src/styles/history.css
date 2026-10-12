@@ -1,0 +1,135 @@
+/* Burndown history: one hue (the accent); the current pass is told from earlier ones by weight
+   and by its direct label, never by colour alone. */
+.hist-toggle {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 1.75rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.hist-toggle::before {
+  content: "";
+  flex: none;
+  inline-size: 0.4rem;
+  block-size: 0.4rem;
+  margin-inline-end: 0.55rem;
+  border: solid currentcolor;
+  border-width: 0 1.5px 1.5px 0;
+  rotate: -45deg;
+}
+
+.hist-toggle[aria-expanded="true"]::before {
+  rotate: 45deg;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hist-toggle::before {
+    transition: rotate 0.15s;
+  }
+}
+
+.hist-pick {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--ink-2);
+  font-size: var(--fs-sm);
+}
+
+.bd {
+  inline-size: 100%;
+  block-size: auto;
+  max-block-size: 9rem;
+}
+
+.bd-grid {
+  stroke: var(--line-2);
+  stroke-width: 1;
+}
+
+.bd-txt,
+.bd-lbl {
+  fill: var(--ink-3);
+  font-size: 9px;
+}
+
+.bd-lbl {
+  fill: var(--ink);
+  font-weight: 600;
+}
+
+.bd-past,
+.bd-cur {
+  fill: none;
+  stroke: var(--accent);
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.bd-past {
+  stroke-opacity: 0.32;
+  stroke-width: 1.25;
+}
+
+.bd-cur {
+  stroke-width: 2.25;
+}
+
+.bd-dot {
+  fill: var(--accent);
+}
+
+.hist-sum {
+  font-size: var(--fs-sm);
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.bd-table table {
+  inline-size: 100%;
+  margin-block-start: 0.35rem;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+
+.bd-table th,
+.bd-table td {
+  padding: 0.2rem 0.4rem;
+  border-block-end: 1px solid var(--line);
+  text-align: start;
+  font-weight: 400;
+}
+
+.bd-table thead th {
+  color: var(--ink-3);
+  font-weight: 600;
+}
+
+@media (forced-colors: active) {
+  .bd-cur,
+  .bd-dot {
+    stroke: Highlight;
+    fill: none;
+  }
+
+  .bd-dot {
+    fill: Highlight;
+  }
+
+  .bd-past {
+    stroke: GrayText;
+    stroke-opacity: 1;
+  }
+
+  .bd-txt,
+  .bd-lbl {
+    fill: CanvasText;
+  }
+}

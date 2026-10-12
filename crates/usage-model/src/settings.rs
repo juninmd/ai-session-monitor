@@ -109,6 +109,8 @@ pub struct GeneralSettings {
     pub alert_thresholds: Vec<u8>,
     /// Poll less often while every window is far from its limit and its reset is far away.
     pub adaptive: bool,
+    /// Keep a local record of past quota windows (percentages and times only) for the burndown.
+    pub history_enabled: bool,
     pub time_format: TimeFormat,
     pub week_format: WeekFormat,
     /// The flyout opens by itself once, on the very first launch.
@@ -126,6 +128,7 @@ impl Default for GeneralSettings {
             notify_on_reset: false,
             alert_thresholds: DEFAULT_ALERT_THRESHOLDS.to_vec(),
             adaptive: true,
+            history_enabled: true,
             time_format: TimeFormat::Hm,
             week_format: WeekFormat::Hours,
             first_run_done: false,

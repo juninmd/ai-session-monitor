@@ -86,6 +86,7 @@ marked *unverified* have never been exercised against a live account.
 | Path | Content |
 |---|---|
 | `%LOCALAPPDATA%\dev.aisessionmonitor.tray\settings.json` | Non-secret settings. A corrupt file is kept as `settings.corrupt-<epoch>.json` and you are notified. |
+| `...\history.json` | Quota history for the burndown (setting "Guardar o histórico de uso", on by default): used percentages and times per window id, 35 days, at most 1 MiB. No account, plan, label or path. Cleared by "Limpar histórico"; a damaged file is kept as `history.corrupt.json`. |
 | `...\claude\rate_limits.json` | The Claude `rate_limits` object plus `capturedAt`. |
 | `...\claude\shim-state.json`, `chain.json` | The previous `statusLine`, kept for exact restore and chaining. Non-default Claude profiles get `shim-state-<key>.json` / `chain-<key>.json` (and `bin\<key>\`). A second copy of the record sits at `<config dir>\settings.json.aism-state`. |
 | `...\bin\statusline-shim.exe` | Stable copy of the shim referenced from Claude Code's settings; refreshed from the bundled build at each start. |

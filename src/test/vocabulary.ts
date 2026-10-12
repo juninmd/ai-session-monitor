@@ -97,6 +97,7 @@ export const FIELDS = [
   'binaryPath',
   'dataDir',
   'shimConsent',
+  'limit',
 ] as const;
 
 /** Window ids the titles depend on, and the source crate whose code must still produce them. */

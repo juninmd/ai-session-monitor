@@ -169,6 +169,21 @@ with virtual time; this is the check in a real session.
       `ai-session-monitor: polling stopped: ...`. If it does, the app recovered by itself but
       something panicked: keep the line (it names the cause and carries no data) and file a bug.
 
+## Quota history
+
+- [ ] Debug build with `AISM_DATA_DIR` on a throwaway folder: after a few polls the tab's
+      "Histórico" (collapsed at first) opens with a chart, a "Pico de N% ..." sentence and "Ver em
+      tabela". `history.json` appears within about a minute and holds only ids, times and numbers.
+- [ ] Keyboard only: Tab reaches "Histórico", Enter or Space opens it, the window selector works,
+      "Ver em tabela" opens. Narrator reads the chart's title and description and the sentence.
+- [ ] Light and dark themes and high contrast: the current line stays heavier than the earlier
+      ones and keeps its "atual N%" label; with "reduzir animações" on, the chevron does not turn
+      smoothly.
+- [ ] Put garbage in `history.json` while the app is closed, then start it: no toast, the history
+      is empty, `history.corrupt.json` holds the bytes.
+- [ ] Settings, "Histórico de uso": switch it off and the section disappears from the tabs;
+      "Limpar histórico" asks first, then deletes `history.json`; Cancelar keeps it.
+
 ## Secrets
 
 Use a fake key. Run this section in the **release** build: a debug build with any `AISM_*`
