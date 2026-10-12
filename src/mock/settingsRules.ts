@@ -1,6 +1,6 @@
 // The slice of the Rust rules (Settings::normalize and the save-time checks) the mock imitates, so
 // the forms see the same rejections they will get from the real backend.
-import { type HarnessError, LIMITS, type Settings } from '../lib/contract';
+import { HARNESS_IDS, type HarnessError, LIMITS, type Settings } from '../lib/contract';
 
 const clamp = (n: number, range: { readonly min: number; readonly max: number }) =>
   Math.min(range.max, Math.max(range.min, Math.round(n)));
@@ -20,6 +20,7 @@ export function normalizeSettings(settings: Settings): Settings {
       intervalSecs: clamp(general.intervalSecs, LIMITS.intervalSecs),
       warnAtPct: clamp(general.warnAtPct, LIMITS.warnAtPct),
       alertThresholds: normalizeThresholds(general.alertThresholds),
+      visibleTabs: HARNESS_IDS.filter((id) => general.visibleTabs.includes(id)),
     },
     litellm: {
       ...litellm,

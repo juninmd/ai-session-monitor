@@ -213,6 +213,18 @@ OpenRouter (`key_credits`) and DeepSeek (`user_balance`) are official and docume
 - Disabled and consent-gated harnesses are never polled.
 - The first snapshot after start has every enabled harness in `loading`.
 
+## Visible tabs
+
+`general.visibleTabs` is an array of `HarnessId` values, persisted by `save_settings` and sent
+in `get_settings` and `settings-changed`. It defaults to all providers when absent from an
+older settings file. Normalization removes duplicates and restores the canonical tab order.
+An empty array is valid: the flyout offers a button to choose providers again.
+
+Visibility is presentation only. Hidden providers retain their settings, credentials,
+collection, history and notification behavior; `general.traySource` still follows any provider.
+To stop reading a provider, disable it in **Fontes de dados**. The strict webview schema requires
+the field in IPC responses; the Rust store supplies it when loading older files.
+
 ## Notifications
 
 `general.notifyOnOut` and `general.notifyOnReset` (both off by default) switch the desktop toasts;

@@ -14,6 +14,7 @@ import { Banner, Note } from '../panel/Banner';
 import { ActionError } from '../panel/ErrorActions';
 import { GeneralSettings } from './GeneralSettings';
 import { SOURCE_GROUPS } from './SourceGroups';
+import { TabPreferences } from './TabPreferences';
 
 interface SettingsViewProps {
   /** The group an error action pointed at; it opens expanded. */
@@ -77,7 +78,7 @@ export function SettingsView({ section, onBack }: SettingsViewProps) {
   const sourcesRef = useRef<HTMLHeadingElement>(null);
   const help = useAsyncAction(() => backend.openLink('project_readme'));
   const [open, setOpen] = useState<ReadonlySet<HarnessId>>(
-    () => new Set(section !== null && section !== 'general' ? [section] : []),
+    () => new Set(section !== null && section !== 'general' && section !== 'tabs' ? [section] : []),
   );
 
   useEffect(() => {
@@ -86,6 +87,12 @@ export function SettingsView({ section, onBack }: SettingsViewProps) {
 
   useEffect(() => {
     if (!api.loaded || section === null || section === 'general') return;
+    if (section === 'tabs') {
+      const heading = rootRef.current?.querySelector<HTMLElement>('#sg-tabs');
+      heading?.scrollIntoView({ block: 'nearest' });
+      heading?.focus();
+      return;
+    }
     const group = rootRef.current?.querySelector<HTMLElement>(`#grp-${section}`);
     group?.scrollIntoView({ block: 'nearest' });
     group?.querySelector('summary')?.focus();
@@ -128,6 +135,7 @@ export function SettingsView({ section, onBack }: SettingsViewProps) {
         <output className="hint">{t('settings.loading')}</output>
       ) : (
         <>
+          <TabPreferences />
           <GeneralSettings />
           <section className="sg" aria-labelledby="sg-sources">
             <h3 id="sg-sources" ref={sourcesRef} tabIndex={-1}>

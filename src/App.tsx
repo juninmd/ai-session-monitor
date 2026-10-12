@@ -26,7 +26,8 @@ import { SettingsView } from './components/settings/SettingsView';
 import { Footer } from './components/shell/Footer';
 import { Header } from './components/shell/Header';
 import { LiveRegion } from './components/shell/LiveRegion';
-import { focusTab, PANEL_ID, TabStrip, tabNameId } from './components/shell/TabStrip';
+import { EmptyTabs, ProviderNavigation } from './components/shell/ProviderNavigation';
+import { focusTab, PANEL_ID, tabNameId } from './components/shell/TabStrip';
 import { t } from './i18n';
 import type { Backend } from './lib/backend';
 import type { HarnessId, HarnessView } from './lib/contract';
@@ -53,11 +54,16 @@ export function App({ backend }: { backend: Backend }) {
     [nowSecs, settingsApi.settings],
   );
   const snapshot = snapshotState.snapshot;
-  const views = useMemo(() => viewsInTabOrder(snapshot), [snapshot]);
+  const allViews = useMemo(() => viewsInTabOrder(snapshot), [snapshot]);
+  const views = useMemo(
+    () => allViews.filter((view) => settingsApi.settings.general.visibleTabs.includes(view.id)),
+    [allViews, settingsApi.settings.general.visibleTabs],
+  );
+  const activeId = views.find((candidate) => candidate.id === selected)?.id ?? views[0]?.id ?? null;
   // Before the first snapshot there is nothing to compare with, so nothing is announced.
   const live = useAnnouncer(snapshot ? snapshot.views : NO_VIEWS, ctx);
-  const tray = useMemo(() => traySummary(views, ctx), [views, ctx]);
-  const view = views.find((candidate) => candidate.id === selected);
+  const tray = useMemo(() => traySummary(allViews, ctx), [allViews, ctx]);
+  const view = views.find((candidate) => candidate.id === activeId);
 
   useFlyoutHeight(backend, rootRef, scrollRef);
 
@@ -87,10 +93,16 @@ export function App({ backend }: { backend: Backend }) {
 
   // Leaving settings puts focus back on the tab the user came from.
   const wasSettings = useRef(false);
+  const previousActive = useRef(activeId);
   useEffect(() => {
-    if (wasSettings.current && screen.kind === 'tabs') focusTab(selected);
+    if (screen.kind === 'tabs' && (wasSettings.current || previousActive.current !== activeId)) {
+      if (activeId !== null) focusTab(activeId);
+      else document.getElementById('customize-tabs')?.focus();
+      toTop();
+    }
     wasSettings.current = screen.kind === 'settings';
-  }, [screen.kind, selected]);
+    previousActive.current = activeId;
+  }, [screen.kind, activeId, toTop]);
 
   // A manual refresh during a cool-down is dropped by the scheduler; say why instead of nothing.
   const [blocked, setBlocked] = useState('');
@@ -116,8 +128,10 @@ export function App({ backend }: { backend: Backend }) {
   );
   useSubscription(subscribeShown, () => {
     sync();
-    if (screen.kind === 'tabs') focusTab(selected);
-    else document.getElementById('settings-title')?.focus();
+    if (screen.kind === 'tabs') {
+      if (activeId !== null) focusTab(activeId);
+      else document.getElementById('customize-tabs')?.focus();
+    } else document.getElementById('settings-title')?.focus();
     void refreshAll();
   });
 
@@ -150,14 +164,22 @@ export function App({ backend }: { backend: Backend }) {
               onToggleSettings={inSettings ? closeSettings : () => openSettings()}
             />
             {!inSettings && (
-              <TabStrip views={views} selected={selected} ctx={ctx} onSelect={selectTab} />
+              <ProviderNavigation
+                views={views}
+                selected={activeId}
+                ctx={ctx}
+                onSelect={selectTab}
+                onCustomize={() => openSettings('tabs')}
+              />
             )}
             <div
               ref={scrollRef}
               className="fly-body"
               {...(inSettings
                 ? { role: 'region', 'aria-labelledby': 'settings-title' }
-                : { role: 'tabpanel', id: PANEL_ID, 'aria-labelledby': tabNameId(selected) })}
+                : activeId !== null
+                  ? { role: 'tabpanel', id: PANEL_ID, 'aria-labelledby': tabNameId(activeId) }
+                  : { role: 'region', 'aria-label': t('tabs.label') })}
             >
               <div className="fly-content">
                 {shellFailure && <ActionError error={shellFailure} />}
@@ -179,6 +201,9 @@ export function App({ backend }: { backend: Backend }) {
                   </section>
                 )}
                 {!inSettings && !loadFailure && view && <HarnessPanel view={view} ctx={ctx} />}
+                {!inSettings && !loadFailure && activeId === null && (
+                  <EmptyTabs onCustomize={() => openSettings('tabs')} />
+                )}
               </div>
             </div>
             <Footer

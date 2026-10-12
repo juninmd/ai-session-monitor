@@ -1,7 +1,7 @@
 // Mirror of crates/usage-model/src/settings.rs. Non-secret configuration only: keys live in the
 // Windows Credential Manager and are written through the set_secret command.
 import { z } from 'zod';
-import { HarnessIdSchema } from './view';
+import { HARNESS_IDS, HarnessIdSchema } from './view';
 
 export const TimeFormatSchema = z.enum(['hm', 'colon', 'decimal']);
 export type TimeFormat = z.infer<typeof TimeFormatSchema>;
@@ -13,6 +13,7 @@ export const GeneralSettingsSchema = z.strictObject({
   intervalSecs: z.number().int(),
   autostart: z.boolean(),
   traySource: HarnessIdSchema.nullable(),
+  visibleTabs: z.array(HarnessIdSchema),
   warnAtPct: z.number().int(),
   notifyOnOut: z.boolean(),
   notifyOnReset: z.boolean(),
@@ -139,6 +140,7 @@ export const defaultSettings: Settings = {
     intervalSecs: 60,
     autostart: false,
     traySource: null,
+    visibleTabs: [...HARNESS_IDS],
     warnAtPct: 25,
     notifyOnOut: false,
     notifyOnReset: false,

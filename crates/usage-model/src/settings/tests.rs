@@ -69,6 +69,31 @@ fn an_older_file_without_the_new_keys_gets_the_defaults() {
         serde_json::from_str(r#"{"general":{"intervalSecs":90}}"#).expect("parse");
     assert_eq!(settings.general.alert_thresholds, [80, 95]);
     assert!(settings.general.adaptive);
+    assert_eq!(settings.general.visible_tabs, HarnessId::ALL);
+}
+
+#[test]
+fn visible_tabs_round_trip_and_normalize_without_changing_collection() {
+    let mut settings: Settings =
+        serde_json::from_str(r#"{"general":{"visibleTabs":["litellm","codex","codex"]}}"#)
+            .expect("parse");
+    settings.normalize();
+    assert_eq!(settings.general.visible_tabs, [HarnessId::Codex, HarnessId::Litellm]);
+    assert!(settings.claude.enabled);
+    let json = serde_json::to_string(&settings).expect("serialize");
+    assert_eq!(serde_json::from_str::<Settings>(&json).expect("parse"), settings);
+}
+
+#[test]
+fn no_visible_tabs_is_valid_and_unknown_ids_are_rejected() {
+    let mut settings: Settings =
+        serde_json::from_str(r#"{"general":{"visibleTabs":[]}}"#).expect("parse");
+    settings.normalize();
+    assert!(settings.general.visible_tabs.is_empty());
+    assert!(
+        serde_json::from_str::<Settings>(r#"{"general":{"visibleTabs":["not-a-provider"]}}"#)
+            .is_err()
+    );
 }
 
 #[test]

@@ -23,6 +23,11 @@ export const shellMessages = {
   'header.tray_none': 'Sem leitura disponível',
 
   'tabs.label': 'Ferramentas de IA',
+  'tabs.yours': 'Seus providers',
+  'tabs.customize': 'Personalizar abas',
+  'tabs.empty_title': 'Seu monitor, do seu jeito',
+  'tabs.empty_body': 'Escolha os providers que você usa para acompanhar suas cotas aqui.',
+  'tabs.choose': 'Escolher providers',
   'tab.connect': 'Conectar',
   'tab.no_data': 'Sem dados',
   'tab.disabled': 'Desligado',

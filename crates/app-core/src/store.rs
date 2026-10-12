@@ -152,3 +152,6 @@ fn parse(value: Value) -> Read {
 mod retry_tests;
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod tab_tests;
