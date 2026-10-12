@@ -113,6 +113,8 @@ pub struct GeneralSettings {
     pub history_enabled: bool,
     pub time_format: TimeFormat,
     pub week_format: WeekFormat,
+    /// Present quota as "used" instead of "available". Wording only: stored numbers stay used %.
+    pub show_used: bool,
     /// The flyout opens by itself once, on the very first launch.
     pub first_run_done: bool,
 }
@@ -131,6 +133,7 @@ impl Default for GeneralSettings {
             history_enabled: true,
             time_format: TimeFormat::Hm,
             week_format: WeekFormat::Hours,
+            show_used: false,
             first_run_done: false,
         }
     }

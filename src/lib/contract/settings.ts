@@ -21,6 +21,7 @@ export const GeneralSettingsSchema = z.strictObject({
   historyEnabled: z.boolean(),
   timeFormat: TimeFormatSchema,
   weekFormat: WeekFormatSchema,
+  showUsed: z.boolean(),
   firstRunDone: z.boolean(),
 });
 export type GeneralSettings = z.infer<typeof GeneralSettingsSchema>;
@@ -110,6 +111,7 @@ export const defaultSettings: Settings = {
     historyEnabled: true,
     timeFormat: 'hm',
     weekFormat: 'hours',
+    showUsed: false,
     firstRunDone: false,
   },
   claude: { enabled: true, shimConsent: false, oauthUsage: false, configDir: null },

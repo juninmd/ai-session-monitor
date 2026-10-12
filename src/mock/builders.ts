@@ -80,7 +80,7 @@ export function codexView(env: Env, mood: Mood): HarnessView {
         resetsInMin: u.weekReset,
       }),
     ],
-    facts: [fact('credits_balance', 120, 'credits')],
+    facts: [fact('credits_balance', 120, 'credits'), fact('reset_credits', 2, 'resets')],
   });
 }
 

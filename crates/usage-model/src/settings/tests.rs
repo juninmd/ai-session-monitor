@@ -72,6 +72,17 @@ fn an_older_file_without_the_new_keys_gets_the_defaults() {
 }
 
 #[test]
+fn quota_wording_defaults_to_available_and_an_older_file_keeps_it() {
+    assert!(!Settings::default().general.show_used);
+    let settings: Settings =
+        serde_json::from_str(r#"{"general":{"showUsed":true}}"#).expect("parse");
+    assert!(settings.general.show_used);
+    let older: Settings =
+        serde_json::from_str(r#"{"general":{"intervalSecs":90}}"#).expect("parse");
+    assert!(!older.general.show_used);
+}
+
+#[test]
 fn thresholds_are_validated_sorted_deduped_and_capped() {
     let cases: [(&[u8], &[u8]); 6] = [
         (&[95, 80, 80], &[80, 95]),

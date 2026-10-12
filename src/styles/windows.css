@@ -235,3 +235,9 @@
     border: 1px solid CanvasText;
   }
 }
+
+/* "~" before a value that is an estimate, not a reading. */
+.est > [aria-hidden="true"] {
+  margin-inline-end: 0.15em;
+  color: var(--ink-3);
+}

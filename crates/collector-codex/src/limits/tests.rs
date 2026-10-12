@@ -130,7 +130,7 @@ fn null_empty_and_foreign_windows_are_skipped() {
     }
     assert_eq!(
         parse_snapshot(&json!({})),
-        Some(Limits { windows: vec![], plan: None, credits: None })
+        Some(Limits { windows: vec![], plan: None, credits: None, reset_credits: None })
     );
     for value in [json!(null), json!([]), json!("x"), json!(1)] {
         assert_eq!(parse_snapshot(&value), None);
@@ -190,4 +190,37 @@ fn unknown_extra_windows_are_ignored_not_promoted() {
     }));
     assert_eq!(got.len(), 1);
     assert_eq!(got[0].id, "weekly");
+}
+
+#[test]
+fn reset_credit_count_reads_only_a_whole_non_negative_available_count() {
+    let count = |answer: Value| super::reset_credit_count(&answer);
+    let with = |value: Value| json!({"rateLimitResetCredits": value});
+    assert_eq!(count(with(json!({"availableCount": 3, "credits": null}))), Some(3));
+    assert_eq!(count(with(json!({"availableCount": 2.0}))), Some(2));
+    assert_eq!(count(with(json!({"availableCount": 0}))), Some(0), "a known zero is not unknown");
+    for unknown in [
+        json!({}),
+        with(json!(null)),
+        with(json!({})),
+        with(json!({"availableCount": null})),
+        with(json!({"availableCount": -1})),
+        with(json!({"availableCount": 1.5})),
+        with(json!({"availableCount": "3"})),
+        with(json!({"availableCount": 1_000_001})),
+        with(json!([3])),
+        with(json!(3)),
+        json!(null),
+    ] {
+        assert_eq!(count(unknown.clone()), None, "{unknown}");
+    }
+}
+
+#[test]
+fn reset_credit_details_are_never_read() {
+    let answer = json!({"rateLimitResetCredits": {
+        "availableCount": 1,
+        "credits": [{"id": "opaque-fixture-id", "title": "fixture", "status": "available"}]
+    }});
+    assert_eq!(super::reset_credit_count(&answer), Some(1));
 }

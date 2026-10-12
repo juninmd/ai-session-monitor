@@ -40,6 +40,17 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
   inline SVG of the current window against the earlier ones with a text summary and a table.
   New commands `get_history` and `clear_history`, the setting "Guardar o histórico de uso" and a
   confirmed "Limpar histórico" button; a damaged file is set aside and the history restarts empty.
+- Codex: the count of earned rate-limit reset credits (`rateLimitResetCredits.availableCount` of
+  `account/rateLimits/read`) shows as a "Recargas de reset" fact. Only the count is read (strict:
+  absent, null, negative, fractional or absurd counts stay unknown); the detail rows and the
+  consume RPC are never touched.
+- Setting `general.showUsed` ("Mostrar cota como: disponível / usado"): the headline numbers,
+  gauges, tab chips, spoken labels, live announcements, the tray tooltip and the "limite
+  disponível" notification switch wording. Status colours, pace and stored numbers are unchanged.
+  The tray icon arc stays on the available share.
+- A "~" prefix, read aloud as "estimativa", on values that are estimates: the pace projection
+  ("No ritmo atual..."), the OpenCode local cost and token facts, and an Antigravity window whose
+  5 h / weekly name was guessed from its reset time.
 - Polling is supervised: if the scheduler dies, the shell restarts it (2 s doubling to 30 s).
 - A start that fails shows a notification with the step and the error code and exits with code 1,
   instead of vanishing from the tray.

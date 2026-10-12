@@ -91,7 +91,7 @@ Fact ids and units:
 
 | Source | Fact `id` (`unit`) |
 |---|---|
-| `codex` | `credits_balance` (`credits`) |
+| `codex` | `credits_balance` (`credits`); `reset_credits` (`resets`, the count of earned resets still available, `app_server` only; absent when the service gives no count) |
 | `opencode` | `local_cost_5h`, `local_cost_7d`, `local_cost_30d` (`usd`); `local_tokens_5h`, `local_tokens_7d` (`tokens`). Local list-price estimate, not quota. |
 | `litellm` | `rpm_limit`, `max_parallel_requests` (`requests`); `tpm_limit` (`tokens`); `expires` (`epoch_s`) |
 
@@ -198,6 +198,9 @@ Go subscription" and offers the console link, never a certain "bad key".
 
 `general.notifyOnOut` and `general.notifyOnReset` (both off by default) switch the desktop toasts;
 `general.alertThresholds` (default `[80, 95]`, empty = off) switches the usage-threshold toasts.
+`general.showUsed` (default `false`) is presentation only: the UI, the tray tooltip and the "limite disponível"
+toast print the used share instead of the available one; every payload keeps `usedPct`, and the tray icon arc
+stays on the available share.
 `app-core` plans them from snapshot changes and the shell shows them; title and body are
 ready-made pt-BR text and carry no path, key or raw error.
 

@@ -4,12 +4,12 @@ const RADIUS = 6;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 interface TrayRingProps {
-  /** Available percentage of the lowest window, or null when nothing is readable. */
+  /** Printed share (available, or used under `showUsed`) of the lowest window, or null when nothing is readable. */
   pct: number | null;
   status: Status | null;
 }
 
-/** The tray icon's arc, repeated in the header: the arc is the available share. */
+/** The tray icon's arc, repeated in the header: the arc is the printed share. */
 export function TrayRing({ pct, status }: TrayRingProps) {
   const known = pct !== null;
   const arc = known ? (Math.min(100, Math.max(0, pct)) / 100) * CIRCUMFERENCE : 0;

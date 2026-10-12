@@ -7,6 +7,7 @@ import { describeError } from './app/errorText';
 import { harnessName, type SettingsSection, TAB_ORDER } from './app/harness';
 import { NavigationContext } from './app/navigation';
 import { latestReadAt, viewsInTabOrder } from './app/placeholder';
+import { sharePct, showsUsed } from './app/quota';
 import { SettingsContext } from './app/settingsContext';
 import { traySummary } from './app/tabModel';
 import { useAnnouncer } from './app/useAnnouncer';
@@ -135,7 +136,15 @@ export function App({ backend }: { backend: Backend }) {
         <NavigationContext value={navigation}>
           <div ref={rootRef} className="flyout">
             <Header
-              tray={tray ? { pct: tray.summary.availablePct, status: tray.summary.status } : null}
+              tray={
+                tray
+                  ? {
+                      pct: sharePct(tray.summary.availablePct, showsUsed(ctx.settings)),
+                      status: tray.summary.status,
+                      showUsed: showsUsed(ctx.settings),
+                    }
+                  : null
+              }
               settingsOpen={inSettings}
               onRefresh={refreshNow}
               onToggleSettings={inSettings ? closeSettings : () => openSettings()}

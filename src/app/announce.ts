@@ -4,6 +4,7 @@ import { formatPercent } from '../i18n/format';
 import type { HarnessId, HarnessView } from '../lib/contract';
 import type { Summary } from '../lib/usage';
 import { harnessName } from './harness';
+import { sharePct, tq } from './quota';
 
 export type StatusKey = 'ok' | 'warn' | 'crit' | 'out' | 'error' | 'stale' | 'other';
 
@@ -21,15 +22,16 @@ export function announcementFor(
   previous: StatusKey | undefined,
   next: StatusKey,
   summary: Summary | null,
+  showUsed = false,
 ): string | null {
   if (previous === undefined || previous === next) return null;
   const name = harnessName(id);
-  const pct = summary ? formatPercent(summary.availablePct) : '';
+  const pct = summary ? formatPercent(sharePct(summary.availablePct, showUsed)) : '';
   switch (next) {
     case 'warn':
-      return t('live.warn', { name, pct });
+      return tq('live.warn', showUsed, { name, pct });
     case 'crit':
-      return t('live.crit', { name, pct });
+      return tq('live.crit', showUsed, { name, pct });
     case 'out':
       return t('live.out', { name });
     case 'error':
@@ -37,7 +39,7 @@ export function announcementFor(
     case 'stale':
       return t('live.stale', { name });
     case 'ok':
-      return PROBLEMS.has(previous) ? t('live.ok', { name, pct }) : null;
+      return PROBLEMS.has(previous) ? tq('live.ok', showUsed, { name, pct }) : null;
     case 'other':
       return null;
   }

@@ -4,6 +4,7 @@ import { t } from '../i18n';
 import { formatPercent } from '../i18n/format';
 import type { HarnessId, HarnessView } from '../lib/contract';
 import { isExpired, type Status, type Summary, summarize } from '../lib/usage';
+import { sharePct, showsUsed, tq } from './quota';
 import type { ViewContext } from './windowModel';
 
 export type TabChip =
@@ -37,13 +38,15 @@ function readyChip(view: HarnessView, summary: Summary | null, ctx: ViewContext)
     );
   }
   if (summary) {
-    const label = formatPercent(summary.availablePct);
+    const showUsed = showsUsed(ctx.settings);
+    const shown = sharePct(summary.availablePct, showUsed);
+    const label = formatPercent(shown);
     return {
       kind: 'pct',
       status: summary.status,
       text: label,
-      pct: summary.availablePct,
-      sr: t('tab.sr.pct', { pct: label, status: t(`status.${summary.status}`) }),
+      pct: shown,
+      sr: tq('tab.sr.pct', showUsed, { pct: label, status: t(`status.${summary.status}`) }),
     };
   }
   if (view.windows.length === 0) return text(t('tab.no_windows'), t('tab.sr.no_windows'));

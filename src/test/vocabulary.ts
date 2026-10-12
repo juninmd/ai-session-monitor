@@ -48,7 +48,10 @@ export const OPENCODE_DB_REASONS: readonly string[] = DB_REASONS;
 export const FACTS: Readonly<Record<HarnessId, readonly (readonly [id: string, unit: string])[]>> =
   {
     claude: [],
-    codex: [['credits_balance', 'credits']],
+    codex: [
+      ['credits_balance', 'credits'],
+      ['reset_credits', 'resets'],
+    ],
     antigravity: [],
     opencode: [
       ['local_cost_5h', 'usd'],

@@ -39,6 +39,11 @@ const WEEK_OPTIONS: readonly Option<WeekFormat>[] = [
   { value: 'days_hours', label: t('settings.week_days_hours') },
 ];
 
+const QUOTA_OPTIONS: readonly Option<'available' | 'used'>[] = [
+  { value: 'available', label: t('settings.show_available') },
+  { value: 'used', label: t('settings.show_used_opt') },
+];
+
 const TRAY_OPTIONS: readonly Option<HarnessId | 'lowest'>[] = [
   { value: 'lowest', label: t('settings.tray_lowest') },
   ...TAB_ORDER.map((id) => ({ value: id, label: harnessName(id) })),
@@ -86,6 +91,13 @@ export function GeneralSettings() {
           apply={(current, source) =>
             patch(current, { traySource: source === 'lowest' ? null : source })
           }
+        />
+        <SettingSegmented
+          id="set-show-used"
+          legend={t('settings.show_used')}
+          value={g.showUsed ? 'used' : 'available'}
+          options={QUOTA_OPTIONS}
+          apply={(current, mode) => patch(current, { showUsed: mode === 'used' })}
         />
         <SettingSegmented
           id="set-time-format"

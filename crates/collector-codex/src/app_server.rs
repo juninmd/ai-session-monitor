@@ -124,6 +124,7 @@ fn parse_limits(answer: &Value, account_plan: Option<String>) -> Result<Reading,
     if limits.plan.is_none() {
         limits.plan = account_plan;
     }
+    limits.reset_credits = limits::reset_credit_count(answer);
     Ok(Reading::Limits(limits))
 }
 
@@ -187,5 +188,17 @@ mod tests {
             assert_eq!(error.code, usage_model::ErrorCode::EndpointChanged, "{answer}");
             assert!(!error.retryable);
         }
+    }
+
+    #[test]
+    fn the_earned_reset_count_comes_from_the_answer_root() {
+        let answer = json!({
+            "rateLimits": {"primary": {"usedPercent": 7}},
+            "rateLimitResetCredits": {"availableCount": 2, "credits": null}
+        });
+        assert_eq!(limits_of(&answer).reset_credits, Some(2));
+        let none =
+            json!({"rateLimits": {"primary": {"usedPercent": 7}}, "rateLimitResetCredits": null});
+        assert_eq!(limits_of(&none).reset_credits, None);
     }
 }

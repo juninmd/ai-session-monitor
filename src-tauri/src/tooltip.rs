@@ -100,8 +100,14 @@ pub fn text(
     let left = reading.resets_at.map(|at| (at - now_secs).max(0) as f64 / 60.0);
     let dur = left.map(|m| format_duration(m, general.time_format, general.week_format, long));
     let out = reading.status == Status::Out;
-    let pct = format_percent(reading.available_pct);
-    let state = if out { "esgotado".to_owned() } else { format!("{pct} disponível") };
+    // Used is the complement of the available share the tray reading carries.
+    let (shown, word) = if general.show_used {
+        (100.0 - reading.available_pct, "usado")
+    } else {
+        (reading.available_pct, "disponível")
+    };
+    let pct = format_percent(shown);
+    let state = if out { "esgotado".to_owned() } else { format!("{pct} {word}") };
     let when = |verb: &str| dur.as_ref().map(|d| format!(" · {verb} em {d}")).unwrap_or_default();
     let verb = if out { "volta" } else { "reseta" };
     fit(&[

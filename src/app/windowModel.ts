@@ -20,6 +20,8 @@ import {
   type Status,
   statusOf,
 } from '../lib/usage';
+import { hasGuessedCadence } from './estimate';
+import { sharePct, showsUsed, tq } from './quota';
 import { specialTitle } from './windowTitles';
 
 const MIN_PER_DAY = 1440;
@@ -45,6 +47,11 @@ export interface WindowModel {
   title: string;
   /** 0..100, null while unknown. */
   available: number | null;
+  /** What is printed: `available`, or its complement under `showUsed`. */
+  shown: number | null;
+  showUsed: boolean;
+  /** The 5 h / weekly name was guessed by the collector, so the title is an estimate. */
+  cadenceGuessed: boolean;
   expired: boolean;
   /** Null for unknown and expired windows: they must not be coloured. */
   status: Status | null;
@@ -77,6 +84,8 @@ export function modelWindow(
   ctx: ViewContext,
 ): WindowModel {
   const { nowSecs, settings } = ctx;
+  const showUsed = showsUsed(settings);
+  const available = availablePct(window);
   const expired = isExpired(window, nowSecs);
   const leftMin = expired ? 0 : minutesLeft(window, nowSecs);
   const hasLength = window.windowMinutes !== null && window.windowMinutes > 0;
@@ -87,7 +96,10 @@ export function modelWindow(
   return {
     window,
     title: windowTitle(harness, window),
-    available: availablePct(window),
+    available,
+    shown: available === null ? null : sharePct(available, showUsed),
+    showUsed,
+    cadenceGuessed: hasGuessedCadence(harness, window),
     expired,
     status: statusOf(window, nowSecs, settings.general.warnAtPct),
     pace: paceOf(window, nowSecs),
@@ -113,6 +125,8 @@ export interface PaceLine {
   text: string;
   /** Out or at risk: shown even in compact rows. */
   urgent: boolean;
+  /** A projection from the burn rate, not a reading. */
+  estimate: boolean;
 }
 
 export function paceLine(m: WindowModel, ctx: ViewContext): PaceLine | null {
@@ -121,29 +135,40 @@ export function paceLine(m: WindowModel, ctx: ViewContext): PaceLine | null {
   if (m.status === 'out') {
     const when = resetMoment(m, ctx);
     const left = leftText(m, ctx);
-    if (when === null || left === null) return { icon: 'ban', text: t('window.out'), urgent: true };
-    return { icon: 'ban', text: t('pace.out', { when: when.label, dur: left }), urgent: true };
+    if (when === null || left === null)
+      return { icon: 'ban', text: t('window.out'), urgent: true, estimate: false };
+    return {
+      icon: 'ban',
+      text: t('pace.out', { when: when.label, dur: left }),
+      urgent: true,
+      estimate: false,
+    };
   }
   const pace = m.pace;
   switch (pace.kind) {
     case 'risk': {
       const exhausted = formatClock(Math.round(ctx.nowSecs + pace.runwayMin * 60), ctx.nowSecs);
       const early = formatDuration(pace.earlyMin, fmt, m.long);
-      return { icon: 'warn', text: t('pace.risk', { when: exhausted.label, early }), urgent: true };
+      return {
+        icon: 'warn',
+        text: t('pace.risk', { when: exhausted.label, early }),
+        urgent: true,
+        estimate: true,
+      };
     }
     case 'fine':
-      return { icon: 'check', text: t('pace.fine'), urgent: false };
+      return { icon: 'check', text: t('pace.fine'), urgent: false, estimate: true };
     case 'early':
-      return { icon: 'clock', text: t('pace.early'), urgent: false };
+      return { icon: 'clock', text: t('pace.early'), urgent: false, estimate: false };
     default:
       return null;
   }
 }
 
 export function gaugeTip(m: WindowModel, ctx: ViewContext): string {
-  if (m.available === null) return t('gauge.tip_unknown');
+  if (m.shown === null) return t('gauge.tip_unknown');
   if (m.expired) return t('gauge.tip_expired');
-  const parts = [t('gauge.tip', { pct: formatPercent(m.available) })];
+  const parts = [tq('gauge.tip', m.showUsed, { pct: formatPercent(m.shown) })];
   const dur = leftText(m, ctx);
   if (dur !== null) {
     parts.push(
@@ -160,7 +185,8 @@ export function gaugeTip(m: WindowModel, ctx: ViewContext): string {
 }
 
 export function gaugeLabel(m: WindowModel, title: string = m.title): string {
-  if (m.available === null) return t('gauge.label_unknown', { title });
+  if (m.shown === null) return t('gauge.label_unknown', { title });
   if (m.expired) return t('gauge.label_expired', { title });
-  return t('gauge.label', { title, pct: formatPercent(m.available) });
+  const named = m.cadenceGuessed ? `${title} (${t('estimate.word')})` : title;
+  return tq('gauge.label', m.showUsed, { title: named, pct: formatPercent(m.shown) });
 }

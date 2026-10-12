@@ -221,6 +221,7 @@ describe('paceLine', () => {
       icon: 'check',
       text: 'No ritmo atual, dura além do reset.',
       urgent: false,
+      estimate: true,
     });
   });
 

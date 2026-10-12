@@ -34,14 +34,15 @@ describe('facts', () => {
   it('label the OpenCode local estimate and keep it apart from the quota', () => {
     ready(opencodeView(env, 'ok'));
     expect(screen.getByRole('heading', { name: 'Estimativa local' })).toBeVisible();
-    expect(factValue('Custo local, 5 horas')).toBe('US$ 0,42');
-    expect(factValue('Custo local, 7 dias')).toBe('US$ 3,18');
-    expect(factValue('Tokens locais, 5 horas')).toBe('184 mil tokens');
+    expect(factValue('Custo local, 5 horas')).toBe('~estimativa: US$ 0,42');
+    expect(factValue('Custo local, 7 dias')).toBe('~estimativa: US$ 3,18');
+    expect(factValue('Tokens locais, 5 horas')).toBe('~estimativa: 184 mil tokens');
   });
 
   it('show Codex credits', () => {
     ready(codexView(env, 'ok'));
     expect(factValue('Créditos adicionais')).toBe('120 créditos');
+    expect(factValue('Recargas de reset')).toBe('2 disponíveis');
   });
 
   it('show an unlabelled fact as its id instead of dropping it', () => {

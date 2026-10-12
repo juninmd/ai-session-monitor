@@ -36,6 +36,7 @@ pub(super) fn window_reset(
     harness: HarnessId,
     window: &UsageWindow,
     available_pct: f64,
+    show_used: bool,
     now_secs: i64,
 ) -> Notification {
     let (article, noun) = subject(window);
@@ -44,12 +45,13 @@ pub(super) fn window_reset(
         .map(|at| format!(" Próximo reinício em {}.", span(at - now_secs)))
         .unwrap_or_default();
     let free = available_pct.round().clamp(0.0, 100.0) as u8;
+    let share = if show_used { format!("{}% usado", 100 - free) } else { format!("{free}% livre") };
     Notification {
         kind: NotificationKind::WindowReset,
         harness,
         window_id: window.id.clone(),
         title: format!("{}: limite disponível", harness_name(harness)),
-        body: format!("{article} {noun} voltou a ter limite disponível ({free}% livre).{next}"),
+        body: format!("{article} {noun} voltou a ter limite disponível ({share}).{next}"),
     }
 }
 

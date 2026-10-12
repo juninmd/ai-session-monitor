@@ -35,6 +35,14 @@ fn fill(view: &mut HarnessView, limits: Limits, now_secs: i64) {
             unit: Some("credits".to_owned()),
         });
     }
+    if let Some(count) = limits.reset_credits {
+        view.facts.push(Fact {
+            id: "reset_credits".to_owned(),
+            number: Some(f64::from(count)),
+            text: None,
+            unit: Some("resets".to_owned()),
+        });
+    }
 }
 
 fn notice(code: &str, severity: Severity, params: BTreeMap<String, String>) -> Notice {
@@ -87,7 +95,7 @@ mod tests {
     }
 
     fn limits(windows: Vec<UsageWindow>) -> Limits {
-        Limits { windows, plan: Some("Plus".into()), credits: Some(3.5) }
+        Limits { windows, plan: Some("Plus".into()), credits: Some(3.5), reset_credits: Some(2) }
     }
 
     #[test]
@@ -100,6 +108,9 @@ mod tests {
         assert_eq!((view.read_at, view.stale), (Some(NOW), false));
         assert_eq!(view.plan.as_deref(), Some("Plus"));
         assert_eq!(view.facts[0].number, Some(3.5));
+        let resets = &view.facts[1];
+        assert_eq!((resets.id.as_str(), resets.number), ("reset_credits", Some(2.0)));
+        assert_eq!(resets.unit.as_deref(), Some("resets"));
         assert!(view.notices.is_empty() && view.error.is_none() && view.meta.is_empty());
     }
 

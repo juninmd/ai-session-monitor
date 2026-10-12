@@ -10,6 +10,7 @@ export const shellMessages = {
   'header.refresh': 'Atualizar agora',
   'header.settings': 'Configurações',
   'header.tray': 'Menor disponível: {pct}',
+  'header.tray_used': 'Maior uso: {pct}',
   'header.tray_none': 'Sem leitura disponível',
 
   'tabs.label': 'Ferramentas de IA',
@@ -22,6 +23,7 @@ export const shellMessages = {
   'tab.unknown': '—',
   'tab.no_windows': 'Sem cota',
   'tab.sr.pct': '{pct} disponível, {status}',
+  'tab.sr.pct_used': '{pct} usado, {status}',
   'tab.sr.connect': 'precisa ser conectado',
   'tab.sr.no_data': 'sem dados ainda',
   'tab.sr.disabled': 'desligado',
@@ -43,9 +45,12 @@ export const shellMessages = {
   'footer.quit': 'Sair',
 
   'live.warn': '{name}: atenção, {pct} disponível.',
+  'live.warn_used': '{name}: atenção, {pct} usado.',
   'live.crit': '{name}: crítico, {pct} disponível.',
+  'live.crit_used': '{name}: crítico, {pct} usado.',
   'live.out': '{name}: esgotado.',
   'live.ok': '{name}: {pct} disponível, sem alertas.',
+  'live.ok_used': '{name}: {pct} usado, sem alertas.',
   'live.error': '{name}: falha na leitura.',
   'live.stale': '{name}: dados desatualizados.',
 

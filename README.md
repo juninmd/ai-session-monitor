@@ -6,7 +6,7 @@ ferramentas de código com IA, uma aba por ferramenta:
 | Aba | O que mostra | Fonte | Confiança |
 |---|---|---|---|
 | **Claude Code** | sessão de 5 h e semana: % disponível, tempo até reiniciar, ritmo | `rate_limits` do statusLine (via shim instalado com seu consentimento) | oficial |
-| **Codex** | janela de 5 h e semanal, plano e créditos | `codex app-server` (JSON-RPC) | oficial |
+| **Codex** | janela de 5 h e semanal, plano, créditos e recargas de reset | `codex app-server` (JSON-RPC) | oficial |
 | **Antigravity** | pools Gemini e Claude/GPT-OSS (5 h e semana) | servidor de linguagem local da IDE | **não oficial** |
 | **OpenCode** | Go: janelas de 5 h, semana e mês; estimativa local de custo | endpoint de uso do Go + `opencode.db` (somente leitura) | **não oficial** |
 | **LiteLLM** | orçamento da chave, usuário ou time (parametrizável) | API do proxy (`/key/info`, `/user/info`, `/team/info`) | oficial |

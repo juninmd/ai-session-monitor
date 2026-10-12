@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { tq } from '../../app/quota';
 import { t } from '../../i18n';
 import { formatPercent } from '../../i18n/format';
 import type { Status } from '../../lib/usage';
@@ -6,7 +7,8 @@ import { Icon } from '../icons';
 import { TrayRing } from './TrayRing';
 
 interface HeaderProps {
-  tray: { pct: number; status: Status } | null;
+  /** `pct` is already the printed share (available, or used under `showUsed`). */
+  tray: { pct: number; status: Status; showUsed: boolean } | null;
   settingsOpen: boolean;
   onRefresh: () => void;
   onToggleSettings: () => void;
@@ -16,7 +18,7 @@ export function Header({ tray, settingsOpen, onRefresh, onToggleSettings }: Head
   // A new key restarts the spin on every press, even while the previous turn is still running.
   const [spins, setSpins] = useState(0);
   const trayLabel = tray
-    ? t('header.tray', { pct: formatPercent(tray.pct) })
+    ? tq('header.tray', tray.showUsed, { pct: formatPercent(tray.pct) })
     : t('header.tray_none');
   return (
     <header className="fly-head">

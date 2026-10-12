@@ -100,6 +100,7 @@ describe('segmented choices', () => {
     ['Formato do tempo', '1:53', 'timeFormat', 'colon'],
     ['Formato do tempo', '1,9 h', 'timeFormat', 'decimal'],
     ['Semana em', 'dias e horas', 'weekFormat', 'days_hours'],
+    ['Mostrar cota como', 'usado', 'showUsed', true],
   ])('%s: picking %s saves %s=%s', async (group, choice, key, expected) => {
     const { user, backend } = renderPanel(<GeneralSettings />);
     const radios = within(screen.getByRole('radiogroup', { name: group }));

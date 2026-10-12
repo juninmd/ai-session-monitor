@@ -39,6 +39,20 @@ fn names_the_harness_window_percentage_and_time_to_reset() {
 }
 
 #[test]
+fn show_used_flips_the_wording_and_the_number() {
+    let on = GeneralSettings { show_used: true, ..GeneralSettings::default() };
+    let r = five_hour(72.4, Some(113), Status::Ok);
+    assert_eq!(
+        text(Some(&r), None, &on, NOW),
+        "Claude Code · 5 horas: 28% usado · reseta em 1h 53m"
+    );
+    let sliver = five_hour(99.7, None, Status::Ok);
+    assert_eq!(text(Some(&sliver), None, &on, NOW), "Claude Code · 5 horas: <1% usado");
+    let out = five_hour(0.0, Some(10), Status::Out);
+    assert!(text(Some(&out), None, &on, NOW).contains("esgotado"));
+}
+
+#[test]
 fn honours_the_time_format_setting() {
     let r = five_hour(72.0, Some(113), Status::Ok);
     let colon = text(Some(&r), None, &general(TimeFormat::Colon, WeekFormat::Hours), NOW);

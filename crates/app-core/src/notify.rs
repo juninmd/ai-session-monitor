@@ -65,7 +65,13 @@ pub fn plan(
                     planned.push(text::window_out(view.id, window, now_secs));
                 }
                 (false, true) if general.notify_on_reset => {
-                    planned.push(text::window_reset(view.id, window, now, now_secs));
+                    planned.push(text::window_reset(
+                        view.id,
+                        window,
+                        now,
+                        general.show_used,
+                        now_secs,
+                    ));
                 }
                 _ => {}
             }
