@@ -1,0 +1,5 @@
+{"model_remains":[
+{"model_name":"MiniMax-M*","start_time":1799996400000,"end_time":1800014400000,"remains_time":14400000,"current_interval_total_count":1500,"current_interval_usage_count":1125,"current_weekly_total_count":15000,"current_weekly_usage_count":12000},
+{"model_name":"image-01","start_time":1799971200000,"end_time":1800057600000,"remains_time":57600000,"current_interval_total_count":100,"current_interval_usage_count":40,"current_weekly_total_count":0,"current_weekly_usage_count":0},
+{"model_name":"speech-hd","start_time":1799971200000,"end_time":1800057600000,"remains_time":57600000,"current_interval_total_count":0,"current_interval_usage_count":0,"current_weekly_total_count":0,"current_weekly_usage_count":0}
+],"base_resp":{"status_code":0,"status_msg":"success"}}

@@ -26,9 +26,14 @@ dependencies = [
  "collector-antigravity",
  "collector-claude",
  "collector-codex",
+ "collector-deepinfra",
  "collector-deepseek",
  "collector-kimi",
  "collector-litellm",
+ "collector-minimax",
+ "collector-moonshot",
+ "collector-novita",
+ "collector-ollama",
  "collector-opencode",
  "collector-openrouter",
  "collector-zai",
@@ -674,6 +679,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "collector-deepinfra"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "tokio",
+ "usage-model",
+ "usage-support",
+]
+
+[[package]]
 name = "collector-deepseek"
 version = "0.1.0"
 dependencies = [
@@ -703,6 +718,46 @@ dependencies = [
  "tempfile",
  "tokio",
  "tokio-rustls",
+ "usage-model",
+ "usage-support",
+]
+
+[[package]]
+name = "collector-minimax"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "tokio",
+ "usage-model",
+ "usage-support",
+]
+
+[[package]]
+name = "collector-moonshot"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "tokio",
+ "usage-model",
+ "usage-support",
+]
+
+[[package]]
+name = "collector-novita"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "tokio",
+ "usage-model",
+ "usage-support",
+]
+
+[[package]]
+name = "collector-ollama"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "tokio",
  "usage-model",
  "usage-support",
 ]

@@ -1,4 +1,4 @@
-// Seven tabs share a scrollable strip: icon and a short reading on top, the name below, then the bar.
+// Many tabs share a scrollable strip: icon and a short reading on top, the name below, then the bar.
 // Roving tabindex with automatic activation; arrows wrap, Home and End jump to the ends.
 import { type KeyboardEvent, useEffect } from 'react';
 import { harnessName, TAB_ORDER } from '../../app/harness';

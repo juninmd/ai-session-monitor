@@ -12,11 +12,16 @@ pub enum HarnessId {
     Zai,
     Openrouter,
     Deepseek,
+    Deepinfra,
+    Moonshot,
+    Novita,
+    Ollama,
+    Minimax,
     Litellm,
 }
 
 impl HarnessId {
-    pub const ALL: [Self; 9] = [
+    pub const ALL: [Self; 14] = [
         Self::Claude,
         Self::Codex,
         Self::Antigravity,
@@ -25,6 +30,11 @@ impl HarnessId {
         Self::Zai,
         Self::Openrouter,
         Self::Deepseek,
+        Self::Deepinfra,
+        Self::Moonshot,
+        Self::Novita,
+        Self::Ollama,
+        Self::Minimax,
         Self::Litellm,
     ];
 
@@ -38,6 +48,11 @@ impl HarnessId {
             Self::Zai => "zai",
             Self::Openrouter => "openrouter",
             Self::Deepseek => "deepseek",
+            Self::Deepinfra => "deepinfra",
+            Self::Moonshot => "moonshot",
+            Self::Novita => "novita",
+            Self::Ollama => "ollama",
+            Self::Minimax => "minimax",
             Self::Litellm => "litellm",
         }
     }

@@ -30,6 +30,11 @@ async fn the_first_snapshot_has_enabled_harnesses_loading_and_the_disabled_one_o
             (HarnessId::Zai, ViewState::Loading),
             (HarnessId::Openrouter, ViewState::Loading),
             (HarnessId::Deepseek, ViewState::Loading),
+            (HarnessId::Deepinfra, ViewState::Loading),
+            (HarnessId::Moonshot, ViewState::Loading),
+            (HarnessId::Novita, ViewState::Loading),
+            (HarnessId::Ollama, ViewState::Loading),
+            (HarnessId::Minimax, ViewState::Loading),
             (HarnessId::Litellm, ViewState::Disabled),
         ]
     );

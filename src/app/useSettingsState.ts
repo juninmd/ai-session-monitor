@@ -37,6 +37,11 @@ const NO_SECRETS: SecretStatus = {
   zai: false,
   openrouter: false,
   deepseek: false,
+  deepinfra: false,
+  moonshot: false,
+  novita: false,
+  ollama: false,
+  minimax: false,
 };
 
 export function useSettingsState(backend: Backend): SettingsApi {

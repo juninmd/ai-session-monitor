@@ -14,11 +14,27 @@ pub enum SecretKind {
     Zai,
     Openrouter,
     Deepseek,
+    Deepinfra,
+    Moonshot,
+    Novita,
+    Ollama,
+    Minimax,
 }
 
 impl SecretKind {
-    pub const ALL: [Self; 6] =
-        [Self::Litellm, Self::Opencode, Self::Kimi, Self::Zai, Self::Openrouter, Self::Deepseek];
+    pub const ALL: [Self; 11] = [
+        Self::Litellm,
+        Self::Opencode,
+        Self::Kimi,
+        Self::Zai,
+        Self::Openrouter,
+        Self::Deepseek,
+        Self::Deepinfra,
+        Self::Moonshot,
+        Self::Novita,
+        Self::Ollama,
+        Self::Minimax,
+    ];
 
     /// Credential Manager target name suffix.
     pub const fn as_str(self) -> &'static str {
@@ -29,6 +45,11 @@ impl SecretKind {
             Self::Zai => "zai",
             Self::Openrouter => "openrouter",
             Self::Deepseek => "deepseek",
+            Self::Deepinfra => "deepinfra",
+            Self::Moonshot => "moonshot",
+            Self::Novita => "novita",
+            Self::Ollama => "ollama",
+            Self::Minimax => "minimax",
         }
     }
 }
@@ -42,6 +63,11 @@ pub struct SecretStatus {
     pub zai: bool,
     pub openrouter: bool,
     pub deepseek: bool,
+    pub deepinfra: bool,
+    pub moonshot: bool,
+    pub novita: bool,
+    pub ollama: bool,
+    pub minimax: bool,
 }
 
 /// Known destinations the UI may ask the backend to open. The UI never passes a URL, so a
@@ -55,17 +81,27 @@ pub enum ExternalLink {
     ZaiConsole,
     OpenrouterConsole,
     DeepseekConsole,
+    DeepinfraConsole,
+    MoonshotConsole,
+    NovitaConsole,
+    OllamaConsole,
+    MinimaxConsole,
     ProjectReadme,
 }
 
 impl ExternalLink {
-    pub const ALL: [Self; 7] = [
+    pub const ALL: [Self; 12] = [
         Self::OpencodeGoConsole,
         Self::OpencodeBilling,
         Self::KimiConsole,
         Self::ZaiConsole,
         Self::OpenrouterConsole,
         Self::DeepseekConsole,
+        Self::DeepinfraConsole,
+        Self::MoonshotConsole,
+        Self::NovitaConsole,
+        Self::OllamaConsole,
+        Self::MinimaxConsole,
         Self::ProjectReadme,
     ];
 }

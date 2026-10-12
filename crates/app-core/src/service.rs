@@ -146,6 +146,11 @@ impl AppService {
             zai: self.exists(SecretKind::Zai)?,
             openrouter: self.exists(SecretKind::Openrouter)?,
             deepseek: self.exists(SecretKind::Deepseek)?,
+            deepinfra: self.exists(SecretKind::Deepinfra)?,
+            moonshot: self.exists(SecretKind::Moonshot)?,
+            novita: self.exists(SecretKind::Novita)?,
+            ollama: self.exists(SecretKind::Ollama)?,
+            minimax: self.exists(SecretKind::Minimax)?,
         })
     }
 
@@ -164,6 +169,11 @@ impl AppService {
             zai: has(SecretKind::Zai),
             openrouter: has(SecretKind::Openrouter),
             deepseek: has(SecretKind::Deepseek),
+            deepinfra: has(SecretKind::Deepinfra),
+            moonshot: has(SecretKind::Moonshot),
+            novita: has(SecretKind::Novita),
+            ollama: has(SecretKind::Ollama),
+            minimax: has(SecretKind::Minimax),
         }
     }
 
@@ -256,5 +266,10 @@ fn harness_of(kind: SecretKind) -> HarnessId {
         SecretKind::Zai => HarnessId::Zai,
         SecretKind::Openrouter => HarnessId::Openrouter,
         SecretKind::Deepseek => HarnessId::Deepseek,
+        SecretKind::Deepinfra => HarnessId::Deepinfra,
+        SecretKind::Moonshot => HarnessId::Moonshot,
+        SecretKind::Novita => HarnessId::Novita,
+        SecretKind::Ollama => HarnessId::Ollama,
+        SecretKind::Minimax => HarnessId::Minimax,
     }
 }

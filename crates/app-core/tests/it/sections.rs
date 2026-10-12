@@ -41,6 +41,26 @@ fn deepseek(settings: &mut Settings) {
     settings.deepseek.enabled = false;
 }
 
+fn deepinfra(settings: &mut Settings) {
+    settings.deepinfra.enabled = false;
+}
+
+fn moonshot(settings: &mut Settings) {
+    settings.moonshot.enabled = false;
+}
+
+fn novita(settings: &mut Settings) {
+    settings.novita.enabled = false;
+}
+
+fn ollama(settings: &mut Settings) {
+    settings.ollama.enabled = false;
+}
+
+fn minimax(settings: &mut Settings) {
+    settings.minimax.enabled = false;
+}
+
 fn litellm(settings: &mut Settings) {
     settings.litellm.base_url = Some("https://litellm.example.test".to_owned());
 }
@@ -124,6 +144,31 @@ async fn the_openrouter_section_is_watched() {
 #[tokio::test(start_paused = true)]
 async fn the_deepseek_section_is_watched() {
     switching_off_drops_the_read_in_flight(HarnessId::Deepseek, deepseek).await;
+}
+
+#[tokio::test(start_paused = true)]
+async fn the_deepinfra_section_is_watched() {
+    switching_off_drops_the_read_in_flight(HarnessId::Deepinfra, deepinfra).await;
+}
+
+#[tokio::test(start_paused = true)]
+async fn the_moonshot_section_is_watched() {
+    switching_off_drops_the_read_in_flight(HarnessId::Moonshot, moonshot).await;
+}
+
+#[tokio::test(start_paused = true)]
+async fn the_novita_section_is_watched() {
+    switching_off_drops_the_read_in_flight(HarnessId::Novita, novita).await;
+}
+
+#[tokio::test(start_paused = true)]
+async fn the_ollama_section_is_watched() {
+    switching_off_drops_the_read_in_flight(HarnessId::Ollama, ollama).await;
+}
+
+#[tokio::test(start_paused = true)]
+async fn the_minimax_section_is_watched() {
+    switching_off_drops_the_read_in_flight(HarnessId::Minimax, minimax).await;
 }
 
 #[tokio::test(start_paused = true)]

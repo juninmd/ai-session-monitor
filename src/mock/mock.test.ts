@@ -56,17 +56,11 @@ describe('scenario content', () => {
   it('starts "fresh" with every source waiting for the user', async () => {
     const backend = backendOf('fresh');
     const states = await Promise.all(HARNESS_IDS.map((id) => stateOf(backend, id)));
-    expect(states).toEqual([
-      'needs_consent',
-      'needs_consent',
-      'needs_consent',
-      'needs_setup',
-      'needs_setup',
-      'needs_setup',
-      'needs_setup',
-      'needs_setup',
-      'needs_setup',
-    ]);
+    expect(states).toEqual(
+      HARNESS_IDS.map((id) =>
+        ['claude', 'codex', 'antigravity'].includes(id) ? 'needs_consent' : 'needs_setup',
+      ),
+    );
     expect((await backend.getSettings()).general.firstRunDone).toBe(false);
   });
 
@@ -79,17 +73,7 @@ describe('scenario content', () => {
   it('mixes states in the demo', async () => {
     const backend = backendOf('demo');
     const states = await Promise.all(HARNESS_IDS.map((id) => stateOf(backend, id)));
-    expect(states).toEqual([
-      'ready',
-      'ready',
-      'ready',
-      'ready',
-      'ready',
-      'ready',
-      'ready',
-      'ready',
-      'error',
-    ]);
+    expect(states).toEqual(HARNESS_IDS.map((id) => (id === 'litellm' ? 'error' : 'ready')));
   });
 
   it('makes every source stale in "stale", each with the reason it stopped', async () => {
@@ -112,8 +96,8 @@ describe('scenario content', () => {
     const warnAt = defaultSettings.general.warnAtPct;
     const statuses = async (name: (typeof SCENARIO_NAMES)[number]) =>
       (await backendOf(name).getSnapshot()).views
-        // DeepSeek reports a balance: facts only, so it has no status to compare.
-        .filter((view) => view.id !== 'deepseek')
+        // Balance-only sources have facts but no window, so no status to compare.
+        .filter((view) => view.windows.length > 0)
         .map((view) => summarize(view, NOW, warnAt)?.status);
     expect(new Set(await statuses('healthy'))).toEqual(new Set(['ok']));
     const critical = await statuses('critical');

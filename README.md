@@ -13,6 +13,11 @@ ferramentas de código com IA, uma aba por ferramenta:
 | **z.ai** | plano GLM Coding: janelas de 5 h e semana, e a cota mensal de ferramentas MCP | endpoint de cota do z.ai com a sua chave | **não oficial** |
 | **OpenRouter** | limite de gasto da chave (só se a chave tiver limite), uso do dia, da semana e do mês, e o saldo de créditos (só com chave de gerenciamento) | API do OpenRouter (`/key`, `/credits`) com a sua chave | oficial |
 | **DeepSeek** | saldo da conta por moeda (CNY e USD, nunca somados), sem porcentagem | API de saldo do DeepSeek com a sua chave | oficial |
+| **DeepInfra** | saldo, gasto do mês e (se houver limite de gasto) uma janela em porcentagem; a API não informa a unidade, lida como dólar | API de cobrança do DeepInfra com a sua chave | oficial |
+| **Moonshot** | saldo da conta, vouchers e dinheiro (dólar), sem porcentagem | API de saldo da Moonshot (`api.moonshot.ai`) com a sua chave | oficial |
+| **Novita** | saldo, limite de crédito e cobranças pendentes (dólar), sem porcentagem | API de saldo do Novita com a sua chave | oficial |
+| **Ollama Cloud** | créditos incluídos do mês (ou janelas de sessão e semana em planos antigos) e saldo comprado | API de saldo do Ollama Cloud com a sua chave | oficial |
+| **MiniMax** | cota do Token Plan por modelo: intervalo em andamento e semana | rota de cota do Token Plan com a sua chave | **não oficial** |
 | **LiteLLM** | orçamento da chave, usuário ou time (parametrizável) | API do proxy (`/key/info`, `/user/info`, `/team/info`) | oficial |
 
 "Em horas" significa duas coisas, sempre mostradas juntas: o **tempo até reiniciar** (número
@@ -23,7 +28,7 @@ atual). Valor desconhecido aparece como desconhecido, nunca como 0 %.
 
 - Cada fonte que lê arquivos ou processos de outra ferramenta fica parada até você **consentir** na aba.
 - O app **só lê**: nunca escreve em um provedor, nunca renova tokens e nunca usa cookies de navegador.
-- As únicas credenciais guardadas são as chaves de API do LiteLLM, do OpenCode Go, do Kimi Code, do z.ai, do OpenRouter e do DeepSeek que você colar;
+- As únicas credenciais guardadas são as chaves de API do LiteLLM, do OpenCode Go, do Kimi Code, do z.ai, do OpenRouter, do DeepSeek, do DeepInfra, da Moonshot, do Novita, do Ollama Cloud e da MiniMax que você colar;
   ficam no **Gerenciador de Credenciais do Windows**, nunca em arquivo, log ou na interface.
 - O histórico de uso (seção "Histórico" de cada aba) fica só neste computador, em `history.json`: porcentagens e horários por janela, por 35 dias, sem conta nem rótulos. Dá para desligar e apagar em Configurações.
 - A interface web não faz requisições de rede; todo HTTP sai do Rust (somente https, sem
@@ -91,7 +96,7 @@ notificações) · `src-tauri` (bandeja, janela, chaves) · `src` (React). Decis
   até você reativá-la lá. Se o executável mudar de pasta, desligue e ligue a opção de novo para
   registrar o novo caminho.
 - O cliente HTTP ignora proxies do sistema e variáveis `HTTP(S)_PROXY` de propósito (uma variável
-  alheia não pode capturar suas chaves). Atrás de proxy corporativo, a conexão com LiteLLM, OpenCode, Kimi Code, z.ai, OpenRouter e DeepSeek
+  alheia não pode capturar suas chaves). Atrás de proxy corporativo, a conexão com LiteLLM, OpenCode, Kimi Code, z.ai, OpenRouter, DeepSeek, DeepInfra, Moonshot, Novita, Ollama Cloud e MiniMax
   precisa ser direta; CA privada é suportada pela configuração de certificado da aba LiteLLM.
 - Comportamento da bandeja (clique, perda de foco, DPI, vários monitores) só se confirma numa sessão
   real do Windows; veja o checklist manual.

@@ -1,0 +1,19 @@
+[package]
+name = "collector-moonshot"
+description = "Moonshot collector: account balance from the documented balance endpoint"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+usage-model.workspace = true
+usage-support.workspace = true
+serde_json.workspace = true
+
+[dev-dependencies]
+tokio.workspace = true
+
+[lints]
+workspace = true

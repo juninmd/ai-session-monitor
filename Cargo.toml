@@ -29,6 +29,11 @@ collector-kimi = { path = "crates/collector-kimi" }
 collector-zai = { path = "crates/collector-zai" }
 collector-openrouter = { path = "crates/collector-openrouter" }
 collector-deepseek = { path = "crates/collector-deepseek" }
+collector-deepinfra = { path = "crates/collector-deepinfra" }
+collector-moonshot = { path = "crates/collector-moonshot" }
+collector-novita = { path = "crates/collector-novita" }
+collector-ollama = { path = "crates/collector-ollama" }
+collector-minimax = { path = "crates/collector-minimax" }
 app-core = { path = "crates/app-core" }
 
 [workspace.lints.rust]

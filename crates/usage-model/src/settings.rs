@@ -7,7 +7,10 @@ use serde::{Deserialize, Serialize};
 use crate::HarnessId;
 
 mod keyed;
-pub use keyed::{DeepseekSettings, KimiSettings, OpenrouterSettings, ZaiSettings};
+pub use keyed::{
+    DeepinfraSettings, DeepseekSettings, KimiSettings, MinimaxSettings, MoonshotSettings,
+    NovitaSettings, OllamaSettings, OpenrouterSettings, ZaiSettings,
+};
 
 pub const SETTINGS_VERSION: u32 = 1;
 pub const MIN_INTERVAL_SECS: u32 = 30;
@@ -29,6 +32,11 @@ pub struct Settings {
     pub zai: ZaiSettings,
     pub openrouter: OpenrouterSettings,
     pub deepseek: DeepseekSettings,
+    pub deepinfra: DeepinfraSettings,
+    pub moonshot: MoonshotSettings,
+    pub novita: NovitaSettings,
+    pub ollama: OllamaSettings,
+    pub minimax: MinimaxSettings,
     pub litellm: LitellmSettings,
 }
 
@@ -45,6 +53,11 @@ impl Default for Settings {
             zai: ZaiSettings::default(),
             openrouter: OpenrouterSettings::default(),
             deepseek: DeepseekSettings::default(),
+            deepinfra: DeepinfraSettings::default(),
+            moonshot: MoonshotSettings::default(),
+            novita: NovitaSettings::default(),
+            ollama: OllamaSettings::default(),
+            minimax: MinimaxSettings::default(),
             litellm: LitellmSettings::default(),
         }
     }
@@ -73,6 +86,11 @@ impl Settings {
             HarnessId::Zai => self.zai.enabled,
             HarnessId::Openrouter => self.openrouter.enabled,
             HarnessId::Deepseek => self.deepseek.enabled,
+            HarnessId::Deepinfra => self.deepinfra.enabled,
+            HarnessId::Moonshot => self.moonshot.enabled,
+            HarnessId::Novita => self.novita.enabled,
+            HarnessId::Ollama => self.ollama.enabled,
+            HarnessId::Minimax => self.minimax.enabled,
             HarnessId::Litellm => self.litellm.enabled,
         }
     }

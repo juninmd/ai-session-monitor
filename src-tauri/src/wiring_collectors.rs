@@ -91,6 +91,51 @@ fn deepseek<'a>(s: &'a Settings, secrets: &'a dyn SecretStore, ctx: &'a Ctx) -> 
     })
 }
 
+fn deepinfra<'a>(s: &'a Settings, secrets: &'a dyn SecretStore, ctx: &'a Ctx) -> CollectFuture<'a> {
+    Box::pin(async move {
+        match secrets.get(SecretKind::Deepinfra) {
+            Ok(key) => collector_deepinfra::collect(&s.deepinfra, key.as_ref(), ctx).await,
+            Err(err) => HarnessView::error(HarnessId::Deepinfra, err),
+        }
+    })
+}
+
+fn moonshot<'a>(s: &'a Settings, secrets: &'a dyn SecretStore, ctx: &'a Ctx) -> CollectFuture<'a> {
+    Box::pin(async move {
+        match secrets.get(SecretKind::Moonshot) {
+            Ok(key) => collector_moonshot::collect(&s.moonshot, key.as_ref(), ctx).await,
+            Err(err) => HarnessView::error(HarnessId::Moonshot, err),
+        }
+    })
+}
+
+fn novita<'a>(s: &'a Settings, secrets: &'a dyn SecretStore, ctx: &'a Ctx) -> CollectFuture<'a> {
+    Box::pin(async move {
+        match secrets.get(SecretKind::Novita) {
+            Ok(key) => collector_novita::collect(&s.novita, key.as_ref(), ctx).await,
+            Err(err) => HarnessView::error(HarnessId::Novita, err),
+        }
+    })
+}
+
+fn ollama<'a>(s: &'a Settings, secrets: &'a dyn SecretStore, ctx: &'a Ctx) -> CollectFuture<'a> {
+    Box::pin(async move {
+        match secrets.get(SecretKind::Ollama) {
+            Ok(key) => collector_ollama::collect(&s.ollama, key.as_ref(), ctx).await,
+            Err(err) => HarnessView::error(HarnessId::Ollama, err),
+        }
+    })
+}
+
+fn minimax<'a>(s: &'a Settings, secrets: &'a dyn SecretStore, ctx: &'a Ctx) -> CollectFuture<'a> {
+    Box::pin(async move {
+        match secrets.get(SecretKind::Minimax) {
+            Ok(key) => collector_minimax::collect(&s.minimax, key.as_ref(), ctx).await,
+            Err(err) => HarnessView::error(HarnessId::Minimax, err),
+        }
+    })
+}
+
 fn litellm<'a>(s: &'a Settings, secrets: &'a dyn SecretStore, ctx: &'a Ctx) -> CollectFuture<'a> {
     Box::pin(async move {
         match secrets.get(SecretKind::Litellm) {
@@ -184,6 +229,11 @@ pub fn adapters(claude_dir: Option<String>) -> Adapters {
             wired(HarnessId::Zai, zai),
             wired(HarnessId::Openrouter, openrouter),
             wired(HarnessId::Deepseek, deepseek),
+            wired(HarnessId::Deepinfra, deepinfra),
+            wired(HarnessId::Moonshot, moonshot),
+            wired(HarnessId::Novita, novita),
+            wired(HarnessId::Ollama, ollama),
+            wired(HarnessId::Minimax, minimax),
             wired(HarnessId::Litellm, litellm),
         ],
         claude_shim: Arc::new(ClaudeCodeShim { env_dir: claude_dir }),

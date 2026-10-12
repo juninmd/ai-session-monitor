@@ -6,6 +6,11 @@
     "zai_console",
     "openrouter_console",
     "deepseek_console",
+    "deepinfra_console",
+    "moonshot_console",
+    "novita_console",
+    "ollama_console",
+    "minimax_console",
     "project_readme"
   ],
   "history": {
@@ -42,12 +47,22 @@
     "kimi",
     "zai",
     "openrouter",
-    "deepseek"
+    "deepseek",
+    "deepinfra",
+    "moonshot",
+    "novita",
+    "ollama",
+    "minimax"
   ],
   "secretStatus": {
+    "deepinfra": true,
     "deepseek": false,
     "kimi": true,
     "litellm": true,
+    "minimax": false,
+    "moonshot": false,
+    "novita": false,
+    "ollama": true,
     "opencode": false,
     "openrouter": true,
     "zai": false

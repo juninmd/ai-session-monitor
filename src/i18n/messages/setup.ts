@@ -109,6 +109,56 @@ export const setupMessages = {
   'deepseek.note':
     'Leitura oficial da API de saldo do DeepSeek. É dinheiro, não uma cota: não há porcentagem nem reset.',
 
+  'deepinfra.title': 'Conectar ao DeepInfra',
+  'deepinfra.lead':
+    'Cole a chave de API do DeepInfra para ver o saldo, o limite de gasto e o gasto do mês.',
+  'deepinfra.detail':
+    'Leitura oficial, pela API de cobrança do DeepInfra. A chave é enviada só a api.deepinfra.com e fica no Gerenciador de Credenciais do Windows. Sem limite de gasto não há porcentagem, só valores em dólar.',
+  'deepinfra.key_label': 'Chave de API do DeepInfra',
+  'deepinfra.console': 'Abrir as chaves do DeepInfra',
+  'deepinfra.note':
+    'Leitura oficial da API de cobrança do DeepInfra. Os valores são lidos como dólares; sem limite de gasto não há porcentagem.',
+
+  'moonshot.title': 'Conectar ao Moonshot',
+  'moonshot.lead':
+    'Cole a chave de API da plataforma Moonshot (platform.moonshot.ai) para ver o saldo da conta.',
+  'moonshot.detail':
+    'Leitura oficial, pela API documentada de saldo da Moonshot. A chave é enviada só a api.moonshot.ai e fica no Gerenciador de Credenciais do Windows. Chaves da plataforma kimi.com são independentes e não funcionam aqui. O saldo é dinheiro: não há porcentagem nem reset.',
+  'moonshot.key_label': 'Chave de API do Moonshot',
+  'moonshot.console': 'Abrir as chaves do Moonshot',
+  'moonshot.note':
+    'Leitura oficial da API de saldo da Moonshot, em dólares. O saldo em dinheiro pode ficar negativo quando há valor em aberto.',
+
+  'novita.title': 'Conectar ao Novita',
+  'novita.lead':
+    'Cole a chave de API do Novita para ver o saldo da conta, o limite de crédito e as cobranças pendentes.',
+  'novita.detail':
+    'Leitura oficial, pela API documentada de cobrança do Novita. A chave é enviada só a api.novita.ai e fica no Gerenciador de Credenciais do Windows. O saldo é dinheiro: não há porcentagem nem reset.',
+  'novita.key_label': 'Chave de API do Novita',
+  'novita.console': 'Abrir as chaves do Novita',
+  'novita.note':
+    'Leitura oficial da API de saldo do Novita, em dólares. O saldo pode ficar negativo quando há valor em aberto.',
+
+  'ollama.title': 'Conectar ao Ollama Cloud',
+  'ollama.lead':
+    'Cole uma chave de API do Ollama Cloud para ver os créditos incluídos do plano e o saldo comprado.',
+  'ollama.detail':
+    'Leitura oficial, pela API documentada de saldo do Ollama Cloud. Crie a chave em ollama.com/settings/keys: a chave de assinatura da CLI nunca é lida. A chave é enviada só a ollama.com e fica no Gerenciador de Credenciais do Windows. O formato da resposta depende do plano (créditos do mês ou janelas de sessão e semana).',
+  'ollama.key_label': 'Chave de API do Ollama Cloud',
+  'ollama.console': 'Abrir as chaves do Ollama Cloud',
+  'ollama.note':
+    'Leitura oficial da API de saldo do Ollama Cloud. Planos atuais mostram créditos em dólar; planos antigos, porcentagens de sessão e semana.',
+
+  'minimax.title': 'Conectar ao MiniMax',
+  'minimax.lead':
+    'Cole a chave do Token Plan da MiniMax para ver as cotas por modelo: o intervalo em andamento e a semana.',
+  'minimax.detail':
+    'Leitura não oficial: a rota de cota do Token Plan não tem esquema publicado e pode mudar sem aviso. A chave é enviada só a api.minimax.io (servidor global) e fica no Gerenciador de Credenciais do Windows. Compare os números com o console da MiniMax na primeira vez.',
+  'minimax.key_label': 'Chave do Token Plan da MiniMax',
+  'minimax.console': 'Abrir as chaves do MiniMax',
+  'minimax.note':
+    'Leitura não oficial da cota do Token Plan da MiniMax, por modelo. Um modelo sem cota no plano não aparece.',
+
   'litellm.title': 'Conectar ao LiteLLM',
   'litellm.title_edit': 'Conexão com o LiteLLM',
   'litellm.url': 'URL do servidor',

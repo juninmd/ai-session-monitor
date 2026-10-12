@@ -15,6 +15,9 @@
       "consent": false,
       "enabled": true
     },
+    "deepinfra": {
+      "enabled": true
+    },
     "deepseek": {
       "enabled": true
     },
@@ -52,6 +55,18 @@
         "pemPath": "C:\\certs\\corp.pem"
       }
     },
+    "minimax": {
+      "enabled": true
+    },
+    "moonshot": {
+      "enabled": true
+    },
+    "novita": {
+      "enabled": true
+    },
+    "ollama": {
+      "enabled": true
+    },
     "opencode": {
       "dataDir": null,
       "enabled": true,
@@ -79,6 +94,9 @@
     "codex": {
       "binaryPath": null,
       "consent": false,
+      "enabled": true
+    },
+    "deepinfra": {
       "enabled": true
     },
     "deepseek": {
@@ -117,6 +135,18 @@
         "mode": "system"
       }
     },
+    "minimax": {
+      "enabled": true
+    },
+    "moonshot": {
+      "enabled": true
+    },
+    "novita": {
+      "enabled": true
+    },
+    "ollama": {
+      "enabled": true
+    },
     "opencode": {
       "dataDir": null,
       "enabled": true,
@@ -144,6 +174,9 @@
     "codex": {
       "binaryPath": null,
       "consent": false,
+      "enabled": true
+    },
+    "deepinfra": {
       "enabled": true
     },
     "deepseek": {
@@ -182,6 +215,18 @@
         "host": "gateway.example.dev",
         "mode": "insecure"
       }
+    },
+    "minimax": {
+      "enabled": true
+    },
+    "moonshot": {
+      "enabled": true
+    },
+    "novita": {
+      "enabled": true
+    },
+    "ollama": {
+      "enabled": true
     },
     "opencode": {
       "dataDir": null,

@@ -22,6 +22,16 @@ export function consoleLink(id: HarnessId): ExternalLink {
       return 'openrouter_console';
     case 'deepseek':
       return 'deepseek_console';
+    case 'deepinfra':
+      return 'deepinfra_console';
+    case 'moonshot':
+      return 'moonshot_console';
+    case 'novita':
+      return 'novita_console';
+    case 'ollama':
+      return 'ollama_console';
+    case 'minimax':
+      return 'minimax_console';
     default:
       return 'opencode_go_console';
   }

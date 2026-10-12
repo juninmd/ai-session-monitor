@@ -60,6 +60,11 @@ describe('selects', () => {
       'z.ai',
       'OpenRouter',
       'DeepSeek',
+      'DeepInfra',
+      'Moonshot',
+      'Novita',
+      'Ollama Cloud',
+      'MiniMax',
       'LiteLLM',
     ]);
   });

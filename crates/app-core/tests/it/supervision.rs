@@ -10,8 +10,12 @@ use crate::rig::{rig, seconds, settle};
 use crate::sink::RecordingSink;
 
 const GARBAGE: &[u8] = b"{ not json";
-/// A minute in: the three local sources read twice, OpenCode, Kimi Code, z.ai and LiteLLM (300 s) once.
-const LOCAL_TWICE: [usize; 9] = [2, 2, 2, 1, 1, 1, 1, 1, 1];
+const N: usize = HarnessId::ALL.len();
+
+/// The three local sources read twice, every remote one (300 s and slower) once.
+fn local_twice() -> Vec<usize> {
+    (0..N).map(|i| if i < 3 { 2 } else { 1 }).collect()
+}
 
 fn reads(rig: &crate::rig::Rig) -> Vec<usize> {
     HarnessId::ALL.iter().map(|&id| rig.fake(id).count()).collect()
@@ -24,16 +28,16 @@ async fn run_can_be_started_again_after_a_sink_panicked_inside_the_loop() {
     rig.run().await;
     let died = rig.take_runner().await;
     assert!(died.is_err_and(|error| error.is_panic()), "the first delivery took the loop down");
-    assert_eq!(reads(&rig), [0; 9], "and it died before reading anything");
+    assert_eq!(reads(&rig), vec![0; N], "and it died before reading anything");
 
     rig.run().await;
     rig.after(seconds(1)).await;
     assert!(!rig.runner_finished(), "the new loop keeps running");
-    assert_eq!(reads(&rig), [1; 9], "and polls again");
+    assert_eq!(reads(&rig), vec![1; N], "and polls again");
     assert!(!rig.sink.snapshots().is_empty(), "with the sink hearing about it");
 
     rig.after(seconds(60)).await;
-    assert_eq!(reads(&rig), LOCAL_TWICE, "on the normal schedule");
+    assert_eq!(reads(&rig), local_twice(), "on the normal schedule");
 }
 
 #[tokio::test(start_paused = true)]
@@ -47,7 +51,7 @@ async fn only_one_run_polls_at_a_time_even_after_a_restart() {
     settle().await;
 
     assert!(third.is_finished(), "the claim is held by the live loop, so this one returns at once");
-    assert_eq!(reads(&rig), [1; 9], "and did not poll");
+    assert_eq!(reads(&rig), vec![1; N], "and did not poll");
 }
 
 #[tokio::test(start_paused = true)]
@@ -59,9 +63,9 @@ async fn two_runs_started_together_make_one_scheduler() {
 
     let done = [first.is_finished(), second.is_finished()];
     assert_eq!(done.iter().filter(|done| **done).count(), 1, "the loser returned at once");
-    assert_eq!(reads(&rig), [1; 9]);
+    assert_eq!(reads(&rig), vec![1; N]);
     rig.after(seconds(60)).await;
-    assert_eq!(reads(&rig), LOCAL_TWICE, "one scheduler, one read per interval");
+    assert_eq!(reads(&rig), local_twice(), "one scheduler, one read per interval");
 
     rig.service.shutdown();
     first.await.expect("ends cleanly");
@@ -77,7 +81,7 @@ async fn a_cancelled_run_releases_the_claim_too() {
 
     rig.run().await;
     assert!(!rig.runner_finished());
-    assert_eq!(reads(&rig), [2; 9], "the first loop's read, then the new loop's");
+    assert_eq!(reads(&rig), vec![2; N], "the first loop's read, then the new loop's");
 }
 
 #[tokio::test(start_paused = true)]

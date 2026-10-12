@@ -3,8 +3,13 @@ import { describe, expect, it } from 'vitest';
 import { HARNESS_IDS, type HarnessId } from '../../lib/contract';
 import { fingerprint, parseSvg, unsafeFindings } from '../../test/svg';
 import { HarnessLogo } from './HarnessLogo';
+import deepinfraFile from './original/deepinfra.mono.svg?raw';
 import deepseekFile from './original/deepseek.mono.svg?raw';
 import kimiFile from './original/kimi.mono.svg?raw';
+import minimaxFile from './original/minimax.mono.svg?raw';
+import moonshotFile from './original/moonshot.mono.svg?raw';
+import novitaFile from './original/novita.mono.svg?raw';
+import ollamaFile from './original/ollama.mono.svg?raw';
 import openrouterFile from './original/openrouter.mono.svg?raw';
 import zaiFile from './original/zai.mono.svg?raw';
 import antigravityFile from './vendor/antigravity.svg?raw';
@@ -13,7 +18,7 @@ import codexFile from './vendor/codex.svg?raw';
 import litellmFile from './vendor/litellm.mono.svg?raw';
 import opencodeFile from './vendor/opencode.mono.svg?raw';
 
-/** The file each component was written from: sanitized upstream art, or (kimi, zai, openrouter, deepseek) an original glyph. */
+/** The file each component was written from: sanitized upstream art, or (kimi, zai, openrouter, deepseek, deepinfra, moonshot, novita, ollama, minimax) an original glyph. */
 const VENDORED: Record<HarnessId, string> = {
   claude: claudeFile,
   codex: codexFile,
@@ -23,6 +28,11 @@ const VENDORED: Record<HarnessId, string> = {
   zai: zaiFile,
   openrouter: openrouterFile,
   deepseek: deepseekFile,
+  deepinfra: deepinfraFile,
+  moonshot: moonshotFile,
+  novita: novitaFile,
+  ollama: ollamaFile,
+  minimax: minimaxFile,
   litellm: litellmFile,
 };
 
@@ -35,6 +45,11 @@ const TONE: Record<HarnessId, 'color' | 'mono'> = {
   zai: 'mono',
   openrouter: 'mono',
   deepseek: 'mono',
+  deepinfra: 'mono',
+  moonshot: 'mono',
+  novita: 'mono',
+  ollama: 'mono',
+  minimax: 'mono',
   litellm: 'mono',
 };
 
@@ -48,6 +63,11 @@ const DEFINED_IDS: Record<HarnessId, number> = {
   zai: 0,
   openrouter: 0,
   deepseek: 0,
+  deepinfra: 0,
+  moonshot: 0,
+  novita: 0,
+  ollama: 0,
+  minimax: 0,
   litellm: 0,
 };
 

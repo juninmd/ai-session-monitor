@@ -9,6 +9,7 @@ use crate::doubles::{FailingStore, OneUnreadable};
 use crate::rig::{rig, seconds, settle};
 
 mod binding;
+mod keyed;
 
 /// Fabricated; it only has to be recognisable in a dump.
 const KEY: &str = "sk-fake-4f9a0c2e7b1d";
