@@ -1,0 +1,237 @@
+# Manual Windows checklist
+
+What the automated tests cannot see: how the tray icon looks, where the flyout lands, who gets
+focus, and what the app does to the OS (registry, Credential Manager, toasts). Run it before a
+release and after any change to `src-tauri/`. Record the Windows build, display setup and result
+in the PR.
+
+## Setup
+
+- One Windows 10 22H2 and one Windows 11 machine if possible; a second monitor with a different
+  scale factor for the multi-monitor section.
+- Release check: `pnpm install`, `pnpm tauri build` (it first runs
+  `node src-tauri/scripts/prepare-sidecar.mjs --release` to build and stage the Claude shim),
+  then install the NSIS package (per-user install).
+- Dev check: `pnpm tauri dev`. The sidecar is a placeholder there, so installing the Claude shim
+  must fail cleanly (see Claude shim). Run `node src-tauri/scripts/prepare-sidecar.mjs` once to
+  stage a real one. With a custom `build-dir` in your cargo config, the debug exe does not end up
+  next to the staged shim: copy `src-tauri/binaries/statusline-shim-<triple>.exe` beside the debug
+  exe as `statusline-shim.exe` to test the install in dev.
+- Throwaway profile (debug builds only; compiled out of release). With these set, nothing below
+  touches your real settings, `~\.claude`, `~\.codex`, the Credential Manager or the Run key:
+
+  ```powershell
+  $env:AISM_DATA_DIR = "$env:TEMP\aism-profile"        # settings, webview data, test home
+  $env:AISM_HOME_DIR = "$env:TEMP\aism-profile\home"   # fabricated harness state goes here
+  $env:AISM_MEMORY_SECRETS = "1"                       # secrets stay in memory
+  $env:AISM_SHOW_ON_START = "1"                        # open the flyout right after start
+  ```
+
+  Both paths must be absolute; a relative one stops the app at startup with a message on stderr.
+- Use fabricated keys and fixtures only. Never paste a real API key into a test run.
+
+## Tray icon
+
+- [ ] The icon appears within two seconds of launch. Tooltip is `AI Session Monitor: sem dados`
+      until the first snapshot, then reads like
+      `Claude Code · 5 horas: 72% disponível · reseta em 1h 53m`.
+- [ ] Ring is crisp (no blur, nothing cut off) at 100, 125, 150, 175 and 200 % scaling, on a
+      light and on a dark taskbar. Sizes in use: 16, 24 and 32 px.
+- [ ] Colours read on both taskbars: blue (ok), amber (at or below the warning threshold), red
+      (critical), full red ring (out), dashed grey (no reading).
+- [ ] The arc shrinks clockwise from 12 o'clock as availability drops.
+- [ ] Changing the display scale while the app runs re-renders the icon within about 30 s.
+- [ ] Windows 11: icon pinned in the corner and icon left in the overflow flyout both work (see
+      Placement for the overflow case).
+- [ ] Restart Explorer (`taskkill /f /im explorer.exe`, then `explorer.exe`): the icon comes back.
+- [ ] Sleep and resume: the tooltip and ring are current within one minute of resume.
+
+## Left click, blur, Escape
+
+- [ ] Left click opens the flyout next to the icon; a second left click closes it and does **not**
+      reopen it. Repeat 10 times quickly.
+- [ ] Clicking another window, the desktop or the taskbar hides the flyout. Alt+Tab away hides it.
+- [ ] Escape inside the flyout hides it with no click first (the webview owns focus on open).
+- [ ] Right button and middle button on the icon never toggle the flyout.
+- [ ] Known limitation, record the behaviour: focus lost within about 250 ms of opening is
+      ignored on purpose (the tray click itself shuffles focus), so the flyout stays until the
+      next blur.
+
+## Placement
+
+- [ ] Bottom taskbar: the flyout sits above it, centred on the icon, 8 px from the work area
+      edge, never under the taskbar.
+- [ ] Top, left and right taskbars (Windows 10): the flyout sits beside the bar, never under it.
+- [ ] Auto-hide taskbar: the flyout opens by the icon, with the bar shown or hidden.
+- [ ] Icon in the overflow popup: the flyout anchors to the taskbar edge, not to the popup.
+- [ ] Icon near the screen edge: the flyout is pushed inside the work area, margin kept.
+- [ ] Two monitors, primary on the left, right, above and below: the flyout opens on the monitor
+      that holds the icon (the primary one) with correct coordinates.
+- [ ] Monitors at 100 % and 150 %: the flyout is 432 logical px wide and crisp on both, and does
+      not jump after opening.
+- [ ] Small work area (for example 1366x768 at 150 %): the body scrolls, header and tab strip
+      stay, height never drops below 200 logical px, 8 px margin all round.
+- [ ] Switching tabs changes the content height without flicker; with a bottom taskbar the
+      bottom edge stays put.
+
+## Right-click menu
+
+- [ ] Right click shows `Abrir`, `Atualizar agora`, `Sair`, in that order. Left click shows no
+      menu.
+- [ ] `Abrir` opens the flyout at the icon.
+- [ ] `Atualizar agora` refreshes; clicking it again within 10 s does nothing and shows no error.
+- [ ] `Sair` ends the process (Task Manager shows no `ai-session-monitor.exe`, no leftover
+      `statusline-shim.exe` or WebView2 children) and the icon leaves the notification area at
+      once, with no ghost after hovering it. Explorer on Windows 11 (build 26200) dropped even a
+      killed process's icon within about 100 ms, so only Windows 10 really tests this.
+- [ ] Closing the flyout window by any other route (Alt+F4 while focused) only hides it.
+
+## First run and single instance
+
+- [ ] Fresh profile: the flyout opens by itself once, after the page is painted (no empty panel
+      flash). `settings.json` then has `firstRunDone: true` and the next launch does not open it.
+- [ ] That first opening lands exactly where a click-opened one does (same position and height,
+      bottom edge 8 px above the taskbar). The very first resize of a never-shown window used to
+      come out 30 px too tall and spill over the taskbar.
+- [ ] Start the app a second time (Start menu or exe): no second tray icon, the running instance
+      opens its flyout, the new process exits within about a second.
+
+## Startup failure
+
+A release build has no console, so a startup failure has to reach the user as a toast and a
+non-zero exit code. Debug build, throwaway profile (see Setup), fabricated content only. To make
+the service unable to start, hold a corrupt `settings.json` open exclusively, so the app can
+neither read nor move it:
+
+```powershell
+$exe = ".\target\debug\ai-session-monitor.exe"   # wherever your debug exe is
+Set-Content "$env:AISM_DATA_DIR\settings.json" '{ not json' -NoNewline
+$hold = [System.IO.File]::Open("$env:AISM_DATA_DIR\settings.json", 'Open', 'ReadWrite', 'None')
+$app = Start-Process $exe -PassThru
+$app.WaitForExit(); $app.ExitCode      # expect 1
+$hold.Close()
+```
+
+- [ ] A toast titled `AI Session Monitor não iniciou` says the settings file is unreadable and
+      could not be moved, then `(código: settings_unreadable). O aplicativo vai fechar.` It shows
+      no path and no OS error text.
+- [ ] The process exits with code 1 a few seconds later, no tray icon is left behind, and
+      `settings.json` is byte for byte what you wrote. Started from a terminal, stderr also
+      carries `ai-session-monitor: cannot start: settings_unreadable: ...`.
+- [ ] After `$hold.Close()`, start again: the app runs on defaults (the Notifications section
+      covers the recovery toast).
+- [ ] Known limitation, record the behaviour: a failure before the setup hook runs (no WebView2
+      runtime, for example) only writes the stderr line and shows no toast.
+
+## Start with Windows
+
+Release build only; the test overrides skip this on purpose.
+
+- [ ] Turning the setting on creates `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` value
+      `AI Session Monitor` holding the **quoted** full path of the exe. Nothing is written under
+      `HKLM`, also when the app runs elevated.
+- [ ] Turning it off removes the value. The entry shows in Task Manager > Startup apps while on.
+- [ ] Sign out and in: the app starts on its own, with no console window, and the icon appears.
+- [ ] If you disabled the entry in Task Manager, record whether turning the setting on again
+      re-enables it (Windows keeps that user decision in `StartupApproved`).
+- [ ] Disable the entry in Task Manager > Startup apps, then restart the app: it stays disabled and
+      is not silently re-enabled at startup.
+- [ ] Move the installed exe to another folder: the Run value keeps the old path until the setting
+      is toggled off and on, which registers the new one.
+- [ ] A debug build registers its own exe path, so turn the setting off again after testing.
+
+## Notifications
+
+- [ ] With "avisar quando esgotar" on, a window running out shows a toast with the pt-BR title
+      and body. Use a fabricated harness fixture under `AISM_HOME_DIR` to force it.
+- [ ] Installed build: note which name the toast shows (the app's is expected). The notification
+      plugin only sets the app identity for installed builds, so a debug build is expected to
+      show Windows PowerShell as the source.
+- [ ] Do Not Disturb / Focus Assist holds the toast back as usual.
+- [ ] Put garbage in `settings.json` while the app is closed, then start it: one toast titled
+      `Configurações restauradas` appears right after the start (the service announces it, once
+      per start) and names `settings.corrupt-<epoch>.json` with no folder path. The app runs on
+      defaults and that copy holds the original bytes. Starting again shows no toast.
+
+## Polling
+
+The polling loop runs under a supervisor: if it ever panics, the app logs it and starts the loop
+again after 2 s (then 4, 8, 16 and 30 s while it keeps failing). Unit tests cover that schedule
+with virtual time; this is the check in a real session.
+
+- [ ] Debug build with a fabricated fixture under `AISM_HOME_DIR`: leave it running across a
+      sleep and resume, and across a network drop (disable the adapter for a minute, then enable
+      it). After each, change the fixture: the tooltip follows within one polling interval and
+      nothing needs a restart.
+- [ ] Quit from the tray menu while a Codex poll is in flight: no orphan `codex` or
+      `codex app-server` process remains in Task Manager.
+- [ ] Run a debug build from a terminal for an hour: stderr never shows
+      `ai-session-monitor: polling stopped: ...`. If it does, the app recovered by itself but
+      something panicked: keep the line (it names the cause and carries no data) and file a bug.
+
+## Secrets
+
+Use a fake key. Run this section in the **release** build: a debug build with any `AISM_*`
+switch keeps secrets in memory (`AISM_MEMORY_SECRETS`) and never reaches the Credential Manager.
+
+- [ ] Saving a LiteLLM key adds `ai-session-monitor/litellm` under Control Panel > Credential
+      Manager > Windows Credentials > Generic, persistence "Local computer". Clearing removes it.
+      The OpenCode key uses `ai-session-monitor/opencode`.
+- [ ] The key appears nowhere else: not in `settings.json`, not in the webview devtools console,
+      not in stderr.
+- [ ] A value the Credential Manager cannot hold (about 1,280 characters: it stores UTF-16 in a
+      2,560-byte blob) is rejected with a field error on the value, not a crash.
+- [ ] `cargo test -p ai-session-monitor --no-default-features -- --ignored` passes. It writes
+      and deletes `ai-session-monitor-manual-test/litellm` in the real Credential Manager, which
+      is why it is not part of the normal run.
+
+## Claude shim (bundled sidecar)
+
+This edits the tester's own `~\.claude\settings.json`; back it up first, or use the test
+overrides in a debug build.
+
+- [ ] Installed build: `statusline-shim.exe` sits next to the main exe.
+- [ ] Install (after consenting) sets the statusLine command; uninstall restores the previous
+      one exactly.
+- [ ] `pnpm tauri dev` without a staged sidecar: install fails with an error in the UI and the app
+      keeps running.
+- [ ] `CLAUDE_CONFIG_DIR` set to a fabricated folder in the shell that launches the exe (release
+      build, or a debug build with no `AISM_*` set): the Claude tab and the shim install follow
+      that folder instead of `~\.claude`, unless a folder is typed in the settings, which wins. A
+      blank value changes nothing. A debug build with any `AISM_*` override ignores the variable
+      on purpose.
+- [ ] Settings > Claude Code folder field: type an absolute fabricated folder; the shim status
+      follows that folder. Clear the field: it returns to `CLAUDE_CONFIG_DIR` or `~\.claude`.
+- [ ] App update with the command installed: after starting the new build, the copy under the data
+      dir `bin` folder matches the new bundled `statusline-shim.exe` (compare hashes) and
+      `settings.json` is byte for byte unchanged. With Claude Code running (copy busy), the app
+      still starts, the tab stays *installed*, and the next start replaces the copy.
+
+## Webview permissions
+
+The flyout may listen to backend events and call the app's own commands, nothing more
+(`src-tauri/capabilities/default.json`; a unit test pins the list). This confirms a live webview
+enforces it; repeat it after a Tauri upgrade.
+
+- [ ] Debug build, throwaway profile. Open the flyout's DevTools (F12 while it has focus, or
+      attach over WebView2 remote debugging with
+      `$env:WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS = "--remote-debugging-port=9223"`) and run in
+      the Console:
+
+      ```js
+      await window.__TAURI_INTERNALS__.invoke('plugin:event|emit', { event: 'probe', payload: null })
+      ```
+
+      It is rejected with `event.emit not allowed`. The app's own commands still work, for
+      example `await window.__TAURI_INTERNALS__.invoke('get_settings')` returns the settings.
+
+## Look and feel
+
+- [ ] A failed settings save is announced as an alert by a screen reader (Narrator).
+- [ ] A stale tab stays legible (numbers and labels) in both the light and dark themes.
+
+- [ ] Windows 11: Mica backdrop, rounded corners, shadow. Windows 10: no Mica; the panel is still
+      legible with nothing of the desktop showing through the text.
+- [ ] Dark and light system themes both render correctly.
+- [ ] No title bar, no taskbar button. Note whether the flyout appears in Alt+Tab.
+- [ ] Tab order and focus rings work with the keyboard; Escape closes.
