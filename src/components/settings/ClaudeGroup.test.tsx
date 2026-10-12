@@ -134,13 +134,16 @@ describe('the status line command', () => {
 });
 
 describe('the usage API opt-in', () => {
-  const toggle = () => screen.getByRole('switch', { name: 'API de uso da conta' });
+  const toggle = () =>
+    screen.getByRole('switch', { name: 'Limites por modelo (Opus, Sonnet, Fable)' });
 
   it('is off, labelled unofficial and explained before it is touched', () => {
     renderPanel(<ClaudeGroup />);
     expect(toggle()).not.toBeChecked();
     expect(screen.getByText('não oficial')).toBeVisible();
-    expect(screen.getByText(/sem autorização explícita nos termos da Anthropic/)).toBeVisible();
+    expect(
+      screen.getByText(/Roda claude -p "\/usage" \(custo zero, usa o login do próprio Claude Code/),
+    ).toBeVisible();
     expect(screen.queryByRole('alert')).toBeNull();
   });
 
@@ -148,7 +151,7 @@ describe('the usage API opt-in', () => {
     const { user, backend } = renderPanel(<ClaudeGroup />);
     await user.click(toggle());
     const warning = await screen.findByRole('alert');
-    expect(warning).toHaveTextContent(/A conta pode ser limitada ou bloqueada/);
+    expect(warning).toHaveTextContent(/a conta pode ser limitada ou bloqueada/);
     expect(within(warning).getByRole('button', { name: 'Ativar mesmo assim' })).toBeEnabled();
     expect(within(warning).getByRole('button', { name: 'Cancelar' })).toBeEnabled();
     expect((await backend.getSettings()).claude.oauthUsage).toBe(false);

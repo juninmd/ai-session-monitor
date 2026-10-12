@@ -44,6 +44,7 @@ fn our_files_go_and_the_backup_of_the_users_file_stays() {
     install(&env).unwrap();
     env.write(&env.rate_limits(), "{}");
     env.write(&env.oauth_cache(), "{}");
+    env.write(&env.cli_cache(), "{}");
     assert!(env.state_copy().is_file(), "the record is also kept beside settings.json");
 
     uninstall(&env).unwrap();

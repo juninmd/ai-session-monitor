@@ -5,7 +5,8 @@ import type { HarnessView } from '../../lib/contract';
 import { Icon } from '../icons';
 
 const MAX_EXTRA_META = 3;
-const OAUTH_SOURCE = 'oauth_usage';
+// Both opt-in per-model sources share one switch, one badge and one chip.
+const PER_MODEL_SOURCES = ['oauth_usage', 'cli_usage'];
 
 function sourceName(id: string): string {
   const key = `source.${id}`;
@@ -29,7 +30,7 @@ function isNamed([key, value]: [string, string], scope: string | undefined): boo
     case 'local_estimate':
       return value === 'true';
     case 'extra_source':
-      return value === OAUTH_SOURCE;
+      return PER_MODEL_SOURCES.includes(value);
     default:
       return false;
   }
@@ -55,7 +56,8 @@ export function MetaChips({ view, ctx }: { view: HarnessView; ctx: ViewContext }
   const insecure = view.id === 'litellm' && ctx.settings.litellm.tls.mode === 'insecure';
   // Windows from the usage API are on screen whatever the setting says by now.
   const oauth =
-    view.id === 'claude' && (ctx.settings.claude.oauthUsage || meta.extra_source === OAUTH_SOURCE);
+    view.id === 'claude' &&
+    (ctx.settings.claude.oauthUsage || PER_MODEL_SOURCES.includes(meta.extra_source ?? ''));
 
   return (
     <div className="meta">

@@ -238,7 +238,7 @@ describe('badges', () => {
       s.claude.oauthUsage = true;
     });
     ready(claudeView(envOf({ settings: on }), 'ok'), on);
-    expect(screen.getByText('Também: API de uso, não oficial')).toBeVisible();
+    expect(screen.getByText('Também: uso por modelo, não oficial')).toBeVisible();
   });
 
   it('show no age chip before anything was read', () => {

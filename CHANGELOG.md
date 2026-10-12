@@ -10,7 +10,9 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
   Antigravity, OpenCode, Kimi Code, z.ai and LiteLLM. Each tab shows the available share of every usage window, the
   time until it resets, a pace estimate, the data age and an official / unofficial source badge.
 - Claude Code: `rate_limits` from the `statusLine` JSON through an opt-in, reversible shim that
-  chains any existing status line; optional OAuth usage (off by default, unofficial).
+  chains any existing status line; optional per-model weeks (Opus, Sonnet, Fable; off by default,
+  unofficial) read from `claude -p "/usage"` (cost 0, the app never touches the token), with the
+  account usage API as the fallback when the CLI is absent or fails.
 - Codex: `codex app-server` rate limits with a rollout-file fallback.
 - Antigravity: local language-server quota pools (unofficial).
 - OpenCode: Go usage windows (unofficial) plus a read-only local cost and token estimate.

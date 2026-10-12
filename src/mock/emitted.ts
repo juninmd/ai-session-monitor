@@ -43,6 +43,7 @@ export function claudeEmitted(env: Env): HarnessView {
       }),
       built(env, { id: 'opus:weekly', usedPct: 18, ...week }, { group: 'opus' }),
       built(env, { id: 'sonnet:weekly', usedPct: 29, ...week }, { group: 'sonnet' }),
+      built(env, { id: 'fable:weekly', usedPct: 9, ...week }, { group: 'fable', label: 'Fable' }),
       built(
         env,
         { id: 'claude_design:weekly', usedPct: 5, ...week },

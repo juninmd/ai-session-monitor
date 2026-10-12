@@ -17,9 +17,14 @@ const KILL_TIMEOUT: Duration = Duration::from_secs(5);
 const REAP_TIMEOUT: Duration = Duration::from_secs(2);
 
 /// A command with stdio left to the caller, no console window and the direct child killed on drop.
-pub(super) fn command(program: &OsStr, args: &[OsString], cwd: Option<&Path>) -> Command {
+pub(super) fn command(
+    program: &OsStr,
+    args: &[OsString],
+    cwd: Option<&Path>,
+    env: &[(OsString, OsString)],
+) -> Command {
     let mut command = Command::new(program);
-    command.args(args).kill_on_drop(true);
+    command.args(args).envs(env.iter().map(|(k, v)| (k, v))).kill_on_drop(true);
     if let Some(cwd) = cwd {
         command.current_dir(cwd);
     }

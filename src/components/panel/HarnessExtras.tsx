@@ -8,7 +8,7 @@ import { LitellmForm } from '../setup/LitellmForm';
 import { OpencodeLinks } from '../setup/OpencodeParts';
 import { Note } from './Banner';
 
-/** Opus and Sonnet need the unofficial usage API; while it is off, say so instead of a gap. */
+/** Opus, Sonnet and Fable need the opt-in `claude -p "/usage"` or usage API source; while it is off, say so instead of a gap. */
 export function ClaudeLocked() {
   const navigation = useNavigation();
   return (

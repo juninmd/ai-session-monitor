@@ -134,6 +134,9 @@ impl Env {
     pub fn chain_file(&self) -> PathBuf {
         self.data.join("claude").join("chain.json")
     }
+    pub fn cli_cache(&self) -> PathBuf {
+        self.data.join("claude").join("cli-usage.json")
+    }
     pub fn oauth_cache(&self) -> PathBuf {
         self.data.join("claude").join("oauth-usage.json")
     }

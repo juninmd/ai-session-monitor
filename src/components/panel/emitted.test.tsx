@@ -42,7 +42,7 @@ const CASES: Case[] = [
       'Opus',
       'Sonnet',
       'Claude Design',
-      'Também: API de uso, não oficial',
+      'Também: uso por modelo, não oficial',
     ],
   },
   {
@@ -106,7 +106,7 @@ describe('a source that sends what its collector emits', () => {
   });
 
   it('keeps the OAuth hint away once the usage API is on', () => {
-    expect(show(claudeEmitted(envOf()))).not.toContain('só aparecem pela API de uso da conta');
+    expect(show(claudeEmitted(envOf()))).not.toContain('só aparecem rodando claude -p');
   });
 });
 

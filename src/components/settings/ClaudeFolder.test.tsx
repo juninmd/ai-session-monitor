@@ -65,7 +65,9 @@ describe('the Claude Code folder', () => {
   it('does not look again when another Claude setting changes', async () => {
     const { user, backend } = renderPanel(<ClaudeGroup />);
     await screen.findByText('Instalado');
-    await user.click(screen.getByRole('switch', { name: 'API de uso da conta' }));
+    await user.click(
+      screen.getByRole('switch', { name: 'Limites por modelo (Opus, Sonnet, Fable)' }),
+    );
     await user.click(await screen.findByRole('button', { name: 'Ativar mesmo assim' }));
     await vi.waitFor(async () =>
       expect((await backend.getSettings()).claude.oauthUsage).toBe(true),

@@ -215,7 +215,9 @@ describe('Claude per-model weeks', () => {
     const { user, openSettings } = ready(claudeView(envOf(), 'ok'));
     const locked = section('Semana por modelo');
     expect(
-      within(locked).getByText(/Opus e Sonnet só aparecem pela API de uso da conta/),
+      within(locked).getByText(
+        /Opus, Sonnet e Fable só aparecem rodando claude -p "\/usage" \(custo zero\) ou, sem o CLI, pela API de uso da conta/,
+      ),
     ).toBeVisible();
     await user.click(within(locked).getByRole('button', { name: 'Abrir configurações' }));
     expect(openSettings).toHaveBeenCalledExactlyOnceWith('claude');

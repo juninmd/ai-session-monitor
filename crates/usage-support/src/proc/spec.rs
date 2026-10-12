@@ -20,6 +20,8 @@ pub struct CommandSpec {
     pub program: OsString,
     pub args: Vec<OsString>,
     pub cwd: Option<PathBuf>,
+    /// Variables added to the inherited environment (never shown in `Debug`).
+    pub env: Vec<(OsString, OsString)>,
     /// Written to the child's stdin, which is then closed. `None` gives the child an empty stdin.
     pub stdin: Option<Vec<u8>>,
     /// Hard wall-clock limit (at most ten minutes), after which the process tree is killed.
@@ -37,6 +39,7 @@ impl CommandSpec {
             program: program.into(),
             args: Vec::new(),
             cwd: None,
+            env: Vec::new(),
             stdin: None,
             timeout: Duration::from_secs(30),
             max_stdout: 1 << 20,
@@ -52,6 +55,7 @@ impl fmt::Debug for CommandSpec {
             .field("program", &name)
             .field("args", &self.args.len())
             .field("cwd", &self.cwd.is_some())
+            .field("env", &self.env.len())
             .field("stdin_bytes", &self.stdin.as_ref().map(Vec::len))
             .field("timeout", &self.timeout)
             .field("max_stdout", &self.max_stdout)

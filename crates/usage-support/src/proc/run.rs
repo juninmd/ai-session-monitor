@@ -20,11 +20,12 @@ const PIPE_GRACE: Duration = Duration::from_millis(250);
 ///
 /// Dropping the future also ends the process tree.
 pub async fn run_capped(spec: CommandSpec) -> Result<ProcOutput, HarnessError> {
-    let CommandSpec { program, args, cwd, stdin, timeout: limit, max_stdout, max_stderr } = spec;
+    let CommandSpec { program, args, cwd, env, stdin, timeout: limit, max_stdout, max_stderr } =
+        spec;
     check_cwd(cwd.as_deref())?;
     let deadline = Instant::now() + limit.min(MAX_TIMEOUT);
 
-    let mut launch = command(&program, &args, cwd.as_deref());
+    let mut launch = command(&program, &args, cwd.as_deref(), &env);
     launch
         .stdin(if stdin.is_some() { Stdio::piped() } else { Stdio::null() })
         .stdout(Stdio::piped())

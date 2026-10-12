@@ -252,3 +252,13 @@ fn debug_output_shows_sizes_and_never_arguments_stdin_or_output() {
     let text = format!("{output:?} {output:#?}");
     assert!(!text.contains("abc123") && !text.contains("secret-stderr"), "{text}");
 }
+
+#[tokio::test]
+async fn extra_environment_reaches_the_child_and_nothing_else_changes() {
+    let mut spec = peer(&["env", "AISM_TEST_EXTRA_ENV"]);
+    spec.env = vec![("AISM_TEST_EXTRA_ENV".into(), "valor ção".into())];
+    let out = run_capped(spec).await.unwrap();
+    assert_eq!(String::from_utf8_lossy(&out.stdout).trim(), "valor ção");
+    let out = run(&["env", "AISM_TEST_EXTRA_ENV"]).await;
+    assert_eq!(String::from_utf8_lossy(&out.stdout).trim(), "<unset>");
+}
