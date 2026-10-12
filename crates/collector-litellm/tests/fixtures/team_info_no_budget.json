@@ -1,0 +1,18 @@
+{
+  "team_id": "team-borealis",
+  "team_info": {
+    "team_id": "team-borealis",
+    "team_alias": "Borealis",
+    "spend": 12.0,
+    "max_budget": null,
+    "budget_duration": null,
+    "budget_reset_at": null,
+    "rpm_limit": null,
+    "tpm_limit": null,
+    "max_parallel_requests": null,
+    "members_with_roles": [],
+    "metadata": {}
+  },
+  "keys": [],
+  "team_memberships": []
+}

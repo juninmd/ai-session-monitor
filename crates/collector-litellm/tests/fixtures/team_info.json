@@ -1,0 +1,22 @@
+{
+  "team_id": "team-borealis",
+  "team_info": {
+    "team_id": "team-borealis",
+    "team_alias": "Borealis",
+    "spend": 910.25,
+    "max_budget": 1000.0,
+    "budget_duration": "7d",
+    "budget_reset_at": "2026-10-14T00:00:00Z",
+    "rpm_limit": null,
+    "tpm_limit": 1000000,
+    "max_parallel_requests": null,
+    "members_with_roles": [
+      { "user_id": "user-aurora", "user_email": "decoy.aurora@example.test", "role": "admin" }
+    ],
+    "metadata": { "api_key": "decoy-metadata-key" }
+  },
+  "keys": [
+    { "token": "decoy-token-0201", "key_alias": "decoy-team-key", "spend": 1.0, "max_budget": 2.0 }
+  ],
+  "team_memberships": []
+}

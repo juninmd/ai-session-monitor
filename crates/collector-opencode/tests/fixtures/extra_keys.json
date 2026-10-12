@@ -1,0 +1,32 @@
+{
+  "usage": {
+    "rolling": {
+      "status": "ok",
+      "percent": 12,
+      "resetsAt": "2027-01-15T10:10:00.000Z",
+      "burst": {
+        "tokens": 3
+      },
+      "label": "five hour"
+    },
+    "weekly": {
+      "status": "ok",
+      "percent": 34,
+      "resetsAt": "2027-01-18T00:00:00.000Z",
+      "note": null
+    },
+    "monthly": {
+      "status": "ok",
+      "percent": 56,
+      "resetsAt": "2027-02-03T14:20:00.000Z",
+      "currency": "USD"
+    },
+    "yearly": {
+      "status": "ok",
+      "percent": 1,
+      "resetsAt": "2027-01-15T10:10:00.000Z"
+    }
+  },
+  "plan": "fabricated-plan",
+  "requestId": "req-fab-0001"
+}

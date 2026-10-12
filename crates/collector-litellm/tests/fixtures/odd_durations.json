@@ -1,0 +1,17 @@
+{
+  "key": "decoy-key-0006",
+  "info": {
+    "key_alias": "odd-durations",
+    "spend": 1.0,
+    "max_budget": 10.0,
+    "budget_duration": "90m",
+    "budget_reset_at": "2026-10-11T13:30:00Z",
+    "model_max_budget_usage": {
+      "model-two-hours": { "current_spend": 1.0, "budget_limit": 4.0, "time_period": "2h" },
+      "model-monthly": { "current_spend": 2.0, "budget_limit": 4.0, "time_period": "1mo" },
+      "model-garbage": { "current_spend": 3.0, "budget_limit": 4.0, "time_period": "soon" },
+      "model-zero": { "current_spend": 0.4, "budget_limit": 4.0, "time_period": "0d" },
+      "model-no-period": { "current_spend": 0.2, "budget_limit": 4.0 }
+    }
+  }
+}

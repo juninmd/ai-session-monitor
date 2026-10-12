@@ -1,0 +1,11 @@
+{
+  "alfa": 1,
+  "statusLine": {
+    "type": "static",
+    "text": "olá"
+  },
+  "omega": [
+    true,
+    false
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "userStatus": {
+    "planStatus": { "planInfo": { "planName": "Pro" } },
+    "cascadeModelConfigData": {
+      "clientModelConfigs": [
+        { "label": "Gemini 3 Pro (High)", "modelOrAlias": { "model": "MODEL_PLACEHOLDER_M8" } },
+        { "label": "Claude Sonnet 4.5", "modelOrAlias": { "model": "MODEL_CLAUDE_4_5_SONNET" } }
+      ]
+    }
+  }
+}

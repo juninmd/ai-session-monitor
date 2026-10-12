@@ -1,0 +1,18 @@
+{
+  "user_id": "user-aurora",
+  "user_info": {
+    "user_id": "user-aurora",
+    "user_alias": "Aurora",
+    "user_email": "decoy.aurora@example.test",
+    "spend": 8.0,
+    "max_budget": null,
+    "budget_duration": null,
+    "budget_reset_at": null,
+    "rpm_limit": null,
+    "tpm_limit": null,
+    "max_parallel_requests": null,
+    "metadata": {}
+  },
+  "keys": [],
+  "teams": []
+}

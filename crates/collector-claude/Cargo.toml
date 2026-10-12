@@ -1,0 +1,23 @@
+[package]
+name = "collector-claude"
+description = "Claude Code collector: statusLine shim data, settings.json installer, optional OAuth usage"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+usage-model.workspace = true
+usage-support.workspace = true
+serde.workspace = true
+# preserve_order keeps the user's key order when settings.json is rewritten. Cargo unifies the
+# feature across the whole workspace build; nothing else here depends on sorted maps.
+serde_json = { workspace = true, features = ["preserve_order"] }
+tokio.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true
