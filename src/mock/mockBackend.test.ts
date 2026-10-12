@@ -18,7 +18,14 @@ describe('secrets', () => {
   it('are write-only flags: the value never comes back', async () => {
     const backend = make({ scenario: 'fresh' });
     const status = await backend.setSecret('opencode', 'fab-key-1');
-    expect(status).toEqual({ litellm: false, opencode: true, kimi: false, zai: false });
+    expect(status).toEqual({
+      litellm: false,
+      opencode: true,
+      kimi: false,
+      zai: false,
+      openrouter: false,
+      deepseek: false,
+    });
     expect(
       JSON.stringify([status, await backend.secretStatus(), await backend.getSnapshot()]),
     ).not.toContain('fab-key-1');
@@ -42,6 +49,8 @@ describe('secrets', () => {
       opencode: false,
       kimi: true,
       zai: true,
+      openrouter: true,
+      deepseek: true,
     });
   });
 

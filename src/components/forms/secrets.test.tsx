@@ -126,7 +126,15 @@ describe('saving a secret', () => {
     const send = vi.spyOn(backend, 'setSecret').mockImplementation(
       () =>
         new Promise((done) => {
-          release = () => done({ litellm: false, opencode: true, kimi: false, zai: false });
+          release = () =>
+            done({
+              litellm: false,
+              opencode: true,
+              kimi: false,
+              zai: false,
+              openrouter: false,
+              deepseek: false,
+            });
         }),
     );
     await user.type(field(), SECRET);

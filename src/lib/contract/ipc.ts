@@ -2,7 +2,14 @@
 // src-tauri. contract/ipc-commands.json pins the names on both sides.
 import { z } from 'zod';
 
-export const SecretKindSchema = z.enum(['litellm', 'opencode', 'kimi', 'zai']);
+export const SecretKindSchema = z.enum([
+  'litellm',
+  'opencode',
+  'kimi',
+  'zai',
+  'openrouter',
+  'deepseek',
+]);
 export type SecretKind = z.infer<typeof SecretKindSchema>;
 
 export const SecretStatusSchema = z.strictObject({
@@ -10,6 +17,8 @@ export const SecretStatusSchema = z.strictObject({
   opencode: z.boolean(),
   kimi: z.boolean(),
   zai: z.boolean(),
+  openrouter: z.boolean(),
+  deepseek: z.boolean(),
 });
 export type SecretStatus = z.infer<typeof SecretStatusSchema>;
 
@@ -19,6 +28,8 @@ export const ExternalLinkSchema = z.enum([
   'opencode_billing',
   'kimi_console',
   'zai_console',
+  'openrouter_console',
+  'deepseek_console',
   'project_readme',
 ]);
 export type ExternalLink = z.infer<typeof ExternalLinkSchema>;

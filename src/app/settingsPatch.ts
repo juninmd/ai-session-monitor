@@ -15,6 +15,10 @@ export function withEnabled(settings: Settings, id: HarnessId, enabled: boolean)
       return { ...settings, kimi: { ...settings.kimi, enabled } };
     case 'zai':
       return { ...settings, zai: { ...settings.zai, enabled } };
+    case 'openrouter':
+      return { ...settings, openrouter: { ...settings.openrouter, enabled } };
+    case 'deepseek':
+      return { ...settings, deepseek: { ...settings.deepseek, enabled } };
     case 'litellm':
       return { ...settings, litellm: { ...settings.litellm, enabled } };
   }

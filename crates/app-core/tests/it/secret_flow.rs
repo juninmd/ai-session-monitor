@@ -16,6 +16,8 @@ const LITELLM: HarnessId = HarnessId::Litellm;
 const OPENCODE: HarnessId = HarnessId::Opencode;
 const KIMI: HarnessId = HarnessId::Kimi;
 const ZAI: HarnessId = HarnessId::Zai;
+const OPENROUTER: HarnessId = HarnessId::Openrouter;
+const DEEPSEEK: HarnessId = HarnessId::Deepseek;
 
 fn only_field(name: &str) -> BTreeMap<String, String> {
     BTreeMap::from([("field".to_owned(), name.to_owned())])
@@ -65,6 +67,31 @@ async fn each_secret_refreshes_only_its_own_harness() {
     assert_eq!(status, SecretStatus { opencode: true, ..SecretStatus::default() });
     assert_eq!((rig.fake(OPENCODE).count(), rig.fake(LITELLM).count()), (2, 1));
     assert_eq!(rig.fake(OPENCODE).calls()[1].opencode_key.as_deref(), Some(KEY));
+}
+
+#[tokio::test(start_paused = true)]
+async fn the_openrouter_and_deepseek_keys_refresh_only_their_own_harness() {
+    let rig = rig().start().await;
+    rig.at(seconds(1)).await;
+
+    let status = rig.service.set_secret(SecretKind::Openrouter, KEY.to_owned()).expect("stored");
+    settle().await;
+    assert_eq!(status, SecretStatus { openrouter: true, ..SecretStatus::default() });
+    assert_eq!((rig.fake(OPENROUTER).count(), rig.fake(DEEPSEEK).count()), (2, 1));
+    let call = &rig.fake(OPENROUTER).calls()[1];
+    assert_eq!((call.openrouter_key.as_deref(), call.deepseek_key.as_deref()), (Some(KEY), None));
+
+    let status = rig.service.set_secret(SecretKind::Deepseek, KEY.to_owned()).expect("stored");
+    settle().await;
+    assert_eq!(
+        status,
+        SecretStatus { openrouter: true, deepseek: true, ..SecretStatus::default() }
+    );
+    assert_eq!((rig.fake(OPENROUTER).count(), rig.fake(DEEPSEEK).count()), (2, 2));
+    assert_eq!(rig.fake(DEEPSEEK).calls()[1].deepseek_key.as_deref(), Some(KEY));
+    for id in [HarnessId::Claude, HarnessId::Codex, KIMI, ZAI, LITELLM] {
+        assert_eq!(rig.fake(id).count(), 1, "{id:?} does not read these secrets");
+    }
 }
 
 #[tokio::test(start_paused = true)]

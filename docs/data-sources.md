@@ -14,7 +14,7 @@ marked *unverified* have never been exercised against a live account.
   passed is shown as reset, without a status.
 - **Read-only toward providers.** The app never writes to a provider, never refreshes or stores a
   provider's OAuth tokens, never uses browser cookies and never scrapes dashboards.
-- **Secrets.** The only secrets the app stores are the LiteLLM, OpenCode Go, Kimi Code and z.ai API keys you paste.
+- **Secrets.** The only secrets the app stores are the LiteLLM, OpenCode Go, Kimi Code, z.ai, OpenRouter and DeepSeek API keys you paste.
   They live in the Windows Credential Manager (`ai-session-monitor/<kind>`), never in
   `settings.json`, snapshots, logs or events. The webview can write, clear and ask *whether* a
   secret exists, never read it back.
@@ -111,6 +111,32 @@ marked *unverified* have never been exercised against a live account.
 | Confidence | **Medium.** The vendor's `zai-org/ZCode` document `docs/coding-plan-quota-remaining-api.md` and the `akitaonrails/ai-usagebar` source (`src/zai/types.rs`, `fetch.rs`, `docs/vendor-endpoints.md`) agree on the path, fields and unit codes (opened 2026-10-11/12); the CodexBar plugin and one blog send the key as Bearer instead, so the header form is the main residual risk (a wrong form surfaces as *could not verify the key*). Never exercised against a live account; the key page `https://z.ai/manage-apikey/apikey-list` could not be verified (single-page app). |
 | Off switch | Clear the key or disable the tab. |
 
+## OpenRouter — oficial (key and credits endpoints)
+
+| | |
+|---|---|
+| Remote | Two `GET`s with the OpenRouter API key you paste, as `Authorization: Bearer`. The host is a constant (`https://openrouter.ai`; https only, no redirects, 64 KiB body cap, 15 s timeout). `/api/v1/key` ([docs](https://openrouter.ai/docs/api/reference/limits), opened 2026-10-12) decides the poll. `/api/v1/credits` ([docs](https://openrouter.ai/docs/api/api-reference/credits/get-credits), opened 2026-10-12) is best effort. `/activity` is not used. |
+| Shape | Key: `data: {limit, limit_remaining, limit_reset, usage, usage_daily, usage_weekly, usage_monthly, is_free_tier}`; `limit` and `limit_remaining` are `null` for an unlimited key. Credits: `data: {total_credits, total_usage}`. All amounts are credits in US dollars. |
+| Windows | One `key_limit` money window only when `limit` is a positive number: used = `limit - limit_remaining` (else `usage`), share = used / limit, shown unclamped when the key overspent. The reset moment is **not** reported (`limit_reset` only names a cadence), so `resetsAt` stays unknown. A key with no limit has no window: unlimited is not zero and not a percentage. |
+| Facts | `usage_daily` (UTC day), `usage_weekly` (Monday week), `usage_monthly` (UTC month), `usage_total`, and `balance` = `total_credits - total_usage` when the credits call answered. A missing or hostile figure is left out, never zero. |
+| Management key | The reference says `/credits` needs a **management** key, so an ordinary key gets a 403 there. That, and any other failure of the credits call (429, 5xx, timeout, odd body), only leaves `balance` out; it never fails the poll. A normal key therefore costs one extra refused request per poll (every 300 s or slower). |
+| Failures | On the key document: 401/403 `unauthorized` (not ambiguous: the API is documented), 402 `bad_response` with `httpStatus = 402`, 429 `rate_limited` (honours `Retry-After`, capped at 1 h), 5xx `server_error`, 404 `endpoint_changed`. Response text is never read or shown. |
+| Never | No cookies, no browser session, no dashboard scraping, no management key requirement, no reading of other tools' credentials. The key is only what you paste into the app. |
+| Confidence | **High** on paths and fields (official docs), *unverified* in practice: never exercised against a live account. `limit_remaining` semantics after a reset were taken from the docs text only. |
+| Off switch | Clear the key or disable the tab. |
+
+## DeepSeek — oficial (balance endpoint)
+
+| | |
+|---|---|
+| Remote | `GET https://api.deepseek.com/user/balance` with the DeepSeek API key you paste, as `Authorization: Bearer` ([balance docs](https://api-docs.deepseek.com/api/get-user-balance) and the [quick start](https://api-docs.deepseek.com/) for the Bearer scheme, both opened 2026-10-12). The host is a constant (https only, no redirects, 64 KiB body cap, 15 s timeout). |
+| Shape | `{is_available, balance_infos: [{currency, total_balance, granted_balance, topped_up_balance}]}`; `currency` is `CNY` or `USD` and the balances are decimal strings. |
+| Facts | A balance has no limit and no reset, so there is **no window and no percentage**: per currency `balance_<cur>`, `granted_<cur>`, `topped_up_<cur>` (unit `cny` or `usd`). Currencies are never summed or converted. Unknown currency codes, negative, non-finite or huge values are left out; the first entry of a currency stands. An empty `balance_infos` is a view with no facts, not an error; only unknown currencies or the wrong shape are `endpoint_changed`. `is_available` is not shown. |
+| Failures | 401/403 `unauthorized` (not ambiguous), 402 `bad_response` with `httpStatus = 402` (the service's "insufficient balance" has no code of its own), 429 `rate_limited`, 5xx `server_error`, 404 `endpoint_changed`. Response text is never read or shown. |
+| Never | No cookies, no browser session, no dashboard scraping. The key is only what you paste into the app. |
+| Confidence | **High** on the path and fields (official docs), *unverified* in practice: never exercised against a live account. |
+| Off switch | Clear the key or disable the tab. |
+
 ## Local files
 
 | Path | Content |
@@ -120,4 +146,4 @@ marked *unverified* have never been exercised against a live account.
 | `...\claude\rate_limits.json` | The Claude `rate_limits` object plus `capturedAt`. |
 | `...\claude\shim-state.json`, `chain.json` | The previous `statusLine`, kept for exact restore and chaining. Non-default Claude profiles get `shim-state-<key>.json` / `chain-<key>.json` (and `bin\<key>\`). A second copy of the record sits at `<config dir>\settings.json.aism-state`. |
 | `...\bin\statusline-shim.exe` | Stable copy of the shim referenced from Claude Code's settings; refreshed from the bundled build at each start. |
-| Windows Credential Manager | `ai-session-monitor/litellm`, `ai-session-monitor/opencode`, `ai-session-monitor/kimi`, `ai-session-monitor/zai`. |
+| Windows Credential Manager | `ai-session-monitor/litellm`, `ai-session-monitor/opencode`, `ai-session-monitor/kimi`, `ai-session-monitor/zai`, `ai-session-monitor/openrouter`, `ai-session-monitor/deepseek`. |

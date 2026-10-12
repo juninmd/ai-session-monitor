@@ -63,6 +63,8 @@ fn credential_manager_targets_are_namespaced_per_kind() {
     assert_eq!(target_name(SERVICE, SecretKind::Opencode), "ai-session-monitor/opencode");
     assert_eq!(target_name(SERVICE, SecretKind::Kimi), "ai-session-monitor/kimi");
     assert_eq!(target_name(SERVICE, SecretKind::Zai), "ai-session-monitor/zai");
+    assert_eq!(target_name(SERVICE, SecretKind::Openrouter), "ai-session-monitor/openrouter");
+    assert_eq!(target_name(SERVICE, SecretKind::Deepseek), "ai-session-monitor/deepseek");
 }
 
 #[test]

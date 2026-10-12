@@ -49,7 +49,12 @@ function readyChip(view: HarnessView, summary: Summary | null, ctx: ViewContext)
       sr: tq('tab.sr.pct', showUsed, { pct: label, status: t(`status.${summary.status}`) }),
     };
   }
-  if (view.windows.length === 0) return text(t('tab.no_windows'), t('tab.sr.no_windows'));
+  if (view.windows.length === 0) {
+    // Money amounts without a window (a balance) read as values, not as a missing quota.
+    return view.facts.length > 0
+      ? text(t('tab.values'), t('tab.sr.values'))
+      : text(t('tab.no_windows'), t('tab.sr.no_windows'));
+  }
   if (view.windows.every((w) => isExpired(w, ctx.nowSecs))) {
     return text(t('tab.expired'), t('tab.sr.expired'), 'refresh');
   }

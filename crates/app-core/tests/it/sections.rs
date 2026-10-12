@@ -33,6 +33,14 @@ fn zai(settings: &mut Settings) {
     settings.zai.enabled = false;
 }
 
+fn openrouter(settings: &mut Settings) {
+    settings.openrouter.enabled = false;
+}
+
+fn deepseek(settings: &mut Settings) {
+    settings.deepseek.enabled = false;
+}
+
 fn litellm(settings: &mut Settings) {
     settings.litellm.base_url = Some("https://litellm.example.test".to_owned());
 }
@@ -106,6 +114,16 @@ async fn the_kimi_section_is_watched() {
 #[tokio::test(start_paused = true)]
 async fn the_zai_section_is_watched() {
     switching_off_drops_the_read_in_flight(HarnessId::Zai, zai).await;
+}
+
+#[tokio::test(start_paused = true)]
+async fn the_openrouter_section_is_watched() {
+    switching_off_drops_the_read_in_flight(HarnessId::Openrouter, openrouter).await;
+}
+
+#[tokio::test(start_paused = true)]
+async fn the_deepseek_section_is_watched() {
+    switching_off_drops_the_read_in_flight(HarnessId::Deepseek, deepseek).await;
 }
 
 #[tokio::test(start_paused = true)]

@@ -12,10 +12,13 @@ pub enum SecretKind {
     Opencode,
     Kimi,
     Zai,
+    Openrouter,
+    Deepseek,
 }
 
 impl SecretKind {
-    pub const ALL: [Self; 4] = [Self::Litellm, Self::Opencode, Self::Kimi, Self::Zai];
+    pub const ALL: [Self; 6] =
+        [Self::Litellm, Self::Opencode, Self::Kimi, Self::Zai, Self::Openrouter, Self::Deepseek];
 
     /// Credential Manager target name suffix.
     pub const fn as_str(self) -> &'static str {
@@ -24,6 +27,8 @@ impl SecretKind {
             Self::Opencode => "opencode",
             Self::Kimi => "kimi",
             Self::Zai => "zai",
+            Self::Openrouter => "openrouter",
+            Self::Deepseek => "deepseek",
         }
     }
 }
@@ -35,6 +40,8 @@ pub struct SecretStatus {
     pub opencode: bool,
     pub kimi: bool,
     pub zai: bool,
+    pub openrouter: bool,
+    pub deepseek: bool,
 }
 
 /// Known destinations the UI may ask the backend to open. The UI never passes a URL, so a
@@ -46,15 +53,19 @@ pub enum ExternalLink {
     OpencodeBilling,
     KimiConsole,
     ZaiConsole,
+    OpenrouterConsole,
+    DeepseekConsole,
     ProjectReadme,
 }
 
 impl ExternalLink {
-    pub const ALL: [Self; 5] = [
+    pub const ALL: [Self; 7] = [
         Self::OpencodeGoConsole,
         Self::OpencodeBilling,
         Self::KimiConsole,
         Self::ZaiConsole,
+        Self::OpenrouterConsole,
+        Self::DeepseekConsole,
         Self::ProjectReadme,
     ];
 }

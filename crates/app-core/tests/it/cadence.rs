@@ -27,7 +27,7 @@ async fn each_harness_follows_its_own_cadence() {
     assert_eq!(offsets(HarnessId::Codex), secs(&every(30, 659)), "the general interval");
     assert_eq!(offsets(HarnessId::Antigravity), secs(&every(30, 659)));
     assert_eq!(offsets(OPENCODE), secs(&[0, 300, 600]), "the Go endpoint is not polled faster");
-    for id in [HarnessId::Kimi, HarnessId::Zai] {
+    for id in [HarnessId::Kimi, HarnessId::Zai, HarnessId::Openrouter, HarnessId::Deepseek] {
         assert_eq!(offsets(id), secs(&[0, 300, 600]), "{id:?} is remote too");
     }
     assert_eq!(offsets(LITELLM), secs(&[0, 600]), "LiteLLM has its own interval");

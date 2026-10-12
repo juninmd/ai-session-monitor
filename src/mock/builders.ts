@@ -1,7 +1,7 @@
 // One sample view per source and mood. Fabricated numbers only; see fixtures.ts.
 import type { HarnessId, HarnessView, Notice } from '../lib/contract';
 import { type Env, fact, type Mood, notice, viewOf, windowOf } from './fixtures';
-import { kimiView, zaiView } from './keyed';
+import { deepseekView, kimiView, openrouterView, zaiView } from './keyed';
 
 const CLAUDE = {
   ok: { five: 48, week: 31, fiveReset: 113, opus: 18, sonnet: 29, fable: 9 },
@@ -226,5 +226,7 @@ export const BUILDERS: Record<HarnessId, (env: Env, mood: Mood) => HarnessView> 
   opencode: opencodeView,
   kimi: kimiView,
   zai: zaiView,
+  openrouter: openrouterView,
+  deepseek: deepseekView,
   litellm: litellmView,
 };

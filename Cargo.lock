@@ -26,9 +26,11 @@ dependencies = [
  "collector-antigravity",
  "collector-claude",
  "collector-codex",
+ "collector-deepseek",
  "collector-kimi",
  "collector-litellm",
  "collector-opencode",
+ "collector-openrouter",
  "collector-zai",
  "keyring-core",
  "serde_json",
@@ -672,6 +674,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "collector-deepseek"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "tokio",
+ "usage-model",
+ "usage-support",
+]
+
+[[package]]
 name = "collector-kimi"
 version = "0.1.0"
 dependencies = [
@@ -702,6 +714,16 @@ dependencies = [
  "rusqlite",
  "serde_json",
  "tempfile",
+ "tokio",
+ "usage-model",
+ "usage-support",
+]
+
+[[package]]
+name = "collector-openrouter"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
  "tokio",
  "usage-model",
  "usage-support",

@@ -2,7 +2,7 @@
 
 Windows-first system-tray app (Tauri 2 + Vite + React + TypeScript, Rust workspace) that shows how
 much of each AI coding tool's session is still available: Claude Code, Codex, Antigravity,
-OpenCode, Kimi Code, z.ai and a parametrizable LiteLLM connection. UI language is pt-BR; code, identifiers,
+OpenCode, Kimi Code, z.ai, OpenRouter, DeepSeek and a parametrizable LiteLLM connection. UI language is pt-BR; code, identifiers,
 comments and commits are English. Decisions: `docs/adr/0001-architecture.md`. Wire contract:
 `docs/ipc.md`. Data sources and trust levels: `docs/data-sources.md`.
 
@@ -12,7 +12,7 @@ comments and commits are English. Decisions: `docs/adr/0001-architecture.md`. Wi
 |---|---|---|
 | `crates/usage-model` | Vocabulary: views, windows, settings, IPC payloads, pace/status rules | serde only |
 | `crates/usage-support` | Hardened HTTP client, atomic file writes, bounded process runner, redaction, RFC 3339 | usage-model |
-| `crates/collector-{claude,codex,antigravity,litellm,opencode,kimi,zai}` | One source each: `collect(...) -> HarnessView` | usage-model, usage-support |
+| `crates/collector-{claude,codex,antigravity,litellm,opencode,kimi,zai,openrouter,deepseek}` | One source each: `collect(...) -> HarnessView` | usage-model, usage-support |
 | `crates/statusline-shim` | Tiny binary Claude Code runs as its `statusLine`; std + serde_json only | none |
 | `crates/app-core` | Window-free core: settings store, hub, scheduler, notification plan, `AppService` | usage-model, usage-support (no collectors) |
 | `src-tauri` | Composition root: tray, flyout window, keyring, wiring, commands | app-core, collectors |

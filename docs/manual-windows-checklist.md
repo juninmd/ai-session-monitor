@@ -192,12 +192,20 @@ switch keeps secrets in memory (`AISM_MEMORY_SECRETS`) and never reaches the Cre
 - [ ] Saving a LiteLLM key adds `ai-session-monitor/litellm` under Control Panel > Credential
       Manager > Windows Credentials > Generic, persistence "Local computer". Clearing removes it.
       The OpenCode key uses `ai-session-monitor/opencode`, Kimi Code `ai-session-monitor/kimi`
-      and z.ai `ai-session-monitor/zai`.
+      z.ai `ai-session-monitor/zai`, OpenRouter `ai-session-monitor/openrouter` and DeepSeek
+      `ai-session-monitor/deepseek`.
 - [ ] With seven tabs the strip scrolls sideways in the flyout: Tab lands on the selected tab,
       the arrow keys move and wrap, the focused tab scrolls into view and shows a visible ring.
 - [ ] Kimi Code and z.ai tabs: with no key they show the setup card and the "não oficial" badge;
       with a real key the windows match the vendor's own page; a wrong key reads "não foi possível
       verificar a chave", not "chave errada". The console links open the vendor page.
+- [ ] OpenRouter and DeepSeek tabs (never exercised against a live account yet): with no key they
+      show the setup card and no "não oficial" badge (both are documented APIs). OpenRouter with a
+      limited key shows one "Limite de gasto da chave" window that matches the dashboard; an
+      unlimited key shows usage facts and no percentage; the balance appears only with a
+      management key and matches the credits page. DeepSeek shows one set of facts per currency,
+      no percentage, and the tab chip reads "Valores". A wrong key reads "chave ou login
+      recusado". The console links open the vendor key pages.
 - [ ] The key appears nowhere else: not in `settings.json`, not in the webview devtools console,
       not in stderr.
 - [ ] A value the Credential Manager cannot hold (about 1,280 characters: it stores UTF-16 in a

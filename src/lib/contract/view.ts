@@ -9,6 +9,8 @@ export const HARNESS_IDS = [
   'opencode',
   'kimi',
   'zai',
+  'openrouter',
+  'deepseek',
   'litellm',
 ] as const;
 export const HarnessIdSchema = z.enum(HARNESS_IDS);

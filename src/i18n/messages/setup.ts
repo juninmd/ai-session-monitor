@@ -89,6 +89,26 @@ export const setupMessages = {
   'zai.note':
     'Leitura não oficial da API de cota do plano GLM Coding, no servidor global (api.z.ai).',
 
+  'openrouter.title': 'Conectar ao OpenRouter',
+  'openrouter.lead':
+    'Cole a chave de API do OpenRouter para ver o limite de gasto da chave, o uso e, quando a chave permite, o saldo de créditos.',
+  'openrouter.detail':
+    'Leitura oficial, pela API documentada do OpenRouter. A chave é enviada só a openrouter.ai e fica no Gerenciador de Credenciais do Windows. O saldo de créditos exige uma chave de gerenciamento; com uma chave comum, só o limite e o uso da chave aparecem.',
+  'openrouter.key_label': 'Chave de API do OpenRouter',
+  'openrouter.console': 'Abrir as chaves do OpenRouter',
+  'openrouter.note':
+    'Leitura oficial da API do OpenRouter. Sem limite na chave não há porcentagem, só o uso. O saldo só aparece com uma chave de gerenciamento.',
+
+  'deepseek.title': 'Conectar ao DeepSeek',
+  'deepseek.lead':
+    'Cole a chave de API do DeepSeek para ver o saldo da conta, em cada moeda em que ela tem crédito.',
+  'deepseek.detail':
+    'Leitura oficial, pela API documentada do DeepSeek. A chave é enviada só a api.deepseek.com e fica no Gerenciador de Credenciais do Windows. O saldo não tem limite nem hora de reset, então não há porcentagem; yuan e dólar nunca são somados.',
+  'deepseek.key_label': 'Chave de API do DeepSeek',
+  'deepseek.console': 'Abrir as chaves do DeepSeek',
+  'deepseek.note':
+    'Leitura oficial da API de saldo do DeepSeek. É dinheiro, não uma cota: não há porcentagem nem reset.',
+
   'litellm.title': 'Conectar ao LiteLLM',
   'litellm.title_edit': 'Conexão com o LiteLLM',
   'litellm.url': 'URL do servidor',

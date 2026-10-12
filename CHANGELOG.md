@@ -19,6 +19,10 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 - Kimi Code and z.ai (both unofficial, key pasted by you, kept in the Credential Manager): 5 h,
   weekly and monthly windows from each vendor's usage endpoint. The tab strip scrolls horizontally
   now that there are seven tabs.
+- OpenRouter and DeepSeek (both official, documented APIs, key pasted by you, kept in the Credential
+  Manager): OpenRouter shows the key's spending limit as a percent window only when the key has a real
+  limit, plus usage facts and, with a management key, the credit balance; DeepSeek shows the account
+  balance per currency (CNY and USD, never summed) as facts, with no percentage.
 - LiteLLM: parametrizable base URL, scope (key, user, team), auth header, poll interval, timeout and
   TLS mode (system, custom CA, insecure for one confirmed host); API key kept in the Windows
   Credential Manager.

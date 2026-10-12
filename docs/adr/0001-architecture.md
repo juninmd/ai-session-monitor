@@ -5,7 +5,7 @@ Status: accepted (2026-10-10, after the user approved the interactive prototype)
 ## Context
 
 A Windows tray app must show, per AI coding tool ("harness"), how much of the session is still
-available: Claude Code (5 h and weekly), Codex, Antigravity, OpenCode, Kimi Code, z.ai and a parametrizable LiteLLM
+available: Claude Code (5 h and weekly), Codex, Antigravity, OpenCode, Kimi Code, z.ai, OpenRouter, DeepSeek and a parametrizable LiteLLM
 connection. One tab per harness. Every source has a different trust level: some are documented,
 some are internal files, one is a local language server. The app reads credentials and personal
 usage data, so what it reads and what it sends must be explicit.
@@ -51,7 +51,7 @@ explicit consent and are never required for the app to work. See `docs/data-sour
 
 ### D5. Secrets only in the Windows Credential Manager; HTTP only from Rust
 
-API keys (LiteLLM, OpenCode Go, Kimi Code, z.ai) are written through `set_secret` and stored with `keyring-core`
+API keys (LiteLLM, OpenCode Go, Kimi Code, z.ai, OpenRouter, DeepSeek) are written through `set_secret` and stored with `keyring-core`
 plus `windows-native-keyring-store` (keyring 4.x was split into a core and per-platform stores; the
 store is opened with an explicit target and local persistence, and if the Credential Manager cannot
 be opened every secret operation fails closed). They never appear in `Settings`, snapshots, logs,

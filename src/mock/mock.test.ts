@@ -64,6 +64,8 @@ describe('scenario content', () => {
       'needs_setup',
       'needs_setup',
       'needs_setup',
+      'needs_setup',
+      'needs_setup',
     ]);
     expect((await backend.getSettings()).general.firstRunDone).toBe(false);
   });
@@ -77,7 +79,17 @@ describe('scenario content', () => {
   it('mixes states in the demo', async () => {
     const backend = backendOf('demo');
     const states = await Promise.all(HARNESS_IDS.map((id) => stateOf(backend, id)));
-    expect(states).toEqual(['ready', 'ready', 'ready', 'ready', 'ready', 'ready', 'error']);
+    expect(states).toEqual([
+      'ready',
+      'ready',
+      'ready',
+      'ready',
+      'ready',
+      'ready',
+      'ready',
+      'ready',
+      'error',
+    ]);
   });
 
   it('makes every source stale in "stale", each with the reason it stopped', async () => {
@@ -99,9 +111,10 @@ describe('scenario content', () => {
   it('keeps every source in the clear in "healthy" and in trouble in "critical"', async () => {
     const warnAt = defaultSettings.general.warnAtPct;
     const statuses = async (name: (typeof SCENARIO_NAMES)[number]) =>
-      (await backendOf(name).getSnapshot()).views.map(
-        (view) => summarize(view, NOW, warnAt)?.status,
-      );
+      (await backendOf(name).getSnapshot()).views
+        // DeepSeek reports a balance: facts only, so it has no status to compare.
+        .filter((view) => view.id !== 'deepseek')
+        .map((view) => summarize(view, NOW, warnAt)?.status);
     expect(new Set(await statuses('healthy'))).toEqual(new Set(['ok']));
     const critical = await statuses('critical');
     expect(critical.every((status) => status === 'crit' || status === 'out')).toBe(true);

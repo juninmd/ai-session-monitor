@@ -16,8 +16,8 @@ webview never shows raw error text.
 | `refresh` | `harness?: HarnessId` | - | Non-blocking. Asks the scheduler to collect now; the result arrives as a `snapshot` event. Rate-limited per harness (>= 10 s); a refused call is not an error. |
 | `get_settings` | - | `Settings` | |
 | `save_settings` | `settings: Settings` | `Settings` | Normalizes (clamps ranges), persists atomically, applies (interval, enabled harnesses, autostart, tray source) and emits `settings-changed`. Returns the normalized value. |
-| `secret_status` | - | `{ litellm, opencode, kimi, zai }` | Booleans: a secret exists in the Credential Manager. Rejects with `internal` (`where = secret_store`) when the Credential Manager cannot be read; the UI keeps Settings usable and shows a notice. |
-| `set_secret` | `kind: 'litellm' | 'opencode' | 'kimi' | 'zai'`, `value: string` | `SecretStatus` | Trims the value; an empty one rejects with `invalid_input` (`field = value`). The value is never logged or echoed. Triggers a refresh of that harness. |
+| `secret_status` | - | `{ litellm, opencode, kimi, zai, openrouter, deepseek }` | Booleans: a secret exists in the Credential Manager. Rejects with `internal` (`where = secret_store`) when the Credential Manager cannot be read; the UI keeps Settings usable and shows a notice. |
+| `set_secret` | `kind: 'litellm' | 'opencode' | 'kimi' | 'zai' | 'openrouter' | 'deepseek'`, `value: string` | `SecretStatus` | Trims the value; an empty one rejects with `invalid_input` (`field = value`). The value is never logged or echoed. Triggers a refresh of that harness. |
 | `clear_secret` | `kind` | `SecretStatus` | Idempotent. |
 | `claude_shim_status` | - | `ShimStatus` | Read-only look at Claude Code's settings.json. |
 | `install_claude_shim` | - | `ShimStatus` | Requires `claude.shimConsent`. Copies the shim to a stable path under the data dir and wraps any existing statusLine. |
@@ -49,10 +49,10 @@ webview never shows raw error text.
 
 ## View semantics
 
-- Tab order: `claude`, `codex`, `antigravity`, `opencode`, `kimi`, `zai`, `litellm` (`HarnessId::ALL`).
+- Tab order: `claude`, `codex`, `antigravity`, `opencode`, `kimi`, `zai`, `openrouter`, `deepseek`, `litellm` (`HarnessId::ALL`).
 - `state`: `disabled` (user switched it off) | `needs_consent` (nothing is read until the user
   agrees) | `needs_setup` (configuration missing: LiteLLM URL/key, OpenCode key and no local
-  consent, Kimi Code or z.ai key) | `loading` (first read in flight) | `ready` | `no_data` (the source works but has
+  consent, Kimi Code, z.ai, OpenRouter or DeepSeek key) | `loading` (first read in flight) | `ready` | `no_data` (the source works but has
   nothing yet) | `error`.
 - A `ready` view with `stale = true` keeps its windows and is shown desaturated (gauges faded, text keeps its contrast) and excluded from
   the tray summary. `error` is set in the `error` state and also on a stale `ready` view whose last
@@ -87,6 +87,8 @@ Window ids and kinds, per source:
 | `opencode` | `rolling`, `weekly`, `monthly` | `five_hour`, `weekly`, `monthly` |
 | `kimi` | `five_hour`, `weekly`, `monthly` (the body states the 5 h length; weekly and monthly have none, so no pace is computed for them); a stated 10080-minute `limits[]` entry is `limit_weekly` and is folded with the top-level `weekly` block into one window (the one that states a reset); other stated durations become `daily` or `window_<n>m` | `five_hour`, `daily`, `weekly`, `monthly`, `other` |
 | `zai` | `five_hour`, `daily`, `weekly`, `window_<n>m` (length = number x unit); `mcp` (monthly tool allowance, no stated length) | `five_hour`, `daily`, `weekly`, `monthly`, `other` |
+| `openrouter` | `key_limit` (a money cap with `amount` in `usd`; only when the key reports a positive `limit`; no `resetsAt`, the reset moment is not reported; the share can exceed 100 when the key overspent). A key without a limit has no window. | `budget` |
+| `deepseek` | none: a balance has no percentage and no reset, so the view carries facts only | - |
 | `litellm` | `budget` (`label` = key alias); `limit:<duration>` (`label` = the raw duration); `model:<name>` (`group` and `label` = the model) | `budget` |
 
 Fact ids and units:
@@ -95,6 +97,8 @@ Fact ids and units:
 |---|---|
 | `codex` | `credits_balance` (`credits`); `reset_credits` (`resets`, the count of earned resets still available, `app_server` only; absent when the service gives no count) |
 | `opencode` | `local_cost_5h`, `local_cost_7d`, `local_cost_30d` (`usd`); `local_tokens_5h`, `local_tokens_7d` (`tokens`). Local list-price estimate, not quota. |
+| `openrouter` | `balance` (credits purchased minus used, only when `/credits` answered, which needs a management key); `usage_daily`, `usage_weekly`, `usage_monthly` (UTC day, Monday week, UTC month), `usage_total` (all `usd`) |
+| `deepseek` | `balance_<cur>`, `granted_<cur>`, `topped_up_<cur>` with `<cur>` = `cny` or `usd` (the unit is the same word); one set per currency, never summed |
 | `litellm` | `rpm_limit`, `max_parallel_requests` (`requests`); `tpm_limit` (`tokens`); `expires` (`epoch_s`) |
 
 `meta` keys (display only): `alias`, `host`, `scope` (`key`, `user`, `team`) and `level` (`key`,
@@ -164,6 +168,7 @@ OpenCode: 401/403 from the usage endpoint are reported as `unauthorized` with `a
 because valid keys have been rejected by the service; the UI says "could not verify the key or the
 Go subscription" and offers the console link, never a certain "bad key".
 Kimi Code and z.ai follow the same rule (a z.ai failure can also arrive as `success: false` inside an HTTP 200 and is mapped by its `code`; the vendor `msg` is never shown). Their sources are `coding_usages` and `quota_limit`, both unofficial.
+OpenRouter (`key_credits`) and DeepSeek (`user_balance`) are official and documented, so a 401/403 is a plain `unauthorized` (no `ambiguous`). A 402 has no code of its own and arrives as `bad_response` with `httpStatus = 402`; 429 is `rate_limited` with `retryAfterSecs` when given. For OpenRouter only the key document decides the poll: a refused or failed `/credits` call (an ordinary key gets a 403) only leaves the balance fact out.
 
 ## Polling
 
@@ -188,7 +193,7 @@ Kimi Code and z.ai follow the same rule (a z.ai failure can also arrive as `succ
   from `base`, not from the stretched wait; a manual refresh and the OpenCode 300 s floor are
   untouched. Turning the switch off brings a pending read back to `base`.
 - `timing::cadence` gives each harness its pace: `general.intervalSecs` for Claude, Codex and
-  Antigravity, `max(intervalSecs, 300 s)` for OpenCode, Kimi Code and z.ai, `litellm.pollIntervalSecs` for LiteLLM.
+  Antigravity, `max(intervalSecs, 300 s)` for OpenCode, Kimi Code, z.ai, OpenRouter and DeepSeek, `litellm.pollIntervalSecs` for LiteLLM.
 - A manual `refresh` is dropped when that harness started a collection less than 10 s ago
   (`REFRESH_MIN_GAP`).
 - Snapshot events: the webview registers the `snapshot` listener first, then calls

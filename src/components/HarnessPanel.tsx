@@ -25,6 +25,10 @@ function SetupSurface({ harness }: { harness: HarnessId }) {
       return <KeyConnect harness="kimi" />;
     case 'zai':
       return <KeyConnect harness="zai" />;
+    case 'openrouter':
+      return <KeyConnect harness="openrouter" />;
+    case 'deepseek':
+      return <KeyConnect harness="deepseek" />;
     case 'litellm':
       return <LitellmForm />;
   }

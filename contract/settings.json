@@ -15,6 +15,9 @@
       "consent": false,
       "enabled": true
     },
+    "deepseek": {
+      "enabled": true
+    },
     "general": {
       "adaptive": true,
       "alertThresholds": [
@@ -54,6 +57,9 @@
       "enabled": true,
       "localConsent": false
     },
+    "openrouter": {
+      "enabled": true
+    },
     "version": 1,
     "zai": {
       "enabled": true
@@ -73,6 +79,9 @@
     "codex": {
       "binaryPath": null,
       "consent": false,
+      "enabled": true
+    },
+    "deepseek": {
       "enabled": true
     },
     "general": {
@@ -113,6 +122,9 @@
       "enabled": true,
       "localConsent": false
     },
+    "openrouter": {
+      "enabled": true
+    },
     "version": 1,
     "zai": {
       "enabled": true
@@ -132,6 +144,9 @@
     "codex": {
       "binaryPath": null,
       "consent": false,
+      "enabled": true
+    },
+    "deepseek": {
       "enabled": true
     },
     "general": {
@@ -172,6 +187,9 @@
       "dataDir": null,
       "enabled": true,
       "localConsent": false
+    },
+    "openrouter": {
+      "enabled": true
     },
     "version": 1,
     "zai": {

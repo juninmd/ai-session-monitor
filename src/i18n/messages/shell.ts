@@ -7,6 +7,8 @@ export const shellMessages = {
   'harness.opencode': 'OpenCode',
   'harness.kimi': 'Kimi Code',
   'harness.zai': 'z.ai',
+  'harness.openrouter': 'OpenRouter',
+  'harness.deepseek': 'DeepSeek',
   'harness.litellm': 'LiteLLM',
 
   'header.refresh': 'Atualizar agora',
@@ -24,6 +26,7 @@ export const shellMessages = {
   'tab.expired': 'Reiniciou',
   'tab.unknown': '—',
   'tab.no_windows': 'Sem cota',
+  'tab.values': 'Valores',
   'tab.sr.pct': '{pct} disponível, {status}',
   'tab.sr.pct_used': '{pct} usado, {status}',
   'tab.sr.connect': 'precisa ser conectado',
@@ -34,6 +37,7 @@ export const shellMessages = {
   'tab.sr.expired': 'a janela reiniciou, aguardando nova leitura',
   'tab.sr.unknown': 'percentual desconhecido',
   'tab.sr.no_windows': 'sem janelas de cota',
+  'tab.sr.values': 'valores em dinheiro, sem porcentagem',
   'tab.sr.loading': 'carregando',
 
   'status.ok': 'dentro do ritmo',
@@ -90,6 +94,8 @@ export const shellMessages = {
   'action.console.opencode': 'Abrir console do OpenCode',
   'action.console.kimi': 'Abrir console do Kimi Code',
   'action.console.zai': 'Abrir chaves do z.ai',
+  'action.console.openrouter': 'Abrir chaves do OpenRouter',
+  'action.console.deepseek': 'Abrir chaves do DeepSeek',
   'action.reinstall': 'Reinstalar',
   'action.failed': 'Não foi possível concluir a ação.',
 } as const satisfies Record<string, string>;

@@ -35,6 +35,8 @@ collector-litellm = { workspace = true, optional = true }
 collector-opencode = { workspace = true, optional = true }
 collector-kimi = { workspace = true, optional = true }
 collector-zai = { workspace = true, optional = true }
+collector-openrouter = { workspace = true, optional = true }
+collector-deepseek = { workspace = true, optional = true }
 
 [target.'cfg(windows)'.dependencies]
 windows-native-keyring-store = { version = "1.1.0", default-features = false }
@@ -53,6 +55,8 @@ collectors = [
     "dep:collector-opencode",
     "dep:collector-kimi",
     "dep:collector-zai",
+    "dep:collector-openrouter",
+    "dep:collector-deepseek",
 ]
 
 [dev-dependencies]

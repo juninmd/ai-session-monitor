@@ -8,8 +8,28 @@ import { createMockBackend } from '../../mock';
 import { ctxOf, NOW } from '../../test/helpers';
 import { PANEL_ID, TabStrip } from './TabStrip';
 
-const NAMES = ['Claude Code', 'Codex', 'Antigravity', 'OpenCode', 'Kimi Code', 'z.ai', 'LiteLLM'];
-const IDS: HarnessId[] = ['claude', 'codex', 'antigravity', 'opencode', 'kimi', 'zai', 'litellm'];
+const NAMES = [
+  'Claude Code',
+  'Codex',
+  'Antigravity',
+  'OpenCode',
+  'Kimi Code',
+  'z.ai',
+  'OpenRouter',
+  'DeepSeek',
+  'LiteLLM',
+];
+const IDS: HarnessId[] = [
+  'claude',
+  'codex',
+  'antigravity',
+  'opencode',
+  'kimi',
+  'zai',
+  'openrouter',
+  'deepseek',
+  'litellm',
+];
 
 async function viewsOf(scenario: Parameters<typeof createMockBackend>[0] = {}) {
   const backend = createMockBackend({ now: () => NOW, ...scenario });
@@ -35,7 +55,7 @@ const tabs = () => screen.getAllByRole('tab');
 const selectedId = () => tabs().find((tab) => tab.getAttribute('aria-selected') === 'true')?.id;
 
 describe('TabStrip semantics', () => {
-  it('is one labelled tablist with the seven tools in order', async () => {
+  it('is one labelled tablist with the nine tools in order', async () => {
     render(<Strip views={await viewsOf({ scenario: 'healthy' })} />);
     expect(screen.getByRole('tablist', { name: 'Ferramentas de IA' })).toBeInTheDocument();
     expect(tabs().map((tab) => tab.id)).toEqual(IDS.map((id) => `tab-${id}`));
@@ -64,9 +84,11 @@ describe('TabStrip semantics', () => {
   it('points every tab at the one panel, and only the selected tab is tabbable', async () => {
     render(<Strip views={await viewsOf()} />);
     for (const tab of tabs()) expect(tab).toHaveAttribute('aria-controls', PANEL_ID);
-    expect(tabs().map((tab) => tab.tabIndex)).toEqual([0, -1, -1, -1, -1, -1, -1]);
+    expect(tabs().map((tab) => tab.tabIndex)).toEqual([0, -1, -1, -1, -1, -1, -1, -1, -1]);
     expect(tabs().map((tab) => tab.getAttribute('aria-selected'))).toEqual([
       'true',
+      'false',
+      'false',
       'false',
       'false',
       'false',
@@ -84,7 +106,8 @@ describe('TabStrip semantics', () => {
 
   it('never leaves a tab with only a colour to tell its state', async () => {
     render(<Strip views={await viewsOf({ scenario: 'critical' })} />);
-    for (const tab of tabs()) {
+    // A balance has no status to repeat: it is worded as values instead.
+    for (const tab of tabs().filter((candidate) => candidate.id !== 'tab-deepseek')) {
       expect(tab).toHaveAccessibleName(/(atenção|crítico|esgotado)$/);
       // A glyph next to the percentage repeats the status for people who cannot see colour.
       expect(tab.querySelector('.t-read svg')).not.toBeNull();
@@ -109,7 +132,7 @@ describe('TabStrip semantics', () => {
 
   it('renders a placeholder as a loading tab', () => {
     render(<Strip views={IDS.map(placeholderView)} />);
-    expect(tabs()).toHaveLength(7);
+    expect(tabs()).toHaveLength(9);
   });
 });
 
@@ -159,7 +182,7 @@ describe('TabStrip keyboard model', () => {
   it('keeps the roving tabindex on the new tab', async () => {
     const { user } = await setup();
     await user.keyboard('{ArrowRight}');
-    expect(tabs().map((tab) => tab.tabIndex)).toEqual([-1, 0, -1, -1, -1, -1, -1]);
+    expect(tabs().map((tab) => tab.tabIndex)).toEqual([-1, 0, -1, -1, -1, -1, -1, -1, -1]);
   });
 
   it('leaves other keys to the browser', async () => {

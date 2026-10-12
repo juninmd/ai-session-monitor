@@ -66,6 +66,10 @@ export function HarnessFooter({ harness }: { harness: HarnessId }) {
       return <Note>{t('kimi.note')}</Note>;
     case 'zai':
       return <Note>{t('zai.note')}</Note>;
+    case 'openrouter':
+      return <Note>{t('openrouter.note')}</Note>;
+    case 'deepseek':
+      return <Note>{t('deepseek.note')}</Note>;
     case 'litellm':
       return <LitellmEditor />;
     case 'claude':

@@ -18,7 +18,7 @@ pub(crate) const EMIT_MIN_GAP: Duration = Duration::from_millis(250);
 const COOLDOWN_DEFAULT: Duration = Duration::from_secs(5 * 60);
 const COOLDOWN_MAX: Duration = Duration::from_secs(30 * 60);
 const MAX_BACKOFF: Duration = Duration::from_secs(15 * 60);
-/// The OpenCode, Kimi and z.ai endpoints are remote, undocumented and rate-sensitive, and their
+/// The OpenCode, Kimi, z.ai, OpenRouter and DeepSeek endpoints are remote and rate-sensitive, and their
 /// collectors leave the pacing to the caller. (The Claude OAuth endpoint paces itself in its collector, so Claude is not slowed.)
 const REMOTE_MIN_CADENCE: Duration = Duration::from_secs(300);
 /// 2^10 times any cadence already exceeds the cap, so the shift never needs to grow past it.
@@ -29,7 +29,11 @@ pub(crate) fn cadence(id: HarnessId, settings: &Settings) -> Duration {
     let local = Duration::from_secs(u64::from(settings.general.interval_secs));
     match id {
         HarnessId::Claude | HarnessId::Codex | HarnessId::Antigravity => local,
-        HarnessId::Opencode | HarnessId::Kimi | HarnessId::Zai => local.max(REMOTE_MIN_CADENCE),
+        HarnessId::Opencode
+        | HarnessId::Kimi
+        | HarnessId::Zai
+        | HarnessId::Openrouter
+        | HarnessId::Deepseek => local.max(REMOTE_MIN_CADENCE),
         HarnessId::Litellm => Duration::from_secs(u64::from(settings.litellm.poll_interval_secs)),
     }
 }
@@ -78,18 +82,26 @@ mod tests {
         assert_eq!(cadence(HarnessId::Litellm, &settings), secs(600));
     }
 
+    const REMOTE: [HarnessId; 5] = [
+        HarnessId::Opencode,
+        HarnessId::Kimi,
+        HarnessId::Zai,
+        HarnessId::Openrouter,
+        HarnessId::Deepseek,
+    ];
+
     #[test]
     fn remote_sources_never_poll_faster_than_five_minutes() {
         let mut settings = Settings::default();
         settings.general.interval_secs = 30;
-        for id in [HarnessId::Opencode, HarnessId::Kimi, HarnessId::Zai] {
+        for id in REMOTE {
             assert_eq!(cadence(id, &settings), secs(300), "{id:?}");
         }
         assert_eq!(cadence(HarnessId::Claude, &settings), secs(30), "statusLine file is local");
         settings.claude.oauth_usage = true;
         assert_eq!(cadence(HarnessId::Claude, &settings), secs(30), "OAuth paces itself");
         settings.general.interval_secs = 900;
-        for id in [HarnessId::Opencode, HarnessId::Kimi, HarnessId::Zai] {
+        for id in REMOTE {
             assert_eq!(cadence(id, &settings), secs(900), "{id:?}: a slower interval wins");
         }
         assert_eq!(cadence(HarnessId::Claude, &settings), secs(900));

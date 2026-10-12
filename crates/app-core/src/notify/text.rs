@@ -15,6 +15,8 @@ fn harness_name(id: HarnessId) -> &'static str {
         HarnessId::Opencode => "OpenCode",
         HarnessId::Kimi => "Kimi Code",
         HarnessId::Zai => "z.ai",
+        HarnessId::Openrouter => "OpenRouter",
+        HarnessId::Deepseek => "DeepSeek",
         HarnessId::Litellm => "LiteLLM",
     }
 }
