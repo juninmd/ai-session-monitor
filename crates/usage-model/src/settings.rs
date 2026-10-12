@@ -6,6 +6,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::HarnessId;
 
+mod keyed;
+pub use keyed::{DeepseekSettings, KimiSettings, OpenrouterSettings, ZaiSettings};
+
 pub const SETTINGS_VERSION: u32 = 1;
 pub const MIN_INTERVAL_SECS: u32 = 30;
 pub const MAX_INTERVAL_SECS: u32 = 3600;
@@ -24,6 +27,8 @@ pub struct Settings {
     pub opencode: OpencodeSettings,
     pub kimi: KimiSettings,
     pub zai: ZaiSettings,
+    pub openrouter: OpenrouterSettings,
+    pub deepseek: DeepseekSettings,
     pub litellm: LitellmSettings,
 }
 
@@ -38,6 +43,8 @@ impl Default for Settings {
             opencode: OpencodeSettings::default(),
             kimi: KimiSettings::default(),
             zai: ZaiSettings::default(),
+            openrouter: OpenrouterSettings::default(),
+            deepseek: DeepseekSettings::default(),
             litellm: LitellmSettings::default(),
         }
     }
@@ -64,6 +71,8 @@ impl Settings {
             HarnessId::Opencode => self.opencode.enabled,
             HarnessId::Kimi => self.kimi.enabled,
             HarnessId::Zai => self.zai.enabled,
+            HarnessId::Openrouter => self.openrouter.enabled,
+            HarnessId::Deepseek => self.deepseek.enabled,
             HarnessId::Litellm => self.litellm.enabled,
         }
     }
@@ -207,32 +216,6 @@ pub struct OpencodeSettings {
 impl Default for OpencodeSettings {
     fn default() -> Self {
         Self { enabled: true, local_consent: false, data_dir: None }
-    }
-}
-
-/// Kimi Code (Moonshot) quota. Saving the API key is the consent, so there is no flag for it.
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase", default)]
-pub struct KimiSettings {
-    pub enabled: bool,
-}
-
-impl Default for KimiSettings {
-    fn default() -> Self {
-        Self { enabled: true }
-    }
-}
-
-/// z.ai (GLM Coding Plan) quota. Saving the API key is the consent, so there is no flag for it.
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase", default)]
-pub struct ZaiSettings {
-    pub enabled: bool,
-}
-
-impl Default for ZaiSettings {
-    fn default() -> Self {
-        Self { enabled: true }
     }
 }
 

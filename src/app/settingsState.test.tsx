@@ -23,6 +23,8 @@ describe('useSettingsState', () => {
       opencode: true,
       kimi: true,
       zai: true,
+      openrouter: true,
+      deepseek: true,
     });
     expect(result.current.loadError).toBeNull();
   });
@@ -187,6 +189,8 @@ describe('useSettingsState', () => {
         opencode: false,
         kimi: false,
         zai: false,
+        openrouter: false,
+        deepseek: false,
       });
     });
 
@@ -199,6 +203,8 @@ describe('useSettingsState', () => {
         opencode: true,
         kimi: true,
         zai: true,
+        openrouter: true,
+        deepseek: true,
       });
     });
 
@@ -214,6 +220,8 @@ describe('useSettingsState', () => {
         opencode: true,
         kimi: true,
         zai: true,
+        openrouter: true,
+        deepseek: true,
       });
     });
 

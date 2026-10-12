@@ -34,7 +34,7 @@ async fn five_answers_at_the_start_make_two_events_not_six() {
 
 #[tokio::test(start_paused = true)]
 async fn staggered_answers_are_batched_into_events_at_least_250_ms_apart() {
-    let builder = [0, 100, 200, 300, 400, 400, 400]
+    let builder = [0, 100, 200, 300, 400, 400, 400, 400, 400]
         .into_iter()
         .zip(HarnessId::ALL)
         .fold(rig(), |builder, (delay, id)| builder.collector(staggered(id, delay)));
@@ -45,7 +45,7 @@ async fn staggered_answers_are_batched_into_events_at_least_250_ms_apart() {
     let events = rig.sink.snapshots();
     let ready_in =
         |n: usize| events[n].1.views.iter().filter(|view| view.state == ViewState::Ready).count();
-    assert_eq!((ready_in(0), ready_in(1), ready_in(2)), (0, 3, 7));
+    assert_eq!((ready_in(0), ready_in(1), ready_in(2)), (0, 3, 9));
 }
 
 #[tokio::test(start_paused = true)]

@@ -4,6 +4,8 @@
     "opencode_billing",
     "kimi_console",
     "zai_console",
+    "openrouter_console",
+    "deepseek_console",
     "project_readme"
   ],
   "history": {
@@ -38,12 +40,16 @@
     "litellm",
     "opencode",
     "kimi",
-    "zai"
+    "zai",
+    "openrouter",
+    "deepseek"
   ],
   "secretStatus": {
+    "deepseek": false,
     "kimi": true,
     "litellm": true,
     "opencode": false,
+    "openrouter": true,
     "zai": false
   },
   "shimStates": [

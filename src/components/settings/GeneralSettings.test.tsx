@@ -58,6 +58,8 @@ describe('selects', () => {
       'OpenCode',
       'Kimi Code',
       'z.ai',
+      'OpenRouter',
+      'DeepSeek',
       'LiteLLM',
     ]);
   });

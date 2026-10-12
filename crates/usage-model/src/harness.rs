@@ -10,17 +10,21 @@ pub enum HarnessId {
     Opencode,
     Kimi,
     Zai,
+    Openrouter,
+    Deepseek,
     Litellm,
 }
 
 impl HarnessId {
-    pub const ALL: [Self; 7] = [
+    pub const ALL: [Self; 9] = [
         Self::Claude,
         Self::Codex,
         Self::Antigravity,
         Self::Opencode,
         Self::Kimi,
         Self::Zai,
+        Self::Openrouter,
+        Self::Deepseek,
         Self::Litellm,
     ];
 
@@ -32,6 +36,8 @@ impl HarnessId {
             Self::Opencode => "opencode",
             Self::Kimi => "kimi",
             Self::Zai => "zai",
+            Self::Openrouter => "openrouter",
+            Self::Deepseek => "deepseek",
             Self::Litellm => "litellm",
         }
     }

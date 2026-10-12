@@ -70,6 +70,14 @@ fn ready(id: HarnessId, source: &str, official: bool) -> HarnessView {
     view
 }
 
+fn currency_fact(id: &str, number: f64, unit: &str) -> Fact {
+    Fact { id: id.into(), number: Some(number), text: None, unit: Some(unit.into()) }
+}
+
+fn usd_fact(id: &str, number: f64) -> Fact {
+    currency_fact(id, number, "usd")
+}
+
 fn sample_views() -> Vec<HarnessView> {
     let mut claude = ready(HarnessId::Claude, "statusline", true);
     claude.plan = Some("Max 5x".into());
@@ -136,6 +144,17 @@ fn sample_views() -> Vec<HarnessView> {
         window(WindowKind::Monthly, "mcp", None, 25.0, 20_000),
     ];
 
+    let mut openrouter = ready(HarnessId::Openrouter, "key_credits", true);
+    let mut key_limit = UsageWindow::new("key_limit", WindowKind::Budget);
+    key_limit.used_pct = Some(25.0);
+    key_limit.amount = Some(Amount { used: 2.5, limit: Some(10.0), unit: AmountUnit::Usd });
+    openrouter.windows = vec![key_limit];
+    openrouter.facts = vec![usd_fact("balance", 74.75), usd_fact("usage_daily", 0.25)];
+
+    let mut deepseek = ready(HarnessId::Deepseek, "user_balance", true);
+    deepseek.facts =
+        vec![currency_fact("balance_cny", 110.0, "cny"), currency_fact("balance_usd", 3.5, "usd")];
+
     let mut litellm = ready(HarnessId::Litellm, "key_info", true);
     let mut budget = window(WindowKind::Budget, "budget", None, 25.0, 20_000);
     budget.label = Some("team-a".into());
@@ -154,6 +173,8 @@ fn sample_views() -> Vec<HarnessView> {
         opencode,
         kimi,
         zai,
+        openrouter,
+        deepseek,
         litellm,
         unknown_pct,
         HarnessView::loading(HarnessId::Claude),
@@ -161,6 +182,7 @@ fn sample_views() -> Vec<HarnessView> {
         HarnessView::needs_setup(HarnessId::Litellm),
         HarnessView::with_state(HarnessId::Opencode, ViewState::NoData),
         HarnessView::needs_setup(HarnessId::Kimi),
+        HarnessView::needs_setup(HarnessId::Deepseek),
         HarnessView::error(
             HarnessId::Zai,
             HarnessError::new(ErrorCode::Unauthorized, false)
@@ -228,7 +250,14 @@ fn ipc_payload_shapes_are_pinned() {
     check_golden(
         "ipc.json",
         &json!({
-            "secretStatus": SecretStatus { litellm: true, opencode: false, kimi: true, zai: false },
+            "secretStatus": SecretStatus {
+                litellm: true,
+                opencode: false,
+                kimi: true,
+                zai: false,
+                openrouter: true,
+                deepseek: false,
+            },
             "secretKinds": SecretKind::ALL,
             "externalLinks": ExternalLink::ALL,
             "shimStates": ShimState::ALL,

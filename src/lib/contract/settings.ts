@@ -60,6 +60,12 @@ export type KimiSettings = z.infer<typeof KimiSettingsSchema>;
 export const ZaiSettingsSchema = z.strictObject({ enabled: z.boolean() });
 export type ZaiSettings = z.infer<typeof ZaiSettingsSchema>;
 
+export const OpenrouterSettingsSchema = z.strictObject({ enabled: z.boolean() });
+export type OpenrouterSettings = z.infer<typeof OpenrouterSettingsSchema>;
+
+export const DeepseekSettingsSchema = z.strictObject({ enabled: z.boolean() });
+export type DeepseekSettings = z.infer<typeof DeepseekSettingsSchema>;
+
 export const LITELLM_SCOPES = ['key', 'user', 'team'] as const;
 export const LitellmScopeSchema = z.enum(LITELLM_SCOPES);
 export type LitellmScope = z.infer<typeof LitellmScopeSchema>;
@@ -92,6 +98,8 @@ export const SettingsSchema = z.strictObject({
   opencode: OpencodeSettingsSchema,
   kimi: KimiSettingsSchema,
   zai: ZaiSettingsSchema,
+  openrouter: OpenrouterSettingsSchema,
+  deepseek: DeepseekSettingsSchema,
   litellm: LitellmSettingsSchema,
 });
 export type Settings = z.infer<typeof SettingsSchema>;
@@ -128,6 +136,8 @@ export const defaultSettings: Settings = {
   opencode: { enabled: true, localConsent: false, dataDir: null },
   kimi: { enabled: true },
   zai: { enabled: true },
+  openrouter: { enabled: true },
+  deepseek: { enabled: true },
   litellm: {
     enabled: true,
     baseUrl: null,

@@ -4,10 +4,12 @@ import type { HarnessId } from '../../lib/contract';
 import { AntigravityLogo } from './AntigravityLogo';
 import { ClaudeLogo } from './ClaudeLogo';
 import { CodexLogo } from './CodexLogo';
+import { DeepSeekLogo } from './DeepSeekLogo';
 import { KimiLogo } from './KimiLogo';
 import { LiteLLMLogo } from './LiteLLMLogo';
 import type { LogoProps } from './LogoSvg';
 import { OpenCodeLogo } from './OpenCodeLogo';
+import { OpenRouterLogo } from './OpenRouterLogo';
 import { ZaiLogo } from './ZaiLogo';
 
 const LOGOS: Record<HarnessId, ComponentType<LogoProps>> = {
@@ -17,6 +19,8 @@ const LOGOS: Record<HarnessId, ComponentType<LogoProps>> = {
   opencode: OpenCodeLogo,
   kimi: KimiLogo,
   zai: ZaiLogo,
+  openrouter: OpenRouterLogo,
+  deepseek: DeepSeekLogo,
   litellm: LiteLLMLogo,
 };
 

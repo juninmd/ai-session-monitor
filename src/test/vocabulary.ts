@@ -62,6 +62,8 @@ export const FACTS: Readonly<Record<HarnessId, readonly (readonly [id: string, u
     ],
     kimi: [],
     zai: [],
+    openrouter: [],
+    deepseek: [],
     litellm: [
       ['rpm_limit', 'requests'],
       ['tpm_limit', 'tokens'],

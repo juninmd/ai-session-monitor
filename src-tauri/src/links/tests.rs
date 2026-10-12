@@ -2,7 +2,8 @@ use std::cell::RefCell;
 
 use super::*;
 
-const ALLOWED_HOSTS: [&str; 4] = ["opencode.ai", "github.com", "www.kimi.com", "z.ai"];
+const ALLOWED_HOSTS: [&str; 6] =
+    ["opencode.ai", "github.com", "www.kimi.com", "z.ai", "openrouter.ai", "platform.deepseek.com"];
 
 #[test]
 fn every_link_maps_to_a_fixed_https_url_on_a_known_host() {

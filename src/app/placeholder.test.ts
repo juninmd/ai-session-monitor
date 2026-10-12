@@ -23,6 +23,8 @@ describe('viewsInTabOrder', () => {
       'opencode:loading',
       'kimi:loading',
       'zai:loading',
+      'openrouter:loading',
+      'deepseek:loading',
       'litellm:loading',
     ]);
   });

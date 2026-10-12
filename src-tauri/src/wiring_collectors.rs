@@ -69,6 +69,28 @@ fn zai<'a>(s: &'a Settings, secrets: &'a dyn SecretStore, ctx: &'a Ctx) -> Colle
     })
 }
 
+fn openrouter<'a>(
+    s: &'a Settings,
+    secrets: &'a dyn SecretStore,
+    ctx: &'a Ctx,
+) -> CollectFuture<'a> {
+    Box::pin(async move {
+        match secrets.get(SecretKind::Openrouter) {
+            Ok(key) => collector_openrouter::collect(&s.openrouter, key.as_ref(), ctx).await,
+            Err(err) => HarnessView::error(HarnessId::Openrouter, err),
+        }
+    })
+}
+
+fn deepseek<'a>(s: &'a Settings, secrets: &'a dyn SecretStore, ctx: &'a Ctx) -> CollectFuture<'a> {
+    Box::pin(async move {
+        match secrets.get(SecretKind::Deepseek) {
+            Ok(key) => collector_deepseek::collect(&s.deepseek, key.as_ref(), ctx).await,
+            Err(err) => HarnessView::error(HarnessId::Deepseek, err),
+        }
+    })
+}
+
 fn litellm<'a>(s: &'a Settings, secrets: &'a dyn SecretStore, ctx: &'a Ctx) -> CollectFuture<'a> {
     Box::pin(async move {
         match secrets.get(SecretKind::Litellm) {
@@ -160,6 +182,8 @@ pub fn adapters(claude_dir: Option<String>) -> Adapters {
             wired(HarnessId::Opencode, opencode),
             wired(HarnessId::Kimi, kimi),
             wired(HarnessId::Zai, zai),
+            wired(HarnessId::Openrouter, openrouter),
+            wired(HarnessId::Deepseek, deepseek),
             wired(HarnessId::Litellm, litellm),
         ],
         claude_shim: Arc::new(ClaudeCodeShim { env_dir: claude_dir }),

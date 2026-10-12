@@ -18,7 +18,7 @@ import {
   opencodeView,
 } from './builders';
 import { asStale, type Env, failed, type Mood, notice, problem, viewOf } from './fixtures';
-import { kimiView, zaiView } from './keyed';
+import { deepseekView, kimiView, openrouterView, zaiView } from './keyed';
 
 export const SCENARIO_NAMES = [
   'demo',
@@ -47,6 +47,8 @@ const everyone = (mood: Mood): Makers => ({
   opencode: (env) => BUILDERS.opencode(env, mood),
   kimi: (env) => BUILDERS.kimi(env, mood),
   zai: (env) => BUILDERS.zai(env, mood),
+  openrouter: (env) => BUILDERS.openrouter(env, mood),
+  deepseek: (env) => BUILDERS.deepseek(env, mood),
   litellm: (env) => BUILDERS.litellm(env, mood),
 });
 
@@ -65,6 +67,8 @@ const loading: Makers = {
   opencode: () => viewOf('opencode', { state: 'loading' }),
   kimi: () => viewOf('kimi', { state: 'loading' }),
   zai: () => viewOf('zai', { state: 'loading' }),
+  openrouter: () => viewOf('openrouter', { state: 'loading' }),
+  deepseek: () => viewOf('deepseek', { state: 'loading' }),
   litellm: () => viewOf('litellm', { state: 'loading' }),
 };
 
@@ -80,6 +84,8 @@ export const DATA: Record<ScenarioName, Makers> = {
     opencode: (env) => opencodeView(env, 'ok'),
     kimi: (env) => kimiView(env, 'ok'),
     zai: (env) => zaiView(env, 'warn'),
+    openrouter: (env) => openrouterView(env, 'warn'),
+    deepseek: (env) => deepseekView(env, 'ok'),
     litellm: () => failed('litellm', problem('unauthorized', { httpStatus: '401' })),
   },
   stale: {
@@ -90,6 +96,8 @@ export const DATA: Record<ScenarioName, Makers> = {
     opencode: (env) => asStale(opencodeView(env, 'ok'), env, 35),
     kimi: (env) => asStale(kimiView(env, 'ok'), env, 30, problem('network', {}, true)),
     zai: (env) => asStale(zaiView(env, 'ok'), env, 25),
+    openrouter: (env) => asStale(openrouterView(env, 'ok'), env, 20, problem('network', {}, true)),
+    deepseek: (env) => asStale(deepseekView(env, 'ok'), env, 22),
     litellm: (env) => ({
       ...asStale(
         litellmView(env, 'ok'),
@@ -108,6 +116,8 @@ export const DATA: Record<ScenarioName, Makers> = {
       failed('opencode', problem('unauthorized', { httpStatus: '401', ambiguous: 'true' })),
     kimi: () => failed('kimi', problem('unauthorized', { httpStatus: '401', ambiguous: 'true' })),
     zai: () => failed('zai', problem('endpoint_changed')),
+    openrouter: () => failed('openrouter', problem('unauthorized', { httpStatus: '401' })),
+    deepseek: () => failed('deepseek', problem('rate_limited', { httpStatus: '429' }, true)),
     litellm: () =>
       failed(
         'litellm',
@@ -128,7 +138,14 @@ export function startFor(scenario: ScenarioName): Start {
   if (scenario === 'fresh') {
     return {
       settings: structuredClone(defaultSettings),
-      secrets: { litellm: false, opencode: false, kimi: false, zai: false },
+      secrets: {
+        litellm: false,
+        opencode: false,
+        kimi: false,
+        zai: false,
+        openrouter: false,
+        deepseek: false,
+      },
       shim: { state: 'not_installed', chained: false, settingsPath: SHIM_PATH },
     };
   }
@@ -144,7 +161,14 @@ export function startFor(scenario: ScenarioName): Start {
   };
   return {
     settings,
-    secrets: { litellm: true, opencode: true, kimi: true, zai: true },
+    secrets: {
+      litellm: true,
+      opencode: true,
+      kimi: true,
+      zai: true,
+      openrouter: true,
+      deepseek: true,
+    },
     shim: {
       state: scenario === 'errors' ? 'outdated' : 'installed',
       chained: scenario === 'demo',
@@ -178,6 +202,10 @@ function gate(id: HarnessId, env: Env, firstSessionSeen: boolean): HarnessView |
       return secrets.kimi ? null : viewOf(id, { state: 'needs_setup' });
     case 'zai':
       return secrets.zai ? null : viewOf(id, { state: 'needs_setup' });
+    case 'openrouter':
+      return secrets.openrouter ? null : viewOf(id, { state: 'needs_setup' });
+    case 'deepseek':
+      return secrets.deepseek ? null : viewOf(id, { state: 'needs_setup' });
     case 'litellm':
       return settings.litellm.baseUrl !== null && secrets.litellm
         ? null

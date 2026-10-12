@@ -204,12 +204,19 @@ export function formatAmountValue(value: number, unit: AmountUnit): string {
   }
 }
 
+/** Yuan, as DeepSeek reports it; kept apart from dollars, never converted. */
+function formatCny(n: number): string {
+  return new Intl.NumberFormat(LOCALE, { style: 'currency', currency: 'CNY' }).format(n);
+}
+
 /** A fact's value: a number with its unit, free text, or a dash when neither is present. */
 export function formatFactValue(fact: Fact): string {
   if (fact.number !== null) {
     switch (fact.unit) {
       case 'usd':
         return formatUsd(fact.number);
+      case 'cny':
+        return formatCny(fact.number);
       case 'tokens':
         return `${compactFormat.format(fact.number)} tokens`;
       case 'requests':

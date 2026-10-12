@@ -11,7 +11,7 @@ use crate::sink::RecordingSink;
 
 const GARBAGE: &[u8] = b"{ not json";
 /// A minute in: the three local sources read twice, OpenCode, Kimi Code, z.ai and LiteLLM (300 s) once.
-const LOCAL_TWICE: [usize; 7] = [2, 2, 2, 1, 1, 1, 1];
+const LOCAL_TWICE: [usize; 9] = [2, 2, 2, 1, 1, 1, 1, 1, 1];
 
 fn reads(rig: &crate::rig::Rig) -> Vec<usize> {
     HarnessId::ALL.iter().map(|&id| rig.fake(id).count()).collect()
@@ -24,12 +24,12 @@ async fn run_can_be_started_again_after_a_sink_panicked_inside_the_loop() {
     rig.run().await;
     let died = rig.take_runner().await;
     assert!(died.is_err_and(|error| error.is_panic()), "the first delivery took the loop down");
-    assert_eq!(reads(&rig), [0; 7], "and it died before reading anything");
+    assert_eq!(reads(&rig), [0; 9], "and it died before reading anything");
 
     rig.run().await;
     rig.after(seconds(1)).await;
     assert!(!rig.runner_finished(), "the new loop keeps running");
-    assert_eq!(reads(&rig), [1; 7], "and polls again");
+    assert_eq!(reads(&rig), [1; 9], "and polls again");
     assert!(!rig.sink.snapshots().is_empty(), "with the sink hearing about it");
 
     rig.after(seconds(60)).await;
@@ -47,7 +47,7 @@ async fn only_one_run_polls_at_a_time_even_after_a_restart() {
     settle().await;
 
     assert!(third.is_finished(), "the claim is held by the live loop, so this one returns at once");
-    assert_eq!(reads(&rig), [1; 7], "and did not poll");
+    assert_eq!(reads(&rig), [1; 9], "and did not poll");
 }
 
 #[tokio::test(start_paused = true)]
@@ -59,7 +59,7 @@ async fn two_runs_started_together_make_one_scheduler() {
 
     let done = [first.is_finished(), second.is_finished()];
     assert_eq!(done.iter().filter(|done| **done).count(), 1, "the loser returned at once");
-    assert_eq!(reads(&rig), [1; 7]);
+    assert_eq!(reads(&rig), [1; 9]);
     rig.after(seconds(60)).await;
     assert_eq!(reads(&rig), LOCAL_TWICE, "one scheduler, one read per interval");
 
@@ -77,7 +77,7 @@ async fn a_cancelled_run_releases_the_claim_too() {
 
     rig.run().await;
     assert!(!rig.runner_finished());
-    assert_eq!(reads(&rig), [2; 7], "the first loop's read, then the new loop's");
+    assert_eq!(reads(&rig), [2; 9], "the first loop's read, then the new loop's");
 }
 
 #[tokio::test(start_paused = true)]

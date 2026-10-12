@@ -29,9 +29,11 @@ export const COLLECTORS = [
   'collector-antigravity',
   'collector-claude',
   'collector-codex',
+  'collector-deepseek',
   'collector-kimi',
   'collector-litellm',
   'collector-opencode',
+  'collector-openrouter',
   'collector-zai',
 ] as const;
 

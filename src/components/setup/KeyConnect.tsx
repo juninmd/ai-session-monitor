@@ -1,4 +1,4 @@
-// Kimi and z.ai share one shape: a key unlocks the quota, and a button opens the vendor's key page.
+// The key-only sources share one shape: a key unlocks the reading, and a button opens the vendor's key page.
 // Pieces shared by the first-run card and the settings group.
 import { useBackend } from '../../app/backendContext';
 import { useSettingsApi } from '../../app/settingsContext';
@@ -9,7 +9,7 @@ import { Icon } from '../icons';
 import { ActionError } from '../panel/ErrorActions';
 import { InfoCard } from '../panel/StateCards';
 
-export type KeyedHarness = 'kimi' | 'zai';
+export type KeyedHarness = 'kimi' | 'zai' | 'openrouter' | 'deepseek';
 
 export function VendorKey({ harness }: { harness: KeyedHarness }) {
   const { secrets, setSecret, clearSecret } = useSettingsApi();

@@ -265,6 +265,8 @@ fn section_changed(id: HarnessId, old: &Settings, new: &Settings) -> bool {
         HarnessId::Opencode => old.opencode != new.opencode,
         HarnessId::Kimi => old.kimi != new.kimi,
         HarnessId::Zai => old.zai != new.zai,
+        HarnessId::Openrouter => old.openrouter != new.openrouter,
+        HarnessId::Deepseek => old.deepseek != new.deepseek,
         HarnessId::Litellm => old.litellm != new.litellm,
     }
 }

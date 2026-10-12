@@ -266,6 +266,81 @@
     },
     {
       "error": null,
+      "facts": [
+        {
+          "id": "balance",
+          "number": 74.75,
+          "text": null,
+          "unit": "usd"
+        },
+        {
+          "id": "usage_daily",
+          "number": 0.25,
+          "text": null,
+          "unit": "usd"
+        }
+      ],
+      "id": "openrouter",
+      "meta": {},
+      "nextAttemptAt": null,
+      "notices": [],
+      "plan": null,
+      "readAt": 1799999970,
+      "source": {
+        "id": "key_credits",
+        "official": true
+      },
+      "stale": false,
+      "state": "ready",
+      "windows": [
+        {
+          "amount": {
+            "limit": 10.0,
+            "unit": "usd",
+            "used": 2.5
+          },
+          "group": null,
+          "id": "key_limit",
+          "kind": "budget",
+          "label": null,
+          "resetsAt": null,
+          "usedPct": 25.0,
+          "windowMinutes": null
+        }
+      ]
+    },
+    {
+      "error": null,
+      "facts": [
+        {
+          "id": "balance_cny",
+          "number": 110.0,
+          "text": null,
+          "unit": "cny"
+        },
+        {
+          "id": "balance_usd",
+          "number": 3.5,
+          "text": null,
+          "unit": "usd"
+        }
+      ],
+      "id": "deepseek",
+      "meta": {},
+      "nextAttemptAt": null,
+      "notices": [],
+      "plan": null,
+      "readAt": 1799999970,
+      "source": {
+        "id": "user_balance",
+        "official": true
+      },
+      "stale": false,
+      "state": "ready",
+      "windows": []
+    },
+    {
+      "error": null,
       "facts": [],
       "id": "litellm",
       "meta": {
@@ -387,6 +462,20 @@
       "error": null,
       "facts": [],
       "id": "kimi",
+      "meta": {},
+      "nextAttemptAt": null,
+      "notices": [],
+      "plan": null,
+      "readAt": null,
+      "source": null,
+      "stale": false,
+      "state": "needs_setup",
+      "windows": []
+    },
+    {
+      "error": null,
+      "facts": [],
+      "id": "deepseek",
       "meta": {},
       "nextAttemptAt": null,
       "notices": [],

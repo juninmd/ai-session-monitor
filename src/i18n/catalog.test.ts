@@ -67,9 +67,12 @@ describe('catalog completeness', () => {
     expect(hasMessage(`action.${action}`)).toBe(true);
   });
 
-  it.each(['opencode', 'kimi', 'zai'])('names the console of %s', (harness) => {
-    expect(hasMessage(`action.console.${harness}`)).toBe(true);
-  });
+  it.each(['opencode', 'kimi', 'zai', 'openrouter', 'deepseek'])(
+    'names the console of %s',
+    (harness) => {
+      expect(hasMessage(`action.console.${harness}`)).toBe(true);
+    },
+  );
 });
 
 describe('catalog hygiene', () => {

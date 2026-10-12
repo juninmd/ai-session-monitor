@@ -18,6 +18,10 @@ export function consoleLink(id: HarnessId): ExternalLink {
       return 'kimi_console';
     case 'zai':
       return 'zai_console';
+    case 'openrouter':
+      return 'openrouter_console';
+    case 'deepseek':
+      return 'deepseek_console';
     default:
       return 'opencode_go_console';
   }

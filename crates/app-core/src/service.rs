@@ -144,6 +144,8 @@ impl AppService {
             opencode: self.exists(SecretKind::Opencode)?,
             kimi: self.exists(SecretKind::Kimi)?,
             zai: self.exists(SecretKind::Zai)?,
+            openrouter: self.exists(SecretKind::Openrouter)?,
+            deepseek: self.exists(SecretKind::Deepseek)?,
         })
     }
 
@@ -160,6 +162,8 @@ impl AppService {
             opencode: has(SecretKind::Opencode),
             kimi: has(SecretKind::Kimi),
             zai: has(SecretKind::Zai),
+            openrouter: has(SecretKind::Openrouter),
+            deepseek: has(SecretKind::Deepseek),
         }
     }
 
@@ -250,5 +254,7 @@ fn harness_of(kind: SecretKind) -> HarnessId {
         SecretKind::Opencode => HarnessId::Opencode,
         SecretKind::Kimi => HarnessId::Kimi,
         SecretKind::Zai => HarnessId::Zai,
+        SecretKind::Openrouter => HarnessId::Openrouter,
+        SecretKind::Deepseek => HarnessId::Deepseek,
     }
 }

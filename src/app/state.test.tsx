@@ -14,7 +14,7 @@ describe('useSnapshotState', () => {
     const backend = createMockBackend({ scenario: 'healthy', now: () => NOW });
     const { result } = renderHook(() => useSnapshotState(backend));
     await waitFor(() => expect(result.current.snapshot).not.toBeNull());
-    expect(result.current.snapshot?.views).toHaveLength(7);
+    expect(result.current.snapshot?.views).toHaveLength(9);
     expect(result.current.error).toBeNull();
   });
 

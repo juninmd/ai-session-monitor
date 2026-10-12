@@ -1,0 +1,1 @@
+{ "data": { "label": "fabricated-key", "limit": 10, "limit_reset": "monthly", "limit_remaining": 7.5, "usage": 2.5, "usage_daily": 0.25, "usage_weekly": 1.0, "usage_monthly": 2.5, "is_free_tier": false } }
