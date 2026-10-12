@@ -69,6 +69,26 @@ export const setupMessages = {
   'opencode.data_dir_hint': 'Deixe em branco para usar a pasta padrão.',
   'opencode.save_settings': 'Salvar pasta',
 
+  'kimi.title': 'Conectar ao Kimi Code',
+  'kimi.lead':
+    'Cole a chave de API do Kimi Code para ler a cota do plano: a janela de 5 horas, a semana e o total do mês, quando o plano os informa.',
+  'kimi.detail':
+    'Leitura não oficial: a API de uso não é documentada e pode mudar sem aviso. A chave é enviada só a api.kimi.com e fica no Gerenciador de Credenciais do Windows. Nenhum cookie nem login de outra ferramenta é usado. A chave da plataforma aberta da Moonshot é outro produto e não funciona aqui.',
+  'kimi.key_label': 'Chave de API do Kimi Code',
+  'kimi.console': 'Abrir o console do Kimi Code',
+  'kimi.note':
+    'Leitura não oficial da API de uso do Kimi Code. Semana e mês só aparecem quando o plano os informa.',
+
+  'zai.title': 'Conectar ao z.ai',
+  'zai.lead':
+    'Cole a chave de API do plano GLM Coding para ler a janela de 5 horas, a semana e a cota mensal de ferramentas MCP.',
+  'zai.detail':
+    'Leitura não oficial: a API de cota não é documentada e pode mudar sem aviso. A chave é enviada só a api.z.ai e fica no Gerenciador de Credenciais do Windows. Nenhum cookie nem login de outra ferramenta é usado. Contas da BigModel (open.bigmodel.cn) não são lidas.',
+  'zai.key_label': 'Chave de API do z.ai',
+  'zai.console': 'Abrir as chaves do z.ai',
+  'zai.note':
+    'Leitura não oficial da API de cota do plano GLM Coding, no servidor global (api.z.ai).',
+
   'litellm.title': 'Conectar ao LiteLLM',
   'litellm.title_edit': 'Conexão com o LiteLLM',
   'litellm.url': 'URL do servidor',

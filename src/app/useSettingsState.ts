@@ -30,7 +30,7 @@ export interface SettingsApi {
   reload: () => void;
 }
 
-const NO_SECRETS: SecretStatus = { litellm: false, opencode: false };
+const NO_SECRETS: SecretStatus = { litellm: false, opencode: false, kimi: false, zai: false };
 
 export function useSettingsState(backend: Backend): SettingsApi {
   const [settings, setSettings] = useState<Settings>(defaultSettings);

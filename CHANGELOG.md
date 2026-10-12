@@ -7,13 +7,16 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 ### Added
 
 - System-tray flyout (Tauri 2, Windows 11 first) with one tab per harness: Claude Code, Codex,
-  Antigravity, OpenCode and LiteLLM. Each tab shows the available share of every usage window, the
+  Antigravity, OpenCode, Kimi Code, z.ai and LiteLLM. Each tab shows the available share of every usage window, the
   time until it resets, a pace estimate, the data age and an official / unofficial source badge.
 - Claude Code: `rate_limits` from the `statusLine` JSON through an opt-in, reversible shim that
   chains any existing status line; optional OAuth usage (off by default, unofficial).
 - Codex: `codex app-server` rate limits with a rollout-file fallback.
 - Antigravity: local language-server quota pools (unofficial).
 - OpenCode: Go usage windows (unofficial) plus a read-only local cost and token estimate.
+- Kimi Code and z.ai (both unofficial, key pasted by you, kept in the Credential Manager): 5 h,
+  weekly and monthly windows from each vendor's usage endpoint. The tab strip scrolls horizontally
+  now that there are seven tabs.
 - LiteLLM: parametrizable base URL, scope (key, user, team), auth header, poll interval, timeout and
   TLS mode (system, custom CA, insecure for one confirmed host); API key kept in the Windows
   Credential Manager.
@@ -92,7 +95,8 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Known limitations / follow-ups
 
-- `Retry-After` is surfaced to the person but not honored by the scheduler backoff.
+- `Retry-After` is honored only for rate-limit answers (the cool-down, capped at 30 min); other
+  retryable errors use the plain cadence backoff and do not read it.
 - Paths in a loaded `settings.json` are validated on save, not on load.
 - Large integers in settings are rewritten on save (JSON number round trip).
 - The Claude shim status is read before consent is given.

@@ -2,16 +2,23 @@
 // src-tauri. contract/ipc-commands.json pins the names on both sides.
 import { z } from 'zod';
 
-export const SecretKindSchema = z.enum(['litellm', 'opencode']);
+export const SecretKindSchema = z.enum(['litellm', 'opencode', 'kimi', 'zai']);
 export type SecretKind = z.infer<typeof SecretKindSchema>;
 
-export const SecretStatusSchema = z.strictObject({ litellm: z.boolean(), opencode: z.boolean() });
+export const SecretStatusSchema = z.strictObject({
+  litellm: z.boolean(),
+  opencode: z.boolean(),
+  kimi: z.boolean(),
+  zai: z.boolean(),
+});
 export type SecretStatus = z.infer<typeof SecretStatusSchema>;
 
 // The UI never passes a URL: the backend maps each link to a fixed destination.
 export const ExternalLinkSchema = z.enum([
   'opencode_go_console',
   'opencode_billing',
+  'kimi_console',
+  'zai_console',
   'project_readme',
 ]);
 export type ExternalLink = z.infer<typeof ExternalLinkSchema>;

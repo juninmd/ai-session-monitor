@@ -18,7 +18,7 @@ describe('secrets', () => {
   it('are write-only flags: the value never comes back', async () => {
     const backend = make({ scenario: 'fresh' });
     const status = await backend.setSecret('opencode', 'fab-key-1');
-    expect(status).toEqual({ litellm: false, opencode: true });
+    expect(status).toEqual({ litellm: false, opencode: true, kimi: false, zai: false });
     expect(
       JSON.stringify([status, await backend.secretStatus(), await backend.getSnapshot()]),
     ).not.toContain('fab-key-1');
@@ -37,7 +37,12 @@ describe('secrets', () => {
 
   it('can be removed again', async () => {
     const backend = make({ scenario: 'healthy' });
-    expect(await backend.clearSecret('opencode')).toEqual({ litellm: true, opencode: false });
+    expect(await backend.clearSecret('opencode')).toEqual({
+      litellm: true,
+      opencode: false,
+      kimi: true,
+      zai: true,
+    });
   });
 
   it('decide whether a source can read: OpenCode gets its windows once the key is saved', async () => {

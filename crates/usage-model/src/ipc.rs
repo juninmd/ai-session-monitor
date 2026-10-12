@@ -10,16 +10,20 @@ use serde::{Deserialize, Serialize};
 pub enum SecretKind {
     Litellm,
     Opencode,
+    Kimi,
+    Zai,
 }
 
 impl SecretKind {
-    pub const ALL: [Self; 2] = [Self::Litellm, Self::Opencode];
+    pub const ALL: [Self; 4] = [Self::Litellm, Self::Opencode, Self::Kimi, Self::Zai];
 
     /// Credential Manager target name suffix.
     pub const fn as_str(self) -> &'static str {
         match self {
             Self::Litellm => "litellm",
             Self::Opencode => "opencode",
+            Self::Kimi => "kimi",
+            Self::Zai => "zai",
         }
     }
 }
@@ -29,6 +33,8 @@ impl SecretKind {
 pub struct SecretStatus {
     pub litellm: bool,
     pub opencode: bool,
+    pub kimi: bool,
+    pub zai: bool,
 }
 
 /// Known destinations the UI may ask the backend to open. The UI never passes a URL, so a
@@ -38,12 +44,19 @@ pub struct SecretStatus {
 pub enum ExternalLink {
     OpencodeGoConsole,
     OpencodeBilling,
+    KimiConsole,
+    ZaiConsole,
     ProjectReadme,
 }
 
 impl ExternalLink {
-    pub const ALL: [Self; 3] =
-        [Self::OpencodeGoConsole, Self::OpencodeBilling, Self::ProjectReadme];
+    pub const ALL: [Self; 5] = [
+        Self::OpencodeGoConsole,
+        Self::OpencodeBilling,
+        Self::KimiConsole,
+        Self::ZaiConsole,
+        Self::ProjectReadme,
+    ];
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]

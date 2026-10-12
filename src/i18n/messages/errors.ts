@@ -23,6 +23,12 @@ export const errorMessages = {
   'error.unauthorized_ambiguous.title': 'Não foi possível verificar a chave ou a assinatura Go',
   'error.unauthorized_ambiguous.body':
     'O serviço recusou a consulta. Isso acontece com chaves válidas e também sem a assinatura Go. Confira a chave e a assinatura no console do OpenCode.',
+  'error.unauthorized_ambiguous.kimi.title': 'Não foi possível verificar a chave do Kimi Code',
+  'error.unauthorized_ambiguous.kimi.body':
+    'O serviço recusou a consulta. Isso acontece com chaves vencidas e também com a chave da plataforma aberta da Moonshot, que é outro produto. Confira no console do Kimi Code se a chave é do plano.',
+  'error.unauthorized_ambiguous.zai.title': 'Não foi possível verificar a chave do z.ai',
+  'error.unauthorized_ambiguous.zai.body':
+    'O serviço recusou a consulta. Isso acontece com chaves válidas e também com contas sem o plano GLM Coding. Confira a chave e o plano no painel do z.ai.',
   'error.not_found.title': 'Endereço não encontrado',
   'error.not_found.body':
     'O servidor não conhece o caminho ou o ID informado. Confira a URL, o escopo e o ID.',

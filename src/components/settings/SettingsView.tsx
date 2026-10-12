@@ -21,6 +21,9 @@ interface SettingsViewProps {
   onBack: () => void;
 }
 
+/** Sources with no vendor-documented interface and no other badge in the summary. */
+const UNOFFICIAL: ReadonlySet<HarnessId> = new Set(['antigravity', 'kimi', 'zai']);
+
 function GroupSummary({ harness }: { harness: HarnessId }) {
   const { settings } = useSettingsApi();
   const on = isEnabled(settings, harness);
@@ -28,7 +31,7 @@ function GroupSummary({ harness }: { harness: HarnessId }) {
     <summary>
       <HarnessLogo id={harness} size={20} />
       <span className="grp-name">{harnessName(harness)}</span>
-      {harness === 'antigravity' && (
+      {UNOFFICIAL.has(harness) && (
         <span className="chip warnchip">
           <Icon name="warn" />
           {t('settings.unofficial_chip')}

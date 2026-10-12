@@ -16,8 +16,8 @@ webview never shows raw error text.
 | `refresh` | `harness?: HarnessId` | - | Non-blocking. Asks the scheduler to collect now; the result arrives as a `snapshot` event. Rate-limited per harness (>= 10 s); a refused call is not an error. |
 | `get_settings` | - | `Settings` | |
 | `save_settings` | `settings: Settings` | `Settings` | Normalizes (clamps ranges), persists atomically, applies (interval, enabled harnesses, autostart, tray source) and emits `settings-changed`. Returns the normalized value. |
-| `secret_status` | - | `{ litellm, opencode }` | Booleans: a secret exists in the Credential Manager. Rejects with `internal` (`where = secret_store`) when the Credential Manager cannot be read; the UI keeps Settings usable and shows a notice. |
-| `set_secret` | `kind: 'litellm' | 'opencode'`, `value: string` | `SecretStatus` | Trims the value; an empty one rejects with `invalid_input` (`field = value`). The value is never logged or echoed. Triggers a refresh of that harness. |
+| `secret_status` | - | `{ litellm, opencode, kimi, zai }` | Booleans: a secret exists in the Credential Manager. Rejects with `internal` (`where = secret_store`) when the Credential Manager cannot be read; the UI keeps Settings usable and shows a notice. |
+| `set_secret` | `kind: 'litellm' | 'opencode' | 'kimi' | 'zai'`, `value: string` | `SecretStatus` | Trims the value; an empty one rejects with `invalid_input` (`field = value`). The value is never logged or echoed. Triggers a refresh of that harness. |
 | `clear_secret` | `kind` | `SecretStatus` | Idempotent. |
 | `claude_shim_status` | - | `ShimStatus` | Read-only look at Claude Code's settings.json. |
 | `install_claude_shim` | - | `ShimStatus` | Requires `claude.shimConsent`. Copies the shim to a stable path under the data dir and wraps any existing statusLine. |
@@ -49,10 +49,10 @@ webview never shows raw error text.
 
 ## View semantics
 
-- Tab order: `claude`, `codex`, `antigravity`, `opencode`, `litellm` (`HarnessId::ALL`).
+- Tab order: `claude`, `codex`, `antigravity`, `opencode`, `kimi`, `zai`, `litellm` (`HarnessId::ALL`).
 - `state`: `disabled` (user switched it off) | `needs_consent` (nothing is read until the user
   agrees) | `needs_setup` (configuration missing: LiteLLM URL/key, OpenCode key and no local
-  consent) | `loading` (first read in flight) | `ready` | `no_data` (the source works but has
+  consent, Kimi Code or z.ai key) | `loading` (first read in flight) | `ready` | `no_data` (the source works but has
   nothing yet) | `error`.
 - A `ready` view with `stale = true` keeps its windows and is shown desaturated (gauges faded, text keeps its contrast) and excluded from
   the tray summary. `error` is set in the `error` state and also on a stale `ready` view whose last
@@ -85,6 +85,8 @@ Window ids and kinds, per source:
 | `codex` | by cadence: `five_hour`, `daily`, `weekly`, `monthly`; a cadence it cannot name stays `primary` / `secondary` with `windowMinutes` set | same, else `other` |
 | `antigravity` | `<pool>:five_hour`, `<pool>:weekly`, `<pool>:<slug>` (`label` = the bucket); pool is `gemini`, `claude_gpt`, a slug from the service, or `group_<n>` (0-based index) | `five_hour`, `weekly`, `other` |
 | `opencode` | `rolling`, `weekly`, `monthly` | `five_hour`, `weekly`, `monthly` |
+| `kimi` | `five_hour`, `weekly`, `monthly` (the body states the 5 h length; weekly and monthly have none, so no pace is computed for them); a stated 10080-minute `limits[]` entry is `limit_weekly` and is folded with the top-level `weekly` block into one window (the one that states a reset); other stated durations become `daily` or `window_<n>m` | `five_hour`, `daily`, `weekly`, `monthly`, `other` |
+| `zai` | `five_hour`, `daily`, `weekly`, `window_<n>m` (length = number x unit); `mcp` (monthly tool allowance, no stated length) | `five_hour`, `daily`, `weekly`, `monthly`, `other` |
 | `litellm` | `budget` (`label` = key alias); `limit:<duration>` (`label` = the raw duration); `model:<name>` (`group` and `label` = the model) | `budget` |
 
 Fact ids and units:
@@ -161,6 +163,7 @@ contract has no better name for it.
 OpenCode: 401/403 from the usage endpoint are reported as `unauthorized` with `ambiguous = true`
 because valid keys have been rejected by the service; the UI says "could not verify the key or the
 Go subscription" and offers the console link, never a certain "bad key".
+Kimi Code and z.ai follow the same rule (a z.ai failure can also arrive as `success: false` inside an HTTP 200 and is mapped by its `code`; the vendor `msg` is never shown). Their sources are `coding_usages` and `quota_limit`, both unofficial.
 
 ## Polling
 
@@ -184,7 +187,7 @@ Go subscription" and offers the console link, never a certain "bad key".
   from `base`, not from the stretched wait; a manual refresh and the OpenCode 300 s floor are
   untouched. Turning the switch off brings a pending read back to `base`.
 - `timing::cadence` gives each harness its pace: `general.intervalSecs` for Claude, Codex and
-  Antigravity, `max(intervalSecs, 300 s)` for OpenCode, `litellm.pollIntervalSecs` for LiteLLM.
+  Antigravity, `max(intervalSecs, 300 s)` for OpenCode, Kimi Code and z.ai, `litellm.pollIntervalSecs` for LiteLLM.
 - A manual `refresh` is dropped when that harness started a collection less than 10 s ago
   (`REFRESH_MIN_GAP`).
 - Snapshot events: the webview registers the `snapshot` listener first, then calls

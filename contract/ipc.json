@@ -2,6 +2,8 @@
   "externalLinks": [
     "opencode_go_console",
     "opencode_billing",
+    "kimi_console",
+    "zai_console",
     "project_readme"
   ],
   "history": {
@@ -34,11 +36,15 @@
   },
   "secretKinds": [
     "litellm",
-    "opencode"
+    "opencode",
+    "kimi",
+    "zai"
   ],
   "secretStatus": {
+    "kimi": true,
     "litellm": true,
-    "opencode": false
+    "opencode": false,
+    "zai": false
   },
   "shimStates": [
     "not_installed",

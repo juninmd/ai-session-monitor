@@ -21,6 +21,8 @@ pub fn harness_name(id: HarnessId) -> &'static str {
         HarnessId::Codex => "Codex",
         HarnessId::Antigravity => "Antigravity",
         HarnessId::Opencode => "OpenCode",
+        HarnessId::Kimi => "Kimi Code",
+        HarnessId::Zai => "z.ai",
         HarnessId::Litellm => "LiteLLM",
     }
 }

@@ -2,7 +2,7 @@
 
 Windows-first system-tray app (Tauri 2 + Vite + React + TypeScript, Rust workspace) that shows how
 much of each AI coding tool's session is still available: Claude Code, Codex, Antigravity,
-OpenCode and a parametrizable LiteLLM connection. UI language is pt-BR; code, identifiers,
+OpenCode, Kimi Code, z.ai and a parametrizable LiteLLM connection. UI language is pt-BR; code, identifiers,
 comments and commits are English. Decisions: `docs/adr/0001-architecture.md`. Wire contract:
 `docs/ipc.md`. Data sources and trust levels: `docs/data-sources.md`.
 
@@ -12,7 +12,7 @@ comments and commits are English. Decisions: `docs/adr/0001-architecture.md`. Wi
 |---|---|---|
 | `crates/usage-model` | Vocabulary: views, windows, settings, IPC payloads, pace/status rules | serde only |
 | `crates/usage-support` | Hardened HTTP client, atomic file writes, bounded process runner, redaction, RFC 3339 | usage-model |
-| `crates/collector-{claude,codex,antigravity,litellm,opencode}` | One source each: `collect(...) -> HarnessView` | usage-model, usage-support |
+| `crates/collector-{claude,codex,antigravity,litellm,opencode,kimi,zai}` | One source each: `collect(...) -> HarnessView` | usage-model, usage-support |
 | `crates/statusline-shim` | Tiny binary Claude Code runs as its `statusLine`; std + serde_json only | none |
 | `crates/app-core` | Window-free core: settings store, hub, scheduler, notification plan, `AppService` | usage-model, usage-support (no collectors) |
 | `src-tauri` | Composition root: tray, flyout window, keyring, wiring, commands | app-core, collectors |
@@ -68,7 +68,7 @@ node scripts/soak.mjs crates tauri,keyring [days]          # same, for crates
   `AISM_SHOW_ON_START=1` so smoke runs never touch your profile (compiled out of release builds).
 - Never log, serialize or place a secret in an error param, notice, fact or `meta`. Tests that
   touch secrets assert absence in the serialized output.
-- Unofficial sources (Antigravity, OpenCode, Claude OAuth) stay opt-in and badged. Do not add
+- Unofficial sources (Antigravity, OpenCode, Kimi Code, z.ai, Claude OAuth) stay opt-in and badged. Do not add
   another unofficial source without an entry in `docs/data-sources.md`.
 - Dependencies: direct crates and npm packages must be at least 7 days old (soak script);
   pnpm denies install scripts (`onlyBuiltDependencies: []`). Do not hand-edit lockfiles.

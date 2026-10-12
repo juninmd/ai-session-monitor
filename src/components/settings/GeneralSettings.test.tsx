@@ -56,6 +56,8 @@ describe('selects', () => {
       'Codex',
       'Antigravity',
       'OpenCode',
+      'Kimi Code',
+      'z.ai',
       'LiteLLM',
     ]);
   });

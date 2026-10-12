@@ -18,8 +18,8 @@ pub(crate) const EMIT_MIN_GAP: Duration = Duration::from_millis(250);
 const COOLDOWN_DEFAULT: Duration = Duration::from_secs(5 * 60);
 const COOLDOWN_MAX: Duration = Duration::from_secs(30 * 60);
 const MAX_BACKOFF: Duration = Duration::from_secs(15 * 60);
-/// The OpenCode Go endpoint is remote and rate-sensitive, and its collector leaves the pacing to
-/// the caller. (The Claude OAuth endpoint paces itself in its collector, so Claude is not slowed.)
+/// The OpenCode, Kimi and z.ai endpoints are remote, undocumented and rate-sensitive, and their
+/// collectors leave the pacing to the caller. (The Claude OAuth endpoint paces itself in its collector, so Claude is not slowed.)
 const REMOTE_MIN_CADENCE: Duration = Duration::from_secs(300);
 /// 2^10 times any cadence already exceeds the cap, so the shift never needs to grow past it.
 const MAX_DOUBLINGS: u32 = 10;
@@ -29,7 +29,7 @@ pub(crate) fn cadence(id: HarnessId, settings: &Settings) -> Duration {
     let local = Duration::from_secs(u64::from(settings.general.interval_secs));
     match id {
         HarnessId::Claude | HarnessId::Codex | HarnessId::Antigravity => local,
-        HarnessId::Opencode => local.max(REMOTE_MIN_CADENCE),
+        HarnessId::Opencode | HarnessId::Kimi | HarnessId::Zai => local.max(REMOTE_MIN_CADENCE),
         HarnessId::Litellm => Duration::from_secs(u64::from(settings.litellm.poll_interval_secs)),
     }
 }
@@ -82,12 +82,16 @@ mod tests {
     fn remote_sources_never_poll_faster_than_five_minutes() {
         let mut settings = Settings::default();
         settings.general.interval_secs = 30;
-        assert_eq!(cadence(HarnessId::Opencode, &settings), secs(300));
+        for id in [HarnessId::Opencode, HarnessId::Kimi, HarnessId::Zai] {
+            assert_eq!(cadence(id, &settings), secs(300), "{id:?}");
+        }
         assert_eq!(cadence(HarnessId::Claude, &settings), secs(30), "statusLine file is local");
         settings.claude.oauth_usage = true;
         assert_eq!(cadence(HarnessId::Claude, &settings), secs(30), "OAuth paces itself");
         settings.general.interval_secs = 900;
-        assert_eq!(cadence(HarnessId::Opencode, &settings), secs(900), "a slower interval wins");
+        for id in [HarnessId::Opencode, HarnessId::Kimi, HarnessId::Zai] {
+            assert_eq!(cadence(id, &settings), secs(900), "{id:?}: a slower interval wins");
+        }
         assert_eq!(cadence(HarnessId::Claude, &settings), secs(900));
     }
 

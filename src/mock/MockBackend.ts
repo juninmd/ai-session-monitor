@@ -5,6 +5,7 @@
 import { type Backend, BackendError, type Unsubscribe } from '../lib/backend';
 import {
   type ExternalLink,
+  HARNESS_IDS,
   type HarnessError,
   type HarnessHistory,
   type HarnessId,
@@ -99,9 +100,7 @@ export class MockBackend implements Backend {
 
   refresh = (harness?: HarnessId) =>
     this.call('refresh', () => {
-      const targets = harness
-        ? [harness]
-        : (['claude', 'codex', 'antigravity', 'opencode', 'litellm'] as const);
+      const targets = harness ? [harness] : HARNESS_IDS;
       for (const id of targets) this.refreshedAt.set(id, this.clock());
       if (!this.firstSessionSeen && (!harness || harness === 'claude')) {
         this.waitingRefreshes += 1;

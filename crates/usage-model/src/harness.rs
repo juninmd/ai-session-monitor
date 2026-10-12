@@ -8,12 +8,21 @@ pub enum HarnessId {
     Codex,
     Antigravity,
     Opencode,
+    Kimi,
+    Zai,
     Litellm,
 }
 
 impl HarnessId {
-    pub const ALL: [Self; 5] =
-        [Self::Claude, Self::Codex, Self::Antigravity, Self::Opencode, Self::Litellm];
+    pub const ALL: [Self; 7] = [
+        Self::Claude,
+        Self::Codex,
+        Self::Antigravity,
+        Self::Opencode,
+        Self::Kimi,
+        Self::Zai,
+        Self::Litellm,
+    ];
 
     pub const fn as_str(self) -> &'static str {
         match self {
@@ -21,6 +30,8 @@ impl HarnessId {
             Self::Codex => "codex",
             Self::Antigravity => "antigravity",
             Self::Opencode => "opencode",
+            Self::Kimi => "kimi",
+            Self::Zai => "zai",
             Self::Litellm => "litellm",
         }
     }

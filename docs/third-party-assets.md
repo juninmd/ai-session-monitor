@@ -38,10 +38,17 @@ How the files are used, and what keeps them honest:
   the first-run cards draw every logo at its natural size). Proportions and colours are never
   altered.
 
+## Original glyphs
+
+Kimi Code and z.ai have no logo in this repository. Their tabs use a neutral glyph drawn for this
+app (`src/components/brand/original/{kimi,zai}.mono.svg`, one `currentColor` path each, MIT like the
+rest of the code). It is not the vendors' mark and implies no affiliation; the same audit test
+that covers the vendored logos covers these files.
+
 ## Trademarks
 
 Claude Code and Anthropic belong to Anthropic, PBC; Codex and OpenAI to OpenAI; Antigravity and
-Google to Google LLC; OpenCode to Anomaly Innovations, Inc.; LiteLLM to Berri AI. The logos are
+Google to Google LLC; OpenCode to Anomaly Innovations, Inc.; Kimi to Moonshot AI; z.ai to Zhipu AI (Z.ai); LiteLLM to Berri AI. The logos are
 trademarks of their owners. This app shows them only to identify the tool whose usage each tab
 displays. It is not affiliated with, endorsed by or sponsored by any of those companies, and the MIT
 licence of an icon set covers its artwork files, not any trademark right. No owner was asked for

@@ -11,6 +11,10 @@ export function withEnabled(settings: Settings, id: HarnessId, enabled: boolean)
       return { ...settings, antigravity: { ...settings.antigravity, enabled } };
     case 'opencode':
       return { ...settings, opencode: { ...settings.opencode, enabled } };
+    case 'kimi':
+      return { ...settings, kimi: { ...settings.kimi, enabled } };
+    case 'zai':
+      return { ...settings, zai: { ...settings.zai, enabled } };
     case 'litellm':
       return { ...settings, litellm: { ...settings.litellm, enabled } };
   }

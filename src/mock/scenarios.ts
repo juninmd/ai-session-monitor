@@ -18,6 +18,7 @@ import {
   opencodeView,
 } from './builders';
 import { asStale, type Env, failed, type Mood, notice, problem, viewOf } from './fixtures';
+import { kimiView, zaiView } from './keyed';
 
 export const SCENARIO_NAMES = [
   'demo',
@@ -44,6 +45,8 @@ const everyone = (mood: Mood): Makers => ({
   codex: (env) => BUILDERS.codex(env, mood),
   antigravity: (env) => BUILDERS.antigravity(env, mood),
   opencode: (env) => BUILDERS.opencode(env, mood),
+  kimi: (env) => BUILDERS.kimi(env, mood),
+  zai: (env) => BUILDERS.zai(env, mood),
   litellm: (env) => BUILDERS.litellm(env, mood),
 });
 
@@ -60,6 +63,8 @@ const loading: Makers = {
   codex: () => viewOf('codex', { state: 'loading' }),
   antigravity: () => viewOf('antigravity', { state: 'loading' }),
   opencode: () => viewOf('opencode', { state: 'loading' }),
+  kimi: () => viewOf('kimi', { state: 'loading' }),
+  zai: () => viewOf('zai', { state: 'loading' }),
   litellm: () => viewOf('litellm', { state: 'loading' }),
 };
 
@@ -73,6 +78,8 @@ export const DATA: Record<ScenarioName, Makers> = {
     codex: (env) => codexView(env, 'warn'),
     antigravity: (env) => antigravityView(env, 'ok', true),
     opencode: (env) => opencodeView(env, 'ok'),
+    kimi: (env) => kimiView(env, 'ok'),
+    zai: (env) => zaiView(env, 'warn'),
     litellm: () => failed('litellm', problem('unauthorized', { httpStatus: '401' })),
   },
   stale: {
@@ -81,6 +88,8 @@ export const DATA: Record<ScenarioName, Makers> = {
     antigravity: (env) =>
       asStale(antigravityView(env, 'warn'), env, 40, problem('not_running', {}, true)),
     opencode: (env) => asStale(opencodeView(env, 'ok'), env, 35),
+    kimi: (env) => asStale(kimiView(env, 'ok'), env, 30, problem('network', {}, true)),
+    zai: (env) => asStale(zaiView(env, 'ok'), env, 25),
     litellm: (env) => ({
       ...asStale(
         litellmView(env, 'ok'),
@@ -97,6 +106,8 @@ export const DATA: Record<ScenarioName, Makers> = {
     antigravity: () => failed('antigravity', problem('not_running', {}, true)),
     opencode: () =>
       failed('opencode', problem('unauthorized', { httpStatus: '401', ambiguous: 'true' })),
+    kimi: () => failed('kimi', problem('unauthorized', { httpStatus: '401', ambiguous: 'true' })),
+    zai: () => failed('zai', problem('endpoint_changed')),
     litellm: () =>
       failed(
         'litellm',
@@ -117,7 +128,7 @@ export function startFor(scenario: ScenarioName): Start {
   if (scenario === 'fresh') {
     return {
       settings: structuredClone(defaultSettings),
-      secrets: { litellm: false, opencode: false },
+      secrets: { litellm: false, opencode: false, kimi: false, zai: false },
       shim: { state: 'not_installed', chained: false, settingsPath: SHIM_PATH },
     };
   }
@@ -133,7 +144,7 @@ export function startFor(scenario: ScenarioName): Start {
   };
   return {
     settings,
-    secrets: { litellm: true, opencode: true },
+    secrets: { litellm: true, opencode: true, kimi: true, zai: true },
     shim: {
       state: scenario === 'errors' ? 'outdated' : 'installed',
       chained: scenario === 'demo',
@@ -163,6 +174,10 @@ function gate(id: HarnessId, env: Env, firstSessionSeen: boolean): HarnessView |
       return secrets.opencode || settings.opencode.localConsent
         ? null
         : viewOf(id, { state: 'needs_setup' });
+    case 'kimi':
+      return secrets.kimi ? null : viewOf(id, { state: 'needs_setup' });
+    case 'zai':
+      return secrets.zai ? null : viewOf(id, { state: 'needs_setup' });
     case 'litellm':
       return settings.litellm.baseUrl !== null && secrets.litellm
         ? null

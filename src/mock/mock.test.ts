@@ -62,6 +62,8 @@ describe('scenario content', () => {
       'needs_consent',
       'needs_setup',
       'needs_setup',
+      'needs_setup',
+      'needs_setup',
     ]);
     expect((await backend.getSettings()).general.firstRunDone).toBe(false);
   });
@@ -75,7 +77,7 @@ describe('scenario content', () => {
   it('mixes states in the demo', async () => {
     const backend = backendOf('demo');
     const states = await Promise.all(HARNESS_IDS.map((id) => stateOf(backend, id)));
-    expect(states).toEqual(['ready', 'ready', 'ready', 'ready', 'error']);
+    expect(states).toEqual(['ready', 'ready', 'ready', 'ready', 'ready', 'ready', 'error']);
   });
 
   it('makes every source stale in "stale", each with the reason it stopped', async () => {

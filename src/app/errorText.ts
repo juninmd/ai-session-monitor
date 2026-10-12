@@ -51,10 +51,14 @@ export interface ErrorText {
   action: ErrorAction;
 }
 
-/** OpenCode rejects valid keys at times: 401/403 never claims the key is certainly wrong. */
+// Sources that refuse valid keys at times (or keys from a sibling product): 401/403 never claims
+// the key is certainly wrong.
+const AMBIGUOUS_AUTH: ReadonlySet<HarnessId> = new Set(['opencode', 'kimi', 'zai']);
+
 export function isAmbiguousAuth(error: HarnessError, harness?: HarnessId): boolean {
   return (
-    error.code === 'unauthorized' && (harness === 'opencode' || error.params.ambiguous === 'true')
+    error.code === 'unauthorized' &&
+    ((harness !== undefined && AMBIGUOUS_AUTH.has(harness)) || error.params.ambiguous === 'true')
   );
 }
 
@@ -63,9 +67,17 @@ function actionOf(error: HarnessError): ErrorAction {
   return byReason ?? ACTIONS[error.code] ?? 'retry';
 }
 
+/** The wording of an ambiguous refusal: the vendor's own when the catalog has one. */
+function ambiguousBase(harness?: HarnessId): string {
+  const specific = `error.unauthorized_ambiguous.${harness}`;
+  return harness !== undefined && hasMessage(`${specific}.title`)
+    ? specific
+    : 'error.unauthorized_ambiguous';
+}
+
 export function describeError(error: HarnessError, harness?: HarnessId): ErrorText {
   const ambiguous = isAmbiguousAuth(error, harness);
-  const base = ambiguous ? 'error.unauthorized_ambiguous' : `error.${error.code}`;
+  const base = ambiguous ? ambiguousBase(harness) : `error.${error.code}`;
   const wording = ambiguous ? null : reasonWording(error);
   const titleKey = `${base}.title`;
   const bodyKey = `${base}.body`;

@@ -14,7 +14,7 @@ marked *unverified* have never been exercised against a live account.
   passed is shown as reset, without a status.
 - **Read-only toward providers.** The app never writes to a provider, never refreshes or stores a
   provider's OAuth tokens, never uses browser cookies and never scrapes dashboards.
-- **Secrets.** The only secrets the app stores are the LiteLLM and OpenCode Go API keys you paste.
+- **Secrets.** The only secrets the app stores are the LiteLLM, OpenCode Go, Kimi Code and z.ai API keys you paste.
   They live in the Windows Credential Manager (`ai-session-monitor/<kind>`), never in
   `settings.json`, snapshots, logs or events. The webview can write, clear and ask *whether* a
   secret exists, never read it back.
@@ -81,6 +81,30 @@ marked *unverified* have never been exercised against a live account.
 | Confidence | Response shapes come from the proxy source (v1.104.2) and its docs, never from a live proxy: a different proxy surfaces as *endpoint changed*, not as invented numbers. |
 | Off switch | Clear the key or disable the tab. |
 
+## Kimi Code — não oficial (coding usages endpoint)
+
+| | |
+|---|---|
+| Remote | `GET https://api.kimi.com/coding/v1/usages` with the Kimi Code API key you paste, as Bearer. The host is a constant (https only, no redirects, 64 KiB body cap, 15 s timeout); the key goes only into that header. Undocumented by the vendor as a public API; the official CLI calls it for its own `/usage` command. |
+| Shapes | Two response shapes are read. Legacy: a top-level `usage` block (weekly, `limit`/`used`/`resetTime`) plus `limits[]` rolling windows with a stated `window.duration` and `timeUnit`. Newer: `usages{limit_*: {used_ratio, reset_time}}`, used to complete a rolling window whose `limits[]` entry carries no count and to add the monthly pool. Counts may be strings or numbers. |
+| Windows | 5 h only when the body states a 300-minute window (or the `limit_5h` ratio); weekly for the top-level block, whose length the body does not state, so no pace alarm can fire on it; monthly only from the newer shape. Percentages are the used share (an overage clamps the percent to 100 while the count keeps the real number); a missing value is unknown, a real zero stays zero. A reset farther away than the stated window length (+2 min) is unknown. |
+| Errors | 401/403 are reported as *could not verify the key* (the service also rejects keys of accounts without the Kimi Code plan), never as a certain bad key. A body that is neither shape is *endpoint changed*. |
+| Never | No cookies, no browser session, no scraping of the console, no reading of `~/.kimi` or any other tool's credentials. The key is only what you paste into the app. |
+| Confidence | **Medium.** Shapes come from two independent sources: the vendor's own CLI source (`MoonshotAI/kimi-cli`, `src/kimi_cli/ui/shell/usage.py` and `auth/platforms.py`, opened 2026-10-11/12) and the CodexBar project docs and plugin (`steipete/CodexBar`, `docs/kimi.md`), cross-checked with a third-party write-up (steeman.be, opened 2026-10-11). Never exercised against a live account; the console page `https://www.kimi.com/code/console` could not be verified (single-page app), so the link is unconfirmed. |
+| Off switch | Clear the key or disable the tab. |
+
+## z.ai — não oficial (GLM Coding Plan quota endpoint)
+
+| | |
+|---|---|
+| Remote | `GET https://api.z.ai/api/monitor/usage/quota/limit` with the z.ai API key you paste, sent as the bare `Authorization` value (no `Bearer`), as the vendor's own ZCode document shows. The host is a constant (https only, no redirects, 64 KiB body cap, 15 s timeout). The monitor API is not part of the documented public API. |
+| Shape | `{code, success, data: {level, limits[]}}`. Each `TOKENS_LIMIT`/`CREDIT_LIMIT` entry is a rolling window: its length is `number * unit` (unit 1 day, 3 hour, 5 minute, 6 week), with `percentage` (used share) and `nextResetTime` in epoch milliseconds. `TIME_LIMIT` is the monthly MCP tool allowance. |
+| Windows | 5 h / daily / weekly only when unit and number state it (any other length becomes a generic window named by its minutes). A reset farther away than the window is long is unknown. An empty `limits[]` is *unsupported plan*, not zero. |
+| In-band failures | The service can answer HTTP 200 with `success: false` and a `code`. 401/403 and the in-band codes 1000, 1001 and 1003 (documented as authentication failures at `https://docs.z.ai/api-reference/api-code`, opened 2026-10-12; that page lists no 1002 or 1004, which stay *endpoint changed*, and it describes the general API, not this monitor endpoint specifically) map to *could not verify the key*, 429 to rate-limited, 5xx to server error, anything else to *endpoint changed*. The `msg` text is never read or shown. |
+| Never | No cookies, no browser session, no dashboard scraping, no reading of other tools' credentials (Claude Code's z.ai environment variables included). The key is only what you paste into the app. |
+| Confidence | **Medium.** The vendor's `zai-org/ZCode` document `docs/coding-plan-quota-remaining-api.md` and the `akitaonrails/ai-usagebar` source (`src/zai/types.rs`, `fetch.rs`, `docs/vendor-endpoints.md`) agree on the path, fields and unit codes (opened 2026-10-11/12); the CodexBar plugin and one blog send the key as Bearer instead, so the header form is the main residual risk (a wrong form surfaces as *could not verify the key*). Never exercised against a live account; the key page `https://z.ai/manage-apikey/apikey-list` could not be verified (single-page app). |
+| Off switch | Clear the key or disable the tab. |
+
 ## Local files
 
 | Path | Content |
@@ -90,4 +114,4 @@ marked *unverified* have never been exercised against a live account.
 | `...\claude\rate_limits.json` | The Claude `rate_limits` object plus `capturedAt`. |
 | `...\claude\shim-state.json`, `chain.json` | The previous `statusLine`, kept for exact restore and chaining. Non-default Claude profiles get `shim-state-<key>.json` / `chain-<key>.json` (and `bin\<key>\`). A second copy of the record sits at `<config dir>\settings.json.aism-state`. |
 | `...\bin\statusline-shim.exe` | Stable copy of the shim referenced from Claude Code's settings; refreshed from the bundled build at each start. |
-| Windows Credential Manager | `ai-session-monitor/litellm`, `ai-session-monitor/opencode`. |
+| Windows Credential Manager | `ai-session-monitor/litellm`, `ai-session-monitor/opencode`, `ai-session-monitor/kimi`, `ai-session-monitor/zai`. |

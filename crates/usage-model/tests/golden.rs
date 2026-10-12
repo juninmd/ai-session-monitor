@@ -115,6 +115,27 @@ fn sample_views() -> Vec<HarnessView> {
         params: BTreeMap::new(),
     }];
 
+    let mut kimi = ready(HarnessId::Kimi, "coding_usages", false);
+    kimi.plan = Some("Intermediate".into());
+    kimi.windows = vec![
+        {
+            let mut five = window(WindowKind::FiveHour, "five_hour", Some(300), 25.0, 120);
+            five.amount =
+                Some(Amount { used: 50.0, limit: Some(200.0), unit: AmountUnit::Requests });
+            five
+        },
+        window(WindowKind::Weekly, "weekly", None, 25.0, 4_320),
+        window(WindowKind::Monthly, "monthly", None, 40.0, 20_000),
+    ];
+
+    let mut zai = ready(HarnessId::Zai, "quota_limit", false);
+    zai.plan = Some("Pro".into());
+    zai.windows = vec![
+        window(WindowKind::FiveHour, "five_hour", Some(300), 12.0, 120),
+        window(WindowKind::Weekly, "weekly", Some(10_080), 40.0, 4_320),
+        window(WindowKind::Monthly, "mcp", None, 25.0, 20_000),
+    ];
+
     let mut litellm = ready(HarnessId::Litellm, "key_info", true);
     let mut budget = window(WindowKind::Budget, "budget", None, 25.0, 20_000);
     budget.label = Some("team-a".into());
@@ -131,12 +152,21 @@ fn sample_views() -> Vec<HarnessView> {
         HarnessView::needs_consent(HarnessId::Codex),
         antigravity,
         opencode,
+        kimi,
+        zai,
         litellm,
         unknown_pct,
         HarnessView::loading(HarnessId::Claude),
         HarnessView::disabled(HarnessId::Antigravity),
         HarnessView::needs_setup(HarnessId::Litellm),
         HarnessView::with_state(HarnessId::Opencode, ViewState::NoData),
+        HarnessView::needs_setup(HarnessId::Kimi),
+        HarnessView::error(
+            HarnessId::Zai,
+            HarnessError::new(ErrorCode::Unauthorized, false)
+                .with_param("httpStatus", "401")
+                .with_param("ambiguous", "true"),
+        ),
         HarnessView::error(
             HarnessId::Litellm,
             HarnessError::new(ErrorCode::Unauthorized, false).with_param("httpStatus", "401"),
@@ -198,7 +228,7 @@ fn ipc_payload_shapes_are_pinned() {
     check_golden(
         "ipc.json",
         &json!({
-            "secretStatus": SecretStatus { litellm: true, opencode: false },
+            "secretStatus": SecretStatus { litellm: true, opencode: false, kimi: true, zai: false },
             "secretKinds": SecretKind::ALL,
             "externalLinks": ExternalLink::ALL,
             "shimStates": ShimState::ALL,

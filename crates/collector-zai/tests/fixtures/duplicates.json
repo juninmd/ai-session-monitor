@@ -1,0 +1,12 @@
+{
+  "code": 200,
+  "data": {
+    "limits": [
+      { "type": "TOKENS_LIMIT", "unit": 3, "number": 5, "percentage": 11 },
+      { "type": "TOKENS_LIMIT", "unit": 3, "number": 5, "percentage": 99 },
+      { "type": "TOKENS_LIMIT", "unit": 1, "number": 1, "percentage": 7 },
+      { "type": "TOKENS_LIMIT", "unit": 5, "number": 90, "percentage": 70 }
+    ]
+  },
+  "success": true
+}

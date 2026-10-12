@@ -1,6 +1,7 @@
 // One sample view per source and mood. Fabricated numbers only; see fixtures.ts.
 import type { HarnessId, HarnessView, Notice } from '../lib/contract';
 import { type Env, fact, type Mood, notice, viewOf, windowOf } from './fixtures';
+import { kimiView, zaiView } from './keyed';
 
 const CLAUDE = {
   ok: { five: 48, week: 31, fiveReset: 113, opus: 18, sonnet: 29 },
@@ -222,5 +223,7 @@ export const BUILDERS: Record<HarnessId, (env: Env, mood: Mood) => HarnessView> 
   codex: codexView,
   antigravity: (env, mood) => antigravityView(env, mood),
   opencode: opencodeView,
+  kimi: kimiView,
+  zai: zaiView,
   litellm: litellmView,
 };

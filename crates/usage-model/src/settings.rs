@@ -22,6 +22,8 @@ pub struct Settings {
     pub codex: CodexSettings,
     pub antigravity: AntigravitySettings,
     pub opencode: OpencodeSettings,
+    pub kimi: KimiSettings,
+    pub zai: ZaiSettings,
     pub litellm: LitellmSettings,
 }
 
@@ -34,6 +36,8 @@ impl Default for Settings {
             codex: CodexSettings::default(),
             antigravity: AntigravitySettings::default(),
             opencode: OpencodeSettings::default(),
+            kimi: KimiSettings::default(),
+            zai: ZaiSettings::default(),
             litellm: LitellmSettings::default(),
         }
     }
@@ -58,6 +62,8 @@ impl Settings {
             HarnessId::Codex => self.codex.enabled,
             HarnessId::Antigravity => self.antigravity.enabled,
             HarnessId::Opencode => self.opencode.enabled,
+            HarnessId::Kimi => self.kimi.enabled,
+            HarnessId::Zai => self.zai.enabled,
             HarnessId::Litellm => self.litellm.enabled,
         }
     }
@@ -201,6 +207,32 @@ pub struct OpencodeSettings {
 impl Default for OpencodeSettings {
     fn default() -> Self {
         Self { enabled: true, local_consent: false, data_dir: None }
+    }
+}
+
+/// Kimi Code (Moonshot) quota. Saving the API key is the consent, so there is no flag for it.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct KimiSettings {
+    pub enabled: bool,
+}
+
+impl Default for KimiSettings {
+    fn default() -> Self {
+        Self { enabled: true }
+    }
+}
+
+/// z.ai (GLM Coding Plan) quota. Saving the API key is the consent, so there is no flag for it.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct ZaiSettings {
+    pub enabled: bool,
+}
+
+impl Default for ZaiSettings {
+    fn default() -> Self {
+        Self { enabled: true }
     }
 }
 

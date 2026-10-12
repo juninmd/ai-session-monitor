@@ -167,6 +167,106 @@
     {
       "error": null,
       "facts": [],
+      "id": "kimi",
+      "meta": {},
+      "nextAttemptAt": null,
+      "notices": [],
+      "plan": "Intermediate",
+      "readAt": 1799999970,
+      "source": {
+        "id": "coding_usages",
+        "official": false
+      },
+      "stale": false,
+      "state": "ready",
+      "windows": [
+        {
+          "amount": {
+            "limit": 200.0,
+            "unit": "requests",
+            "used": 50.0
+          },
+          "group": null,
+          "id": "five_hour",
+          "kind": "five_hour",
+          "label": null,
+          "resetsAt": 1800007200,
+          "usedPct": 25.0,
+          "windowMinutes": 300
+        },
+        {
+          "amount": null,
+          "group": null,
+          "id": "weekly",
+          "kind": "weekly",
+          "label": null,
+          "resetsAt": 1800259200,
+          "usedPct": 25.0,
+          "windowMinutes": null
+        },
+        {
+          "amount": null,
+          "group": null,
+          "id": "monthly",
+          "kind": "monthly",
+          "label": null,
+          "resetsAt": 1801200000,
+          "usedPct": 40.0,
+          "windowMinutes": null
+        }
+      ]
+    },
+    {
+      "error": null,
+      "facts": [],
+      "id": "zai",
+      "meta": {},
+      "nextAttemptAt": null,
+      "notices": [],
+      "plan": "Pro",
+      "readAt": 1799999970,
+      "source": {
+        "id": "quota_limit",
+        "official": false
+      },
+      "stale": false,
+      "state": "ready",
+      "windows": [
+        {
+          "amount": null,
+          "group": null,
+          "id": "five_hour",
+          "kind": "five_hour",
+          "label": null,
+          "resetsAt": 1800007200,
+          "usedPct": 12.0,
+          "windowMinutes": 300
+        },
+        {
+          "amount": null,
+          "group": null,
+          "id": "weekly",
+          "kind": "weekly",
+          "label": null,
+          "resetsAt": 1800259200,
+          "usedPct": 40.0,
+          "windowMinutes": 10080
+        },
+        {
+          "amount": null,
+          "group": null,
+          "id": "mcp",
+          "kind": "monthly",
+          "label": null,
+          "resetsAt": 1801200000,
+          "usedPct": 25.0,
+          "windowMinutes": null
+        }
+      ]
+    },
+    {
+      "error": null,
+      "facts": [],
       "id": "litellm",
       "meta": {
         "host": "gateway.example.dev",
@@ -281,6 +381,41 @@
       "source": null,
       "stale": false,
       "state": "no_data",
+      "windows": []
+    },
+    {
+      "error": null,
+      "facts": [],
+      "id": "kimi",
+      "meta": {},
+      "nextAttemptAt": null,
+      "notices": [],
+      "plan": null,
+      "readAt": null,
+      "source": null,
+      "stale": false,
+      "state": "needs_setup",
+      "windows": []
+    },
+    {
+      "error": {
+        "code": "unauthorized",
+        "params": {
+          "ambiguous": "true",
+          "httpStatus": "401"
+        },
+        "retryable": false
+      },
+      "facts": [],
+      "id": "zai",
+      "meta": {},
+      "nextAttemptAt": null,
+      "notices": [],
+      "plan": null,
+      "readAt": null,
+      "source": null,
+      "stale": false,
+      "state": "error",
       "windows": []
     },
     {

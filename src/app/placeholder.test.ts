@@ -21,6 +21,8 @@ describe('viewsInTabOrder', () => {
       'codex:ready',
       'antigravity:loading',
       'opencode:loading',
+      'kimi:loading',
+      'zai:loading',
       'litellm:loading',
     ]);
   });

@@ -5,7 +5,7 @@ Status: accepted (2026-10-10, after the user approved the interactive prototype)
 ## Context
 
 A Windows tray app must show, per AI coding tool ("harness"), how much of the session is still
-available: Claude Code (5 h and weekly), Codex, Antigravity, OpenCode and a parametrizable LiteLLM
+available: Claude Code (5 h and weekly), Codex, Antigravity, OpenCode, Kimi Code, z.ai and a parametrizable LiteLLM
 connection. One tab per harness. Every source has a different trust level: some are documented,
 some are internal files, one is a local language server. The app reads credentials and personal
 usage data, so what it reads and what it sends must be explicit.
@@ -44,14 +44,14 @@ Coupling impact: the webview depends only on `Backend` (`src/lib/backend.ts`); t
 ### D4. Honest sources
 
 Each view carries `source = { id, official }`. The UI shows an "unofficial" badge for anything
-that is not a documented vendor interface (Antigravity local server, OpenCode Go usage endpoint,
+that is not a documented vendor interface (Antigravity local server, OpenCode Go usage endpoint, Kimi Code and z.ai usage endpoints,
 Claude OAuth usage). Official-first where one exists: Claude's statusLine `rate_limits`
 (through an installed shim) and `codex app-server`. Unofficial or optional sources are opt-in with
 explicit consent and are never required for the app to work. See `docs/data-sources.md`.
 
 ### D5. Secrets only in the Windows Credential Manager; HTTP only from Rust
 
-API keys (LiteLLM, OpenCode Go) are written through `set_secret` and stored with `keyring-core`
+API keys (LiteLLM, OpenCode Go, Kimi Code, z.ai) are written through `set_secret` and stored with `keyring-core`
 plus `windows-native-keyring-store` (keyring 4.x was split into a core and per-platform stores; the
 store is opened with an explicit target and local persistence, and if the Credential Manager cannot
 be opened every secret operation fails closed). They never appear in `Settings`, snapshots, logs,
@@ -109,10 +109,10 @@ rate`) and shown only when the window is old enough to extrapolate.
 
 ## Consequences
 
-- More up-front structure (five collector crates, a contract layer) than a single binary would
+- More up-front structure (seven collector crates, a contract layer) than a single binary would
   need; the payoff is that each source can fail, change or be replaced independently, and that
   Rust/TypeScript drift is a test failure rather than a runtime surprise.
-- Two of five sources are unofficial and can break without notice; the UI states that and shows
+- Four of seven sources are unofficial and can break without notice; the UI states that and shows
   "unavailable" instead of a made-up number.
 - The tray flyout cannot be fully verified in CI; Windows behaviour has a manual checklist.
 

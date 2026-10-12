@@ -54,6 +54,12 @@ export const OpencodeSettingsSchema = z.strictObject({
 });
 export type OpencodeSettings = z.infer<typeof OpencodeSettingsSchema>;
 
+export const KimiSettingsSchema = z.strictObject({ enabled: z.boolean() });
+export type KimiSettings = z.infer<typeof KimiSettingsSchema>;
+
+export const ZaiSettingsSchema = z.strictObject({ enabled: z.boolean() });
+export type ZaiSettings = z.infer<typeof ZaiSettingsSchema>;
+
 export const LITELLM_SCOPES = ['key', 'user', 'team'] as const;
 export const LitellmScopeSchema = z.enum(LITELLM_SCOPES);
 export type LitellmScope = z.infer<typeof LitellmScopeSchema>;
@@ -84,6 +90,8 @@ export const SettingsSchema = z.strictObject({
   codex: CodexSettingsSchema,
   antigravity: AntigravitySettingsSchema,
   opencode: OpencodeSettingsSchema,
+  kimi: KimiSettingsSchema,
+  zai: ZaiSettingsSchema,
   litellm: LitellmSettingsSchema,
 });
 export type Settings = z.infer<typeof SettingsSchema>;
@@ -118,6 +126,8 @@ export const defaultSettings: Settings = {
   codex: { enabled: true, consent: false, binaryPath: null },
   antigravity: { enabled: true, consent: false },
   opencode: { enabled: true, localConsent: false, dataDir: null },
+  kimi: { enabled: true },
+  zai: { enabled: true },
   litellm: {
     enabled: true,
     baseUrl: null,

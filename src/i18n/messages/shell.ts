@@ -5,6 +5,8 @@ export const shellMessages = {
   'harness.codex': 'Codex',
   'harness.antigravity': 'Antigravity',
   'harness.opencode': 'OpenCode',
+  'harness.kimi': 'Kimi Code',
+  'harness.zai': 'z.ai',
   'harness.litellm': 'LiteLLM',
 
   'header.refresh': 'Atualizar agora',
@@ -85,7 +87,9 @@ export const shellMessages = {
 
   'action.retry': 'Tentar de novo',
   'action.settings': 'Abrir configurações',
-  'action.console': 'Abrir console do OpenCode',
+  'action.console.opencode': 'Abrir console do OpenCode',
+  'action.console.kimi': 'Abrir console do Kimi Code',
+  'action.console.zai': 'Abrir chaves do z.ai',
   'action.reinstall': 'Reinstalar',
   'action.failed': 'Não foi possível concluir a ação.',
 } as const satisfies Record<string, string>;

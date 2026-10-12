@@ -263,6 +263,8 @@ fn section_changed(id: HarnessId, old: &Settings, new: &Settings) -> bool {
         HarnessId::Codex => old.codex != new.codex,
         HarnessId::Antigravity => old.antigravity != new.antigravity,
         HarnessId::Opencode => old.opencode != new.opencode,
+        HarnessId::Kimi => old.kimi != new.kimi,
+        HarnessId::Zai => old.zai != new.zai,
         HarnessId::Litellm => old.litellm != new.litellm,
     }
 }

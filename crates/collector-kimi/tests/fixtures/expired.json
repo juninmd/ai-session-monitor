@@ -1,0 +1,9 @@
+{
+  "usage": { "limit": 100, "used": 100, "resetTime": "2027-01-15T07:00:00Z" },
+  "limits": [
+    {
+      "window": { "duration": 5, "timeUnit": "TIME_UNIT_HOUR" },
+      "detail": { "limit": 200, "remaining": 0, "resetTime": "2027-01-15T07:00:00Z" }
+    }
+  ]
+}

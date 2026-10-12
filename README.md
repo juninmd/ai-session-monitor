@@ -9,6 +9,8 @@ ferramentas de código com IA, uma aba por ferramenta:
 | **Codex** | janela de 5 h e semanal, plano, créditos e recargas de reset | `codex app-server` (JSON-RPC) | oficial |
 | **Antigravity** | pools Gemini e Claude/GPT-OSS (5 h e semana) | servidor de linguagem local da IDE | **não oficial** |
 | **OpenCode** | Go: janelas de 5 h, semana e mês; estimativa local de custo | endpoint de uso do Go + `opencode.db` (somente leitura) | **não oficial** |
+| **Kimi Code** | janelas de 5 h e semana (e o pool mensal, quando o serviço informa) | endpoint de uso do Kimi Code com a sua chave | **não oficial** |
+| **z.ai** | plano GLM Coding: janelas de 5 h e semana, e a cota mensal de ferramentas MCP | endpoint de cota do z.ai com a sua chave | **não oficial** |
 | **LiteLLM** | orçamento da chave, usuário ou time (parametrizável) | API do proxy (`/key/info`, `/user/info`, `/team/info`) | oficial |
 
 "Em horas" significa duas coisas, sempre mostradas juntas: o **tempo até reiniciar** (número
@@ -19,7 +21,7 @@ atual). Valor desconhecido aparece como desconhecido, nunca como 0 %.
 
 - Cada fonte que lê arquivos ou processos de outra ferramenta fica parada até você **consentir** na aba.
 - O app **só lê**: nunca escreve em um provedor, nunca renova tokens e nunca usa cookies de navegador.
-- As únicas credenciais guardadas são as chaves de API do LiteLLM e do OpenCode Go que você colar;
+- As únicas credenciais guardadas são as chaves de API do LiteLLM, do OpenCode Go, do Kimi Code e do z.ai que você colar;
   ficam no **Gerenciador de Credenciais do Windows**, nunca em arquivo, log ou na interface.
 - O histórico de uso (seção "Histórico" de cada aba) fica só neste computador, em `history.json`: porcentagens e horários por janela, por 35 dias, sem conta nem rótulos. Dá para desligar e apagar em Configurações.
 - A interface web não faz requisições de rede; todo HTTP sai do Rust (somente https, sem
@@ -79,7 +81,7 @@ notificações) · `src-tauri` (bandeja, janela, chaves) · `src` (React). Decis
 
 ## Limitações conhecidas
 
-- Antigravity e o endpoint de uso do OpenCode não têm API pública: podem mudar sem aviso (o app mostra
+- Antigravity e os endpoints de uso do OpenCode, do Kimi Code e do z.ai não têm API pública: podem mudar sem aviso (o app mostra
   "indisponível" em vez de inventar um número). A leitura do Antigravity ainda não foi exercitada
   contra uma IDE real.
 - O statusLine do Claude Code só atualiza enquanto o Claude Code está aberto.
@@ -87,7 +89,7 @@ notificações) · `src-tauri` (bandeja, janela, chaves) · `src` (React). Decis
   até você reativá-la lá. Se o executável mudar de pasta, desligue e ligue a opção de novo para
   registrar o novo caminho.
 - O cliente HTTP ignora proxies do sistema e variáveis `HTTP(S)_PROXY` de propósito (uma variável
-  alheia não pode capturar suas chaves). Atrás de proxy corporativo, a conexão com LiteLLM e OpenCode
+  alheia não pode capturar suas chaves). Atrás de proxy corporativo, a conexão com LiteLLM, OpenCode, Kimi Code e z.ai
   precisa ser direta; CA privada é suportada pela configuração de certificado da aba LiteLLM.
 - Comportamento da bandeja (clique, perda de foco, DPI, vários monitores) só se confirma numa sessão
   real do Windows; veja o checklist manual.

@@ -142,6 +142,8 @@ impl AppService {
         Ok(SecretStatus {
             litellm: self.exists(SecretKind::Litellm)?,
             opencode: self.exists(SecretKind::Opencode)?,
+            kimi: self.exists(SecretKind::Kimi)?,
+            zai: self.exists(SecretKind::Zai)?,
         })
     }
 
@@ -153,7 +155,12 @@ impl AppService {
     /// written kind is known, and the other one counts as unset when unreadable.
     fn status_after_write(&self, written: SecretKind, present: bool) -> SecretStatus {
         let has = |kind| if kind == written { present } else { self.exists(kind).unwrap_or(false) };
-        SecretStatus { litellm: has(SecretKind::Litellm), opencode: has(SecretKind::Opencode) }
+        SecretStatus {
+            litellm: has(SecretKind::Litellm),
+            opencode: has(SecretKind::Opencode),
+            kimi: has(SecretKind::Kimi),
+            zai: has(SecretKind::Zai),
+        }
     }
 
     /// Stores the trimmed value and re-reads that harness. The value is never logged or echoed.
@@ -241,5 +248,7 @@ fn harness_of(kind: SecretKind) -> HarnessId {
     match kind {
         SecretKind::Litellm => HarnessId::Litellm,
         SecretKind::Opencode => HarnessId::Opencode,
+        SecretKind::Kimi => HarnessId::Kimi,
+        SecretKind::Zai => HarnessId::Zai,
     }
 }

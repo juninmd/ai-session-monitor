@@ -1,11 +1,19 @@
 import { useBackend } from '../../app/backendContext';
 import { describeError, type ErrorAction } from '../../app/errorText';
+import { consoleLink } from '../../app/harness';
 import { useNavigation } from '../../app/navigation';
 import { useSettingsApi } from '../../app/settingsContext';
 import { useAsyncAction } from '../../app/useAsyncAction';
-import { t } from '../../i18n';
+import { hasMessage, type MessageKey, t } from '../../i18n';
 import type { HarnessError, HarnessId } from '../../lib/contract';
 import { Icon } from '../icons';
+
+/** The console button names the vendor; a harness without its own wording gets OpenCode's. */
+function actionKey(action: ErrorAction, harness: HarnessId): MessageKey {
+  if (action !== 'console') return `action.${action}` as MessageKey;
+  const own = `action.console.${harness}`;
+  return hasMessage(own) ? own : 'action.console.opencode';
+}
 
 /** Runs the one action an error offers: retry, open settings, open the console, reinstall. */
 export function useErrorAction(action: ErrorAction, harness: HarnessId) {
@@ -21,7 +29,7 @@ export function useErrorAction(action: ErrorAction, harness: HarnessId) {
         navigation.openSettings(harness);
         return;
       case 'console':
-        await backend.openLink('opencode_go_console');
+        await backend.openLink(consoleLink(harness));
         return;
       case 'reinstall':
         await installShim();
@@ -29,7 +37,7 @@ export function useErrorAction(action: ErrorAction, harness: HarnessId) {
         return;
     }
   });
-  return { ...task, label: t(`action.${action}`) };
+  return { ...task, label: t(actionKey(action, harness)) };
 }
 
 /** A failure of the action itself (the link did not open, the install failed again). */

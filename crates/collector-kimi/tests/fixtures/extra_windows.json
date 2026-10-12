@@ -1,0 +1,8 @@
+{
+  "limits": [
+    { "window": { "duration": 300, "timeUnit": "TIME_UNIT_MINUTE" }, "detail": { "limit": "200", "used": "20", "resetTime": "2027-01-15T10:00:00Z" } },
+    { "window": { "duration": 300, "timeUnit": "TIME_UNIT_MINUTE" }, "detail": { "limit": "200", "used": "190", "resetTime": "2027-01-15T11:00:00Z" } },
+    { "window": { "duration": 1, "timeUnit": "TIME_UNIT_DAY" }, "detail": { "limit": "50", "used": "60", "resetTime": "2027-01-16T08:00:00Z" } },
+    { "window": { "duration": 90, "timeUnit": "TIME_UNIT_MINUTE" }, "detail": { "limit": "10", "remaining": "4", "resetTime": "2027-01-15T09:30:00Z" } }
+  ]
+}

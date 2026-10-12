@@ -16,6 +16,8 @@ fn emitted() -> Vec<(&'static str, &'static [&'static str])> {
         ("collector-antigravity", collector_antigravity::NOTICE_CODES),
         ("collector-litellm", collector_litellm::NOTICE_CODES),
         ("collector-opencode", collector_opencode::NOTICE_CODES),
+        ("collector-kimi", collector_kimi::NOTICE_CODES),
+        ("collector-zai", collector_zai::NOTICE_CODES),
     ]
 }
 

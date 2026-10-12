@@ -60,6 +60,8 @@ export const FACTS: Readonly<Record<HarnessId, readonly (readonly [id: string, u
       ['local_tokens_5h', 'tokens'],
       ['local_tokens_7d', 'tokens'],
     ],
+    kimi: [],
+    zai: [],
     litellm: [
       ['rpm_limit', 'requests'],
       ['tpm_limit', 'tokens'],

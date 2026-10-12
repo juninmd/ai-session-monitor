@@ -4,15 +4,19 @@ import type { HarnessId } from '../../lib/contract';
 import { AntigravityLogo } from './AntigravityLogo';
 import { ClaudeLogo } from './ClaudeLogo';
 import { CodexLogo } from './CodexLogo';
+import { KimiLogo } from './KimiLogo';
 import { LiteLLMLogo } from './LiteLLMLogo';
 import type { LogoProps } from './LogoSvg';
 import { OpenCodeLogo } from './OpenCodeLogo';
+import { ZaiLogo } from './ZaiLogo';
 
 const LOGOS: Record<HarnessId, ComponentType<LogoProps>> = {
   claude: ClaudeLogo,
   codex: CodexLogo,
   antigravity: AntigravityLogo,
   opencode: OpenCodeLogo,
+  kimi: KimiLogo,
+  zai: ZaiLogo,
   litellm: LiteLLMLogo,
 };
 

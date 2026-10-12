@@ -11,6 +11,8 @@ export const windowMessages = {
   'window.litellm.named': 'Orçamento: {name}',
   'window.litellm.limit': 'Orçamento de {dur}',
   'window.monthly': 'Mês',
+  'window.kimi.monthly': 'Total do mês',
+  'window.zai.monthly': 'Ferramentas MCP, mês',
   'window.daily': 'Dia',
   'window.budget': 'Orçamento',
   'window.other': 'Janela',
@@ -89,6 +91,8 @@ export const windowMessages = {
   'source.language_server': 'servidor local da IDE',
   'source.key_info': 'API do LiteLLM',
   'source.go_usage': 'API de uso do Go',
+  'source.coding_usages': 'API de uso do Kimi Code',
+  'source.quota_limit': 'API de cota do z.ai',
   'source.local_db': 'banco local',
 
   'group.opus': 'Opus',

@@ -41,12 +41,30 @@ fn antigravity<'a>(s: &'a Settings, _: &'a dyn SecretStore, ctx: &'a Ctx) -> Col
     Box::pin(collector_antigravity::collect(&s.antigravity, ctx))
 }
 
-/// The two keyed collectors read their key here; a store failure becomes that tab's error.
+/// The keyed collectors read their key here; a store failure becomes that tab's error.
 fn opencode<'a>(s: &'a Settings, secrets: &'a dyn SecretStore, ctx: &'a Ctx) -> CollectFuture<'a> {
     Box::pin(async move {
         match secrets.get(SecretKind::Opencode) {
             Ok(key) => collector_opencode::collect(&s.opencode, key.as_ref(), ctx).await,
             Err(err) => HarnessView::error(HarnessId::Opencode, err),
+        }
+    })
+}
+
+fn kimi<'a>(s: &'a Settings, secrets: &'a dyn SecretStore, ctx: &'a Ctx) -> CollectFuture<'a> {
+    Box::pin(async move {
+        match secrets.get(SecretKind::Kimi) {
+            Ok(key) => collector_kimi::collect(&s.kimi, key.as_ref(), ctx).await,
+            Err(err) => HarnessView::error(HarnessId::Kimi, err),
+        }
+    })
+}
+
+fn zai<'a>(s: &'a Settings, secrets: &'a dyn SecretStore, ctx: &'a Ctx) -> CollectFuture<'a> {
+    Box::pin(async move {
+        match secrets.get(SecretKind::Zai) {
+            Ok(key) => collector_zai::collect(&s.zai, key.as_ref(), ctx).await,
+            Err(err) => HarnessView::error(HarnessId::Zai, err),
         }
     })
 }
@@ -140,6 +158,8 @@ pub fn adapters(claude_dir: Option<String>) -> Adapters {
             wired(HarnessId::Codex, codex),
             wired(HarnessId::Antigravity, antigravity),
             wired(HarnessId::Opencode, opencode),
+            wired(HarnessId::Kimi, kimi),
+            wired(HarnessId::Zai, zai),
             wired(HarnessId::Litellm, litellm),
         ],
         claude_shim: Arc::new(ClaudeCodeShim { env_dir: claude_dir }),

@@ -49,7 +49,8 @@ async fn a_failing_secret_store_becomes_that_tabs_error_for_the_keyed_harnesses(
     for collector in adapters(None).collectors {
         let view = collector.collect(&settings, &BrokenStore, &ctx).await;
         let id = collector.id();
-        if matches!(id, HarnessId::Opencode | HarnessId::Litellm) {
+        if matches!(id, HarnessId::Opencode | HarnessId::Kimi | HarnessId::Zai | HarnessId::Litellm)
+        {
             assert_eq!(view.state, ViewState::Error, "{id:?}");
             assert_eq!(view.error, Some(store_error()), "{id:?}");
         } else {
