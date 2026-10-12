@@ -3,6 +3,8 @@
 use serde_json::Value;
 
 const FIELD: &str = "remainingFraction";
+/// The `agy` CLI writes the same field in snake case.
+const FIELD_SNAKE: &str = "remaining_fraction";
 /// A numeric string longer than this is not a share.
 const MAX_NUMBER_TEXT: usize = 32;
 
@@ -17,6 +19,7 @@ pub(crate) fn used_pct(object: &Value) -> Option<f64> {
     let remaining = object.get("remaining");
     let share = object
         .get(FIELD)
+        .or_else(|| object.get(FIELD_SNAKE))
         .or_else(|| remaining.and_then(|inner| inner.get(FIELD)))
         .or_else(|| remaining.and_then(oneof))?;
     let fraction = number(share)?;

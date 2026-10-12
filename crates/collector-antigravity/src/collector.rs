@@ -1,18 +1,20 @@
-//! One poll: check the gates, find the server, ask it, read the answers.
+//! One poll: check the gates, try the CLI, else find the IDE's server, ask it, read the answers.
 
 use std::time::Duration;
 
 use usage_model::settings::AntigravitySettings;
 use usage_model::{Ctx, ErrorCode, HarnessError, HarnessId, HarnessView};
 
+use crate::cli::{Cli, CliError, parse_usage};
 use crate::discovery::{Discovery, Target};
 use crate::errors::most_specific;
 use crate::quota::{Read, merge, parse_status, parse_summary};
 use crate::rpc::{Limits, Method, Rpc};
-use crate::view;
+use crate::view::{self, Origin};
 
-/// The scheduler cuts a poll off at 30 s; ending sooner keeps the error specific.
-const DEFAULT_BUDGET: Duration = Duration::from_secs(24);
+/// The scheduler cuts a poll off at 30 s; ending sooner keeps the error specific. Room for a slow
+/// CLI (15 s) and then the IDE attempt.
+const DEFAULT_BUDGET: Duration = Duration::from_secs(28);
 
 /// Tunables that tests shrink.
 #[derive(Clone, Debug)]
@@ -28,10 +30,11 @@ impl Default for Config {
     }
 }
 
-pub(crate) async fn collect_with<D: Discovery>(
+pub(crate) async fn collect_with<D: Discovery, C: Cli>(
     settings: &AntigravitySettings,
     ctx: &Ctx,
     discovery: &D,
+    cli: &C,
     config: &Config,
 ) -> HarnessView {
     let id = HarnessId::Antigravity;
@@ -43,14 +46,41 @@ pub(crate) async fn collect_with<D: Discovery>(
     if !settings.consent {
         return HarnessView::needs_consent(id);
     }
-    match tokio::time::timeout(config.budget, poll(ctx, discovery, config)).await {
-        Ok(Ok(read)) => view::build(read, ctx.now_secs),
+    match tokio::time::timeout(config.budget, poll(ctx, discovery, cli, config)).await {
+        Ok(Ok((read, origin))) => view::build(read, origin, ctx.now_secs),
         Ok(Err(error)) => HarnessView::error(id, error),
         Err(_elapsed) => HarnessView::error(id, HarnessError::new(ErrorCode::Timeout, true)),
     }
 }
 
-async fn poll<D: Discovery>(
+/// The CLI first: it is installed on its own (no IDE needed), answers in a moment and needs no
+/// token. When it gives a result the IDE is not asked at all, so the same account is never counted
+/// twice. Without a result the IDE path runs unchanged; if that finds nothing either, the more
+/// telling of the two errors wins (a CLI that failed beats "IDE closed").
+async fn poll<D: Discovery, C: Cli>(
+    ctx: &Ctx,
+    discovery: &D,
+    cli: &C,
+    config: &Config,
+) -> Result<(Read, Origin), HarnessError> {
+    let cli_failure = match cli.usage(ctx).await {
+        Ok(body) => match parse_usage(&body, ctx.now_secs) {
+            Ok(read) => return Ok((read, Origin::Cli)),
+            Err(error) => Some(error),
+        },
+        Err(CliError::Absent) => None,
+        Err(CliError::Failed(error)) => Some(error),
+    };
+    match poll_ide(ctx, discovery, config).await {
+        Ok(read) => Ok((read, Origin::LanguageServer)),
+        Err(ide) => Err(match cli_failure {
+            Some(cli) => most_specific(cli, ide),
+            None => ide,
+        }),
+    }
+}
+
+async fn poll_ide<D: Discovery>(
     ctx: &Ctx,
     discovery: &D,
     config: &Config,

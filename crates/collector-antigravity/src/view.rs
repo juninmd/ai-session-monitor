@@ -10,16 +10,32 @@ use crate::quota::{Cadence, PoolWindow, Read};
 
 /// Notice for a pool whose share the server did not state; the window shows as unknown, not 0 %.
 pub(crate) const POOL_UNKNOWN: &str = "antigravity_pool_unknown";
-const SOURCE_ID: &str = "language_server";
+
+/// Where a read came from; the id names the source badge in the UI.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum Origin {
+    LanguageServer,
+    Cli,
+}
+
+impl Origin {
+    const fn id(self) -> &'static str {
+        match self {
+            Self::LanguageServer => "language_server",
+            Self::Cli => "agy_cli",
+        }
+    }
+}
+
 const FIVE_HOUR_MINUTES: u32 = 300;
 const WEEKLY_MINUTES: u32 = 10_080;
 
 /// `now` is when the response was produced, so it is also when the data is from.
-pub(crate) fn build(read: Read, now: i64) -> HarnessView {
+pub(crate) fn build(read: Read, origin: Origin, now: i64) -> HarnessView {
     let windows = windows_of(&read.windows);
     let state = if windows.is_empty() { ViewState::NoData } else { ViewState::Ready };
     let mut view = HarnessView::with_state(HarnessId::Antigravity, state);
-    view.source = Some(Source { id: SOURCE_ID.to_owned(), official: false });
+    view.source = Some(Source { id: origin.id().to_owned(), official: false });
     view.read_at = Some(now);
     view.plan = read.plan;
     // The server can keep serving last cycle's numbers after every window has reset.

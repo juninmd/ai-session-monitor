@@ -161,7 +161,7 @@ async fn the_clock_of_the_poll_dates_the_data_and_the_prose() {
     let discovery = StaticDiscovery::new(Ok(vec![server.target(TOKEN)]));
     let ctx =
         Ctx::new(later, "data-dir-the-collector-never-uses", "home-dir-the-collector-never-uses");
-    let view = collect_with(&on(), &ctx, &discovery, &config()).await;
+    let view = collect_with(&on(), &ctx, &discovery, &AbsentCli, &config()).await;
     assert_eq!(view.read_at, Some(later));
     assert_eq!(view.windows[0].resets_at, Some(later + 3 * 3_600 + 1_800));
 }

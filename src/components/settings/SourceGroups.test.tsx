@@ -97,9 +97,9 @@ describe('Antigravity', () => {
     });
     const { user, backend } = renderPanel(<Antigravity />, { settings: off });
     expect(screen.getByText(/Leitura não oficial/)).toBeVisible();
-    expect(screen.getByText(/conversa só com 127\.0\.0\.1/)).toBeVisible();
+    expect(screen.getByText(/só para ler \/usage/)).toBeVisible();
     const consent = screen.getByRole('switch', {
-      name: 'Permitir a leitura do servidor local da IDE',
+      name: 'Permitir a leitura do Antigravity (CLI ou IDE)',
     });
     expect(consent).not.toBeChecked();
     await user.click(consent);

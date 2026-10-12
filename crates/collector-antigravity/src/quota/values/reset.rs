@@ -18,7 +18,9 @@ const MAX_TIME_TEXT: usize = 64;
 /// relative time its `description` states ("it will fully refresh in 5 days, 11 hours"), counted
 /// from `now`, the moment the response was produced.
 pub(crate) fn reset_at(object: &Value, now: i64) -> Option<i64> {
-    object.get("resetTime").and_then(absolute).or_else(|| {
+    // `reset_time` is how the `agy` CLI spells it.
+    let stated = object.get("resetTime").or_else(|| object.get("reset_time"));
+    stated.and_then(absolute).or_else(|| {
         object.get("description").and_then(Value::as_str).and_then(|text| relative(text, now))
     })
 }

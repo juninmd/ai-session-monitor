@@ -8,6 +8,7 @@ pub(crate) const NOW: i64 = 1_791_633_600;
 
 pub(crate) fn text(name: &str) -> &'static str {
     match name {
+        "cli_usage" => include_str!("../tests/fixtures/cli_usage.json"),
         "summary_full" => include_str!("../tests/fixtures/summary_full.json"),
         "summary_hub" => include_str!("../tests/fixtures/summary_hub.json"),
         "summary_free" => include_str!("../tests/fixtures/summary_free.json"),

@@ -8,12 +8,15 @@ mod wire;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
 
+use serde_json::Value;
 use tokio::io::{AsyncRead, AsyncWrite, AsyncWriteExt};
 use tokio::net::TcpListener;
 use tokio::task::JoinHandle;
 use tokio_rustls::TlsAcceptor;
+use usage_model::Ctx;
 use usage_support::Secret;
 
+use crate::cli::{Cli, CliError};
 use crate::discovery::{Discovery, DiscoveryError, Scheme, Target};
 pub(crate) use wire::{Reply, Request};
 
@@ -163,6 +166,38 @@ impl StaticDiscovery {
 
 impl Discovery for StaticDiscovery {
     async fn find(&self) -> Result<Vec<Target>, DiscoveryError> {
+        self.calls.fetch_add(1, Ordering::SeqCst);
+        self.result.clone()
+    }
+}
+
+/// No CLI installed: the IDE-only machine.
+pub(crate) struct AbsentCli;
+
+impl Cli for AbsentCli {
+    async fn usage(&self, _ctx: &Ctx) -> Result<Value, CliError> {
+        Err(CliError::Absent)
+    }
+}
+
+/// A CLI that answers what it was given and counts how often it was asked.
+pub(crate) struct ScriptedCli {
+    result: Result<Value, CliError>,
+    calls: AtomicUsize,
+}
+
+impl ScriptedCli {
+    pub(crate) fn new(result: Result<Value, CliError>) -> Self {
+        Self { result, calls: AtomicUsize::new(0) }
+    }
+
+    pub(crate) fn calls(&self) -> usize {
+        self.calls.load(Ordering::SeqCst)
+    }
+}
+
+impl Cli for ScriptedCli {
+    async fn usage(&self, _ctx: &Ctx) -> Result<Value, CliError> {
         self.calls.fetch_add(1, Ordering::SeqCst);
         self.result.clone()
     }

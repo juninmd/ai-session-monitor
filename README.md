@@ -7,7 +7,7 @@ ferramentas de código com IA, uma aba por ferramenta:
 |---|---|---|---|
 | **Claude Code** | sessão de 5 h e semana: % disponível, tempo até reiniciar, ritmo | `rate_limits` do statusLine (via shim instalado com seu consentimento) | oficial |
 | **Codex** | janela de 5 h e semanal, plano, créditos e recargas de reset | `codex app-server` (JSON-RPC) | oficial |
-| **Antigravity** | pools Gemini e Claude/GPT-OSS (5 h e semana) | servidor de linguagem local da IDE | **não oficial** |
+| **Antigravity** | pools Gemini e Claude/GPT-OSS (5 h e semana) | CLI `agy` (`/usage`) ou servidor local da IDE | **não oficial** |
 | **OpenCode** | Go: janelas de 5 h, semana e mês; estimativa local de custo | endpoint de uso do Go + `opencode.db` (somente leitura) | **não oficial** |
 | **Kimi Code** | janelas de 5 h e semana (e o pool mensal, quando o serviço informa) | endpoint de uso do Kimi Code com a sua chave | **não oficial** |
 | **z.ai** | plano GLM Coding: janelas de 5 h e semana, e a cota mensal de ferramentas MCP | endpoint de cota do z.ai com a sua chave | **não oficial** |
@@ -82,8 +82,8 @@ notificações) · `src-tauri` (bandeja, janela, chaves) · `src` (React). Decis
 ## Limitações conhecidas
 
 - Antigravity e os endpoints de uso do OpenCode, do Kimi Code e do z.ai não têm API pública: podem mudar sem aviso (o app mostra
-  "indisponível" em vez de inventar um número). A leitura do Antigravity ainda não foi exercitada
-  contra uma IDE real.
+  "indisponível" em vez de inventar um número). A leitura pelo CLI `agy` (1.3.3) foi verificada
+  em 2026-10-12; a leitura pelo servidor local da IDE ainda não foi exercitada contra uma IDE real.
 - O statusLine do Claude Code só atualiza enquanto o Claude Code está aberto.
 - Se você desativar a inicialização com o Windows no Gerenciador de Tarefas, ela continua desativada
   até você reativá-la lá. Se o executável mudar de pasta, desligue e ligue a opção de novo para
