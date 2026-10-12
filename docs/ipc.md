@@ -81,7 +81,7 @@ Window ids and kinds, per source:
 | Source | Window `id` | `kind` |
 |---|---|---|
 | `claude` | `five_hour`, `weekly`; `spend_limit` (a money cap with `amount`, when the status line reports one) | `five_hour`, `weekly`; `budget` |
-| `claude` (OAuth, opt-in) | `<family>:weekly` (`group` = the model family, e.g. `opus`) | `weekly` |
+| `claude` (`claude /usage` or OAuth, opt-in) | `<family>:weekly` (`group` = the model family, e.g. `opus`, `fable`; `label` the display name for families the UI does not name) | `weekly` |
 | `codex` | by cadence: `five_hour`, `daily`, `weekly`, `monthly`; a cadence it cannot name stays `primary` / `secondary` with `windowMinutes` set | same, else `other` |
 | `antigravity` | `<pool>:five_hour`, `<pool>:weekly`, `<pool>:<slug>` (`label` = the bucket); pool is `gemini`, `claude_gpt`, a slug from the service, or `group_<n>` (0-based index) | `five_hour`, `weekly`, `other` |
 | `opencode` | `rolling`, `weekly`, `monthly` | `five_hour`, `weekly`, `monthly` |
@@ -99,8 +99,8 @@ Fact ids and units:
 
 `meta` keys (display only): `alias`, `host`, `scope` (`key`, `user`, `team`) and `level` (`key`,
 `user`, `team`: where the budget was found) for LiteLLM; `local_estimate = true` for OpenCode when
-facts are a local estimate; `extra_source = oauth_usage` for Claude when some windows come from
-the opt-in OAuth source.
+facts are a local estimate; `extra_source = cli_usage` (the `claude -p "/usage"` command) or `oauth_usage` (the fallback API) for
+Claude when some windows come from the opt-in per-model sources.
 
 Error params are non-secret and drive the wording: `reason` (per code: `install_failed`,
 `tls_error`, `endpoint_changed`, `not_running = no_port`, `unauthorized = no_token`), `field`
@@ -118,7 +118,7 @@ with a generic message that includes the code, so a missing translation is visib
 | `claude_waiting_first_session` | info | Shim installed, no Claude Code session has reported yet. |
 | `claude_no_rate_limits` | warn | Claude Code reports no `rate_limits` (API-key billing or a plan without limits). |
 | `claude_shim_outdated` | warn | The configured shim executable is missing; reinstall. |
-| `claude_oauth_partial` | info | OAuth usage is on but failing; showing statusLine data only (`reason` param). |
+| `claude_oauth_partial` | info | Per-model usage is on but both the CLI and the OAuth API failed; showing statusLine data only (`reason` param, the API's). |
 | `codex_rollout_fallback` | info | `codex app-server` unavailable; reading the newest rollout (may be old). `reason` param: the snake_case error code that stopped the app-server (`binary_not_found`, `timeout`, ...). |
 | `codex_no_limits` | warn | The signed-in Codex account reports no limits (API-key auth). |
 | `antigravity_pool_unknown` | warn | A quota pool returned no data (`pool` param); unknown, not zero. |
@@ -168,8 +168,9 @@ Kimi Code and z.ai follow the same rule (a z.ai failure can also arrive as `succ
 ## Polling
 
 - `general.intervalSecs` (30..3600, default 60) is the base cadence; it drives local sources (Claude shim file, Codex,
-  Antigravity, OpenCode local database) and also Claude when OAuth is on: the collector itself
-  asks the OAuth endpoint no more than once per 300 s. LiteLLM uses `litellm.pollIntervalSecs`
+  Antigravity, OpenCode local database) and also Claude when per-model usage is on: the collector itself
+  runs `claude -p "/usage"` no more than once per 600 s (failures 1800 s) and asks the OAuth endpoint, its
+  fallback, no more than once per 300 s. LiteLLM uses `litellm.pollIntervalSecs`
   (>= 60, default 300). Scheduled OpenCode polls, which reach its Go endpoint, never run faster
   than 300 s; a manual refresh can (see the 10 s gap above).
 - Failures back off exponentially per harness up to 15 minutes; a successful read resets it. A Codex

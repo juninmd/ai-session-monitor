@@ -15,7 +15,11 @@
 //!   so two profiles never share a recording). The channel only updates while Claude Code runs
 //!   and after a session's first API response, so quiet periods show stale data with its age,
 //!   and some plans report no `rate_limits` at all.
-//! - **`oauth_usage` (unofficial, single origin).** `GET https://api.anthropic.com/api/oauth/usage`
+//! - **`cli` (unofficial, preferred for per-model weeks).** `claude -p "/usage"` run from a fixed
+//!   user-owned path answers locally (cost 0) with text lines for every weekly cap, Fable
+//!   included; the CLI uses its own login, so no token is read. Same opt-in flag as the API
+//!   below, cached ten minutes, verified by hand on Claude Code 2.1.296 (docs/data-sources.md).
+//! - **`oauth_usage` (unofficial, single origin, fallback).** `GET https://api.anthropic.com/api/oauth/usage`
 //!   with the access token Claude Code already holds adds the per-model weekly windows
 //!   (Opus, Sonnet, ...). The path, the `anthropic-beta: oauth-2025-04-20` header, both response
 //!   shapes (flat `seven_day_*` keys and the newer `limits[]`) and the credentials file layout
@@ -27,6 +31,7 @@
 //! OAuth throttle. Nothing in this crate reads the process environment: the caller resolves the
 //! Claude config directory (`CLAUDE_CONFIG_DIR`) into `ClaudeSettings::config_dir`.
 
+mod cli;
 mod datafile;
 mod lenient;
 mod local;
@@ -56,14 +61,26 @@ pub const NOTICE_CODES: &[&str] = &[
 /// One read of Claude Code's limits. Gates run before any I/O: a disabled tab or a missing consent
 /// returns at once without touching a file or the network.
 pub async fn collect(settings: &ClaudeSettings, ctx: &Ctx) -> HarnessView {
-    collect_with(settings, ctx, &oauth::Endpoint::production()).await
+    collect_with_cli(settings, ctx, &oauth::Endpoint::production(), &cli::SystemCli::new()).await
 }
 
-/// `collect` with the OAuth endpoint injectable, so tests can talk to a loopback server.
+/// `collect` with the OAuth endpoint injectable, so tests can talk to a loopback server. The CLI
+/// is the real one, found only under the (temporary) home of the test, so it is absent there.
+#[cfg(test)]
 pub(crate) async fn collect_with(
     settings: &ClaudeSettings,
     ctx: &Ctx,
     endpoint: &oauth::Endpoint,
+) -> HarnessView {
+    collect_with_cli(settings, ctx, endpoint, &cli::SystemCli::new()).await
+}
+
+/// Both extra sources injectable: the CLI double and the OAuth loopback server.
+pub(crate) async fn collect_with_cli<C: cli::Cli>(
+    settings: &ClaudeSettings,
+    ctx: &Ctx,
+    endpoint: &oauth::Endpoint,
+    cli: &C,
 ) -> HarnessView {
     if !settings.enabled {
         return HarnessView::disabled(HarnessId::Claude);
@@ -76,7 +93,9 @@ pub(crate) async fn collect_with(
         tokio::task::spawn_blocking(move || local::view(&owned_settings, &owned_ctx)).await;
     let mut view = joined.unwrap_or_else(task_lost);
     // Extras ride on a usable statusLine view; an idle machine does not poll an unofficial API.
-    if settings.oauth_usage && view.state == ViewState::Ready && !view.stale {
+    // The CLI is preferred (no token involved); the OAuth API only answers when it cannot.
+    let wants_extras = settings.oauth_usage && view.state == ViewState::Ready && !view.stale;
+    if wants_extras && !cli::add_extras(&mut view, settings, ctx, cli).await {
         oauth::add_extras(&mut view, settings, ctx, endpoint).await;
     }
     view

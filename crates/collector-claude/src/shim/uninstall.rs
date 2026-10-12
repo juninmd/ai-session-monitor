@@ -55,7 +55,7 @@ fn leftovers(paths: &Paths) -> bool {
 }
 
 /// Best effort: a copy that is still running cannot be deleted on Windows, and nothing refers to
-/// it any more. The recording and the OAuth throttle go too, so a later reinstall does not show
+/// it any more. The recording and the OAuth and CLI throttles go too, so a later reinstall does not show
 /// weeks-old numbers, and so does the copy of the saved record beside settings.json. The backup of
 /// the original settings.json is the user's and stays.
 fn remove_own_files(paths: &Paths) {
@@ -65,6 +65,7 @@ fn remove_own_files(paths: &Paths) {
         &paths.state_copy,
         &paths.rate_limits,
         &paths.oauth_cache,
+        &paths.cli_cache,
         &paths.exe,
     ];
     for file in files {

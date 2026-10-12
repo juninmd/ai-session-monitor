@@ -57,16 +57,22 @@ describe('meta chips', () => {
     });
 
     it.each([false, true])(
-      'flag windows from the unofficial Claude usage API once, with the setting at %s',
+      'flag windows from the unofficial Claude per-model sources once, with the setting at %s',
       (oauthUsage) => {
         const settings = settingsWith((s) => {
           s.claude.oauthUsage = oauthUsage;
         });
         ready({ ...claudeView(envOf(), 'ok'), meta: { extra_source: 'oauth_usage' } }, settings);
-        expect(screen.getAllByText('Também: API de uso, não oficial')).toHaveLength(1);
+        expect(screen.getAllByText('Também: uso por modelo, não oficial')).toHaveLength(1);
         expect(document.body).not.toHaveTextContent('extra_source');
       },
     );
+
+    it('treats windows from the claude /usage command like the API ones', () => {
+      ready({ ...claudeView(envOf(), 'ok'), meta: { extra_source: 'cli_usage' } });
+      expect(screen.getAllByText('Também: uso por modelo, não oficial')).toHaveLength(1);
+      expect(document.body).not.toHaveTextContent('extra_source');
+    });
 
     it('show an extra source nobody named yet as it came', () => {
       ready({ ...claudeView(envOf(), 'ok'), meta: { extra_source: 'something_new' } });

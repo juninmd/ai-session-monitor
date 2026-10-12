@@ -29,6 +29,8 @@ pub(crate) struct Paths {
     /// `{"command": ...}`: what the shim runs after recording.
     pub chain: PathBuf,
     pub oauth_cache: PathBuf,
+    /// Throttle and last answer of the `claude -p "/usage"` source.
+    pub cli_cache: PathBuf,
     pub exe: PathBuf,
     /// Directories that hold only our files, deepest first; each goes once it is empty.
     pub own_dirs: [PathBuf; 3],
@@ -67,6 +69,7 @@ impl Paths {
             state: named("shim-state"),
             chain: named("chain"),
             oauth_cache: named("oauth-usage"),
+            cli_cache: named("cli-usage"),
             exe: exe_dir.join(EXE_NAME),
             own_dirs: [exe_dir, bin, claude_data],
         })
@@ -155,8 +158,15 @@ mod tests {
     }
 
     /// What an install owns in the app data dir.
-    fn data_files(paths: &Paths) -> [&PathBuf; 5] {
-        [&paths.rate_limits, &paths.state, &paths.chain, &paths.oauth_cache, &paths.exe]
+    fn data_files(paths: &Paths) -> [&PathBuf; 6] {
+        [
+            &paths.rate_limits,
+            &paths.state,
+            &paths.chain,
+            &paths.oauth_cache,
+            &paths.cli_cache,
+            &paths.exe,
+        ]
     }
 
     #[test]
@@ -167,6 +177,7 @@ mod tests {
         assert_eq!(paths.state, env.state_file());
         assert_eq!(paths.chain, env.chain_file());
         assert_eq!(paths.oauth_cache, env.oauth_cache());
+        assert_eq!(paths.cli_cache, env.cli_cache());
         assert_eq!(paths.exe, env.shim_copy());
         assert_eq!(paths.home, env.home);
         assert_eq!(paths.state_copy, env.state_copy(), "beside settings.json, not in the data dir");

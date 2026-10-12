@@ -70,6 +70,13 @@ fn print_args(args: &[String]) -> io::Result<()> {
     out.flush()
 }
 
+fn print_env(name: &str) -> io::Result<()> {
+    let value = std::env::var(name).unwrap_or_else(|_| "<unset>".to_owned());
+    let mut out = io::stdout().lock();
+    writeln!(out, "{value}")?;
+    out.flush()
+}
+
 fn print_cwd() -> io::Result<()> {
     let dir = std::env::current_dir()?;
     let mut out = io::stdout().lock();
@@ -117,6 +124,7 @@ fn run(args: &[String]) -> io::Result<()> {
         Some("flood") => flood(),
         Some("args") => print_args(&args[1..]),
         Some("cwd") => print_cwd(),
+        Some("env") => print_env(args.get(1).map_or("", String::as_str)),
         Some("resolve") => resolve(&args[1..]),
         Some("print") => write_bytes(io::stdout().lock(), number(args, 1), b""),
         Some("print-err") => write_bytes(io::stderr().lock(), number(args, 1), b""),

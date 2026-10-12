@@ -12,8 +12,10 @@ mod cache;
 mod credentials;
 mod usage;
 
+pub(crate) use usage::{bounded, weekly};
+
 #[cfg(test)]
-mod fake_server;
+pub(crate) mod fake_server;
 #[cfg(test)]
 mod tests;
 
@@ -106,6 +108,8 @@ async fn request(
 }
 
 /// Runs blocking file work off the async runtime; `None` if the task was lost.
-async fn blocking<T: Send + 'static>(work: impl FnOnce() -> T + Send + 'static) -> Option<T> {
+pub(crate) async fn blocking<T: Send + 'static>(
+    work: impl FnOnce() -> T + Send + 'static,
+) -> Option<T> {
     tokio::task::spawn_blocking(work).await.ok()
 }

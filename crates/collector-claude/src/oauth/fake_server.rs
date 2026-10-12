@@ -16,20 +16,20 @@ const READ_TIMEOUT: Duration = Duration::from_secs(5);
 const SILENT_POLL: Duration = Duration::from_millis(20);
 
 #[derive(Clone, Debug)]
-pub(super) struct Request {
+pub(crate) struct Request {
     pub method: String,
     pub target: String,
     pub headers: Vec<(String, String)>,
 }
 
 impl Request {
-    pub(super) fn header(&self, name: &str) -> Option<&str> {
+    pub(crate) fn header(&self, name: &str) -> Option<&str> {
         let found = self.headers.iter().find(|(key, _)| key.eq_ignore_ascii_case(name));
         found.map(|(_, value)| value.as_str())
     }
 }
 
-pub(super) enum Reply {
+pub(crate) enum Reply {
     /// A complete response with a `Content-Length`.
     Full { status: u16, headers: Vec<(String, String)>, body: Vec<u8> },
     /// These bytes are the whole response; the connection then closes.
@@ -39,17 +39,17 @@ pub(super) enum Reply {
 }
 
 impl Reply {
-    pub(super) fn json(body: &str) -> Self {
+    pub(crate) fn json(body: &str) -> Self {
         Self::typed(200, "application/json", body.as_bytes())
     }
 
-    pub(super) fn typed(status: u16, content_type: &str, body: &[u8]) -> Self {
+    pub(crate) fn typed(status: u16, content_type: &str, body: &[u8]) -> Self {
         let headers = vec![("Content-Type".to_owned(), content_type.to_owned())];
         Self::Full { status, headers, body: body.to_vec() }
     }
 
     /// An empty JSON object with the given status and extra headers.
-    pub(super) fn status(status: u16, headers: &[(&str, &str)]) -> Self {
+    pub(crate) fn status(status: u16, headers: &[(&str, &str)]) -> Self {
         let mut all = vec![("Content-Type".to_owned(), "application/json".to_owned())];
         all.extend(headers.iter().map(|(key, value)| ((*key).to_owned(), (*value).to_owned())));
         Self::Full { status, headers: all, body: b"{}".to_vec() }
@@ -65,13 +65,13 @@ struct Shared {
     stop: AtomicBool,
 }
 
-pub(super) struct FakeServer {
+pub(crate) struct FakeServer {
     addr: SocketAddr,
     shared: Arc<Shared>,
 }
 
 impl FakeServer {
-    pub(super) fn start(handler: impl Fn(&Request) -> Reply + Send + Sync + 'static) -> Self {
+    pub(crate) fn start(handler: impl Fn(&Request) -> Reply + Send + Sync + 'static) -> Self {
         let listener = TcpListener::bind(("127.0.0.1", 0)).unwrap();
         let addr = listener.local_addr().unwrap();
         let shared = Arc::new(Shared {
@@ -95,27 +95,27 @@ impl FakeServer {
         Self { addr, shared }
     }
 
-    pub(super) fn json(body: &str) -> Self {
+    pub(crate) fn json(body: &str) -> Self {
         let body = body.to_owned();
         Self::start(move |_| Reply::json(&body))
     }
 
     /// What the injected endpoint points at.
-    pub(super) fn base(&self) -> String {
+    pub(crate) fn base(&self) -> String {
         format!("http://127.0.0.1:{}", self.addr.port())
     }
 
-    pub(super) fn requests(&self) -> Vec<Request> {
+    pub(crate) fn requests(&self) -> Vec<Request> {
         self.shared.log.lock().unwrap().clone()
     }
 
     /// Connections accepted so far; any request implies one.
-    pub(super) fn connections(&self) -> usize {
+    pub(crate) fn connections(&self) -> usize {
         self.shared.connections.load(Ordering::SeqCst)
     }
 
     /// Gives a stray connection time to arrive, then checks that none did.
-    pub(super) fn assert_untouched(&self) {
+    pub(crate) fn assert_untouched(&self) {
         thread::sleep(Duration::from_millis(100));
         assert_eq!(self.connections(), 0, "no request may reach the server");
     }

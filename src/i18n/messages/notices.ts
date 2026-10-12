@@ -8,7 +8,7 @@ export const noticeMessages = {
   'notice.code.claude_shim_outdated':
     'O comando instalado na barra de status do Claude Code não foi encontrado. Reinstale para voltar a ler.',
   'notice.code.claude_oauth_partial':
-    'A API de uso da conta está ligada, mas falhou ({reason}). Mostrando só os dados da barra de status.',
+    'O uso por modelo (claude /usage ou API de uso da conta) está ligado, mas falhou ({reason}). Mostrando só os dados da barra de status.',
   'notice.code.codex_rollout_fallback':
     'O codex app-server não respondeu ({reason}). Lendo a última sessão gravada; os números podem estar antigos.',
   'notice.code.codex_no_limits': 'A conta do Codex não informa limites (login por chave de API).',

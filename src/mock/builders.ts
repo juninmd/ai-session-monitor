@@ -4,9 +4,9 @@ import { type Env, fact, type Mood, notice, viewOf, windowOf } from './fixtures'
 import { kimiView, zaiView } from './keyed';
 
 const CLAUDE = {
-  ok: { five: 48, week: 31, fiveReset: 113, opus: 18, sonnet: 29 },
-  warn: { five: 84, week: 59, fiveReset: 113, opus: 45, sonnet: 62 },
-  crit: { five: 100, week: 45, fiveReset: 47, opus: 55, sonnet: 70 },
+  ok: { five: 48, week: 31, fiveReset: 113, opus: 18, sonnet: 29, fable: 9 },
+  warn: { five: 84, week: 59, fiveReset: 113, opus: 45, sonnet: 62, fable: 38 },
+  crit: { five: 100, week: 45, fiveReset: 47, opus: 55, sonnet: 70, fable: 81 },
 } as const;
 
 export function claudeView(env: Env, mood: Mood): HarnessView {
@@ -31,17 +31,18 @@ export function claudeView(env: Env, mood: Mood): HarnessView {
     for (const [group, used] of [
       ['opus', u.opus],
       ['sonnet', u.sonnet],
+      ['fable', u.fable],
     ] as const) {
-      windows.push(
-        windowOf(env, {
-          id: `${group}:weekly`,
-          kind: 'weekly',
-          group,
-          usedPct: used,
-          windowMinutes: 10080,
-          resetsInMin: 6432,
-        }),
-      );
+      const window = windowOf(env, {
+        id: `${group}:weekly`,
+        kind: 'weekly',
+        group,
+        usedPct: used,
+        windowMinutes: 10080,
+        resetsInMin: 6432,
+      });
+      // Like the collector: Opus and Sonnet are named by the UI, any other model by its own label.
+      windows.push(group === 'fable' ? { ...window, label: 'Fable' } : window);
     }
   }
   return viewOf('claude', {
@@ -49,7 +50,7 @@ export function claudeView(env: Env, mood: Mood): HarnessView {
     plan: 'Max 5×',
     readAt: env.now - 4 * 60,
     windows,
-    meta: env.settings.claude.oauthUsage ? { extra_source: 'oauth_usage' } : {},
+    meta: env.settings.claude.oauthUsage ? { extra_source: 'cli_usage' } : {},
   });
 }
 

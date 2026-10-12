@@ -45,12 +45,12 @@ export const settingsMessages = {
   'settings.loading': 'Carregando as configurações',
   'settings.saved': 'Salvo.',
 
-  'claude.oauth.label': 'API de uso da conta',
-  'claude.oauth.chip': 'Também: API de uso, não oficial',
+  'claude.oauth.label': 'Limites por modelo (Opus, Sonnet, Fable)',
+  'claude.oauth.chip': 'Também: uso por modelo, não oficial',
   'claude.oauth.hint':
-    'Mostra Opus e Sonnet por modelo. Usa o login local numa API sem documentação e sem autorização explícita nos termos da Anthropic. Desligada por padrão.',
+    'Mostra Opus, Sonnet e Fable por modelo. Roda claude -p "/usage" (custo zero, usa o login do próprio Claude Code; o monitor não lê o token). Sem o CLI, cai na API de uso da conta, que não tem documentação. Desligada por padrão.',
   'claude.oauth.warning':
-    'Atenção: esta API não é documentada e os termos da Anthropic não autorizam acessos automatizados fora da API oficial. A conta pode ser limitada ou bloqueada. Ative só se aceitar esse risco.',
+    'Atenção: o monitor vai rodar claude -p "/usage" no máximo a cada 10 minutos (uns 5 s de CPU; hooks globais do Claude Code podem disparar). Se o CLI não existir ou falhar, usa a API de uso da conta, que não é documentada e que os termos da Anthropic não autorizam fora da API oficial: a conta pode ser limitada ou bloqueada. Ative só se aceitar esse risco.',
   'claude.oauth.confirm': 'Ativar mesmo assim',
   'claude.oauth.cancel': 'Cancelar',
   'claude.config_dir': 'Pasta de configuração do Claude Code',
@@ -60,7 +60,7 @@ export const settingsMessages = {
   'claude.config_dir_save': 'Salvar pasta do Claude Code',
   'claude.locked.title': 'Semana por modelo',
   'claude.locked.body':
-    'Opus e Sonnet só aparecem pela API de uso da conta. Ela não é oficial e está desligada.',
+    'Opus, Sonnet e Fable só aparecem rodando claude -p "/usage" (custo zero) ou, sem o CLI, pela API de uso da conta. Não é oficial e está desligado.',
 
   'codex.consent': 'Permitir que o monitor inicie o codex app-server',
   'codex.consent_hint': 'Roda o programa codex da sua máquina, só leitura.',

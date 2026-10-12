@@ -67,7 +67,7 @@ impl LineSession {
     /// inside a Tokio runtime.
     pub fn spawn(spec: CommandSpec) -> Result<Self, HarnessError> {
         check_cwd(spec.cwd.as_deref())?;
-        let mut launch = command(&spec.program, &spec.args, spec.cwd.as_deref());
+        let mut launch = command(&spec.program, &spec.args, spec.cwd.as_deref(), &spec.env);
         launch.stdin(Stdio::piped()).stdout(Stdio::piped()).stderr(Stdio::piped());
         let mut guard = ChildGuard::spawn(&mut launch).map_err(|e| spawn_error(&e))?;
         let pipes =

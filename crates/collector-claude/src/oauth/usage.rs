@@ -82,7 +82,7 @@ fn flat(family: &str, raw: &Value) -> Option<UsageWindow> {
     Some(weekly(family, percent(object.get("utilization"), 100.0), resets(object.get("resets_at"))))
 }
 
-fn weekly(name: &str, used_pct: Option<f64>, resets_at: Option<i64>) -> UsageWindow {
+pub(crate) fn weekly(name: &str, used_pct: Option<f64>, resets_at: Option<i64>) -> UsageWindow {
     let lower = name.to_lowercase();
     let family = if lower.contains("opus") {
         "opus".to_owned()

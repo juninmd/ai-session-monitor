@@ -30,7 +30,7 @@ describe('layoutWindows', () => {
     expect(layout.hero?.window.id).toBe('five_hour');
     expect(ids(layout.flats)).toEqual(['weekly']);
     expect(layout.groupList?.title).toBe('Semana por modelo');
-    expect(layout.groupList?.rows.map((row) => row.name)).toEqual(['Opus', 'Sonnet']);
+    expect(layout.groupList?.rows.map((row) => row.name)).toEqual(['Opus', 'Sonnet', 'Fable']);
     expect(layout.pools).toEqual([]);
   });
 
@@ -156,6 +156,7 @@ describe('windows as the collectors emit them', () => {
     expect(layout.groupList?.rows.map((row) => row.name)).toEqual([
       'Opus',
       'Sonnet',
+      'Fable',
       'Claude Design',
     ]);
   });
