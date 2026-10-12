@@ -174,8 +174,14 @@ async fn a_server_that_never_answers_or_answers_late_times_out_retryably() {
 async fn extreme_timeouts_neither_panic_nor_hang() {
     let server = TestServer::start(|_| Reply::json(200, "{}")).await;
     assert!(get(&with_timeout(Duration::MAX), &server).await.is_ok());
-    let error = get(&with_timeout(Duration::ZERO), &server).await.unwrap_err();
-    assert_eq!(error.code, ErrorCode::Timeout);
+    // A zero budget races the loopback reply: either outcome is fine, a panic or a hang is not.
+    let zero =
+        tokio::time::timeout(Duration::from_secs(10), get(&with_timeout(Duration::ZERO), &server))
+            .await
+            .expect("a zero timeout must not hang");
+    if let Err(error) = zero {
+        assert_eq!(error.code, ErrorCode::Timeout);
+    }
 }
 
 #[tokio::test]
