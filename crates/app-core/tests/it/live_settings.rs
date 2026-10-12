@@ -178,7 +178,7 @@ async fn a_change_outside_every_harness_section_reads_nothing() {
 
 #[tokio::test(start_paused = true)]
 async fn a_rejected_save_changes_nothing() {
-    let rig = rig().start().await;
+    let rig = rig().pristine().start().await;
     rig.at(seconds(5)).await;
     let before = rig.service.settings();
 

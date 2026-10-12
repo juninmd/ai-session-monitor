@@ -55,17 +55,21 @@ pub async fn collect(
 
 /// What one poll reads, decided from settings alone, before any file or socket is touched.
 enum Plan<'a> {
-    Done(HarnessView),
-    Read { key: Option<&'a Secret>, local: bool },
+    /// Boxed: a view is large and the other variant is two words.
+    Done(Box<HarnessView>),
+    Read {
+        key: Option<&'a Secret>,
+        local: bool,
+    },
 }
 
 fn plan<'a>(settings: &OpencodeSettings, api_key: Option<&'a Secret>) -> Plan<'a> {
     if !settings.enabled {
-        return Plan::Done(HarnessView::disabled(HarnessId::Opencode));
+        return Plan::Done(Box::new(HarnessView::disabled(HarnessId::Opencode)));
     }
     let key = api_key.filter(|secret| !secret.expose().trim().is_empty());
     if key.is_none() && !settings.local_consent {
-        return Plan::Done(HarnessView::needs_setup(HarnessId::Opencode));
+        return Plan::Done(Box::new(HarnessView::needs_setup(HarnessId::Opencode)));
     }
     Plan::Read { key, local: settings.local_consent }
 }
@@ -77,7 +81,7 @@ async fn collect_with(
     endpoint: &remote::Endpoint,
 ) -> HarnessView {
     let (key, with_local) = match plan(settings, api_key) {
-        Plan::Done(view) => return view,
+        Plan::Done(view) => return *view,
         Plan::Read { key, local } => (key, local),
     };
     let remote = async {

@@ -10,6 +10,8 @@ pub const SETTINGS_VERSION: u32 = 1;
 pub const MIN_INTERVAL_SECS: u32 = 30;
 pub const MAX_INTERVAL_SECS: u32 = 3600;
 pub const MIN_LITELLM_POLL_SECS: u32 = 60;
+pub const MAX_ALERT_THRESHOLDS: usize = 4;
+pub const DEFAULT_ALERT_THRESHOLDS: [u8; 2] = [80, 95];
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
@@ -44,6 +46,7 @@ impl Settings {
         self.general.interval_secs =
             self.general.interval_secs.clamp(MIN_INTERVAL_SECS, MAX_INTERVAL_SECS);
         self.general.warn_at_pct = self.general.warn_at_pct.clamp(5, 90);
+        normalize_thresholds(&mut self.general.alert_thresholds);
         self.litellm.poll_interval_secs =
             self.litellm.poll_interval_secs.clamp(MIN_LITELLM_POLL_SECS, MAX_INTERVAL_SECS);
         self.litellm.timeout_secs = self.litellm.timeout_secs.clamp(1, 30);
@@ -58,6 +61,14 @@ impl Settings {
             HarnessId::Litellm => self.litellm.enabled,
         }
     }
+}
+
+/// Drops out-of-range values, sorts, dedupes and keeps the `MAX_ALERT_THRESHOLDS` lowest.
+fn normalize_thresholds(values: &mut Vec<u8>) {
+    values.retain(|pct| (1..=99).contains(pct));
+    values.sort_unstable();
+    values.dedup();
+    values.truncate(MAX_ALERT_THRESHOLDS);
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -93,6 +104,11 @@ pub struct GeneralSettings {
     pub warn_at_pct: u8,
     pub notify_on_out: bool,
     pub notify_on_reset: bool,
+    /// Used percentages (1..=99) that raise one toast each time a window crosses them. Empty
+    /// switches the alerts off. Sorted, deduplicated, at most `MAX_ALERT_THRESHOLDS`.
+    pub alert_thresholds: Vec<u8>,
+    /// Poll less often while every window is far from its limit and its reset is far away.
+    pub adaptive: bool,
     pub time_format: TimeFormat,
     pub week_format: WeekFormat,
     /// The flyout opens by itself once, on the very first launch.
@@ -108,6 +124,8 @@ impl Default for GeneralSettings {
             warn_at_pct: 25,
             notify_on_out: false,
             notify_on_reset: false,
+            alert_thresholds: DEFAULT_ALERT_THRESHOLDS.to_vec(),
+            adaptive: true,
             time_format: TimeFormat::Hm,
             week_format: WeekFormat::Hours,
             first_run_done: false,
@@ -235,62 +253,4 @@ impl Default for LitellmSettings {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn empty_json_yields_defaults() {
-        let settings: Settings = serde_json::from_str("{}").expect("parse");
-        assert_eq!(settings, Settings::default());
-        assert!(!settings.claude.oauth_usage, "the unofficial source must be opt-in");
-        assert!(!settings.general.autostart, "autostart must be opt-in");
-    }
-
-    #[test]
-    fn unknown_keys_are_ignored_and_known_ones_kept() {
-        let json = r#"{"general":{"intervalSecs":120,"futureKey":1},"litellm":{"scope":"team","entityId":"t-1"}}"#;
-        let settings: Settings = serde_json::from_str(json).expect("parse");
-        assert_eq!(settings.general.interval_secs, 120);
-        assert_eq!(settings.litellm.scope, LitellmScope::Team);
-        assert_eq!(settings.litellm.entity_id.as_deref(), Some("t-1"));
-        assert!(settings.codex.enabled);
-    }
-
-    #[test]
-    fn normalize_clamps_out_of_range_values() {
-        let mut settings = Settings::default();
-        settings.general.interval_secs = 1;
-        settings.general.warn_at_pct = 99;
-        settings.litellm.poll_interval_secs = 5;
-        settings.litellm.timeout_secs = 999;
-        settings.normalize();
-        assert_eq!(settings.general.interval_secs, MIN_INTERVAL_SECS);
-        assert_eq!(settings.general.warn_at_pct, 90);
-        assert_eq!(settings.litellm.poll_interval_secs, MIN_LITELLM_POLL_SECS);
-        assert_eq!(settings.litellm.timeout_secs, 30);
-    }
-
-    #[test]
-    fn tls_mode_round_trips_with_a_mode_tag() {
-        let tls = TlsMode::Insecure { host: "gateway.example.dev".into() };
-        let json = serde_json::to_string(&tls).expect("serialize");
-        assert_eq!(json, r#"{"mode":"insecure","host":"gateway.example.dev"}"#);
-        assert_eq!(serde_json::from_str::<TlsMode>(&json).expect("parse"), tls);
-    }
-
-    #[test]
-    fn custom_ca_field_is_camel_case() {
-        let tls = TlsMode::CustomCa { pem_path: r"C:\certs\corp.pem".into() };
-        let json = serde_json::to_value(&tls).expect("serialize");
-        assert_eq!(json["mode"], "custom_ca");
-        assert_eq!(json["pemPath"], r"C:\certs\corp.pem");
-    }
-
-    #[test]
-    fn settings_hold_no_secret_fields() {
-        let json = serde_json::to_string(&Settings::default()).expect("serialize").to_lowercase();
-        for forbidden in ["apikey", "token", "password", "secret"] {
-            assert!(!json.contains(forbidden), "settings JSON mentions {forbidden}");
-        }
-    }
-}
+mod tests;

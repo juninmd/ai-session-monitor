@@ -14,6 +14,7 @@ async fn a_save_that_cannot_be_written_changes_nothing_anywhere() {
     rig.at(seconds(5)).await;
     let before = rig.service.settings();
     // A directory where the file goes: the atomic replace of it fails.
+    std::fs::remove_file(rig.settings_file()).unwrap_or_else(|e| panic!("rm: {e}"));
     std::fs::create_dir(rig.settings_file()).unwrap_or_else(|e| panic!("mkdir: {e}"));
 
     let mut wanted = before.clone();

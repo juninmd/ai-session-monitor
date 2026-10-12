@@ -74,6 +74,10 @@ export const shellMessages = {
   'stale.banner_noage': 'Mostrando os últimos números lidos.',
   'stale.failed': 'A última atualização falhou: {title}.',
 
+  'cooldown.next': 'A fonte pediu um intervalo entre as consultas. Nova tentativa em {wait}.',
+  'cooldown.refresh_blocked':
+    '{name}: a fonte pediu um intervalo, então a leitura manual espera. Nova tentativa em {wait}.',
+
   'action.retry': 'Tentar de novo',
   'action.settings': 'Abrir configurações',
   'action.console': 'Abrir console do OpenCode',

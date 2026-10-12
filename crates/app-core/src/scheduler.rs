@@ -4,6 +4,7 @@
 //! Only this task touches the slots. The API reaches it through `Shared` (requests and the
 //! settings watch), so no lock is ever held while a collector runs or a sink is called.
 
+mod pacing;
 mod slot;
 
 use std::collections::HashMap;
@@ -15,7 +16,7 @@ use tokio::task::{Id, JoinError, JoinSet};
 use tokio::time::{Instant, sleep_until, timeout};
 use usage_model::{Ctx, ErrorCode, HarnessError, HarnessId, HarnessView, Settings, ViewState};
 
-use self::slot::{Slot, judge};
+use self::slot::{Slot, Verdict, judge};
 use crate::collectors::Collector;
 use crate::hub::Counts;
 use crate::notify;
@@ -179,9 +180,16 @@ impl Scheduler {
             HarnessView::error(id, error)
         });
         let verdict = judge(&view);
-        self.shared.with_hub(|hub| hub.apply(view));
-        let cadence = timing::cadence(id, &self.shared.settings());
-        self.slots[idx].settle(verdict, cadence, Instant::now());
+        let changed = self.shared.with_hub(|hub| hub.apply(view));
+        let settings = self.shared.settings();
+        let base = timing::cadence(id, &settings);
+        let now = Instant::now();
+        self.slots[idx].settle(verdict, base, now);
+        match verdict {
+            Verdict::Healthy => self.stretch(idx, &settings, base, changed, now),
+            Verdict::Limited { .. } => self.announce_cooldown(idx, now),
+            Verdict::Parked | Verdict::Failed { .. } => {}
+        }
     }
 
     fn serve_requests(&mut self) {
@@ -192,7 +200,7 @@ impl Scheduler {
         let now = Instant::now();
         for idx in 0..self.slots.len() {
             if forced[idx] {
-                self.slots[idx].failures = 0;
+                self.slots[idx].reset_failures();
                 self.restart(idx, now);
             } else if manual[idx] && self.slots[idx].may_refresh(now) {
                 self.start(idx, now);
@@ -219,15 +227,18 @@ impl Scheduler {
                 self.cancel(idx);
                 let slot = &mut self.slots[idx];
                 slot.due = None;
-                slot.failures = 0;
+                slot.reset_failures();
             } else if seen != switch_ons[idx]
                 || !old.is_enabled(id)
                 || section_changed(id, &old, &new)
             {
-                self.slots[idx].failures = 0;
+                self.slots[idx].reset_failures();
                 self.restart(idx, now);
             } else {
-                let (before, after) = (timing::cadence(id, &old), timing::cadence(id, &new));
+                let (mut before, after) = (timing::cadence(id, &old), timing::cadence(id, &new));
+                if old.general.adaptive && !new.general.adaptive {
+                    before = Duration::ZERO; // a stretched wait snaps back to the base cadence
+                }
                 self.slots[idx].retime(before, after, now);
             }
         }

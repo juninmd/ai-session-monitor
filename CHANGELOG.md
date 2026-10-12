@@ -26,6 +26,15 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
   that read the collectors' sources so a new code cannot ship without a message.
 - A window that ran out gets its "limite disponível" notification at the reset time even when its
   source stays silent (the Claude status line only moves while Claude Code runs).
+- Rate-limit cool-down: a source that answers "too many requests" is left alone (its
+  `Retry-After`, 5 min by default, at most 30 min), keeps showing its last good numbers marked
+  stale, and the panel says when the next attempt is; a manual refresh during it is dropped and
+  the UI explains why.
+- Usage-threshold alerts: one desktop notification per window each time it crosses a configurable
+  used percentage (default 80 % and 95 %, up to four values, or off), re-armed at every reset.
+- Adaptive polling (setting "Ritmo adaptativo", on by default): a source far from its limit and
+  from its reset is read up to every 30 minutes; it goes back to the normal interval at 70 % used
+  or 10 minutes before a reset.
 - Polling is supervised: if the scheduler dies, the shell restarts it (2 s doubling to 30 s).
 - A start that fails shows a notification with the step and the error code and exits with code 1,
   instead of vanishing from the tray.

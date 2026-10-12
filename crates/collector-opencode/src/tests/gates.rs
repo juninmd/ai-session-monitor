@@ -17,7 +17,7 @@ const BLANK_KEYS: [&str; 5] = ["", " ", "\t\r\n", "\u{a0}\u{2003}", "   \n   "];
 
 fn gate(settings: &OpencodeSettings, key: Option<&Secret>) -> Option<HarnessView> {
     match plan(settings, key) {
-        Plan::Done(view) => Some(view),
+        Plan::Done(view) => Some(*view),
         Plan::Read { .. } => None,
     }
 }

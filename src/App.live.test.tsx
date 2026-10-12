@@ -156,3 +156,26 @@ describe('when the event bridge is broken', () => {
     expect(await screen.findByText(/Não foi possível acompanhar as atualizações/)).toBeVisible();
   });
 });
+
+describe('a manual refresh during a rate-limit cool-down', () => {
+  it('is still sent but tells the person why nothing will happen yet', async () => {
+    const { user, backend } = renderApp({ scenario: 'stale' });
+    await screen.findByRole('tab', { name: /^LiteLLM\b/ });
+    await user.click(tab('LiteLLM'));
+    await user.click(screen.getByRole('button', { name: 'Atualizar agora' }));
+
+    const live = document.querySelector('output[aria-live="polite"]') as HTMLElement;
+    expect(live).toHaveTextContent(
+      'LiteLLM: a fonte pediu um intervalo, então a leitura manual espera. Nova tentativa em 4 min.',
+    );
+    expect(refreshes(backend.calls)).toBeGreaterThan(0);
+  });
+
+  it('says nothing special for a source that is not cooling', async () => {
+    const { user } = renderApp({ scenario: 'stale' });
+    await ready();
+    await user.click(screen.getByRole('button', { name: 'Atualizar agora' }));
+    const live = document.querySelector('output[aria-live="polite"]') as HTMLElement;
+    expect(live).not.toHaveTextContent(/Nova tentativa/);
+  });
+});

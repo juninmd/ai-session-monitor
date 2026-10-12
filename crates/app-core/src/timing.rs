@@ -4,12 +4,19 @@ use std::time::Duration;
 
 use usage_model::{HarnessId, Settings};
 
+mod adaptive;
+
+pub(crate) use adaptive::{adaptive_wait, hot_pct};
+
 /// One collector call never runs longer than this; it then becomes a `Timeout` error.
 pub(crate) const COLLECT_TIMEOUT: Duration = Duration::from_secs(30);
 /// A manual refresh is dropped when the harness started a collection less than this ago.
 pub(crate) const REFRESH_MIN_GAP: Duration = Duration::from_secs(10);
 /// Snapshot events are at least this far apart (about four a second at most).
 pub(crate) const EMIT_MIN_GAP: Duration = Duration::from_millis(250);
+/// Rate-limit cool-down: the wait when the source names none, and the longest wait we honour.
+const COOLDOWN_DEFAULT: Duration = Duration::from_secs(5 * 60);
+const COOLDOWN_MAX: Duration = Duration::from_secs(30 * 60);
 const MAX_BACKOFF: Duration = Duration::from_secs(15 * 60);
 /// The OpenCode Go endpoint is remote and rate-sensitive, and its collector leaves the pacing to
 /// the caller. (The Claude OAuth endpoint paces itself in its collector, so Claude is not slowed.)
@@ -39,6 +46,17 @@ pub(crate) fn backoff(cadence: Duration, failures: u32, retryable: bool) -> Dura
         MAX_BACKOFF
     };
     grown.min(MAX_BACKOFF).max(cadence)
+}
+
+/// The wait after a rate-limit answer: the source's `Retry-After` (5 min when absent), held to
+/// 30 minutes, at least the ordinary backoff and never below the normal cadence.
+pub(crate) fn cooldown(
+    cadence: Duration,
+    failures: u32,
+    retry_after_secs: Option<u64>,
+) -> Duration {
+    let asked = retry_after_secs.map_or(COOLDOWN_DEFAULT, Duration::from_secs);
+    asked.max(backoff(cadence, failures, true)).min(COOLDOWN_MAX).max(cadence)
 }
 
 #[cfg(test)]
@@ -92,6 +110,24 @@ mod tests {
         assert_eq!(backoff(secs(3600), 1, true), secs(3600));
         assert_eq!(backoff(secs(3600), 5, false), secs(3600));
         assert_eq!(backoff(secs(1000), 3, true), secs(1000));
+    }
+
+    #[test]
+    fn a_rate_limit_waits_five_minutes_unless_the_source_says_otherwise() {
+        let wait = |after: Option<u64>| cooldown(secs(60), 1, after).as_secs();
+        assert_eq!(wait(None), 300);
+        assert_eq!(wait(Some(900)), 900);
+        assert_eq!(wait(Some(86_400)), 1800, "capped at 30 minutes");
+        assert_eq!(wait(Some(30)), 120, "a short ask is still held to the ordinary backoff");
+        assert_eq!(wait(Some(u64::MAX)), 1800);
+    }
+
+    #[test]
+    fn a_rate_limit_never_waits_less_than_the_cadence_or_the_backoff() {
+        assert_eq!(cooldown(secs(3600), 1, None), secs(3600));
+        assert_eq!(cooldown(secs(60), 6, None), secs(900), "repeated limits keep growing");
+        assert_eq!(cooldown(secs(60), u32::MAX, None), secs(900));
+        assert_eq!(cooldown(Duration::MAX, 1, None), Duration::MAX);
     }
 
     #[test]

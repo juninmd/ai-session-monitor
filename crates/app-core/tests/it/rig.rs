@@ -130,6 +130,16 @@ pub struct RigBuilder {
     clock: Option<Arc<dyn Clock>>,
     shim: Option<Arc<FakeShim>>,
     sink: Option<Arc<RecordingSink>>,
+    pristine: bool,
+}
+
+/// The settings every rig starts from: the pacing and alerts that react to the readings are off,
+/// so the older scheduling tests keep their fixed cadence; tests of those features switch them on.
+pub fn steady() -> Settings {
+    let mut settings = Settings::default();
+    settings.general.adaptive = false;
+    settings.general.alert_thresholds.clear();
+    settings
 }
 
 pub fn rig() -> RigBuilder {
@@ -145,9 +155,15 @@ impl RigBuilder {
 
     /// Changes the defaults; the result is written as the settings file before the service loads.
     pub fn settings(mut self, edit: impl FnOnce(&mut Settings)) -> Self {
-        let mut settings = self.settings.take().unwrap_or_default();
+        let mut settings = self.settings.take().unwrap_or_else(steady);
         edit(&mut settings);
         self.settings = Some(settings);
+        self
+    }
+
+    /// Starts with no settings file at all, so the service runs on the real defaults.
+    pub fn pristine(mut self) -> Self {
+        self.pristine = true;
         self
     }
 
@@ -213,7 +229,8 @@ impl RigBuilder {
         let content = match (&self.raw_settings, &self.settings) {
             (Some(raw), _) => Some(raw.clone()),
             (None, Some(settings)) => serde_json::to_vec_pretty(settings).ok(),
-            (None, None) => None,
+            (None, None) if self.pristine => None,
+            (None, None) => serde_json::to_vec_pretty(&steady()).ok(),
         };
         if let Some(bytes) = content {
             std::fs::write(&file, bytes).unwrap_or_else(|e| panic!("write settings: {e}"));

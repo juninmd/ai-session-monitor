@@ -61,6 +61,7 @@ describe('summary vectors', () => {
       facts: [],
       notices: [],
       error: null,
+      nextAttemptAt: null,
       meta: {},
     };
     const got = summarize(view, NOW, c.warnAt);

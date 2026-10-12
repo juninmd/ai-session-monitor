@@ -117,6 +117,7 @@ export const HarnessViewSchema = z.strictObject({
   facts: z.array(FactSchema),
   notices: z.array(NoticeSchema),
   error: HarnessErrorSchema.nullable(),
+  nextAttemptAt: z.number().int().nullable(),
   meta: z.record(z.string(), z.string()),
 });
 export type HarnessView = z.infer<typeof HarnessViewSchema>;

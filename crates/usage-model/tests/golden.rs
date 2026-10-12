@@ -86,7 +86,9 @@ fn sample_views() -> Vec<HarnessView> {
     claude_gpt.group = Some("claude_gpt".into());
     antigravity.windows = vec![gemini, claude_gpt];
     antigravity.stale = true;
-    antigravity.error = Some(HarnessError::new(ErrorCode::Network, true));
+    antigravity.error =
+        Some(HarnessError::new(ErrorCode::RateLimited, true).with_param("retryAfterSecs", "120"));
+    antigravity.next_attempt_at = Some(1_800_000_300);
 
     let mut opencode = ready(HarnessId::Opencode, "go_usage", false);
     opencode.windows = vec![

@@ -58,6 +58,9 @@ webview never shows raw error text.
 - `usedPct = null` is unknown and is never rendered as 0 %. Over-budget values above 100 are
   allowed and clamp to 0 % available. A window whose `resetsAt` passed is expired: shown as
   "reiniciou", no status, no pace.
+- `nextAttemptAt` (epoch seconds or `null`) is set only while a rate-limit cool-down holds the
+  source back (see Polling). The view keeps its last good windows, `stale = true` and the
+  `rate_limited` error; the UI says "nova tentativa em N min". Any later result clears it.
 - `readAt` is when the data was produced (file mtime, response time), not when we polled; the UI
   shows "lido há N min".
 - Status and pace come only from the shared rules (`usage-model::status`, `src/lib/usage.ts`).
@@ -158,14 +161,25 @@ Go subscription" and offers the console link, never a certain "bad key".
 
 ## Polling
 
-- `general.intervalSecs` (30..3600, default 60) drives local sources (Claude shim file, Codex,
+- `general.intervalSecs` (30..3600, default 60) is the base cadence; it drives local sources (Claude shim file, Codex,
   Antigravity, OpenCode local database) and also Claude when OAuth is on: the collector itself
   asks the OAuth endpoint no more than once per 300 s. LiteLLM uses `litellm.pollIntervalSecs`
   (>= 60, default 300). Scheduled OpenCode polls, which reach its Go endpoint, never run faster
   than 300 s; a manual refresh can (see the 10 s gap above).
-- Failures back off exponentially per harness up to 15 minutes; a successful read resets it. A
-  `retryAfterSecs` param is surfaced to the person but not honored by the scheduler. A Codex
+- Failures back off exponentially per harness up to 15 minutes; a successful read resets it. A Codex
   rollout fallback counts as a success (no error on the view), so it does not back off.
+- Rate-limit cool-down: an `error` view with code `rate_limited` leaves that harness alone for
+  `max(retryAfterSecs or 300 s, ordinary backoff, normal cadence)`, held to 30 minutes
+  (`timing::cooldown`). The hub keeps the last good view stale and sets `nextAttemptAt`. A manual
+  `refresh` is dropped during it like `REFRESH_MIN_GAP`, and the UI says why; a forced read (the
+  harness' own settings or secret changed) ends the cool-down.
+- Adaptive cadence (`general.adaptive`, default on): after a healthy read the next wait is
+  `base * (2 + unchanged reads in a row)`, held to 30 minutes and to 10 minutes before the
+  nearest reset, never below `base` (`timing::adaptive_wait`). `base` applies as is when any live
+  window has `usedPct` unknown, at or above 70 % (lower when the first alert threshold minus 10
+  is lower), or resets within 10 minutes, and when no live window exists. A failure backs off
+  from `base`, not from the stretched wait; a manual refresh and the OpenCode 300 s floor are
+  untouched. Turning the switch off brings a pending read back to `base`.
 - `timing::cadence` gives each harness its pace: `general.intervalSecs` for Claude, Codex and
   Antigravity, `max(intervalSecs, 300 s)` for OpenCode, `litellm.pollIntervalSecs` for LiteLLM.
 - A manual `refresh` is dropped when that harness started a collection less than 10 s ago
@@ -179,7 +193,8 @@ Go subscription" and offers the console link, never a certain "bad key".
 
 ## Notifications
 
-`general.notifyOnOut` and `general.notifyOnReset` (both off by default) switch the desktop toasts.
+`general.notifyOnOut` and `general.notifyOnReset` (both off by default) switch the desktop toasts;
+`general.alertThresholds` (default `[80, 95]`, empty = off) switches the usage-threshold toasts.
 `app-core` plans them from snapshot changes and the shell shows them; title and body are
 ready-made pt-BR text and carry no path, key or raw error.
 
@@ -189,6 +204,14 @@ ready-made pt-BR text and carry no path, key or raw error.
   stays silent (the Claude status line only moves while Claude Code runs), the clock announces it
   once at `resetsAt` ("limite disponível", without a percentage). A reading that later confirms
   that reset does not notify a second time.
+- Usage threshold: a fresh, non-expired window with a known `usedPct` reaches a value in
+  `general.alertThresholds` (1..99, at most 4, sorted and unique after `normalize`). One toast per
+  crossing per window and reset epoch (state keyed by harness, window id and `resetsAt`, so a
+  reset re-arms it); a jump over several thresholds tells only the highest; unknown, stale and
+  expired readings never alert. The state lives in memory like the other notification state, so
+  the first reading of a window after a start (or a switch-on) only sets the baseline and a
+  restart never repeats a toast. A window with no `resetsAt` alerts once per level per run.
+  Text carries the harness, the window name and numbers only. `NotificationKind::ThresholdCrossed`.
 - Settings recovered: `settings.json` was unreadable, was kept as `settings.corrupt-<epoch>.json`
   and defaults are in effect. Shown once per start, before the first snapshot, whatever the two
   toggles say.

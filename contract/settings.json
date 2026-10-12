@@ -16,6 +16,11 @@
       "enabled": true
     },
     "general": {
+      "adaptive": true,
+      "alertThresholds": [
+        80,
+        95
+      ],
       "autostart": false,
       "firstRunDone": false,
       "intervalSecs": 60,
@@ -63,6 +68,11 @@
       "enabled": true
     },
     "general": {
+      "adaptive": true,
+      "alertThresholds": [
+        80,
+        95
+      ],
       "autostart": false,
       "firstRunDone": false,
       "intervalSecs": 60,
@@ -109,6 +119,11 @@
       "enabled": true
     },
     "general": {
+      "adaptive": true,
+      "alertThresholds": [
+        80,
+        95
+      ],
       "autostart": false,
       "firstRunDone": false,
       "intervalSecs": 60,

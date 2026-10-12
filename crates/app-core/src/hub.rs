@@ -51,16 +51,32 @@ impl Hub {
     }
 
     /// Stores a collector result. A failed collection never blanks a tab that has data: the
-    /// previous good view stays `Ready`, flagged stale, with the new error attached.
-    pub(crate) fn apply(&mut self, incoming: HarnessView) {
+    /// previous good view stays `Ready`, flagged stale, with the new error attached. Returns
+    /// whether the windows differ from before (the adaptive cadence counts unchanged reads).
+    pub(crate) fn apply(&mut self, incoming: HarnessView) -> bool {
         let incoming = sanitize(incoming);
         let current = &mut self.views[incoming.id as usize];
+        let before = std::mem::take(&mut current.windows);
         if incoming.state == ViewState::Error && current.state == ViewState::Ready {
+            current.windows = before;
             current.stale = true;
             current.error = incoming.error;
+            current.next_attempt_at = None;
+            false
         } else {
             *current = incoming;
+            current.windows != before
         }
+    }
+
+    /// Marks when a rate-limit cool-down ends, or clears the mark. Set after `apply`, which resets it.
+    pub(crate) fn set_next_attempt(&mut self, id: HarnessId, at: Option<i64>) {
+        self.views[id as usize].next_attempt_at = at;
+    }
+
+    /// The current view of one harness as the UI sees it at `now_secs`.
+    pub(crate) fn view_at(&self, id: HarnessId, now_secs: i64) -> HarnessView {
+        present(&self.views[id as usize], now_secs)
     }
 
     /// The views as the UI should see them at `now_secs`.

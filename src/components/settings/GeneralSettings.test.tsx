@@ -171,3 +171,37 @@ describe('a refused save', () => {
     expect(document.body).not.toHaveTextContent('someone');
   });
 });
+
+describe('usage alerts and adaptive pacing', () => {
+  it('start on the defaults: alerts at 80 and 95, adaptive on', () => {
+    renderPanel(<GeneralSettings />);
+    expect(screen.getByLabelText('Avisar ao atingir este uso')).toHaveValue('80,95');
+    expect(screen.getByRole('switch', { name: /Ritmo adaptativo/ })).toBeChecked();
+  });
+
+  it('save a preset, off, and keep a custom list that was stored', async () => {
+    const { user, backend } = renderPanel(<GeneralSettings />);
+    const select = screen.getByLabelText('Avisar ao atingir este uso');
+    await user.selectOptions(select, '90');
+    await vi.waitFor(async () => expect((await stored(backend)).alertThresholds).toEqual([90]));
+    await user.selectOptions(select, 'off');
+    await vi.waitFor(async () => expect((await stored(backend)).alertThresholds).toEqual([]));
+  });
+
+  it('show a stored custom list as "Personalizado"', async () => {
+    const custom = settingsWith((s) => {
+      s.general.alertThresholds = [60, 85];
+    });
+    renderPanel(<GeneralSettings />, { settings: custom });
+    await vi.waitFor(() =>
+      expect(screen.getByLabelText('Avisar ao atingir este uso')).toHaveValue('60,85'),
+    );
+    expect(screen.getByRole('option', { name: 'Personalizado (60% e 85%)' })).toBeInTheDocument();
+  });
+
+  it('turn adaptive pacing off and on', async () => {
+    const { user, backend } = renderPanel(<GeneralSettings />);
+    await user.click(screen.getByRole('switch', { name: /Ritmo adaptativo/ }));
+    await vi.waitFor(async () => expect((await stored(backend)).adaptive).toBe(false));
+  });
+});

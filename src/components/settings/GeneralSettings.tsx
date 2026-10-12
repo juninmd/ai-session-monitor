@@ -3,7 +3,10 @@ import {
   INTERVAL_PRESETS,
   intervalLabel,
   numericOptions,
+  parseThresholdKey,
   percentLabel,
+  thresholdKey,
+  thresholdOptions,
   WARN_PRESETS,
 } from '../../app/options';
 import { useSettingsApi } from '../../app/settingsContext';
@@ -61,6 +64,13 @@ export function GeneralSettings() {
           apply={(current, intervalSecs) => patch(current, { intervalSecs })}
         />
         <SettingSwitch
+          id="set-adaptive"
+          label={t('settings.adaptive')}
+          hint={t('settings.adaptive_hint')}
+          checked={g.adaptive}
+          apply={(current, adaptive) => patch(current, { adaptive })}
+        />
+        <SettingSwitch
           id="set-autostart"
           label={t('settings.autostart')}
           checked={g.autostart}
@@ -106,6 +116,14 @@ export function GeneralSettings() {
           value={g.warnAtPct}
           options={numericOptions(WARN_PRESETS, LIMITS.warnAtPct, g.warnAtPct, percentLabel)}
           apply={(current, warnAtPct) => patch(current, { warnAtPct })}
+        />
+        <SettingSelect
+          id="set-thresholds"
+          label={t('settings.alert_thresholds')}
+          hint={t('settings.alert_thresholds_hint')}
+          value={thresholdKey(g.alertThresholds)}
+          options={thresholdOptions(g.alertThresholds)}
+          apply={(current, key) => patch(current, { alertThresholds: parseThresholdKey(key) })}
         />
         <SettingSwitch
           id="set-notify-out"

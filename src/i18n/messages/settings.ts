@@ -20,6 +20,13 @@ export const settingsMessages = {
   'settings.alerts': 'Alertas',
   'settings.warn_at': 'Avisar quando restar até',
   'settings.warn_at_hint': 'Abaixo disso a janela fica em atenção.',
+  'settings.alert_thresholds': 'Avisar ao atingir este uso',
+  'settings.alert_thresholds_hint':
+    'Um aviso por limite cruzado, em cada janela, até ela reiniciar.',
+  'settings.alert_off': 'Desligado',
+  'settings.alert_custom': 'Personalizado ({list})',
+  'settings.adaptive': 'Ritmo adaptativo',
+  'settings.adaptive_hint': 'Consulta menos vezes quando o uso está baixo e o reinício está longe.',
   'settings.notify_out': 'Avisar ao esgotar',
   'settings.notify_reset': 'Avisar quando a janela resetar',
   'settings.sources': 'Fontes de dados',

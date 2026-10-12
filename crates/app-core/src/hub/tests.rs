@@ -251,3 +251,31 @@ fn non_finite_numbers_become_unknown_and_snapshots_stay_comparable() {
     assert_eq!(shown.facts[0].number, None);
     assert_eq!(hub.views_at(NOW), hub.views_at(NOW), "a NaN would make this unequal");
 }
+
+#[test]
+fn apply_reports_whether_the_windows_changed() {
+    let mut hub = all_enabled();
+    let id = HarnessId::Codex;
+    assert!(hub.apply(ready(id, vec![window("five_hour", 10.0, 3600)])), "first reading");
+    assert!(!hub.apply(ready(id, vec![window("five_hour", 10.0, 3600)])), "same windows");
+    assert!(hub.apply(ready(id, vec![window("five_hour", 11.0, 3600)])), "new percentage");
+    assert!(!hub.apply(failure(id, ErrorCode::Network)), "a failure keeps the windows");
+}
+
+#[test]
+fn the_cool_down_mark_rides_on_the_stale_view_and_ends_with_the_next_result() {
+    let mut hub = all_enabled();
+    let id = HarnessId::Claude;
+    hub.apply(ready(id, vec![window("five_hour", 10.0, 3600)]));
+    hub.apply(failure(id, ErrorCode::RateLimited));
+    hub.set_next_attempt(id, Some(NOW + 300));
+    let shown = view_of(&hub, id);
+    assert_eq!((shown.stale, shown.next_attempt_at), (true, Some(NOW + 300)));
+    assert_eq!(shown.windows.len(), 1);
+
+    hub.apply(failure(id, ErrorCode::Network));
+    assert_eq!(view_of(&hub, id).next_attempt_at, None, "a later failure clears it");
+    hub.set_next_attempt(id, Some(NOW + 300));
+    hub.apply(ready(id, vec![window("five_hour", 12.0, 3600)]));
+    assert_eq!(view_of(&hub, id).next_attempt_at, None, "so does a good read");
+}

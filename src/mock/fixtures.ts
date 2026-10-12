@@ -56,6 +56,7 @@ export function viewOf(id: HarnessId, patch: Partial<HarnessView> = {}): Harness
     facts: [],
     notices: [],
     error: null,
+    nextAttemptAt: null,
     meta: {},
     ...patch,
   };

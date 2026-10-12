@@ -6,6 +6,7 @@
       "facts": [],
       "id": "claude",
       "meta": {},
+      "nextAttemptAt": null,
       "notices": [],
       "plan": "Max 5x",
       "readAt": 1799999970,
@@ -43,6 +44,7 @@
       "facts": [],
       "id": "codex",
       "meta": {},
+      "nextAttemptAt": null,
       "notices": [],
       "plan": null,
       "readAt": null,
@@ -53,13 +55,16 @@
     },
     {
       "error": {
-        "code": "network",
-        "params": {},
+        "code": "rate_limited",
+        "params": {
+          "retryAfterSecs": "120"
+        },
         "retryable": true
       },
       "facts": [],
       "id": "antigravity",
       "meta": {},
+      "nextAttemptAt": 1800000300,
       "notices": [],
       "plan": null,
       "readAt": 1799999970,
@@ -110,6 +115,7 @@
       ],
       "id": "opencode",
       "meta": {},
+      "nextAttemptAt": null,
       "notices": [
         {
           "code": "opencode_window_idle",
@@ -166,6 +172,7 @@
         "host": "gateway.example.dev",
         "scope": "key"
       },
+      "nextAttemptAt": null,
       "notices": [],
       "plan": null,
       "readAt": 1799999970,
@@ -197,6 +204,7 @@
       "facts": [],
       "id": "codex",
       "meta": {},
+      "nextAttemptAt": null,
       "notices": [],
       "plan": null,
       "readAt": 1799999970,
@@ -224,6 +232,7 @@
       "facts": [],
       "id": "claude",
       "meta": {},
+      "nextAttemptAt": null,
       "notices": [],
       "plan": null,
       "readAt": null,
@@ -237,6 +246,7 @@
       "facts": [],
       "id": "antigravity",
       "meta": {},
+      "nextAttemptAt": null,
       "notices": [],
       "plan": null,
       "readAt": null,
@@ -250,6 +260,7 @@
       "facts": [],
       "id": "litellm",
       "meta": {},
+      "nextAttemptAt": null,
       "notices": [],
       "plan": null,
       "readAt": null,
@@ -263,6 +274,7 @@
       "facts": [],
       "id": "opencode",
       "meta": {},
+      "nextAttemptAt": null,
       "notices": [],
       "plan": null,
       "readAt": null,
@@ -282,6 +294,7 @@
       "facts": [],
       "id": "litellm",
       "meta": {},
+      "nextAttemptAt": null,
       "notices": [],
       "plan": null,
       "readAt": null,

@@ -2,8 +2,9 @@
 // shows comes from the Backend; this component only wires state, focus and the height protocol.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BackendContext } from './app/backendContext';
+import { cooldownLeft, waitText } from './app/cooldown';
 import { describeError } from './app/errorText';
-import { type SettingsSection, TAB_ORDER } from './app/harness';
+import { harnessName, type SettingsSection, TAB_ORDER } from './app/harness';
 import { NavigationContext } from './app/navigation';
 import { latestReadAt, viewsInTabOrder } from './app/placeholder';
 import { SettingsContext } from './app/settingsContext';
@@ -90,6 +91,23 @@ export function App({ backend }: { backend: Backend }) {
     wasSettings.current = screen.kind === 'settings';
   }, [screen.kind, selected]);
 
+  // A manual refresh during a cool-down is dropped by the scheduler; say why instead of nothing.
+  const [blocked, setBlocked] = useState('');
+  useEffect(() => {
+    if (blocked === '') return;
+    const timer = setTimeout(() => setBlocked(''), 8000);
+    return () => clearTimeout(timer);
+  }, [blocked]);
+  const refreshNow = () => {
+    const left = view ? cooldownLeft(view, nowSecs) : null;
+    setBlocked(
+      view && left !== null
+        ? t('cooldown.refresh_blocked', { name: harnessName(view.id), wait: waitText(left) })
+        : '',
+    );
+    void refresh.run();
+  };
+
   const { run: refreshAll } = refresh;
   const subscribeShown = useCallback(
     (callback: () => void) => backend.onFlyoutShown(callback),
@@ -119,7 +137,7 @@ export function App({ backend }: { backend: Backend }) {
             <Header
               tray={tray ? { pct: tray.summary.availablePct, status: tray.summary.status } : null}
               settingsOpen={inSettings}
-              onRefresh={() => void refresh.run()}
+              onRefresh={refreshNow}
               onToggleSettings={inSettings ? closeSettings : () => openSettings()}
             />
             {!inSettings && (
@@ -157,10 +175,10 @@ export function App({ backend }: { backend: Backend }) {
             <Footer
               readAt={latestReadAt(views)}
               nowSecs={nowSecs}
-              onRefresh={() => void refresh.run()}
+              onRefresh={refreshNow}
               onQuit={() => void quit.run()}
             />
-            <LiveRegion message={live} />
+            <LiveRegion message={blocked || live} />
           </div>
         </NavigationContext>
       </SettingsContext>

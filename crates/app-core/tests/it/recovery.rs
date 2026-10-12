@@ -53,7 +53,7 @@ async fn a_settings_path_that_cannot_be_read_is_set_aside_and_announced_too() {
     fs::create_dir_all(&stuck).unwrap_or_else(|e| panic!("mkdir: {e}"));
 
     // Real waiting happens here: the read is retried for about a second and a half first.
-    let mut rig = rig().in_dir(dir.path()).build();
+    let mut rig = rig().pristine().in_dir(dir.path()).build();
 
     assert!(copy_path(&rig).is_dir(), "the unreadable entry was moved aside, not deleted");
     assert!(!rig.settings_file().exists());

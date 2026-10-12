@@ -53,6 +53,29 @@ pub(super) fn window_reset(
     }
 }
 
+/// A usage threshold was crossed; `level` is the threshold, `used` the reading that crossed it.
+pub(super) fn threshold(
+    harness: HarnessId,
+    window: &UsageWindow,
+    level: u8,
+    used: f64,
+    now_secs: i64,
+) -> Notification {
+    let (article, noun) = subject(window);
+    let reset = match window.resets_at {
+        Some(at) => format!("Reinicia em {}.", span(at - now_secs)),
+        None => "O horário de reinício não foi informado.".to_owned(),
+    };
+    let shown = used.round().clamp(0.0, 999.0) as u16;
+    Notification {
+        kind: NotificationKind::ThresholdCrossed,
+        harness,
+        window_id: window.id.clone(),
+        title: format!("{}: {level}% do limite usado", harness_name(harness)),
+        body: format!("{article} {noun} já usou {shown}%. {reset}"),
+    }
+}
+
 /// The reset came by the clock with no reading behind it, so the text claims no free percentage.
 pub(super) fn window_lapsed(harness: HarnessId, window: &UsageWindow) -> Notification {
     let (article, noun) = subject(window);

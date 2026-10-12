@@ -81,7 +81,15 @@ export const DATA: Record<ScenarioName, Makers> = {
     antigravity: (env) =>
       asStale(antigravityView(env, 'warn'), env, 40, problem('not_running', {}, true)),
     opencode: (env) => asStale(opencodeView(env, 'ok'), env, 35),
-    litellm: (env) => asStale(litellmView(env, 'ok'), env, 18, problem('timeout', {}, true)),
+    litellm: (env) => ({
+      ...asStale(
+        litellmView(env, 'ok'),
+        env,
+        18,
+        problem('rate_limited', { httpStatus: '429', retryAfterSecs: '240' }, true),
+      ),
+      nextAttemptAt: env.now + 240,
+    }),
   },
   errors: {
     claude: () => failed('claude', problem('install_failed', { reason: 'write_failed' })),
