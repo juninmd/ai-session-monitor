@@ -21,9 +21,9 @@ export const setupMessages = {
 
   'antigravity.connect.title': 'Conectar ao Antigravity',
   'antigravity.connect.lead':
-    'A cota vem do servidor local da IDE. Esse caminho não é oficial e pode parar de funcionar quando o Antigravity atualizar.',
+    'A cota vem do agy (CLI) instalado ou do servidor local da IDE. Esse caminho não é oficial e pode parar de funcionar quando o Antigravity atualizar.',
   'antigravity.connect.detail':
-    'Lê a linha de comando do processo do servidor da IDE para pegar o token de sessão local e conversa só com 127.0.0.1. O token fica em memória; nada é gravado em disco nem enviado à internet.',
+    'Com sua permissão, o monitor pode rodar o agy instalado só para ler /usage (sem gastar tokens nem ler dados de login) e/ou ler a linha de comando do servidor da IDE para pegar o token de sessão local, falando só com 127.0.0.1. Nada é gravado em disco nem enviado à internet.',
   'antigravity.connect.allow': 'Permitir leitura local',
 
   'shim.title': 'Comando na barra de status',

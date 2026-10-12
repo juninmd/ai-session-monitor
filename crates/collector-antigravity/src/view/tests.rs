@@ -27,7 +27,11 @@ const LATER: Option<i64> = Some(NOW + 3_600);
 
 #[test]
 fn a_read_becomes_a_ready_view_with_the_source_marked_unofficial() {
-    let view = build(read(vec![window(&Pool::Gemini, FIVE, Some(54.0), LATER)]), NOW);
+    let view = build(
+        read(vec![window(&Pool::Gemini, FIVE, Some(54.0), LATER)]),
+        Origin::LanguageServer,
+        NOW,
+    );
     assert_eq!(view.id, HarnessId::Antigravity);
     assert_eq!(view.state, ViewState::Ready);
     assert_eq!(view.source, Some(Source { id: "language_server".to_owned(), official: false }));
@@ -40,7 +44,7 @@ fn a_read_becomes_a_ready_view_with_the_source_marked_unofficial() {
 #[test]
 fn ids_kinds_groups_and_lengths_follow_the_contract() {
     let summary = parse_summary(&crate::fixtures::json("summary_full"), NOW).unwrap();
-    let view = build(crate::quota::merge(None, Some(summary)), NOW);
+    let view = build(crate::quota::merge(None, Some(summary)), Origin::LanguageServer, NOW);
     let rows: Vec<_> = view
         .windows
         .iter()
@@ -69,7 +73,7 @@ fn ids_kinds_groups_and_lengths_follow_the_contract() {
 fn a_guessed_cadence_names_the_window_but_gives_no_length() {
     let mut guessed = window(&Pool::Gemini, FIVE, Some(30.0), LATER);
     guessed.inferred = true;
-    let view = build(read(vec![guessed]), NOW);
+    let view = build(read(vec![guessed]), Origin::LanguageServer, NOW);
     assert_eq!(view.windows[0].kind, WindowKind::FiveHour);
     assert_eq!(view.windows[0].window_minutes, None);
 }
@@ -79,7 +83,7 @@ fn a_window_without_a_cadence_is_other_and_keeps_the_provider_name() {
     let mut named = window(&Pool::Other("image_models".to_owned()), None, Some(10.0), None);
     named.label = Some("Monthly Limit".to_owned());
     named.slug = Some("monthly".to_owned());
-    let view = build(read(vec![named]), NOW);
+    let view = build(read(vec![named]), Origin::LanguageServer, NOW);
     let shown = &view.windows[0];
     assert_eq!(shown.id, "image_models:monthly");
     assert_eq!(
@@ -96,7 +100,7 @@ fn duplicate_names_get_distinct_ids() {
     let mut second = first.clone();
     second.used_pct = Some(2.0);
     let third = window(&Pool::Gemini, None, Some(3.0), None);
-    let view = build(read(vec![first, second, third]), NOW);
+    let view = build(read(vec![first, second, third]), Origin::LanguageServer, NOW);
     let ids: Vec<&str> = view.windows.iter().map(|w| w.id.as_str()).collect();
     assert_eq!(ids, ["gemini:quota", "gemini:quota_2", "gemini:quota_3"]);
 }
@@ -110,6 +114,7 @@ fn an_unknown_share_stays_null_and_raises_one_notice_per_pool() {
             window(&Pool::Gemini, FIVE, Some(10.0), LATER),
             window(&Pool::Gemini, WEEK, None, LATER),
         ]),
+        Origin::LanguageServer,
         NOW,
     );
     assert_eq!(view.state, ViewState::Ready);
@@ -127,7 +132,7 @@ fn an_unknown_share_stays_null_and_raises_one_notice_per_pool() {
 fn a_view_is_stale_only_when_every_window_has_already_reset() {
     let stale = |resets: &[Option<i64>]| {
         let windows = resets.iter().map(|reset| window(&Pool::Gemini, FIVE, Some(50.0), *reset));
-        build(read(windows.collect()), NOW).stale
+        build(read(windows.collect()), Origin::LanguageServer, NOW).stale
     };
     assert!(stale(&[Some(NOW - 1)]));
     assert!(stale(&[Some(NOW)]));
@@ -141,7 +146,11 @@ fn a_view_is_stale_only_when_every_window_has_already_reset() {
 
 #[test]
 fn stale_data_stays_visible_and_ready() {
-    let view = build(read(vec![window(&Pool::Gemini, FIVE, Some(54.0), Some(NOW - 60))]), NOW);
+    let view = build(
+        read(vec![window(&Pool::Gemini, FIVE, Some(54.0), Some(NOW - 60))]),
+        Origin::LanguageServer,
+        NOW,
+    );
     assert!(view.stale);
     assert_eq!(view.state, ViewState::Ready);
     assert_eq!(view.windows.len(), 1);
@@ -151,7 +160,7 @@ fn stale_data_stays_visible_and_ready() {
 
 #[test]
 fn a_server_without_quota_is_no_data_not_an_error() {
-    let view = build(read(Vec::new()), NOW);
+    let view = build(read(Vec::new()), Origin::LanguageServer, NOW);
     assert_eq!(view.state, ViewState::NoData);
     assert!(view.windows.is_empty() && !view.stale && view.notices.is_empty());
     assert_eq!(view.plan.as_deref(), Some("Pro"));

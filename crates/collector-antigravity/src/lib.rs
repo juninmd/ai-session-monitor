@@ -3,6 +3,11 @@
 //!
 //! # Where the data comes from
 //!
+//! First choice is the `agy` CLI: `agy -p "/usage" --output-format json` from its fixed install
+//! path (see `cli`), verified against a live agy 1.3.3 on 2026-10-12. Only when that is absent or
+//! fails does the IDE language server below get asked; everything in the rest of these docs about
+//! the IDE path remains unverified.
+//!
 //! Antigravity starts a local language server per window. It listens on `127.0.0.1`, speaks
 //! Connect (JSON over HTTP) and refuses a request without the CSRF token it was started with. The
 //! collector reads that token and the ports from the server's own command line, then calls
@@ -57,6 +62,7 @@
 //!   no `window_minutes`, so a wrong guess cannot raise a false pace alarm.
 //! - `stale` is set when every window has already reset: the server kept serving last cycle.
 
+mod cli;
 mod collector;
 mod discovery;
 mod errors;
@@ -77,6 +83,6 @@ pub const NOTICE_CODES: &[&str] = &[view::POOL_UNKNOWN];
 
 /// One poll. Always returns a view for `HarnessId::Antigravity`; failures are in the view.
 pub async fn collect(settings: &AntigravitySettings, ctx: &Ctx) -> HarnessView {
-    let discovery = discovery::SystemDiscovery::new();
-    collector::collect_with(settings, ctx, &discovery, &collector::Config::default()).await
+    let (discovery, cli) = (discovery::SystemDiscovery::new(), cli::SystemCli::new());
+    collector::collect_with(settings, ctx, &discovery, &cli, &collector::Config::default()).await
 }

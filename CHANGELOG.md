@@ -64,6 +64,10 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 - Stale tabs keep legible contrast in both themes; an expired window is worded once per card; the
   setup card shows the shim-outdated notice; a snapshot event racing the first `get_snapshot` no
   longer overwrites newer data.
+- Antigravity tab was empty for the `agy` command-line client (its language server is embedded and
+  answers 401 without an in-memory token). The collector now runs `agy -p "/usage" --output-format
+  json` from the fixed install path (no PATH search, no tokens spent) and prefers it over the IDE
+  server; the IDE path is unchanged when the CLI is absent or fails.
 
 ### Known limitations / follow-ups
 
@@ -77,6 +81,7 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
   `codex app-server`.
 - CI has no Node 22.22.2 leg in its matrix (the engines floor is not exercised).
 - `litellmDraft.ts` and the Rust validation treat `app.localhost` differently.
+- Antigravity: the IDE plan label is not shown when the `agy` CLI is the source.
 - `crates/usage-support/tests/it/redact.rs` is at 298 of the 300-line limit.
 
 ### Security
