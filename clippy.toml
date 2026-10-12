@@ -1,0 +1,4 @@
+# Tests assert by panicking; production code keeps the strict unwrap/expect lints.
+allow-expect-in-tests = true
+allow-unwrap-in-tests = true
+allow-print-in-tests = true
