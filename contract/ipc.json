@@ -1,0 +1,49 @@
+{
+  "externalLinks": [
+    "opencode_go_console",
+    "opencode_billing",
+    "project_readme"
+  ],
+  "secretKinds": [
+    "litellm",
+    "opencode"
+  ],
+  "secretStatus": {
+    "litellm": true,
+    "opencode": false
+  },
+  "shimStates": [
+    "not_installed",
+    "installed",
+    "foreign",
+    "outdated",
+    "unreadable"
+  ],
+  "shimStatuses": [
+    {
+      "chained": false,
+      "settingsPath": "C:\\Users\\someone\\.claude\\settings.json",
+      "state": "not_installed"
+    },
+    {
+      "chained": true,
+      "settingsPath": "C:\\Users\\someone\\.claude\\settings.json",
+      "state": "installed"
+    },
+    {
+      "chained": false,
+      "settingsPath": "C:\\Users\\someone\\.claude\\settings.json",
+      "state": "foreign"
+    },
+    {
+      "chained": false,
+      "settingsPath": "C:\\Users\\someone\\.claude\\settings.json",
+      "state": "outdated"
+    },
+    {
+      "chained": false,
+      "settingsPath": "C:\\Users\\someone\\.claude\\settings.json",
+      "state": "unreadable"
+    }
+  ]
+}
