@@ -9,6 +9,11 @@ export const shellMessages = {
   'harness.zai': 'z.ai',
   'harness.openrouter': 'OpenRouter',
   'harness.deepseek': 'DeepSeek',
+  'harness.deepinfra': 'DeepInfra',
+  'harness.moonshot': 'Moonshot',
+  'harness.novita': 'Novita',
+  'harness.ollama': 'Ollama Cloud',
+  'harness.minimax': 'MiniMax',
   'harness.litellm': 'LiteLLM',
 
   'header.refresh': 'Atualizar agora',
@@ -96,6 +101,11 @@ export const shellMessages = {
   'action.console.zai': 'Abrir chaves do z.ai',
   'action.console.openrouter': 'Abrir chaves do OpenRouter',
   'action.console.deepseek': 'Abrir chaves do DeepSeek',
+  'action.console.deepinfra': 'Abrir chaves do DeepInfra',
+  'action.console.moonshot': 'Abrir chaves do Moonshot',
+  'action.console.novita': 'Abrir chaves do Novita',
+  'action.console.ollama': 'Abrir chaves do Ollama Cloud',
+  'action.console.minimax': 'Abrir chaves do MiniMax',
   'action.reinstall': 'Reinstalar',
   'action.failed': 'Não foi possível concluir a ação.',
 } as const satisfies Record<string, string>;

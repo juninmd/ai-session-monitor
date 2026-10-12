@@ -56,6 +56,11 @@ async fn a_failing_secret_store_becomes_that_tabs_error_for_the_keyed_harnesses(
                 | HarnessId::Zai
                 | HarnessId::Openrouter
                 | HarnessId::Deepseek
+                | HarnessId::Deepinfra
+                | HarnessId::Moonshot
+                | HarnessId::Novita
+                | HarnessId::Ollama
+                | HarnessId::Minimax
                 | HarnessId::Litellm
         );
         if keyed {

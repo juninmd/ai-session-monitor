@@ -20,6 +20,11 @@ fn emitted() -> Vec<(&'static str, &'static [&'static str])> {
         ("collector-zai", collector_zai::NOTICE_CODES),
         ("collector-openrouter", collector_openrouter::NOTICE_CODES),
         ("collector-deepseek", collector_deepseek::NOTICE_CODES),
+        ("collector-deepinfra", collector_deepinfra::NOTICE_CODES),
+        ("collector-moonshot", collector_moonshot::NOTICE_CODES),
+        ("collector-novita", collector_novita::NOTICE_CODES),
+        ("collector-ollama", collector_ollama::NOTICE_CODES),
+        ("collector-minimax", collector_minimax::NOTICE_CODES),
     ]
 }
 

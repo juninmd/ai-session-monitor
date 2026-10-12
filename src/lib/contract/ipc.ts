@@ -9,6 +9,11 @@ export const SecretKindSchema = z.enum([
   'zai',
   'openrouter',
   'deepseek',
+  'deepinfra',
+  'moonshot',
+  'novita',
+  'ollama',
+  'minimax',
 ]);
 export type SecretKind = z.infer<typeof SecretKindSchema>;
 
@@ -19,6 +24,11 @@ export const SecretStatusSchema = z.strictObject({
   zai: z.boolean(),
   openrouter: z.boolean(),
   deepseek: z.boolean(),
+  deepinfra: z.boolean(),
+  moonshot: z.boolean(),
+  novita: z.boolean(),
+  ollama: z.boolean(),
+  minimax: z.boolean(),
 });
 export type SecretStatus = z.infer<typeof SecretStatusSchema>;
 
@@ -30,6 +40,11 @@ export const ExternalLinkSchema = z.enum([
   'zai_console',
   'openrouter_console',
   'deepseek_console',
+  'deepinfra_console',
+  'moonshot_console',
+  'novita_console',
+  'ollama_console',
+  'minimax_console',
   'project_readme',
 ]);
 export type ExternalLink = z.infer<typeof ExternalLinkSchema>;

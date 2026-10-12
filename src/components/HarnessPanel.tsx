@@ -29,6 +29,16 @@ function SetupSurface({ harness }: { harness: HarnessId }) {
       return <KeyConnect harness="openrouter" />;
     case 'deepseek':
       return <KeyConnect harness="deepseek" />;
+    case 'deepinfra':
+      return <KeyConnect harness="deepinfra" />;
+    case 'moonshot':
+      return <KeyConnect harness="moonshot" />;
+    case 'novita':
+      return <KeyConnect harness="novita" />;
+    case 'ollama':
+      return <KeyConnect harness="ollama" />;
+    case 'minimax':
+      return <KeyConnect harness="minimax" />;
     case 'litellm':
       return <LitellmForm />;
   }

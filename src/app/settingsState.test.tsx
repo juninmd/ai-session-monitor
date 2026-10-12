@@ -25,6 +25,11 @@ describe('useSettingsState', () => {
       zai: true,
       openrouter: true,
       deepseek: true,
+      deepinfra: true,
+      moonshot: true,
+      novita: true,
+      ollama: true,
+      minimax: true,
     });
     expect(result.current.loadError).toBeNull();
   });
@@ -191,6 +196,11 @@ describe('useSettingsState', () => {
         zai: false,
         openrouter: false,
         deepseek: false,
+        deepinfra: false,
+        moonshot: false,
+        novita: false,
+        ollama: false,
+        minimax: false,
       });
     });
 
@@ -205,6 +215,11 @@ describe('useSettingsState', () => {
         zai: true,
         openrouter: true,
         deepseek: true,
+        deepinfra: true,
+        moonshot: true,
+        novita: true,
+        ollama: true,
+        minimax: true,
       });
     });
 
@@ -222,6 +237,11 @@ describe('useSettingsState', () => {
         zai: true,
         openrouter: true,
         deepseek: true,
+        deepinfra: true,
+        moonshot: true,
+        novita: true,
+        ollama: true,
+        minimax: true,
       });
     });
 

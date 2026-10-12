@@ -134,6 +134,11 @@ describe('saving a secret', () => {
               zai: false,
               openrouter: false,
               deepseek: false,
+              deepinfra: false,
+              moonshot: false,
+              novita: false,
+              ollama: false,
+              minimax: false,
             });
         }),
     );

@@ -17,8 +17,15 @@ const NAMES = [
   'z.ai',
   'OpenRouter',
   'DeepSeek',
+  'DeepInfra',
+  'Moonshot',
+  'Novita',
+  'Ollama Cloud',
+  'MiniMax',
   'LiteLLM',
 ];
+/** Balance-only sources: money facts, no window, so no status to repeat. */
+const BALANCE_ONLY = ['tab-deepseek', 'tab-moonshot', 'tab-novita'];
 const IDS: HarnessId[] = [
   'claude',
   'codex',
@@ -28,6 +35,11 @@ const IDS: HarnessId[] = [
   'zai',
   'openrouter',
   'deepseek',
+  'deepinfra',
+  'moonshot',
+  'novita',
+  'ollama',
+  'minimax',
   'litellm',
 ];
 
@@ -55,7 +67,7 @@ const tabs = () => screen.getAllByRole('tab');
 const selectedId = () => tabs().find((tab) => tab.getAttribute('aria-selected') === 'true')?.id;
 
 describe('TabStrip semantics', () => {
-  it('is one labelled tablist with the nine tools in order', async () => {
+  it('is one labelled tablist with all the tools in order', async () => {
     render(<Strip views={await viewsOf({ scenario: 'healthy' })} />);
     expect(screen.getByRole('tablist', { name: 'Ferramentas de IA' })).toBeInTheDocument();
     expect(tabs().map((tab) => tab.id)).toEqual(IDS.map((id) => `tab-${id}`));
@@ -84,17 +96,10 @@ describe('TabStrip semantics', () => {
   it('points every tab at the one panel, and only the selected tab is tabbable', async () => {
     render(<Strip views={await viewsOf()} />);
     for (const tab of tabs()) expect(tab).toHaveAttribute('aria-controls', PANEL_ID);
-    expect(tabs().map((tab) => tab.tabIndex)).toEqual([0, -1, -1, -1, -1, -1, -1, -1, -1]);
+    expect(tabs().map((tab) => tab.tabIndex)).toEqual([0, ...IDS.slice(1).map(() => -1)]);
     expect(tabs().map((tab) => tab.getAttribute('aria-selected'))).toEqual([
       'true',
-      'false',
-      'false',
-      'false',
-      'false',
-      'false',
-      'false',
-      'false',
-      'false',
+      ...IDS.slice(1).map(() => 'false'),
     ]);
   });
 
@@ -107,7 +112,7 @@ describe('TabStrip semantics', () => {
   it('never leaves a tab with only a colour to tell its state', async () => {
     render(<Strip views={await viewsOf({ scenario: 'critical' })} />);
     // A balance has no status to repeat: it is worded as values instead.
-    for (const tab of tabs().filter((candidate) => candidate.id !== 'tab-deepseek')) {
+    for (const tab of tabs().filter((candidate) => !BALANCE_ONLY.includes(candidate.id))) {
       expect(tab).toHaveAccessibleName(/(atenção|crítico|esgotado)$/);
       // A glyph next to the percentage repeats the status for people who cannot see colour.
       expect(tab.querySelector('.t-read svg')).not.toBeNull();
@@ -132,7 +137,7 @@ describe('TabStrip semantics', () => {
 
   it('renders a placeholder as a loading tab', () => {
     render(<Strip views={IDS.map(placeholderView)} />);
-    expect(tabs()).toHaveLength(9);
+    expect(tabs()).toHaveLength(IDS.length);
   });
 });
 
@@ -182,7 +187,7 @@ describe('TabStrip keyboard model', () => {
   it('keeps the roving tabindex on the new tab', async () => {
     const { user } = await setup();
     await user.keyboard('{ArrowRight}');
-    expect(tabs().map((tab) => tab.tabIndex)).toEqual([-1, 0, -1, -1, -1, -1, -1, -1, -1]);
+    expect(tabs().map((tab) => tab.tabIndex)).toEqual(IDS.map((_, i) => (i === 1 ? 0 : -1)));
   });
 
   it('leaves other keys to the browser', async () => {

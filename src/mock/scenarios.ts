@@ -9,6 +9,7 @@ import {
   type Settings,
   type ShimStatus,
 } from '../lib/contract';
+import { deepinfraView, minimaxView, moonshotView, novitaView, ollamaView } from './balances';
 import {
   antigravityView,
   BUILDERS,
@@ -49,6 +50,11 @@ const everyone = (mood: Mood): Makers => ({
   zai: (env) => BUILDERS.zai(env, mood),
   openrouter: (env) => BUILDERS.openrouter(env, mood),
   deepseek: (env) => BUILDERS.deepseek(env, mood),
+  deepinfra: (env) => BUILDERS.deepinfra(env, mood),
+  moonshot: (env) => BUILDERS.moonshot(env, mood),
+  novita: (env) => BUILDERS.novita(env, mood),
+  ollama: (env) => BUILDERS.ollama(env, mood),
+  minimax: (env) => BUILDERS.minimax(env, mood),
   litellm: (env) => BUILDERS.litellm(env, mood),
 });
 
@@ -69,6 +75,11 @@ const loading: Makers = {
   zai: () => viewOf('zai', { state: 'loading' }),
   openrouter: () => viewOf('openrouter', { state: 'loading' }),
   deepseek: () => viewOf('deepseek', { state: 'loading' }),
+  deepinfra: () => viewOf('deepinfra', { state: 'loading' }),
+  moonshot: () => viewOf('moonshot', { state: 'loading' }),
+  novita: () => viewOf('novita', { state: 'loading' }),
+  ollama: () => viewOf('ollama', { state: 'loading' }),
+  minimax: () => viewOf('minimax', { state: 'loading' }),
   litellm: () => viewOf('litellm', { state: 'loading' }),
 };
 
@@ -86,6 +97,11 @@ export const DATA: Record<ScenarioName, Makers> = {
     zai: (env) => zaiView(env, 'warn'),
     openrouter: (env) => openrouterView(env, 'warn'),
     deepseek: (env) => deepseekView(env, 'ok'),
+    deepinfra: (env) => deepinfraView(env, 'ok'),
+    moonshot: (env) => moonshotView(env, 'ok'),
+    novita: (env) => novitaView(env, 'ok'),
+    ollama: (env) => ollamaView(env, 'ok'),
+    minimax: (env) => minimaxView(env, 'ok'),
     litellm: () => failed('litellm', problem('unauthorized', { httpStatus: '401' })),
   },
   stale: {
@@ -98,6 +114,11 @@ export const DATA: Record<ScenarioName, Makers> = {
     zai: (env) => asStale(zaiView(env, 'ok'), env, 25),
     openrouter: (env) => asStale(openrouterView(env, 'ok'), env, 20, problem('network', {}, true)),
     deepseek: (env) => asStale(deepseekView(env, 'ok'), env, 22),
+    deepinfra: (env) => asStale(deepinfraView(env, 'ok'), env, 22),
+    moonshot: (env) => asStale(moonshotView(env, 'ok'), env, 22),
+    novita: (env) => asStale(novitaView(env, 'ok'), env, 22),
+    ollama: (env) => asStale(ollamaView(env, 'ok'), env, 22),
+    minimax: (env) => asStale(minimaxView(env, 'ok'), env, 22),
     litellm: (env) => ({
       ...asStale(
         litellmView(env, 'ok'),
@@ -118,6 +139,11 @@ export const DATA: Record<ScenarioName, Makers> = {
     zai: () => failed('zai', problem('endpoint_changed')),
     openrouter: () => failed('openrouter', problem('unauthorized', { httpStatus: '401' })),
     deepseek: () => failed('deepseek', problem('rate_limited', { httpStatus: '429' }, true)),
+    deepinfra: () => failed('deepinfra', problem('rate_limited', { httpStatus: '429' }, true)),
+    moonshot: () => failed('moonshot', problem('rate_limited', { httpStatus: '429' }, true)),
+    novita: () => failed('novita', problem('rate_limited', { httpStatus: '429' }, true)),
+    ollama: () => failed('ollama', problem('rate_limited', { httpStatus: '429' }, true)),
+    minimax: () => failed('minimax', problem('rate_limited', { httpStatus: '429' }, true)),
     litellm: () =>
       failed(
         'litellm',
@@ -145,6 +171,11 @@ export function startFor(scenario: ScenarioName): Start {
         zai: false,
         openrouter: false,
         deepseek: false,
+        deepinfra: false,
+        moonshot: false,
+        novita: false,
+        ollama: false,
+        minimax: false,
       },
       shim: { state: 'not_installed', chained: false, settingsPath: SHIM_PATH },
     };
@@ -168,6 +199,11 @@ export function startFor(scenario: ScenarioName): Start {
       zai: true,
       openrouter: true,
       deepseek: true,
+      deepinfra: true,
+      moonshot: true,
+      novita: true,
+      ollama: true,
+      minimax: true,
     },
     shim: {
       state: scenario === 'errors' ? 'outdated' : 'installed',
@@ -206,6 +242,16 @@ function gate(id: HarnessId, env: Env, firstSessionSeen: boolean): HarnessView |
       return secrets.openrouter ? null : viewOf(id, { state: 'needs_setup' });
     case 'deepseek':
       return secrets.deepseek ? null : viewOf(id, { state: 'needs_setup' });
+    case 'deepinfra':
+      return secrets.deepinfra ? null : viewOf(id, { state: 'needs_setup' });
+    case 'moonshot':
+      return secrets.moonshot ? null : viewOf(id, { state: 'needs_setup' });
+    case 'novita':
+      return secrets.novita ? null : viewOf(id, { state: 'needs_setup' });
+    case 'ollama':
+      return secrets.ollama ? null : viewOf(id, { state: 'needs_setup' });
+    case 'minimax':
+      return secrets.minimax ? null : viewOf(id, { state: 'needs_setup' });
     case 'litellm':
       return settings.litellm.baseUrl !== null && secrets.litellm
         ? null

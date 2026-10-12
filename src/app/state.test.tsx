@@ -1,7 +1,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { BackendError } from '../lib/backend';
-import type { Snapshot } from '../lib/contract';
+import { HARNESS_IDS, type Snapshot } from '../lib/contract';
 import { createMockBackend } from '../mock';
 import { problem } from '../mock/fixtures';
 import { NOW } from '../test/helpers';
@@ -14,7 +14,7 @@ describe('useSnapshotState', () => {
     const backend = createMockBackend({ scenario: 'healthy', now: () => NOW });
     const { result } = renderHook(() => useSnapshotState(backend));
     await waitFor(() => expect(result.current.snapshot).not.toBeNull());
-    expect(result.current.snapshot?.views).toHaveLength(9);
+    expect(result.current.snapshot?.views).toHaveLength(HARNESS_IDS.length);
     expect(result.current.error).toBeNull();
   });
 

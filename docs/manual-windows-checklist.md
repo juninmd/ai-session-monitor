@@ -192,9 +192,11 @@ switch keeps secrets in memory (`AISM_MEMORY_SECRETS`) and never reaches the Cre
 - [ ] Saving a LiteLLM key adds `ai-session-monitor/litellm` under Control Panel > Credential
       Manager > Windows Credentials > Generic, persistence "Local computer". Clearing removes it.
       The OpenCode key uses `ai-session-monitor/opencode`, Kimi Code `ai-session-monitor/kimi`
-      z.ai `ai-session-monitor/zai`, OpenRouter `ai-session-monitor/openrouter` and DeepSeek
-      `ai-session-monitor/deepseek`.
-- [ ] With seven tabs the strip scrolls sideways in the flyout: Tab lands on the selected tab,
+      z.ai `ai-session-monitor/zai`, OpenRouter `ai-session-monitor/openrouter`, DeepSeek
+      `ai-session-monitor/deepseek`, DeepInfra `ai-session-monitor/deepinfra`, Moonshot
+      `ai-session-monitor/moonshot`, Novita `ai-session-monitor/novita`, Ollama Cloud
+      `ai-session-monitor/ollama` and MiniMax `ai-session-monitor/minimax`.
+- [ ] With fourteen tabs the strip scrolls sideways in the flyout: Tab lands on the selected tab,
       the arrow keys move and wrap, the focused tab scrolls into view and shows a visible ring.
 - [ ] Kimi Code and z.ai tabs: with no key they show the setup card and the "não oficial" badge;
       with a real key the windows match the vendor's own page; a wrong key reads "não foi possível
@@ -206,6 +208,24 @@ switch keeps secrets in memory (`AISM_MEMORY_SECRETS`) and never reaches the Cre
       management key and matches the credits page. DeepSeek shows one set of facts per currency,
       no percentage, and the tab chip reads "Valores". A wrong key reads "chave ou login
       recusado". The console links open the vendor key pages.
+- [ ] DeepInfra tab (never exercised against a live account yet): with no key the setup card and no
+      "não oficial" badge. With a spending limit there is one "Limite de gasto da conta" window; the
+      balance, "Gasto desde a última fatura" and "Gasto no mês" match the dashboard to the cent. If
+      they are 100x off, DeepInfra answers in cents: fix the unit (see data-sources.md).
+- [ ] Moonshot tab (never exercised against a live account yet): no "não oficial" badge, no
+      percentage, chip reads "Valores". The three balances match the platform's billing page; a key
+      of the kimi.com platform reads "chave ou login recusado", not a wrong balance.
+- [ ] Novita tab (never exercised against a live account yet): no "não oficial" badge, no percentage,
+      chip reads "Valores". The balance, cash balance and credit limit match the billing page (the
+      API answers in 1/10000 dollar; a figure 10000x off means the unit changed).
+- [ ] Ollama Cloud tab (never exercised against a live account yet): no "não oficial" badge. A
+      current plan shows "Créditos incluídos do mês" matching ollama.com/settings, plus the
+      purchased balance; a legacy plan shows "Sessão" and "Semana". A key minted at
+      ollama.com/settings/keys works; nothing under `~/.ollama` is read.
+- [ ] MiniMax tab (UNOFFICIAL route, never exercised against a live account): with no key the setup
+      card and the "não oficial" badge. With a Token Plan key, each model shows an interval and a
+      weekly row; compare **both percentages with the console** the first time. If they are
+      inverted (used shown as left), the `*_usage_count` meaning is wrong: fix `parse.rs`. A pay-as-you-go key reads "chave ou login recusado".
 - [ ] The key appears nowhere else: not in `settings.json`, not in the webview devtools console,
       not in stderr.
 - [ ] A value the Credential Manager cannot hold (about 1,280 characters: it stores UTF-16 in a

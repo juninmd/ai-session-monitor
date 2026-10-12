@@ -25,6 +25,11 @@ describe('viewsInTabOrder', () => {
       'zai:loading',
       'openrouter:loading',
       'deepseek:loading',
+      'deepinfra:loading',
+      'moonshot:loading',
+      'novita:loading',
+      'ollama:loading',
+      'minimax:loading',
       'litellm:loading',
     ]);
   });

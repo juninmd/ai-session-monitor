@@ -4,10 +4,15 @@ import type { HarnessId } from '../../lib/contract';
 import { AntigravityLogo } from './AntigravityLogo';
 import { ClaudeLogo } from './ClaudeLogo';
 import { CodexLogo } from './CodexLogo';
+import { DeepinfraLogo } from './DeepinfraLogo';
 import { DeepSeekLogo } from './DeepSeekLogo';
 import { KimiLogo } from './KimiLogo';
 import { LiteLLMLogo } from './LiteLLMLogo';
 import type { LogoProps } from './LogoSvg';
+import { MinimaxLogo } from './MinimaxLogo';
+import { MoonshotLogo } from './MoonshotLogo';
+import { NovitaLogo } from './NovitaLogo';
+import { OllamaLogo } from './OllamaLogo';
 import { OpenCodeLogo } from './OpenCodeLogo';
 import { OpenRouterLogo } from './OpenRouterLogo';
 import { ZaiLogo } from './ZaiLogo';
@@ -21,6 +26,11 @@ const LOGOS: Record<HarnessId, ComponentType<LogoProps>> = {
   zai: ZaiLogo,
   openrouter: OpenRouterLogo,
   deepseek: DeepSeekLogo,
+  deepinfra: DeepinfraLogo,
+  moonshot: MoonshotLogo,
+  novita: NovitaLogo,
+  ollama: OllamaLogo,
+  minimax: MinimaxLogo,
   litellm: LiteLLMLogo,
 };
 

@@ -1,4 +1,4 @@
-/* Seven tabs do not fit a narrow flyout: each keeps a readable minimum width and the strip scrolls. */
+/* Fourteen tabs do not fit a narrow flyout: each keeps a readable minimum width and the strip scrolls. */
 .tabs {
   display: grid;
   overflow-x: auto;

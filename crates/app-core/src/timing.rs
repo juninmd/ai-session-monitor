@@ -18,7 +18,7 @@ pub(crate) const EMIT_MIN_GAP: Duration = Duration::from_millis(250);
 const COOLDOWN_DEFAULT: Duration = Duration::from_secs(5 * 60);
 const COOLDOWN_MAX: Duration = Duration::from_secs(30 * 60);
 const MAX_BACKOFF: Duration = Duration::from_secs(15 * 60);
-/// The OpenCode, Kimi, z.ai, OpenRouter and DeepSeek endpoints are remote and rate-sensitive, and their
+/// The OpenCode, Kimi, z.ai and every key-based balance endpoint are remote and rate-sensitive, and their
 /// collectors leave the pacing to the caller. (The Claude OAuth endpoint paces itself in its collector, so Claude is not slowed.)
 const REMOTE_MIN_CADENCE: Duration = Duration::from_secs(300);
 /// 2^10 times any cadence already exceeds the cap, so the shift never needs to grow past it.
@@ -33,7 +33,12 @@ pub(crate) fn cadence(id: HarnessId, settings: &Settings) -> Duration {
         | HarnessId::Kimi
         | HarnessId::Zai
         | HarnessId::Openrouter
-        | HarnessId::Deepseek => local.max(REMOTE_MIN_CADENCE),
+        | HarnessId::Deepseek
+        | HarnessId::Deepinfra
+        | HarnessId::Moonshot
+        | HarnessId::Novita
+        | HarnessId::Ollama
+        | HarnessId::Minimax => local.max(REMOTE_MIN_CADENCE),
         HarnessId::Litellm => Duration::from_secs(u64::from(settings.litellm.poll_interval_secs)),
     }
 }
@@ -82,12 +87,17 @@ mod tests {
         assert_eq!(cadence(HarnessId::Litellm, &settings), secs(600));
     }
 
-    const REMOTE: [HarnessId; 5] = [
+    const REMOTE: [HarnessId; 10] = [
         HarnessId::Opencode,
         HarnessId::Kimi,
         HarnessId::Zai,
         HarnessId::Openrouter,
         HarnessId::Deepseek,
+        HarnessId::Deepinfra,
+        HarnessId::Moonshot,
+        HarnessId::Novita,
+        HarnessId::Ollama,
+        HarnessId::Minimax,
     ];
 
     #[test]
