@@ -93,3 +93,9 @@ describe('stale numbers', () => {
     expect(aboveText).toEqual([]);
   });
 });
+
+describe('collapsed sections', () => {
+  it('keeps a hidden stack out of the layout, since .stack sets display:flex', () => {
+    expect(shell).toMatch(/\.stack\[hidden\]\s*\{\s*display:\s*none;/);
+  });
+});
