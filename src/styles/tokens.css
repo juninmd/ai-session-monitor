@@ -1,0 +1,60 @@
+/* Design tokens. Every colour is a light-dark() pair, so the system preference and the
+   data-theme override (a reviewer aid; the app follows Windows) resolve through one property.
+   Amber and red appear only as status and always travel with a glyph and text. */
+:root {
+  --font:
+    "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial,
+    sans-serif;
+  --font-disp:
+    "Segoe UI Variable Display", "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system,
+    "Helvetica Neue", Arial, sans-serif;
+
+  --fs-xs: 0.6875rem;
+  --fs-sm: 0.75rem;
+  --fs-base: 0.8125rem;
+  --fs-md: 0.9375rem;
+  --fs-lg: 1.25rem;
+  --fs-hero: 2.75rem;
+
+  --r-fly: 12px;
+  --r-card: 8px;
+  --r-ctl: 6px;
+  --r-bar: 4px;
+
+  color-scheme: light dark;
+
+  --page: light-dark(#e9edf2, #101215);
+  --surface: light-dark(rgb(246 247 249 / 0.9), rgb(34 37 42 / 0.9));
+  --solid: light-dark(#f6f7f9, #22252a);
+  --raise: light-dark(#ffffff, #2b2f35);
+  --raise-2: light-dark(#eceef2, #343940);
+  --raise-3: light-dark(#e0e3e9, #3e444c);
+
+  --ink: light-dark(#171a1f, #eceef1);
+  --ink-2: light-dark(#444a52, #b9bec6);
+  --ink-3: light-dark(#646a73, #a2a8b1);
+
+  --line: light-dark(rgb(18 22 28 / 0.1), rgb(255 255 255 / 0.09));
+  --line-2: light-dark(rgb(18 22 28 / 0.22), rgb(255 255 255 / 0.2));
+  /* 3:1 against every surface, for the edge of an input, a select or a switch (WCAG 1.4.11). */
+  --control-line: light-dark(#7b818a, #8d939c);
+
+  --accent: light-dark(#2a78d6, #5a9bec);
+  --btn-bg: light-dark(#1f66bd, #3987e5);
+  --btn-ink: light-dark(#ffffff, #07182b);
+  --warn: #fab219;
+  --warn-fill: light-dark(#a86400, #fab219);
+  --crit: light-dark(#d03b3b, #ef6b61);
+
+  --shadow:
+    0 18px 48px light-dark(rgb(16 24 40 / 0.28), rgb(0 0 0 / 0.55)),
+    0 2px 8px light-dark(rgb(16 24 40 / 0.16), rgb(0 0 0 / 0.4));
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}

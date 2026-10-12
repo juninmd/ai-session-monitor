@@ -1,0 +1,31 @@
+/* Harness logos. Colour marks keep the brand's own colours; mono marks paint currentColor. */
+.logo {
+  flex: none;
+  /* Optical balance, layout untouched: the wide mascot reads small, tiles read large. */
+  scale: var(--logo-scale, 1);
+}
+
+.logo[data-tone="mono"] {
+  color: var(--logo-ink, var(--ink));
+}
+
+.logo[data-logo="claude"] {
+  --logo-scale: 1.2;
+}
+
+.logo[data-logo="codex"],
+.logo[data-logo="litellm"] {
+  --logo-scale: 0.9;
+}
+
+/* LiteLLM's guidelines allow only its blue on light surfaces and white on dark: no theme greys. */
+.logo[data-logo="litellm"] {
+  --logo-ink: light-dark(#0117be, #fff);
+}
+
+/* Forced colours would flatten brand artwork into system colours; keep it as drawn. */
+@media (forced-colors: active) {
+  .logo[data-tone="color"] {
+    forced-color-adjust: none;
+  }
+}

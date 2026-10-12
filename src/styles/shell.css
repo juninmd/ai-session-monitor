@@ -1,0 +1,169 @@
+/* The flyout frame: header, one scrolling body, footer. The tab strip lives in tabs.css. */
+.flyout {
+  display: flex;
+  flex-direction: column;
+  inline-size: min(100%, 27rem);
+  max-block-size: 100vh;
+  overflow: hidden;
+  background: var(--surface);
+  backdrop-filter: blur(28px) saturate(1.4);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-fly);
+  color: var(--ink);
+}
+
+html[data-host="browser"] .flyout {
+  max-block-size: calc(100vh - 3rem);
+  margin-inline: auto;
+  box-shadow: var(--shadow);
+}
+
+.fly-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.5rem 0.25rem 0.85rem;
+}
+
+.fly-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-inline-size: 0;
+  font-size: inherit;
+  font-weight: 600;
+}
+
+.fly-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  margin-inline-start: auto;
+}
+
+.icon-btn {
+  appearance: none;
+  display: grid;
+  place-items: center;
+  inline-size: 2rem;
+  block-size: 2rem;
+  border: 0;
+  border-radius: var(--r-ctl);
+  background: transparent;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+
+.icon-btn:hover,
+.icon-btn[aria-pressed="true"] {
+  background: var(--raise-2);
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .spin .ico {
+    animation: spin 0.8s linear;
+  }
+}
+
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@media (pointer: coarse) {
+  .icon-btn {
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+  }
+}
+
+/* The tray ring, repeated in the header. */
+.ring-ico {
+  inline-size: 16px;
+  block-size: 16px;
+  color: var(--ink-2);
+  --ring-c: var(--accent);
+}
+
+.ring-ico[data-status="warn"] {
+  --ring-c: var(--warn-fill);
+}
+
+.ring-ico[data-status="crit"],
+.ring-ico[data-status="out"] {
+  --ring-c: var(--crit);
+}
+
+.ring-bg {
+  stroke: currentcolor;
+  opacity: 0.28;
+}
+
+.ring-fg {
+  stroke: var(--ring-c);
+}
+
+/* ---------- body and footer ---------- */
+.fly-body {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  overflow: auto;
+  padding: 0.25rem 0.75rem 0.75rem;
+  scrollbar-width: thin;
+  /* The colour behind a gauge, so the tick's halo matches the surface it sits on. */
+  --ring-bg: var(--solid);
+}
+
+.fly-content,
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Old numbers lose their colour, not their contrast: a group opacity drags ink-2/ink-3 text to
+   2.6-4.4:1 (5.0-8.9:1 fresh), so the block is desaturated and only its bars fade. */
+.stack[data-stale="true"] {
+  filter: grayscale(1);
+}
+
+.stack[data-stale="true"] .gauge meter,
+.stack[data-stale="true"] .gauge-void {
+  opacity: 0.6;
+}
+
+.fly-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.25rem 0.5rem 0.25rem 0.85rem;
+  border-block-start: 1px solid var(--line);
+  color: var(--ink-3);
+  font-size: var(--fs-xs);
+}
+
+.foot-actions {
+  display: flex;
+  gap: 0.125rem;
+}
+
+.link-btn {
+  appearance: none;
+  min-block-size: 1.5rem;
+  padding: 0.2rem 0.5rem;
+  border: 0;
+  border-radius: var(--r-ctl);
+  background: transparent;
+  color: var(--ink-2);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.link-btn:hover {
+  background: var(--raise-2);
+  color: var(--ink);
+}
