@@ -169,9 +169,10 @@ async fn a_slow_server_times_out_within_the_budget() {
     assert!(started.elapsed() < Duration::from_secs(3), "{:?}", started.elapsed());
 }
 
+// Windows retries SYNs to a closed loopback port for ~2 s before refusing; a shorter budget reads as a timeout.
 #[tokio::test]
 async fn an_unreachable_or_dropped_connection_is_a_retryable_network_error() {
-    let refused = fetch_with(closed_port_url(), Duration::from_secs(2)).await.unwrap_err();
+    let refused = fetch_with(closed_port_url(), Duration::from_secs(10)).await.unwrap_err();
     assert_eq!((refused.code, refused.retryable), (ErrorCode::Network, true));
 
     let hangup = FakeServer::always(|| Reply::Hangup);
