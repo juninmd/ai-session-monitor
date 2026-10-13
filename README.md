@@ -1,112 +1,193 @@
-# AI Session Monitor
+# 🚀 AI Session Monitor
 
-Ícone na bandeja do Windows que mostra **quanto da sessão você ainda tem disponível** nas suas
-ferramentas de código com IA, uma aba por ferramenta:
+<div align="center">
 
-| Aba | O que mostra | Fonte | Confiança |
-|---|---|---|---|
-| **Claude Code** | sessão de 5 h e semana: % disponível, tempo até reiniciar, ritmo | `rate_limits` do statusLine (via shim instalado com seu consentimento); Opus, Sonnet e Fable por modelo são opcionais, via `claude -p "/usage"` (custo zero) ou, sem o CLI, a API de uso da conta | oficial (por modelo: **não oficial**) |
-| **Codex** | janela de 5 h e semanal, plano, créditos e recargas de reset | `codex app-server` (JSON-RPC) | oficial |
-| **Antigravity** | pools Gemini e Claude/GPT-OSS (5 h e semana) | CLI `agy` (`/usage`) ou servidor local da IDE | **não oficial** |
-| **OpenCode** | Go: janelas de 5 h, semana e mês; estimativa local de custo | endpoint de uso do Go + `opencode.db` (somente leitura) | **não oficial** |
-| **Kimi Code** | janelas de 5 h e semana (e o pool mensal, quando o serviço informa) | endpoint de uso do Kimi Code com a sua chave | **não oficial** |
-| **z.ai** | plano GLM Coding: janelas de 5 h e semana, e a cota mensal de ferramentas MCP | endpoint de cota do z.ai com a sua chave | **não oficial** |
-| **OpenRouter** | limite de gasto da chave (só se a chave tiver limite), uso do dia, da semana e do mês, e o saldo de créditos (só com chave de gerenciamento) | API do OpenRouter (`/key`, `/credits`) com a sua chave | oficial |
-| **DeepSeek** | saldo da conta por moeda (CNY e USD, nunca somados), sem porcentagem | API de saldo do DeepSeek com a sua chave | oficial |
-| **DeepInfra** | saldo, gasto do mês e (se houver limite de gasto) uma janela em porcentagem; a API não informa a unidade, lida como dólar | API de cobrança do DeepInfra com a sua chave | oficial |
-| **Moonshot** | saldo da conta, vouchers e dinheiro (dólar), sem porcentagem | API de saldo da Moonshot (`api.moonshot.ai`) com a sua chave | oficial |
-| **Novita** | saldo, limite de crédito e cobranças pendentes (dólar), sem porcentagem | API de saldo do Novita com a sua chave | oficial |
-| **Ollama Cloud** | créditos incluídos do mês (ou janelas de sessão e semana em planos antigos) e saldo comprado | API de saldo do Ollama Cloud com a sua chave | oficial |
-| **MiniMax** | cota do Token Plan por modelo: intervalo em andamento e semana | rota de cota do Token Plan com a sua chave | **não oficial** |
-| **LiteLLM** | orçamento da chave, usuário ou time (parametrizável) | API do proxy (`/key/info`, `/user/info`, `/team/info`) | oficial |
+[![Windows 10 | 11](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/juninmd/ai-session-monitor)
+[![Tauri 2](https://img.shields.io/badge/Tauri-v2-24C8DB?style=for-the-badge&logo=tauri&logoColor=white)](https://v2.tauri.app/)
+[![Rust 2024](https://img.shields.io/badge/Rust-2024%20(1.97.1)-DEA584?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org/)
+[![React 19](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+[![Auto Updates](https://img.shields.io/badge/Updates-Minisign%20Signed-informational?style=for-the-badge&logo=github)](https://github.com/juninmd/ai-session-monitor/releases)
 
-"Em horas" significa duas coisas, sempre mostradas juntas: o **tempo até reiniciar** (número
-principal) e uma **estimativa de ritmo** (quanto tempo a cota dura se você continuar no ritmo
-atual). Valor desconhecido aparece como desconhecido, nunca como 0 %.
+**Monitore a cota restante, o tempo de reset e o ritmo de consumo das suas sessões de IA direto da bandeja do Windows.**
 
-## Privacidade e segurança
+[Recursos](#-principais-recursos) • [Provedores Suportados](#-provedores-suportados) • [Instalação](#-instalação-e-download) • [Segurança](#-privacidade-e-segurança) • [Desenvolvimento](#-desenvolvimento-e-build) • [Arquitetura](#-arquitetura)
 
-- Cada fonte que lê arquivos ou processos de outra ferramenta fica parada até você **consentir** na aba.
-- O app **só lê**: nunca escreve em um provedor, nunca renova tokens e nunca usa cookies de navegador.
-- As únicas credenciais guardadas são as chaves de API do LiteLLM, do OpenCode Go, do Kimi Code, do z.ai, do OpenRouter, do DeepSeek, do DeepInfra, da Moonshot, do Novita, do Ollama Cloud e da MiniMax que você colar;
-  ficam no **Gerenciador de Credenciais do Windows**, nunca em arquivo, log ou na interface.
-- O histórico de uso (seção "Histórico" de cada aba) fica só neste computador, em `history.json`: porcentagens e horários por janela, por 35 dias, sem conta nem rótulos. Dá para desligar e apagar em Configurações.
-- A interface web não faz requisições de rede; todo HTTP sai do Rust (somente https, sem
-  redirecionamentos, com limites de tamanho e tempo). Ela só pode ouvir eventos do app, nunca emitir.
+</div>
 
-Detalhes por fonte, o que é enviado e como desligar: [`docs/data-sources.md`](docs/data-sources.md).
+---
 
-## Requisitos
+## 💡 O que é o AI Session Monitor?
 
-- Windows 10/11 com WebView2 (já incluso no Windows 11).
-- Node.js 22.22.2+, 24.15+ ou 26+ e pnpm 10 (`corepack enable`).
-- Rust 1.97.1 (o `rust-toolchain.toml` instala sozinho via rustup) e MSVC Build Tools.
+O **AI Session Monitor** é um aplicativo nativo e ultraleve para a área de notificação (System Tray) do Windows. Desenvolvido com **Tauri 2, Rust e React 19**, ele consolida em um único painel elegante o status das suas sessões de codificação e créditos em **14 ferramentas e provedores de IA**.
 
-## Desenvolvimento
+Nunca mais seja pego de surpresa pelo fim da janela de 5 horas do Claude, pela cota semanal do Codex ou pelo saldo zerado de uma API no meio de uma tarefa complexa.
+
+---
+
+## ✨ Principais Recursos
+
+- ⏱️ **Janelas de Sessão em Tempo Real:** Acompanhe a porcentagem restante e o tempo exato até o próximo reset em janelas de 5 horas, semanais e mensais.
+- ⚡ **Estimativa de Ritmo (Burn Rate):** Sabe em quanto tempo sua cota vai acabar se continuar codando no ritmo atual.
+- 🛡️ **Zero-Trust & Privacidade Total:** Suas chaves ficam guardadas no **Windows Credential Manager**. O app é estritamente **read-only**, não grava em servidores remotos e o webview não tem acesso à internet externa.
+- 📊 **Histórico Local de 35 Dias:** Visualize tendências de consumo diretamente pelo app. Os dados ficam salvos apenas na sua máquina em `history.json` e podem ser desativados a qualquer momento.
+- 🎛️ **Abas Parametrizáveis:** Ative, desative ou reordene provedores conforme suas preferências nas Configurações.
+- 🔄 **Atualizações Automáticas Integradas:** O aplicativo verifica novas versões em segundo plano com binários criptograficamente assinados via **Minisign**.
+- 🔔 **Alertas Inteligentes:** Notificações discretas na bandeja do Windows quando uma sessão atingir níveis de alerta ou esgotamento.
+
+---
+
+## 🔌 Provedores Suportados
+
+| Provedor | O que é monitorado | Método de Coleta | Tipo de Integração |
+|---|---|---|:---:|
+| **Claude Code** | Sessão de 5 h e semana (% disponível, tempo até reiniciar, ritmo) e cotas por modelo (Opus, Sonnet, Haiku/Fable) | `rate_limits` via shim do `statusLine` ou `claude -p "/usage"` | Oficial *(Por modelo: Comunitário)* |
+| **Codex** | Janela de 5 h e semana, plano atual, créditos e recargas de reset | `codex app-server` (JSON-RPC local) | Oficial |
+| **Antigravity** | Pools Gemini e Claude/GPT-OSS (5 h e semanal) | CLI `agy` (`/usage`) ou servidor local da IDE | Comunitário |
+| **OpenCode** | Janelas de 5 h, semana e mês no Go; estimativa de custo local | Endpoint de uso do Go + `opencode.db` (leitura local) | Comunitário |
+| **Kimi Code** | Janelas de 5 h, semana e pool mensal | Endpoint de uso Kimi Code via API Key | Comunitário |
+| **z.ai** | Plano GLM Coding: janelas de 5 h, semana e cota de ferramentas MCP | Endpoint de cota z.ai via API Key | Comunitário |
+| **OpenRouter** | Limite da chave, consumo do dia/semana/mês e saldo de créditos | API oficial do OpenRouter (`/key`, `/credits`) | Oficial |
+| **DeepSeek** | Saldo da conta por moeda (CNY e USD, nunca somados) | API de saldo do DeepSeek via API Key | Oficial |
+| **DeepInfra** | Saldo em conta, gasto do mês e janela percentual de limite | API de cobrança DeepInfra via API Key | Oficial |
+| **Moonshot** | Saldo da conta, vouchers promocionais e dinheiro (USD) | API oficial da Moonshot (`api.moonshot.ai`) | Oficial |
+| **Novita** | Saldo da conta, limite de crédito e cobranças pendentes | API de saldo da Novita via API Key | Oficial |
+| **Ollama Cloud** | Créditos mensais incluídos (ou janelas antigas) e saldo comprado | API de saldo do Ollama Cloud via API Key | Oficial |
+| **MiniMax** | Cota do Token Plan por modelo: intervalo ativo e semana | Rota de cota do Token Plan via API Key | Comunitário |
+| **LiteLLM** | Orçamento parametrizável de chave, usuário ou equipe (suporte a CA própria) | API do LiteLLM Proxy (`/key/info`, `/user/info`, `/team/info`) | Oficial |
+
+> [!NOTE]
+> **O que significa o indicador "Em horas"?**
+> Dois valores são apresentados em conjunto: o **tempo até reiniciar** (contagem regressiva até o reset da janela) e a **estimativa de ritmo** (quanto tempo a cota durará no ritmo de requisições recente). Quando o consumo não puder ser determinado com exatidão, o valor é exibido como *desconhecido*, nunca como 0 %.
+
+---
+
+## 🔒 Privacidade e Segurança
+
+Projetado sob o princípio do **privilégio mínimo**:
+
+1. **Armazenamento Seguro de Credenciais:** As chaves de API informadas são mantidas no **Gerenciador de Credenciais do Windows** (`keyring` do SO). Nenhuma chave é salva em texto puro, logs, arquivos de configuração ou trafegada para a interface gráfica.
+2. **Somente Leitura (Read-Only):** O monitor nunca executa comandos de escrita nas suas contas, não faz dispatch de tarefas nos LLMs e não renova tokens por conta própria.
+3. **Isolamento de Rede na Interface:** A janela do app roda com **Content Security Policy (CSP)** estrita (`connect-src ipc:`). O frontend React não faz chamadas HTTP diretas; todas as requisições partem do núcleo em Rust através de um cliente seguro (`SafeClient`) com limites rigorosos de tempo e tamanho.
+4. **Proteção Contra Vazamento em Proxies:** O cliente HTTP em Rust ignora deliberadamente variáveis de ambiente `HTTP(S)_PROXY` do sistema, evitando que proxies de terceiros interceptem credenciais.
+5. **Consentimento Explícito:** Fontes que leem arquivos locais ou inspecionam processos (como Claude, OpenCode e Antigravity) permanecem pausadas até você autorizar expressamente na aba.
+
+---
+
+## 📥 Instalação e Download
+
+### Requisitos de Sistema
+- **Sistema Operacional:** Windows 10 (Build 19041+) ou Windows 11 (64-bit).
+- **WebView2 Runtime:** Já instalado por padrão no Windows 11 e na maioria dos sistemas Windows 10 atualizados.
+
+### Baixar Instalador
+Acesse a página de **[Releases](https://github.com/juninmd/ai-session-monitor/releases)** e baixe a versão mais recente do instalador:
+- `AI.Session.Monitor_<versao>_x64-setup.exe` (Instalador NSIS por usuário, não requer elevação de administrador).
+
+O aplicativo cria automaticamente o ícone na bandeja do sistema e configura atualizações automáticas silenciosas verificadas por chave pública Minisign.
+
+---
+
+## 🛠️ Desenvolvimento e Build
+
+### Pré-requisitos
+- [Node.js](https://nodejs.org/) `22.22.2+`, `24.15+` ou `>=26.0.0`
+- [pnpm](https://pnpm.io/) `10+` (`corepack enable`)
+- [Rust](https://www.rust-lang.org/) `1.97.1` (definido em `rust-toolchain.toml`) e Visual Studio C++ Build Tools
+
+### Comandos Rápidos
 
 ```sh
+# Instalação das dependências
 pnpm install --frozen-lockfile
-pnpm dev            # interface no navegador com backend simulado: http://127.0.0.1:1420/?mock=demo
-pnpm tauri dev      # o app de verdade (bandeja + flyout)
-pnpm verify         # lint, tipos, testes e build da interface
+
+# Desenvolvimento com backend mock no navegador (ideal para estilização de UI)
+pnpm dev
+
+# App nativo completo em modo desenvolvimento (Bandeja + Flyout Tauri)
+pnpm tauri dev
+
+# Suíte completa de verificação (Biome lint + formatação, TypeScript check, Vitest e Vite build)
+pnpm verify
+
+# Testes automatizados do workspace Rust
 cargo test --workspace
 ```
 
-Cenários do backend simulado (`?mock=`): `demo`, `fresh`, `healthy`, `critical`, `stale`, `errors`, `loading`.
+### Cenários do Mock Backend
+Para testar estados de borda da interface no navegador (`http://127.0.0.1:1420/?mock=<cenario>`):
+- `?mock=demo` — Dados realistas de demonstração com múltiplos provedores ativos.
+- `?mock=fresh` — Estado limpo recém-instalado, aguardando consentimentos e chaves.
+- `?mock=healthy` — Todas as cotas cheias e sem avisos pendentes.
+- `?mock=critical` — Sessões em esgotamento iminente e cotas zeradas.
+- `?mock=stale` — Conexões expiradas ou serviços fora do ar.
+- `?mock=errors` — Erros de autenticação e falhas de rede simuladas.
+- `?mock=loading` — Estado perpétuo de carregamento.
 
-O app embute o `statusline-shim` como sidecar. `pnpm tauri build` o compila e prepara (o
-`beforeBuildCommand` roda `node src-tauri/scripts/prepare-sidecar.mjs --release`). `pnpm tauri dev`
-não: o `build.rs` deixa um placeholder, e instalar o shim do Claude falha em dev até você rodar esse
-script uma vez (`node src-tauri/scripts/prepare-sidecar.mjs`).
-
-Para rodar o app sem tocar no seu perfil real (build de debug), aponte diretórios temporários:
+### Isolamento Seguro em Builds de Debug
+Para executar o aplicativo sem tocar no seu Gerenciador de Credenciais real ou arquivos do seu usuário:
 
 ```powershell
-$env:AISM_DATA_DIR = "$env:TEMP\aism-data"; $env:AISM_HOME_DIR = "$env:TEMP\aism-home"
-$env:AISM_MEMORY_SECRETS = "1"; $env:AISM_SHOW_ON_START = "1"
+$env:AISM_DATA_DIR = "$env:TEMP\aism-data"
+$env:AISM_HOME_DIR = "$env:TEMP\aism-home"
+$env:AISM_MEMORY_SECRETS = "1"
+$env:AISM_SHOW_ON_START = "1"
 pnpm tauri dev
 ```
 
-Esses interruptores existem só em builds de debug (são compilados fora do release). Com qualquer um
-ativo, as chaves ficam apenas em memória e o Gerenciador de Credenciais real não é tocado.
+> [!TIP]
+> Essas variáveis de ambiente só existem em compilações de `debug` e são totalmente removidas em builds de `release`.
 
-## Build
+### Gerando o Build de Produção
 
 ```sh
-pnpm tauri build --no-bundle    # executável de release
-pnpm tauri build                # instalador NSIS (por usuário)
+# Executável avulso de release
+pnpm tauri build --no-bundle
+
+# Instalador NSIS final
+pnpm tauri build
 ```
 
-## Estrutura
+---
 
-`crates/usage-model` (vocabulário e regras de status) · `crates/usage-support` (HTTP seguro,
-processos, arquivos) · `crates/collector-*` (uma fonte cada) · `crates/app-core` (agendador, store,
-notificações) · `src-tauri` (bandeja, janela, chaves) · `src` (React). Decisões:
-[`docs/adr/0001-architecture.md`](docs/adr/0001-architecture.md); contrato:
-[`docs/ipc.md`](docs/ipc.md); verificação manual no Windows:
-[`docs/manual-windows-checklist.md`](docs/manual-windows-checklist.md).
+## 🏛️ Arquitetura
 
-## Limitações conhecidas
+O projeto é organizado como um workspace modular garantindo separação rígida de responsabilidades:
 
-- Antigravity e os endpoints de uso do OpenCode, do Kimi Code e do z.ai não têm API pública: podem mudar sem aviso (o app mostra
-  "indisponível" em vez de inventar um número). A leitura pelo CLI `agy` (1.3.3) foi verificada
-  em 2026-10-12; a leitura pelo servidor local da IDE ainda não foi exercitada contra uma IDE real.
-- O statusLine do Claude Code só atualiza enquanto o Claude Code está aberto.
-- Se você desativar a inicialização com o Windows no Gerenciador de Tarefas, ela continua desativada
-  até você reativá-la lá. Se o executável mudar de pasta, desligue e ligue a opção de novo para
-  registrar o novo caminho.
-- O cliente HTTP ignora proxies do sistema e variáveis `HTTP(S)_PROXY` de propósito (uma variável
-  alheia não pode capturar suas chaves). Atrás de proxy corporativo, a conexão com LiteLLM, OpenCode, Kimi Code, z.ai, OpenRouter, DeepSeek, DeepInfra, Moonshot, Novita, Ollama Cloud e MiniMax
-  precisa ser direta; CA privada é suportada pela configuração de certificado da aba LiteLLM.
-- Comportamento da bandeja (clique, perda de foco, DPI, vários monitores) só se confirma numa sessão
-  real do Windows; veja o checklist manual.
-- Uma falha ao iniciar o serviço aparece como notificação (etapa e código do erro) e o app sai com
-  código 1; sem o WebView2 instalado o app não consegue abrir janela nem avisar, e só escreve no stderr.
+```
+ai-session-monitor/
+├── crates/
+│   ├── usage-model/        # Modelos de domínio, janelas, cálculo de status e ritmo (sem I/O)
+│   ├── usage-support/      # HTTP cliente blindado, escrita atômica, runners de processo
+│   ├── collector-*/        # Um crate independente para cada fonte (sem depender de Tauri)
+│   ├── statusline-shim/    # Binário ultra-leve injetado no statusLine do Claude Code
+│   └── app-core/           # Hub central, agendamento de coletas e store de configurações
+├── src-tauri/              # Inicialização nativa do Windows, System Tray, atalhos e IPC
+├── src/                    # Interface React 19 + TypeScript + Tailwind/CSS limpo
+├── docs/                   # ADRs, contratos IPC e especificações de segurança
+└── contract/               # Arquivos Golden pinning da paridade Rust <-> TypeScript
+```
 
-## Licença
+Documentação de aprofundamento:
+- [Decisões de Arquitetura (ADR 0001)](docs/adr/0001-architecture.md)
+- [Fontes de Dados e Níveis de Confiança](docs/data-sources.md)
+- [Contrato IPC & Mensagens](docs/ipc.md)
+- [Checklist de Homologação Manual no Windows](docs/manual-windows-checklist.md)
+- [Referências e Links Oficiais](REFERENCES.md)
 
-MIT. Veja [`LICENSE`](LICENSE).
+---
 
-Logotipos das ferramentas monitoradas: marcas de seus respectivos donos, usadas só para
-identificá-las, sem afiliação nem endosso; origem, licenças e hashes em
-[`docs/third-party-assets.md`](docs/third-party-assets.md).
+## ⚠️ Limitações Conhecidas
+
+- **Integrações Comunitárias:** Os endpoints de Antigravity, OpenCode, Kimi Code, z.ai e MiniMax não são APIs públicas documentadas e podem sofrer alterações pelos provedores. O app trata quebras sinalizando status de "indisponível" em vez de inventar dados.
+- **Claude Code statusLine:** O statusLine só emite métricas enquanto o processo do Claude Code estiver em execução ativa.
+- **Inicialização com o Windows:** Caso desativada manualmente pelo Gerenciador de Tarefas do Windows, deve ser reativada por lá. Se o executável for movido de diretório, desligue e religue a opção nas configurações do app.
+- **Proxies Corporativos:** Devido à política estrita anti-interceptação de chaves, conexões através de proxy local podem necessitar de configuração direta ou CA corporativa na aba do LiteLLM.
+
+---
+
+## 📄 Licença
+
+Distribuído sob a licença **MIT**. Consulte [`LICENSE`](LICENSE) para mais detalhes.
+
+Logotipos e marcas das ferramentas monitoradas pertencem aos seus respectivos proprietários e são utilizados estritamente para identificação dos provedores. Detalhes de ativos de terceiros em [`docs/third-party-assets.md`](docs/third-party-assets.md).
