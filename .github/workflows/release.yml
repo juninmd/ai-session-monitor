@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+    branches: [master]
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-master
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: windows-latest
+    outputs:
+      candidate: ${{ steps.releases.outputs.candidate }}
+      more: ${{ steps.releases.outputs.more }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - run: git fetch origin master --tags
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - id: releases
+        run: node scripts/release.mjs plan
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish:
+    needs: plan
+    if: needs.plan.outputs.candidate != '{}' && needs.plan.outputs.candidate != ''
+    permissions:
+      contents: write
+    uses: ./.github/workflows/release-commit.yml
+    with:
+      sha: ${{ fromJSON(needs.plan.outputs.candidate).sha }}
+      tag: ${{ fromJSON(needs.plan.outputs.candidate).tag }}
+      version: ${{ fromJSON(needs.plan.outputs.candidate).version }}
+      previous-tag: ${{ fromJSON(needs.plan.outputs.candidate).previousTag }}
+    secrets: inherit
+
+  next:
+    needs: [plan, publish]
+    if: needs.plan.outputs.more == 'true'
+    runs-on: windows-latest
+    permissions:
+      actions: write
+    steps:
+      - run: gh workflow run release.yml --ref master --repo "$env:GITHUB_REPOSITORY"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

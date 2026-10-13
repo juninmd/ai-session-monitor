@@ -1,0 +1,160 @@
+name: Publish commit
+
+on:
+  workflow_call:
+    inputs:
+      sha:
+        required: true
+        type: string
+      tag:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      previous-tag:
+        required: true
+        type: string
+
+jobs:
+  verify:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.sha }}
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --workspace --all-targets --locked -- -D warnings
+      - run: cargo test --workspace --locked
+
+  prepare:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    outputs:
+      release-id: ${{ steps.draft.outputs.release-id }}
+      release-notes: ${{ steps.draft.outputs.release-notes }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Create automatic changelog
+        shell: pwsh
+        run: node scripts/release.mjs notes "$env:RELEASE_TAG" "$env:RELEASE_SHA" "$env:PREVIOUS_TAG" release-notes.md
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+          RELEASE_SHA: ${{ inputs.sha }}
+          PREVIOUS_TAG: ${{ inputs.previous-tag }}
+      - id: draft
+        name: Create or resume draft
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ inputs.tag }}
+          RELEASE_SHA: ${{ inputs.sha }}
+        run: |
+          $state = gh release view "$env:RELEASE_TAG" --json isDraft --jq .isDraft 2>$null
+          if ($state -eq "true") {
+            gh release edit "$env:RELEASE_TAG" --target "$env:RELEASE_SHA" --title "AI Session Monitor $env:RELEASE_TAG" --notes-file release-notes.md
+          } else {
+            gh release create "$env:RELEASE_TAG" --target "$env:RELEASE_SHA" --draft --title "AI Session Monitor $env:RELEASE_TAG" --notes-file release-notes.md
+          }
+          $id = gh release view "$env:RELEASE_TAG" --repo "$env:GITHUB_REPOSITORY" --json databaseId --jq .databaseId
+          echo "release-id=$id" >> $env:GITHUB_OUTPUT
+          $notes = Get-Content -Raw release-notes.md
+          $delimiter = "AISM_NOTES_" + [System.Guid]::NewGuid().ToString("N")
+          "release-notes<<$delimiter`n$notes`n$delimiter" >> $env:GITHUB_OUTPUT
+
+  build:
+    needs: prepare
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.sha }}
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Set version for this commit
+        shell: pwsh
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          Set-Content -Path src-tauri/tauri.release-version.conf.json -Value "{`"version`":`"$env:RELEASE_VERSION`"}"
+      - uses: tauri-apps/tauri-action@1deb371b0cd8bd54025b384f1cd735e725c4060f # action-v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        with:
+          tauriScript: pnpm tauri
+          releaseId: ${{ needs.prepare.outputs.release-id }}
+          tagName: ${{ inputs.tag }}
+          releaseBody: ${{ needs.prepare.outputs.release-notes }}
+          releaseDraft: true
+          uploadUpdaterJson: false
+          updaterJsonPreferNsis: true
+          retryAttempts: 3
+          args: --config src-tauri/tauri.updater.conf.json --config src-tauri/tauri.release-version.conf.json
+
+  publish:
+    needs: [verify, prepare, build]
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Verify updater and publish release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ inputs.tag }}
+          RELEASE_VERSION: ${{ inputs.version }}
+          RELEASE_SHA: ${{ inputs.sha }}
+          PREVIOUS_TAG: ${{ inputs.previous-tag }}
+        run: |
+          node scripts/release.mjs notes "$env:RELEASE_TAG" "$env:RELEASE_SHA" "$env:PREVIOUS_TAG" release-notes.md
+          New-Item -ItemType Directory -Force -Path signatures
+          gh release download "$env:RELEASE_TAG" --repo "$env:GITHUB_REPOSITORY" --pattern '*.sig' --dir signatures
+          $id = gh release view "$env:RELEASE_TAG" --repo "$env:GITHUB_REPOSITORY" --json databaseId --jq .databaseId
+          gh api "repos/$env:GITHUB_REPOSITORY/releases/$id" | Set-Content -Path release.json
+          node scripts/release.mjs manifest release.json signatures release-notes.md latest.json "$env:RELEASE_TAG" "$env:RELEASE_VERSION"
+          gh release upload "$env:RELEASE_TAG" latest.json --repo "$env:GITHUB_REPOSITORY" --clobber
+          gh api "repos/$env:GITHUB_REPOSITORY/releases/$id" | Set-Content -Path release.json
+          node scripts/release.mjs verify latest.json release.json "$env:RELEASE_TAG" "$env:RELEASE_VERSION"
+          gh release edit "$env:RELEASE_TAG" --repo "$env:GITHUB_REPOSITORY" --draft=false
