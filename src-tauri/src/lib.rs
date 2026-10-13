@@ -46,6 +46,7 @@ pub fn run() {
         // First, so a second launch hands over and exits before anything else starts.
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| setup::reopen(app)))
         .plugin(tauri_plugin_notification::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .invoke_handler(tauri::generate_handler![
             commands::get_snapshot,
             commands::refresh,

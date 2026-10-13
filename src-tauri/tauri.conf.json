@@ -31,6 +31,15 @@
       "devCsp": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src ipc: http://ipc.localhost http://127.0.0.1:1420 ws://127.0.0.1:1420; object-src 'none'; base-uri 'none'; form-action 'none'"
     }
   },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDJBMkRCMDQ1MTIyNkFDNTUKUldSVnJDWVNSYkF0S2xrenNrMURuYnpOck9LbkcybmlRQmRmYWswVEpaQkEvMEx2TXVDMldRdTMK",
+      "endpoints": [
+        "https://github.com/juninmd/ai-session-monitor/releases/latest/download/latest.json"
+      ],
+      "windows": { "installMode": "passive" }
+    }
+  },
   "bundle": {
     "active": true,
     "targets": ["nsis"],
