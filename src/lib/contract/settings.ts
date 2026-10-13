@@ -66,6 +66,21 @@ export type OpenrouterSettings = z.infer<typeof OpenrouterSettingsSchema>;
 export const DeepseekSettingsSchema = z.strictObject({ enabled: z.boolean() });
 export type DeepseekSettings = z.infer<typeof DeepseekSettingsSchema>;
 
+export const DeepinfraSettingsSchema = z.strictObject({ enabled: z.boolean() });
+export type DeepinfraSettings = z.infer<typeof DeepinfraSettingsSchema>;
+
+export const MoonshotSettingsSchema = z.strictObject({ enabled: z.boolean() });
+export type MoonshotSettings = z.infer<typeof MoonshotSettingsSchema>;
+
+export const NovitaSettingsSchema = z.strictObject({ enabled: z.boolean() });
+export type NovitaSettings = z.infer<typeof NovitaSettingsSchema>;
+
+export const OllamaSettingsSchema = z.strictObject({ enabled: z.boolean() });
+export type OllamaSettings = z.infer<typeof OllamaSettingsSchema>;
+
+export const MinimaxSettingsSchema = z.strictObject({ enabled: z.boolean() });
+export type MinimaxSettings = z.infer<typeof MinimaxSettingsSchema>;
+
 export const LITELLM_SCOPES = ['key', 'user', 'team'] as const;
 export const LitellmScopeSchema = z.enum(LITELLM_SCOPES);
 export type LitellmScope = z.infer<typeof LitellmScopeSchema>;
@@ -100,6 +115,11 @@ export const SettingsSchema = z.strictObject({
   zai: ZaiSettingsSchema,
   openrouter: OpenrouterSettingsSchema,
   deepseek: DeepseekSettingsSchema,
+  deepinfra: DeepinfraSettingsSchema,
+  moonshot: MoonshotSettingsSchema,
+  novita: NovitaSettingsSchema,
+  ollama: OllamaSettingsSchema,
+  minimax: MinimaxSettingsSchema,
   litellm: LitellmSettingsSchema,
 });
 export type Settings = z.infer<typeof SettingsSchema>;
@@ -138,6 +158,11 @@ export const defaultSettings: Settings = {
   zai: { enabled: true },
   openrouter: { enabled: true },
   deepseek: { enabled: true },
+  deepinfra: { enabled: true },
+  moonshot: { enabled: true },
+  novita: { enabled: true },
+  ollama: { enabled: true },
+  minimax: { enabled: true },
   litellm: {
     enabled: true,
     baseUrl: null,

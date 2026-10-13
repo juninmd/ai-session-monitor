@@ -50,6 +50,11 @@ fn the_hub_starts_loading_for_enabled_harnesses_and_disabled_for_the_rest() {
             (HarnessId::Zai, ViewState::Loading),
             (HarnessId::Openrouter, ViewState::Loading),
             (HarnessId::Deepseek, ViewState::Loading),
+            (HarnessId::Deepinfra, ViewState::Loading),
+            (HarnessId::Moonshot, ViewState::Loading),
+            (HarnessId::Novita, ViewState::Loading),
+            (HarnessId::Ollama, ViewState::Loading),
+            (HarnessId::Minimax, ViewState::Loading),
             (HarnessId::Litellm, ViewState::Disabled),
         ]
     );

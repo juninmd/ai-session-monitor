@@ -19,6 +19,16 @@ export function withEnabled(settings: Settings, id: HarnessId, enabled: boolean)
       return { ...settings, openrouter: { ...settings.openrouter, enabled } };
     case 'deepseek':
       return { ...settings, deepseek: { ...settings.deepseek, enabled } };
+    case 'deepinfra':
+      return { ...settings, deepinfra: { ...settings.deepinfra, enabled } };
+    case 'moonshot':
+      return { ...settings, moonshot: { ...settings.moonshot, enabled } };
+    case 'novita':
+      return { ...settings, novita: { ...settings.novita, enabled } };
+    case 'ollama':
+      return { ...settings, ollama: { ...settings.ollama, enabled } };
+    case 'minimax':
+      return { ...settings, minimax: { ...settings.minimax, enabled } };
     case 'litellm':
       return { ...settings, litellm: { ...settings.litellm, enabled } };
   }

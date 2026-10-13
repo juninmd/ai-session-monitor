@@ -13,6 +13,11 @@ const NAMES = [
   'z.ai',
   'OpenRouter',
   'DeepSeek',
+  'DeepInfra',
+  'Moonshot',
+  'Novita',
+  'Ollama Cloud',
+  'MiniMax',
   'LiteLLM',
 ];
 const tab = (name: string) => screen.getByRole('tab', { name: new RegExp(`^${name}\\b`) });
@@ -20,7 +25,7 @@ const ready = () => screen.findByRole('heading', { name: 'Sessão de 5 horas' })
 const gear = () => screen.getByRole('button', { name: 'Configurações' });
 
 describe('the shell', () => {
-  it('shows the title, the nine tools in order and the first panel', async () => {
+  it('shows the title, all the tools in order and the first panel', async () => {
     renderApp();
     expect(screen.getByRole('heading', { level: 1, name: 'AI Session Monitor' })).toBeVisible();
     const tabs = screen.getAllByRole('tab');

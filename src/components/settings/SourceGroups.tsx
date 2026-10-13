@@ -99,6 +99,26 @@ function DeepseekGroup() {
   return <KeyedGroup harness="deepseek" />;
 }
 
+function DeepinfraGroup() {
+  return <KeyedGroup harness="deepinfra" />;
+}
+
+function MoonshotGroup() {
+  return <KeyedGroup harness="moonshot" />;
+}
+
+function NovitaGroup() {
+  return <KeyedGroup harness="novita" />;
+}
+
+function OllamaGroup() {
+  return <KeyedGroup harness="ollama" />;
+}
+
+function MinimaxGroup() {
+  return <KeyedGroup harness="minimax" />;
+}
+
 function LitellmGroup() {
   return (
     <>
@@ -117,5 +137,10 @@ export const SOURCE_GROUPS = {
   zai: ZaiGroup,
   openrouter: OpenrouterGroup,
   deepseek: DeepseekGroup,
+  deepinfra: DeepinfraGroup,
+  moonshot: MoonshotGroup,
+  novita: NovitaGroup,
+  ollama: OllamaGroup,
+  minimax: MinimaxGroup,
   litellm: LitellmGroup,
 } as const;

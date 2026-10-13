@@ -14,7 +14,7 @@ marked *unverified* have never been exercised against a live account.
   passed is shown as reset, without a status.
 - **Read-only toward providers.** The app never writes to a provider, never refreshes or stores a
   provider's OAuth tokens, never uses browser cookies and never scrapes dashboards.
-- **Secrets.** The only secrets the app stores are the LiteLLM, OpenCode Go, Kimi Code, z.ai, OpenRouter and DeepSeek API keys you paste.
+- **Secrets.** The only secrets the app stores are the LiteLLM, OpenCode Go, Kimi Code, z.ai, OpenRouter, DeepSeek, DeepInfra, Moonshot, Novita, Ollama Cloud and MiniMax API keys you paste.
   They live in the Windows Credential Manager (`ai-session-monitor/<kind>`), never in
   `settings.json`, snapshots, logs or events. The webview can write, clear and ask *whether* a
   secret exists, never read it back.
@@ -137,6 +137,69 @@ marked *unverified* have never been exercised against a live account.
 | Confidence | **High** on the path and fields (official docs), *unverified* in practice: never exercised against a live account. |
 | Off switch | Clear the key or disable the tab. |
 
+## DeepInfra — oficial (billing endpoints, one unit unverified)
+
+| | |
+|---|---|
+| Remote | Two `GET`s with the DeepInfra API key you paste, as `Authorization: Bearer`. The host is a constant (`https://api.deepinfra.com`; https only, no redirects, 64 KiB body cap, 15 s timeout). `/payment/checklist` ([docs](https://docs.deepinfra.com/api-reference/billing/get-checklist), opened 2026-10-12) decides the poll. `/payment/usage?from=current` ([docs](https://docs.deepinfra.com/api-reference/billing/usage), opened 2026-10-12) is best effort. |
+| Shape | Checklist: `stripe_balance` (negative = funds ready to spend, positive = money owed), `recent` (usage since the last invoice), `limit` (number or `null`). Usage: `months[].total_cost` in **cents**. |
+| Windows | One `spend_limit` money window only when `limit` is positive and `recent` is known: used = `recent`, share = used / limit, no `resetsAt` (the limit is per invoice period, not a clock). No limit means no window. |
+| Facts | `balance` (= `-stripe_balance` when it is zero or negative) or `owed` (positive `stripe_balance`), `usage_recent`, `usage_month` (= first month's `total_cost` / 100); all `usd`. A missing or hostile figure is left out, never zero. |
+| Unverified | The reference gives **no unit** for `stripe_balance`, `recent` and `limit` (only the scoped credits are explicitly cents). They are read as US dollars, like the spending-limit setter (`/payment/config`, USD). If DeepInfra answers in cents the figures will be 100x off; check against the dashboard before trusting them. The key page `https://deepinfra.com/dash/api_keys` could not be verified (single-page app). |
+| Failures | On the checklist: 401/403 `unauthorized` (not ambiguous: documented API), 429 `rate_limited`, 5xx `server_error`, 404 `endpoint_changed`, a body without a numeric `stripe_balance` `endpoint_changed`. The usage call failing only drops `usage_month`. Response text is never read or shown. |
+| Never | No cookies (the reference lists an optional `session` cookie; the app never sends one), no dashboard scraping. The key is only what you paste into the app. |
+| Confidence | **High** on paths and field names (official reference), *unverified* in practice: never exercised against a live account. |
+| Off switch | Clear the key or disable the tab. |
+
+## Moonshot — oficial (balance endpoint)
+
+| | |
+|---|---|
+| Remote | `GET https://api.moonshot.ai/v1/users/me/balance` with the Moonshot platform API key you paste, as `Authorization: Bearer` ([docs](https://platform.kimi.ai/docs/api/balance), reached through the redirect from `platform.moonshot.ai`, opened 2026-10-12). The host is a constant: only `.ai`, never `.cn` or `.com`, because keys of the sibling platform (`platform.kimi.com`) are independent and a key on the wrong host answers 401 (https only, no redirects, 64 KiB body cap, 15 s timeout). |
+| Shape | `{code, data: {available_balance, voucher_balance, cash_balance}, scode, status}`; amounts are numbers in US dollars. `available_balance <= 0` means the account cannot call inference; `cash_balance` may be negative (money owed). |
+| Facts | `balance` (available), `voucher`, `cash` (all `usd`). There is **no window and no percentage**: a balance has no limit and no reset. Non-finite or huge figures are left out, never zero. A body with `status: false` or a non-zero `code` is `bad_response`; a body without a usable `data` object is `endpoint_changed`. |
+| Failures | 401/403 `unauthorized` (the documented 401 also covers a key of the other platform; not ambiguous), 429 `rate_limited`, 5xx `server_error`, 404 `endpoint_changed`. Response text is never read or shown. |
+| Never | No cookies, no browser session, no dashboard scraping, no `.cn` host. The key is only what you paste into the app. The console link `https://platform.moonshot.ai/console/api-keys` could not be verified (single-page app). |
+| Confidence | **High** on the path and fields (official docs), *unverified* in practice: never exercised against a live account. |
+| Off switch | Clear the key or disable the tab. |
+
+## Novita — oficial (billing balance endpoint)
+
+| | |
+|---|---|
+| Remote | `GET https://api.novita.ai/openapi/v1/billing/balance/detail` with the Novita API key you paste, as `Authorization: Bearer` ([docs](https://docs.novita.ai/api-reference/basic-get-user-balance-detail), opened 2026-10-12). The host is a constant (https only, no redirects, 64 KiB body cap, 15 s timeout). |
+| Shape | `{availableBalance, cashBalance, creditLimit, pendingCharges, outstandingInvoices}`; every amount is a decimal **string** in units of 1/10000 US dollar (`"10000"` is $1.00). A JSON number is tolerated. |
+| Facts | `balance`, `cash`, `credit_limit`, `pending`, `owed` (all `usd`, the raw figure / 10000). `balance` and `cash` may be negative; the others are left out if negative. There is **no window and no percentage**: `creditLimit` is how much you may owe, not a quota with a reset. Unparsable, non-finite or huge figures are left out, never zero. A body with no usable figure is `endpoint_changed`. |
+| Failures | The reference documents **no error codes or error body**, so the status mapping is the generic one: 401/403 `unauthorized` (not ambiguous: documented API), 429 `rate_limited`, 5xx `server_error`, 404 `endpoint_changed`. Response text is never read or shown. |
+| Never | No cookies, no browser session, no dashboard scraping. The key is only what you paste into the app. The key page `https://novita.ai/settings/key-management` could not be verified (single-page app). |
+| Confidence | **High** on path, header and fields (official docs), *unverified* in practice: never exercised against a live account. |
+| Off switch | Clear the key or disable the tab. |
+
+## Ollama Cloud — oficial (balance endpoint)
+
+| | |
+|---|---|
+| Remote | `GET https://ollama.com/api/balance` with an Ollama API key you create at `https://ollama.com/settings/keys` and paste, as `Authorization: Bearer` ([docs](https://docs.ollama.com/api/balance), opened 2026-10-12). The host is a constant (https only, no redirects, 64 KiB body cap, 15 s timeout). The CLI signing key (`~/.ollama/id_ed25519`) is **never read**. The service allows 10 requests a minute per user across keys; the app polls every 300 s or slower. |
+| Shape | `{included, purchased}`. Current plans: `included = {balance_usd, allowance_usd, period: {from, until}}` (RFC 3339 UTC, `from` inclusive, `until` exclusive). Legacy plans: `included = {session, weekly}`, each `{remaining_percent (0..100), resets_at}`. Both: `purchased = {balance_usd}`. Teams share the balances. |
+| Windows | Current plan: one `monthly` money window (used = allowance - balance, share = used / allowance, clamped 0..100, `resetsAt` = `period.until`, length = the period). No allowance, no window. Legacy plan: `session` (kind `other`, length not stated, so not guessed) and `weekly`, share = 100 - `remaining_percent`. A `used_percent` figure or a `usage` fraction (0..1) is tolerated; everything is clamped into range and a non-number stays unknown. |
+| Facts | `included_balance` (current plans) and `purchased_balance`, both `usd`. A zero purchase is a real zero; negative or hostile figures are left out. A body from which nothing can be read is `endpoint_changed`. |
+| Failures | 401 `unauthorized` (documented: invalid credentials), 403 `unauthorized` (documented as *account suspended*; the app cannot tell it apart and says it could not verify the key), 429 `rate_limited` (honours `Retry-After`), 503 `server_error` ("balance reporting temporarily unavailable"), 404 `endpoint_changed`. Response text is never read or shown. |
+| Never | No cookies, no browser session, no dashboard scraping, no reading of the CLI credentials. The key is only what you paste into the app. |
+| Confidence | **High** on path and fields for the current-plan shape (official docs); the legacy shape comes from the same page, and the tolerated `used_percent` / `usage` variants from the task brief; none seen live. *Unverified* in practice: never exercised against a live account. |
+| Off switch | Clear the key or disable the tab. |
+
+## MiniMax — NÃO oficial (token_plan/remains route, schema unpublished)
+
+| | |
+|---|---|
+| Remote | `GET https://api.minimax.io/v1/token_plan/remains` with the **Token Plan** key you paste, as `Authorization: Bearer`. The host is a constant: the global `.io` host only, never the China one (https only, no redirects, 64 KiB body cap, 15 s timeout). MiniMax's public documentation (Token Plan intro, M Plan usage rules, FAQ; opened 2026-10-12) says usage is "shown in the console" or via `mmx quota`; it does **not** publish this route or its schema, so the view is badged unofficial. Community clients (for example `pi-minimax-usage`, which also defaults to `https://api.minimax.io`) call the same route. A Token Plan key is separate from pay-as-you-go keys. |
+| Shape (community reports, unverified) | `{model_remains: [{model_name, start_time, end_time, remains_time, current_interval_total_count, current_interval_usage_count, current_weekly_total_count, current_weekly_usage_count}], base_resp: {status_code, status_msg}}`; times are epoch milliseconds (`remains_time` is the time left). Reports **disagree on the meaning of the `*_usage_count` fields; the more careful ones say they hold what is LEFT**, and the app reads them that way unless an explicit `*_remaining_count` / `*_remains_count` field is present (that wins). If the console shows the inverse, `parse.rs::bucket` is the one place to flip. |
+| Windows | Per model (at most 16, `group` = the model name, which must be short printable ASCII): `<slug>:interval` (share = (total - left) / total, clamped 0..100; length = `end_time - start_time` when both are sane, named `five_hour` for 300 min, `daily` for 1440 min, else `other`; reset = now + `remains_time`, else `end_time`) and `<slug>:weekly` (no stated length or reset, so none is shown). A total of zero means the plan has no such quota: no window, never 0 %. No money amounts: the unit of the counts is not stated. |
+| Failures | 401/403 `unauthorized` (not documented, so treated as the usual rule), 429 `rate_limited`, 5xx `server_error`, 404 `endpoint_changed`. A 200 whose `base_resp.status_code` is not 0 is `bad_response` (the code meaning is not documented, so it is not interpreted). A body without a `model_remains` list, or whose entries are all unreadable, is `endpoint_changed`; response text is never read or shown. |
+| Never | No cookies, no browser session, no dashboard scraping, no China host, no pay-as-you-go key. The key is only what you paste into the app. The key page `https://platform.minimax.io/user-center/basic-information/interface-key` could not be verified (single-page app). |
+| Confidence | **Low.** Route and field names come from community clients, not from MiniMax. Never exercised against a live account: the first live run must compare the percentages with the console. |
+| Off switch | Clear the key or disable the tab. |
+
 ## Local files
 
 | Path | Content |
@@ -146,4 +209,4 @@ marked *unverified* have never been exercised against a live account.
 | `...\claude\rate_limits.json` | The Claude `rate_limits` object plus `capturedAt`. |
 | `...\claude\shim-state.json`, `chain.json` | The previous `statusLine`, kept for exact restore and chaining. Non-default Claude profiles get `shim-state-<key>.json` / `chain-<key>.json` (and `bin\<key>\`). A second copy of the record sits at `<config dir>\settings.json.aism-state`. |
 | `...\bin\statusline-shim.exe` | Stable copy of the shim referenced from Claude Code's settings; refreshed from the bundled build at each start. |
-| Windows Credential Manager | `ai-session-monitor/litellm`, `ai-session-monitor/opencode`, `ai-session-monitor/kimi`, `ai-session-monitor/zai`, `ai-session-monitor/openrouter`, `ai-session-monitor/deepseek`. |
+| Windows Credential Manager | `ai-session-monitor/litellm`, `ai-session-monitor/opencode`, `ai-session-monitor/kimi`, `ai-session-monitor/zai`, `ai-session-monitor/openrouter`, `ai-session-monitor/deepseek`, `ai-session-monitor/deepinfra`, `ai-session-monitor/moonshot`, `ai-session-monitor/novita`, `ai-session-monitor/ollama`, `ai-session-monitor/minimax`. |

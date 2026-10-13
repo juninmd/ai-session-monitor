@@ -9,7 +9,16 @@ import { Icon } from '../icons';
 import { ActionError } from '../panel/ErrorActions';
 import { InfoCard } from '../panel/StateCards';
 
-export type KeyedHarness = 'kimi' | 'zai' | 'openrouter' | 'deepseek';
+export type KeyedHarness =
+  | 'kimi'
+  | 'zai'
+  | 'openrouter'
+  | 'deepseek'
+  | 'deepinfra'
+  | 'moonshot'
+  | 'novita'
+  | 'ollama'
+  | 'minimax';
 
 export function VendorKey({ harness }: { harness: KeyedHarness }) {
   const { secrets, setSecret, clearSecret } = useSettingsApi();

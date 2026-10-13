@@ -1,5 +1,6 @@
 // One sample view per source and mood. Fabricated numbers only; see fixtures.ts.
 import type { HarnessId, HarnessView, Notice } from '../lib/contract';
+import { deepinfraView, minimaxView, moonshotView, novitaView, ollamaView } from './balances';
 import { type Env, fact, type Mood, notice, viewOf, windowOf } from './fixtures';
 import { deepseekView, kimiView, openrouterView, zaiView } from './keyed';
 
@@ -228,5 +229,10 @@ export const BUILDERS: Record<HarnessId, (env: Env, mood: Mood) => HarnessView> 
   zai: zaiView,
   openrouter: openrouterView,
   deepseek: deepseekView,
+  deepinfra: deepinfraView,
+  moonshot: moonshotView,
+  novita: novitaView,
+  ollama: ollamaView,
+  minimax: minimaxView,
   litellm: litellmView,
 };

@@ -267,6 +267,11 @@ fn section_changed(id: HarnessId, old: &Settings, new: &Settings) -> bool {
         HarnessId::Zai => old.zai != new.zai,
         HarnessId::Openrouter => old.openrouter != new.openrouter,
         HarnessId::Deepseek => old.deepseek != new.deepseek,
+        HarnessId::Deepinfra => old.deepinfra != new.deepinfra,
+        HarnessId::Moonshot => old.moonshot != new.moonshot,
+        HarnessId::Novita => old.novita != new.novita,
+        HarnessId::Ollama => old.ollama != new.ollama,
+        HarnessId::Minimax => old.minimax != new.minimax,
         HarnessId::Litellm => old.litellm != new.litellm,
     }
 }

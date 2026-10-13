@@ -8,7 +8,8 @@ use usage_model::{ErrorCode, ExternalLink, HarnessError};
 #[cfg(test)]
 mod tests;
 
-/// Kimi, z.ai, OpenRouter and DeepSeek land on their key pages; both need a sign-in the vendor's site handles.
+/// The key-based vendors land on their key pages; each needs a sign-in the vendor's site handles.
+/// None of the DeepInfra, Moonshot, Novita and MiniMax pages could be verified (single-page apps).
 ///
 /// The OpenCode console has no deep link without the user's workspace id, so both console links
 /// land on the sign-in page, which forwards to the workspace.
@@ -21,6 +22,13 @@ pub const fn url_for(link: ExternalLink) -> &'static str {
         ExternalLink::ZaiConsole => "https://z.ai/manage-apikey/apikey-list",
         ExternalLink::OpenrouterConsole => "https://openrouter.ai/settings/keys",
         ExternalLink::DeepseekConsole => "https://platform.deepseek.com/api_keys",
+        ExternalLink::DeepinfraConsole => "https://deepinfra.com/dash/api_keys",
+        ExternalLink::MoonshotConsole => "https://platform.moonshot.ai/console/api-keys",
+        ExternalLink::NovitaConsole => "https://novita.ai/settings/key-management",
+        ExternalLink::OllamaConsole => "https://ollama.com/settings/keys",
+        ExternalLink::MinimaxConsole => {
+            "https://platform.minimax.io/user-center/basic-information/interface-key"
+        }
         ExternalLink::ProjectReadme => "https://github.com/juninmd/ai-session-monitor#readme",
     }
 }

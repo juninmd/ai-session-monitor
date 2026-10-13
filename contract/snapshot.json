@@ -341,6 +341,206 @@
     },
     {
       "error": null,
+      "facts": [
+        {
+          "id": "balance",
+          "number": 12.5,
+          "text": null,
+          "unit": "usd"
+        },
+        {
+          "id": "usage_month",
+          "number": 12.34,
+          "text": null,
+          "unit": "usd"
+        }
+      ],
+      "id": "deepinfra",
+      "meta": {},
+      "nextAttemptAt": null,
+      "notices": [],
+      "plan": null,
+      "readAt": 1799999970,
+      "source": {
+        "id": "payment_checklist",
+        "official": true
+      },
+      "stale": false,
+      "state": "ready",
+      "windows": [
+        {
+          "amount": {
+            "limit": 10.0,
+            "unit": "usd",
+            "used": 2.5
+          },
+          "group": null,
+          "id": "spend_limit",
+          "kind": "budget",
+          "label": null,
+          "resetsAt": null,
+          "usedPct": 25.0,
+          "windowMinutes": null
+        }
+      ]
+    },
+    {
+      "error": null,
+      "facts": [
+        {
+          "id": "balance",
+          "number": 49.58,
+          "text": null,
+          "unit": "usd"
+        },
+        {
+          "id": "voucher",
+          "number": 46.58,
+          "text": null,
+          "unit": "usd"
+        },
+        {
+          "id": "cash",
+          "number": -2.5,
+          "text": null,
+          "unit": "usd"
+        }
+      ],
+      "id": "moonshot",
+      "meta": {},
+      "nextAttemptAt": null,
+      "notices": [],
+      "plan": null,
+      "readAt": 1799999970,
+      "source": {
+        "id": "users_balance",
+        "official": true
+      },
+      "stale": false,
+      "state": "ready",
+      "windows": []
+    },
+    {
+      "error": null,
+      "facts": [
+        {
+          "id": "balance",
+          "number": 100.0,
+          "text": null,
+          "unit": "usd"
+        },
+        {
+          "id": "cash",
+          "number": 80.0,
+          "text": null,
+          "unit": "usd"
+        },
+        {
+          "id": "owed",
+          "number": 0.0,
+          "text": null,
+          "unit": "usd"
+        }
+      ],
+      "id": "novita",
+      "meta": {},
+      "nextAttemptAt": null,
+      "notices": [],
+      "plan": null,
+      "readAt": 1799999970,
+      "source": {
+        "id": "balance_detail",
+        "official": true
+      },
+      "stale": false,
+      "state": "ready",
+      "windows": []
+    },
+    {
+      "error": null,
+      "facts": [
+        {
+          "id": "included_balance",
+          "number": 72.5,
+          "text": null,
+          "unit": "usd"
+        },
+        {
+          "id": "purchased_balance",
+          "number": 25.0,
+          "text": null,
+          "unit": "usd"
+        }
+      ],
+      "id": "ollama",
+      "meta": {},
+      "nextAttemptAt": null,
+      "notices": [],
+      "plan": null,
+      "readAt": 1799999970,
+      "source": {
+        "id": "balance",
+        "official": true
+      },
+      "stale": false,
+      "state": "ready",
+      "windows": [
+        {
+          "amount": {
+            "limit": 100.0,
+            "unit": "usd",
+            "used": 27.5
+          },
+          "group": null,
+          "id": "monthly",
+          "kind": "monthly",
+          "label": null,
+          "resetsAt": 1801200000,
+          "usedPct": 27.5,
+          "windowMinutes": 43200
+        }
+      ]
+    },
+    {
+      "error": null,
+      "facts": [],
+      "id": "minimax",
+      "meta": {},
+      "nextAttemptAt": null,
+      "notices": [],
+      "plan": null,
+      "readAt": 1799999970,
+      "source": {
+        "id": "token_plan_remains",
+        "official": false
+      },
+      "stale": false,
+      "state": "ready",
+      "windows": [
+        {
+          "amount": null,
+          "group": "MiniMax-M*",
+          "id": "minimax_m:interval",
+          "kind": "five_hour",
+          "label": null,
+          "resetsAt": 1800014400,
+          "usedPct": 25.0,
+          "windowMinutes": 300
+        },
+        {
+          "amount": null,
+          "group": "MiniMax-M*",
+          "id": "minimax_m:weekly",
+          "kind": "weekly",
+          "label": null,
+          "resetsAt": null,
+          "usedPct": 20.0,
+          "windowMinutes": null
+        }
+      ]
+    },
+    {
+      "error": null,
       "facts": [],
       "id": "litellm",
       "meta": {

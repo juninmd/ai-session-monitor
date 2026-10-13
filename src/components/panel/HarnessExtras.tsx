@@ -70,6 +70,16 @@ export function HarnessFooter({ harness }: { harness: HarnessId }) {
       return <Note>{t('openrouter.note')}</Note>;
     case 'deepseek':
       return <Note>{t('deepseek.note')}</Note>;
+    case 'deepinfra':
+      return <Note>{t('deepinfra.note')}</Note>;
+    case 'moonshot':
+      return <Note>{t('moonshot.note')}</Note>;
+    case 'novita':
+      return <Note>{t('novita.note')}</Note>;
+    case 'ollama':
+      return <Note>{t('ollama.note')}</Note>;
+    case 'minimax':
+      return <Note>{t('minimax.note')}</Note>;
     case 'litellm':
       return <LitellmEditor />;
     case 'claude':

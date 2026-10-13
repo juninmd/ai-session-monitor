@@ -25,6 +25,11 @@ describe('secrets', () => {
       zai: false,
       openrouter: false,
       deepseek: false,
+      deepinfra: false,
+      moonshot: false,
+      novita: false,
+      ollama: false,
+      minimax: false,
     });
     expect(
       JSON.stringify([status, await backend.secretStatus(), await backend.getSnapshot()]),
@@ -51,6 +56,11 @@ describe('secrets', () => {
       zai: true,
       openrouter: true,
       deepseek: true,
+      deepinfra: true,
+      moonshot: true,
+      novita: true,
+      ollama: true,
+      minimax: true,
     });
   });
 

@@ -25,6 +25,11 @@ pub fn harness_name(id: HarnessId) -> &'static str {
         HarnessId::Zai => "z.ai",
         HarnessId::Openrouter => "OpenRouter",
         HarnessId::Deepseek => "DeepSeek",
+        HarnessId::Deepinfra => "DeepInfra",
+        HarnessId::Moonshot => "Moonshot",
+        HarnessId::Novita => "Novita",
+        HarnessId::Ollama => "Ollama Cloud",
+        HarnessId::Minimax => "MiniMax",
         HarnessId::Litellm => "LiteLLM",
     }
 }
