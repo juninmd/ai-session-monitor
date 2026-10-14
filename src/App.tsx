@@ -34,26 +34,29 @@ import { UpdateBanner } from './components/shell/UpdateBanner';
 import { t } from './i18n';
 import type { Backend } from './lib/backend';
 import type { HarnessId, HarnessView } from './lib/contract';
+import { activeViews } from './prototype/model';
+import { PreviewNavigation, PreviewPanel } from './prototype/PreviewNavigation';
+import { PreviewSettings } from './prototype/PreviewSettings';
 
 type Screen = { kind: 'tabs' } | { kind: 'settings'; section: SettingsSection | null };
 
 const NO_VIEWS: readonly HarnessView[] = [];
 
-export function App({ backend }: { backend: Backend }) {
+export function App({ backend, preview = false }: { backend: Backend; preview?: boolean }) {
   return (
     <DraftProvider>
-      <AppBody backend={backend} />
+      <AppBody backend={backend} preview={preview} />
     </DraftProvider>
   );
 }
 
-function AppBody({ backend }: { backend: Backend }) {
+function AppBody({ backend, preview }: { backend: Backend; preview: boolean }) {
   const request = useDraftGuard()?.request;
   const snapshotState = useSnapshotState(backend);
   const settingsApi = useSettingsState(backend);
   const updateApi = useUpdateState(backend);
   const { nowSecs, sync } = useNowSecs();
-  const [selected, setSelected] = useState<HarnessId>(TAB_ORDER[0] ?? 'claude');
+  const [preferred, setSelected] = useState<HarnessId>(TAB_ORDER[0] ?? 'claude');
   const [screen, setScreen] = useState<Screen>({ kind: 'tabs' });
   const rootRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -68,10 +71,16 @@ function AppBody({ backend }: { backend: Backend }) {
   );
   const snapshot = snapshotState.snapshot;
   const views = useMemo(() => viewsInTabOrder(snapshot), [snapshot]);
+  const visible = preview ? (settingsApi.loaded ? activeViews(views, ctx) : []) : views;
+  const selected =
+    visible.find((candidate) => candidate.id === preferred)?.id ?? visible[0]?.id ?? preferred;
   // Before the first snapshot there is nothing to compare with, so nothing is announced.
   const live = useAnnouncer(snapshot ? snapshot.views : NO_VIEWS, ctx);
-  const tray = useMemo(() => traySummary(views, ctx), [views, ctx]);
-  const view = views.find((candidate) => candidate.id === selected);
+  const tray = useMemo(
+    () => traySummary(preview ? activeViews(views, ctx) : views, ctx),
+    [preview, views, ctx],
+  );
+  const view = visible.find((candidate) => candidate.id === selected);
 
   useFlyoutHeight(backend, rootRef, scrollRef);
 
@@ -176,7 +185,7 @@ function AppBody({ backend }: { backend: Backend }) {
                     : () => openSettings()
                 }
               />
-              {!inSettings && (
+              {!inSettings && !preview && (
                 <TabStrip views={views} selected={selected} ctx={ctx} onSelect={selectTab} />
               )}
               <div
@@ -184,11 +193,24 @@ function AppBody({ backend }: { backend: Backend }) {
                 className="fly-body"
                 {...(inSettings
                   ? { role: 'region', 'aria-labelledby': 'settings-title' }
-                  : { role: 'tabpanel', id: PANEL_ID, 'aria-labelledby': tabNameId(selected) })}
+                  : preview
+                    ? { role: 'region', 'aria-label': 'Monitoramento' }
+                    : { role: 'tabpanel', id: PANEL_ID, 'aria-labelledby': tabNameId(selected) })}
               >
                 <div className="fly-content">
                   {!inSettings && <UpdateBanner onOpen={() => openSettings('general')} />}
-                  {!inSettings && (
+                  {!inSettings && preview && (
+                    <PreviewNavigation
+                      views={views}
+                      active={visible}
+                      selected={selected}
+                      ctx={ctx}
+                      onSelect={selectTab}
+                      loaded={settingsApi.loaded}
+                      onSettings={() => openSettings()}
+                    />
+                  )}
+                  {!inSettings && !preview && (
                     <ProviderPicker
                       views={views}
                       selected={selected}
@@ -202,7 +224,18 @@ function AppBody({ backend }: { backend: Backend }) {
                       <p>{t('load.events')}</p>
                     </Banner>
                   )}
-                  {inSettings && <SettingsView section={screen.section} onBack={closeSettings} />}
+                  {inSettings &&
+                    (preview ? (
+                      <PreviewSettings
+                        views={views}
+                        selected={selected}
+                        ctx={ctx}
+                        section={screen.section}
+                        onBack={closeSettings}
+                      />
+                    ) : (
+                      <SettingsView section={screen.section} onBack={closeSettings} />
+                    ))}
                   {!inSettings && loadFailure && (
                     <section className="card notice" data-status="crit">
                       <h2>{t('load.title')}</h2>
@@ -218,7 +251,14 @@ function AppBody({ backend }: { backend: Backend }) {
                       </div>
                     </section>
                   )}
-                  {!inSettings && !loadFailure && view && <HarnessPanel view={view} ctx={ctx} />}
+                  {!inSettings &&
+                    !loadFailure &&
+                    view &&
+                    (preview ? (
+                      <PreviewPanel view={view} ctx={ctx} />
+                    ) : (
+                      <HarnessPanel view={view} ctx={ctx} />
+                    ))}
                 </div>
               </div>
               <Footer
