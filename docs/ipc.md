@@ -28,6 +28,10 @@ webview never shows raw error text.
 | `hide_flyout` | - | - | |
 | `set_flyout_height` | `height: number` | - | Content height in CSS px; the shell clamps to the monitor work area and resizes keeping the anchor edge. |
 | `quit_app` | - | - | |
+| `get_update_status` | - | `UpdateStatus` | Current updater state; no network. |
+| `check_update` | - | `UpdateStatus` | Checks the fixed public GitHub channel through SafeClient. |
+| `download_update` | - | `UpdateStatus` | Downloads the selected installer, verifies both Minisign signatures and its authenticated version. |
+| `install_update` | - | `UpdateStatus` | Requires verified bytes and a production Windows x64 build. Drains polling before opening NSIS and exiting. |
 
 ## Events (shell -> webview)
 
@@ -36,6 +40,35 @@ webview never shows raw error text.
 | `snapshot` | `Snapshot` | Whenever any view changed. |
 | `settings-changed` | `Settings` | After a successful `save_settings` (also from another surface). |
 | `flyout-shown` | none | The flyout became visible. The webview refocuses the selected tab and calls `refresh()`; the scheduler skips collectors that are fresh. |
+| `update-status` | `UpdateStatus` | Updater transitions and download progress (throttled to 100 ms). |
+
+## GitHub update protocol
+
+`UpdateStatus` exposes `currentVersion`, `phase`, `availableVersion`, `notes`,
+`downloadedBytes`, `totalBytes`, `checkedAt`, `failure` and `installable`. Unknown version,
+notes, total and check time are `null`. Installer URLs, signatures and raw errors stay in Rust.
+Phases: `idle`, `checking`, `current`, `available`, `downloading`, `ready`, `installing`,
+`error`, `unavailable`. Failure kinds: `check`, `download`, `signature`, `install`.
+
+`general.autoUpdateCheck` defaults to true, including settings saved by an older version.
+The shell checks at startup and then every six hours, without automatic downloads or
+installation. Turning it off leaves manual checks available. Debug runs with any test
+override disable the updater entirely; other debug builds can check but cannot install.
+
+Operations are serialized; concurrent requests return the current state. The channel
+accepts stable versions newer than the running one and only this repository's release
+assets. SafeClient bounds redirects to GitHub release hosts, time and body size (1 MiB
+manifest, 128 MiB installer), uses verified TLS and sends no credentials. Installation
+requires an authenticated NSIS executable and signed version. Failed downloads never
+invoke an installer. A ready download remains in memory until explicit installation or
+app exit. Installation confirmation drains queued settings saves, shuts down collectors
+and flushes history. If staging or process launch fails, monitoring remains or resumes.
+Unsaved form drafts block installation until saved or explicitly discarded. The UI freezes
+settings inputs while draining saves and invoking installation. Closing an edited source,
+leaving settings, changing the selected source or quitting through the UI requires explicit
+discard; Escape in that dialog keeps the edits. In-flight form saves cannot be discarded.
+The registry holds only field IDs and dirty/pending booleans, never draft text or keys.
+An external settings event updates clean fields but preserves local edits.
 
 ## Window protocol
 

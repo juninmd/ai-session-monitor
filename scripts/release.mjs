@@ -1,14 +1,9 @@
-import { execFileSync } from 'node:child_process';
 import { appendFileSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { readCommits, run } from './release-git.mjs';
+import { verifyReleaseFiles } from './verify-release.mjs';
 
-export function run(command, args, cwd) {
-  return execFileSync(command, args, {
-    encoding: 'utf8',
-    cwd,
-    stdio: ['ignore', 'pipe', 'pipe'],
-  }).trim();
-}
+export { readCommits, run, workflowsTree } from './release-git.mjs';
 
 export function commitTitle(message) {
   const lines = message
@@ -98,19 +93,6 @@ export function planReleases(commits, tags, releases, previousTag) {
     priorTag = tag;
   }
   return candidates;
-}
-
-export function workflowsTree(rev, cwd) {
-  return run('git', ['ls-tree', rev, '.github/workflows'], cwd).split(/\s+/)[2] ?? '';
-}
-
-export function readCommits(shas, tipRev, cwd) {
-  const tipWorkflows = workflowsTree(tipRev, cwd);
-  return shas.map((sha) => ({
-    sha,
-    message: run('git', ['log', '-1', '--format=%B', sha], cwd),
-    taggable: tipWorkflows === '' || workflowsTree(sha, cwd) === tipWorkflows,
-  }));
 }
 
 function plan() {
@@ -248,7 +230,7 @@ export function releaseNotes(message, candidate, repository) {
   return `${[
     `## AI Session Monitor ${candidate.tag}`,
     ...sections,
-    `## ⬇️ Baixar\n\n${downloadTable}\n\nInstaladores assinados criptograficamente com Minisign. Atualizações automáticas verificadas pelo aplicativo.`,
+    `## ⬇️ Baixar\n\n${downloadTable}\n\nInstaladores assinados criptograficamente com Minisign. O manifesto e as assinaturas dos instaladores baixados são verificados antes da publicação.`,
   ].join('\n\n')}\n`;
 }
 
@@ -281,7 +263,7 @@ function manifest() {
     run('gh', ['repo', 'view', '--json', 'nameWithOwner', '--jq', '.nameWithOwner']);
 
   const names = release.assets.map(({ name }) => name);
-  const prefix = `https://api.github.com/repos/${repository}/releases/assets/`;
+  const prefix = `https://github.com/${repository}/releases/download/${tag}/`;
   const platforms = Object.fromEntries(
     Object.entries(updaterBundles).map(([platform, pattern]) => {
       const name = bundleName(names, version, pattern);
@@ -289,7 +271,7 @@ function manifest() {
       const signature = name ? signatures.get(`${name}.sig`)?.trim() : undefined;
       if (!asset || !signature)
         throw new Error(`Instalador ou assinatura ausente para ${platform}`);
-      return [platform, { signature, url: `${prefix}${asset.id}` }];
+      return [platform, { signature, url: `${prefix}${encodeURIComponent(asset.name)}` }];
     }),
   );
 
@@ -302,18 +284,7 @@ function manifest() {
   writeFileSync(outputPath, `${JSON.stringify(result, null, 2)}\n`);
 }
 
-function verify() {
-  const [manifestPath, releasePath, tag, version] = process.argv.slice(3);
-  if (!manifestPath || !releasePath || !tag || !version) throw new Error('Argumentos inválidos');
-  const manifestValue = JSON.parse(readFileSync(manifestPath, 'utf8'));
-  const release = JSON.parse(readFileSync(releasePath, 'utf8'));
-  if (manifestValue.version !== version || release.tag_name !== tag) {
-    throw new Error('Versão ou tag do manifest diverge');
-  }
-  console.log(`Manifest ${tag} verificado com sucesso.`);
-}
-
 if (process.argv[2] === 'plan') plan();
 else if (process.argv[2] === 'notes') notes();
 else if (process.argv[2] === 'manifest') manifest();
-else if (process.argv[2] === 'verify') verify();
+else if (process.argv[2] === 'verify') verifyReleaseFiles(process.argv.slice(3));

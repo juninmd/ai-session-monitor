@@ -11,6 +11,24 @@ use crate::rig::{rig, seconds, settle};
 const CLAUDE: HarnessId = HarnessId::Claude;
 
 #[tokio::test(start_paused = true)]
+async fn a_failed_installer_can_resume_only_after_the_old_loop_unwinds() {
+    let mut rig = rig().collector(FakeCollector::always(CLAUDE, Step::Hang)).start().await;
+    rig.at(seconds(5)).await;
+    assert!(!rig.service.resume_after_failed_update());
+    assert!(rig.service.shutdown_and_wait(seconds(2)).await);
+    rig.take_runner().await.expect("the old loop ends");
+    let reads = rig.fake(CLAUDE).count();
+    assert!(rig.service.resume_after_failed_update());
+    let resumed = tokio::spawn(Arc::clone(&rig.service).run());
+    settle().await;
+    rig.after(seconds(400)).await;
+    assert!(rig.fake(CLAUDE).count() > reads, "monitoring resumes");
+    assert!(!rig.service.resume_after_failed_update(), "cannot reset an active loop");
+    assert!(rig.service.shutdown_and_wait(seconds(2)).await);
+    resumed.await.expect("the resumed loop ends");
+}
+
+#[tokio::test(start_paused = true)]
 async fn shutdown_ends_run_at_once_and_drops_the_collection_in_flight() {
     let mut rig = rig().collector(FakeCollector::always(CLAUDE, Step::Hang)).start().await;
     rig.at(seconds(5)).await;

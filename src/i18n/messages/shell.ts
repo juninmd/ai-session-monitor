@@ -23,6 +23,11 @@ export const shellMessages = {
   'header.tray_none': 'Sem leitura disponível',
 
   'tabs.label': 'Ferramentas de IA',
+  'providers.title': 'Todas as ferramentas',
+  'providers.search': 'Buscar ferramenta',
+  'providers.results': 'Ferramentas encontradas',
+  'providers.empty': 'Nenhuma ferramenta encontrada. Tente outro nome.',
+  'providers.clear': 'Limpar busca',
   'tab.connect': 'Conectar',
   'tab.no_data': 'Sem dados',
   'tab.disabled': 'Desligado',

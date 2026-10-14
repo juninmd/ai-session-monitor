@@ -22,6 +22,7 @@ pub mod notify;
 pub mod paths;
 pub mod secrets;
 pub mod service;
+pub mod update;
 
 mod history;
 mod hub;

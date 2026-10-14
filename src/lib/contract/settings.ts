@@ -12,6 +12,7 @@ export type WeekFormat = z.infer<typeof WeekFormatSchema>;
 export const GeneralSettingsSchema = z.strictObject({
   intervalSecs: z.number().int(),
   autostart: z.boolean(),
+  autoUpdateCheck: z.boolean(),
   traySource: HarnessIdSchema.nullable(),
   warnAtPct: z.number().int(),
   notifyOnOut: z.boolean(),
@@ -138,6 +139,7 @@ export const defaultSettings: Settings = {
   general: {
     intervalSecs: 60,
     autostart: false,
+    autoUpdateCheck: true,
     traySource: null,
     warnAtPct: 25,
     notifyOnOut: false,

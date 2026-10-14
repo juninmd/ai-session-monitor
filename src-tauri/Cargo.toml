@@ -18,7 +18,6 @@ serde_json.workspace = true
 tauri = { version = "2.12.1", features = ["tray-icon", "image-png"] }
 tauri-plugin-single-instance = "2.5.2"
 tauri-plugin-notification = "2.5.1"
-tauri-plugin-updater = "2.13.1"
 # Per-user Run key only; tauri-plugin-autostart would use the machine-wide key when elevated.
 auto-launch = "0.6.0"
 # keyring 4 split into a store-agnostic core and one crate per store; no regex search feature.
@@ -29,6 +28,7 @@ tokio.workspace = true
 usage-model.workspace = true
 usage-support.workspace = true
 app-core.workspace = true
+tempfile.workspace = true
 collector-claude = { workspace = true, optional = true }
 collector-codex = { workspace = true, optional = true }
 collector-antigravity = { workspace = true, optional = true }

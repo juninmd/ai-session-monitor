@@ -3,6 +3,7 @@
 pub const SNAPSHOT: &str = "snapshot";
 pub const SETTINGS_CHANGED: &str = "settings-changed";
 pub const FLYOUT_SHOWN: &str = "flyout-shown";
+pub const UPDATE_STATUS: &str = "update-status";
 
 #[cfg(test)]
 mod tests {
@@ -19,7 +20,7 @@ mod tests {
             .map(|e| e.as_str().expect("string"))
             .collect();
         declared.sort_unstable();
-        let mut ours = vec![SNAPSHOT, SETTINGS_CHANGED, FLYOUT_SHOWN];
+        let mut ours = vec![SNAPSHOT, SETTINGS_CHANGED, FLYOUT_SHOWN, UPDATE_STATUS];
         ours.sort_unstable();
         assert_eq!(declared, ours);
     }

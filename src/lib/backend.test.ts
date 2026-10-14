@@ -20,6 +20,28 @@ beforeEach(() => {
 
 describe('commands', () => {
   it.each([
+    [
+      'getUpdateStatus',
+      () => backend.getUpdateStatus(),
+      COMMANDS.getUpdateStatus,
+      undefined,
+      ipc.updateStatus,
+    ],
+    ['checkUpdate', () => backend.checkUpdate(), COMMANDS.checkUpdate, undefined, ipc.updateStatus],
+    [
+      'downloadUpdate',
+      () => backend.downloadUpdate(),
+      COMMANDS.downloadUpdate,
+      undefined,
+      ipc.updateStatus,
+    ],
+    [
+      'installUpdate',
+      () => backend.installUpdate(),
+      COMMANDS.installUpdate,
+      undefined,
+      ipc.updateStatus,
+    ],
     ['getSnapshot', () => backend.getSnapshot(), COMMANDS.getSnapshot, undefined, snapshot],
     ['getSettings', () => backend.getSettings(), COMMANDS.getSettings, undefined, settings.default],
     [

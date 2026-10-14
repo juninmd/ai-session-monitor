@@ -1,0 +1,33 @@
+.pending-dialog {
+  color: var(--ink);
+  background: var(--solid);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-card);
+  inline-size: min(24rem, calc(100% - 2rem));
+  padding: 1.25rem;
+  box-shadow: var(--shadow);
+}
+
+.pending-dialog::backdrop {
+  background: rgb(0 0 0 / 0.45);
+  backdrop-filter: blur(2px);
+}
+
+.pending-dialog h2 {
+  margin: 0;
+  font-size: var(--fs-lg);
+  font-weight: 600;
+}
+
+.pending-dialog p {
+  margin-block: 0.75rem 1rem;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+.settings-controls {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-inline-size: 0;
+}

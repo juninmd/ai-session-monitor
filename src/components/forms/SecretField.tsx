@@ -1,6 +1,7 @@
 // Secret fields never echo a value: the input is write-only, cleared the moment a save succeeds,
 // and the only thing rendered about a stored key is the saved / not-saved chip.
 import { type FormEvent, type Ref, useRef, useState } from 'react';
+import { usePendingDraft } from '../../app/draftContext';
 import { fieldOf } from '../../app/errorText';
 import { fieldMessage } from '../../app/fieldErrors';
 import { useAsyncAction } from '../../app/useAsyncAction';
@@ -79,6 +80,7 @@ export function SecretField({ id, label, saved, onSave, onClear }: SecretFieldPr
   const inputRef = useRef<HTMLInputElement>(null);
   const save = useAsyncAction(onSave);
   const clear = useAsyncAction(onClear);
+  usePendingDraft(id, value !== '', save.pending || clear.pending);
 
   const edit = (next: string) => {
     setValue(next);
@@ -95,7 +97,7 @@ export function SecretField({ id, label, saved, onSave, onClear }: SecretFieldPr
       return;
     }
     if (await save.run(secret)) {
-      setValue('');
+      setValue((current) => (current.trim() === secret ? '' : current));
       setStatus(t('secret.saved_ok'));
     }
   };
@@ -117,6 +119,7 @@ export function SecretField({ id, label, saved, onSave, onClear }: SecretFieldPr
         label={label}
         value={value}
         onChange={edit}
+        disabled={save.pending || clear.pending}
         saved={saved}
         hint={t('secret.hint')}
         placeholder={saved ? t('secret.placeholder_keep') : undefined}

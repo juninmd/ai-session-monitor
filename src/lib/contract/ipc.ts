@@ -83,10 +83,15 @@ export const COMMANDS = {
   hideFlyout: 'hide_flyout',
   setFlyoutHeight: 'set_flyout_height',
   quitApp: 'quit_app',
+  getUpdateStatus: 'get_update_status',
+  checkUpdate: 'check_update',
+  downloadUpdate: 'download_update',
+  installUpdate: 'install_update',
 } as const;
 
 export const EVENTS = {
   snapshot: 'snapshot',
   settingsChanged: 'settings-changed',
   flyoutShown: 'flyout-shown',
+  updateStatus: 'update-status',
 } as const;

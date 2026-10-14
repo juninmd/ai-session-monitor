@@ -15,7 +15,11 @@
     "open_link",
     "hide_flyout",
     "set_flyout_height",
-    "quit_app"
+    "quit_app",
+    "get_update_status",
+    "check_update",
+    "download_update",
+    "install_update"
   ],
-  "events": ["snapshot", "settings-changed", "flyout-shown"]
+  "events": ["snapshot", "settings-changed", "flyout-shown", "update-status"]
 }

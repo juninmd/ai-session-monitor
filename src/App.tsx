@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BackendContext } from './app/backendContext';
 import { cooldownLeft, waitText } from './app/cooldown';
+import { DraftProvider, useDraftGuard } from './app/draftContext';
 import { describeError } from './app/errorText';
 import { harnessName, type SettingsSection, TAB_ORDER } from './app/harness';
 import { NavigationContext } from './app/navigation';
@@ -18,6 +19,7 @@ import { useNowSecs } from './app/useNowSecs';
 import { useSettingsState } from './app/useSettingsState';
 import { useSnapshotState } from './app/useSnapshotState';
 import { useSubscription } from './app/useSubscription';
+import { UpdateContext, useUpdateState } from './app/useUpdateState';
 import type { ViewContext } from './app/windowModel';
 import { HarnessPanel } from './components/HarnessPanel';
 import { Banner } from './components/panel/Banner';
@@ -26,7 +28,9 @@ import { SettingsView } from './components/settings/SettingsView';
 import { Footer } from './components/shell/Footer';
 import { Header } from './components/shell/Header';
 import { LiveRegion } from './components/shell/LiveRegion';
+import { ProviderPicker } from './components/shell/ProviderPicker';
 import { focusTab, PANEL_ID, TabStrip, tabNameId } from './components/shell/TabStrip';
+import { UpdateBanner } from './components/shell/UpdateBanner';
 import { t } from './i18n';
 import type { Backend } from './lib/backend';
 import type { HarnessId, HarnessView } from './lib/contract';
@@ -36,8 +40,18 @@ type Screen = { kind: 'tabs' } | { kind: 'settings'; section: SettingsSection | 
 const NO_VIEWS: readonly HarnessView[] = [];
 
 export function App({ backend }: { backend: Backend }) {
+  return (
+    <DraftProvider>
+      <AppBody backend={backend} />
+    </DraftProvider>
+  );
+}
+
+function AppBody({ backend }: { backend: Backend }) {
+  const request = useDraftGuard()?.request;
   const snapshotState = useSnapshotState(backend);
   const settingsApi = useSettingsState(backend);
+  const updateApi = useUpdateState(backend);
   const { nowSecs, sync } = useNowSecs();
   const [selected, setSelected] = useState<HarnessId>(TAB_ORDER[0] ?? 'claude');
   const [screen, setScreen] = useState<Screen>({ kind: 'tabs' });
@@ -67,17 +81,25 @@ export function App({ backend }: { backend: Backend }) {
   }, []);
   const selectTab = useCallback(
     (id: HarnessId) => {
-      setSelected(id);
-      toTop();
+      const select = () => {
+        setSelected(id);
+        toTop();
+      };
+      if (id !== selected && request) request(select);
+      else select();
     },
-    [toTop],
+    [toTop, selected, request],
   );
   const openSettings = useCallback(
     (section?: SettingsSection) => {
-      setScreen({ kind: 'settings', section: section ?? null });
-      toTop();
+      const open = () => {
+        setScreen({ kind: 'settings', section: section ?? null });
+        toTop();
+      };
+      if (screen.kind === 'tabs' && request) request(open);
+      else open();
     },
-    [toTop],
+    [toTop, screen.kind, request],
   );
   const closeSettings = useCallback(() => {
     setScreen({ kind: 'tabs' });
@@ -122,7 +144,7 @@ export function App({ backend }: { backend: Backend }) {
   });
 
   useEscape(() => {
-    if (screen.kind === 'settings') closeSettings();
+    if (screen.kind === 'settings') request ? request(closeSettings) : closeSettings();
     else void hide.run();
   });
 
@@ -132,65 +154,84 @@ export function App({ backend }: { backend: Backend }) {
   const inSettings = screen.kind === 'settings';
   return (
     <BackendContext value={backend}>
-      <SettingsContext value={settingsApi}>
-        <NavigationContext value={navigation}>
-          <div ref={rootRef} className="flyout">
-            <Header
-              tray={
-                tray
-                  ? {
-                      pct: sharePct(tray.summary.availablePct, showsUsed(ctx.settings)),
-                      status: tray.summary.status,
-                      showUsed: showsUsed(ctx.settings),
-                    }
-                  : null
-              }
-              settingsOpen={inSettings}
-              onRefresh={refreshNow}
-              onToggleSettings={inSettings ? closeSettings : () => openSettings()}
-            />
-            {!inSettings && (
-              <TabStrip views={views} selected={selected} ctx={ctx} onSelect={selectTab} />
-            )}
-            <div
-              ref={scrollRef}
-              className="fly-body"
-              {...(inSettings
-                ? { role: 'region', 'aria-labelledby': 'settings-title' }
-                : { role: 'tabpanel', id: PANEL_ID, 'aria-labelledby': tabNameId(selected) })}
-            >
-              <div className="fly-content">
-                {shellFailure && <ActionError error={shellFailure} />}
-                {snapshotState.eventsFailed && (
-                  <Banner tone="warn">
-                    <p>{t('load.events')}</p>
-                  </Banner>
-                )}
-                {inSettings && <SettingsView section={screen.section} onBack={closeSettings} />}
-                {!inSettings && loadFailure && (
-                  <section className="card notice" data-status="crit">
-                    <h2>{t('load.title')}</h2>
-                    <p>{loadFailure.body}</p>
-                    <div className="actions">
-                      <button type="button" className="btn primary" onClick={snapshotState.reload}>
-                        {t('action.retry')}
-                      </button>
-                    </div>
-                  </section>
-                )}
-                {!inSettings && !loadFailure && view && <HarnessPanel view={view} ctx={ctx} />}
+      <UpdateContext value={updateApi}>
+        <SettingsContext value={settingsApi}>
+          <NavigationContext value={navigation}>
+            <div ref={rootRef} className="flyout">
+              <Header
+                tray={
+                  tray
+                    ? {
+                        pct: sharePct(tray.summary.availablePct, showsUsed(ctx.settings)),
+                        status: tray.summary.status,
+                        showUsed: showsUsed(ctx.settings),
+                      }
+                    : null
+                }
+                settingsOpen={inSettings}
+                onRefresh={refreshNow}
+                onToggleSettings={
+                  inSettings
+                    ? () => (request ? request(closeSettings) : closeSettings())
+                    : () => openSettings()
+                }
+              />
+              {!inSettings && (
+                <TabStrip views={views} selected={selected} ctx={ctx} onSelect={selectTab} />
+              )}
+              <div
+                ref={scrollRef}
+                className="fly-body"
+                {...(inSettings
+                  ? { role: 'region', 'aria-labelledby': 'settings-title' }
+                  : { role: 'tabpanel', id: PANEL_ID, 'aria-labelledby': tabNameId(selected) })}
+              >
+                <div className="fly-content">
+                  {!inSettings && <UpdateBanner onOpen={() => openSettings('general')} />}
+                  {!inSettings && (
+                    <ProviderPicker
+                      views={views}
+                      selected={selected}
+                      ctx={ctx}
+                      onSelect={selectTab}
+                    />
+                  )}
+                  {shellFailure && <ActionError error={shellFailure} />}
+                  {snapshotState.eventsFailed && (
+                    <Banner tone="warn">
+                      <p>{t('load.events')}</p>
+                    </Banner>
+                  )}
+                  {inSettings && <SettingsView section={screen.section} onBack={closeSettings} />}
+                  {!inSettings && loadFailure && (
+                    <section className="card notice" data-status="crit">
+                      <h2>{t('load.title')}</h2>
+                      <p>{loadFailure.body}</p>
+                      <div className="actions">
+                        <button
+                          type="button"
+                          className="btn primary"
+                          onClick={snapshotState.reload}
+                        >
+                          {t('action.retry')}
+                        </button>
+                      </div>
+                    </section>
+                  )}
+                  {!inSettings && !loadFailure && view && <HarnessPanel view={view} ctx={ctx} />}
+                </div>
               </div>
+              <Footer
+                readAt={latestReadAt(views)}
+                nowSecs={nowSecs}
+                onRefresh={refreshNow}
+                onQuit={() => (request ? request(() => void quit.run()) : void quit.run())}
+              />
+              <LiveRegion message={blocked || live} />
             </div>
-            <Footer
-              readAt={latestReadAt(views)}
-              nowSecs={nowSecs}
-              onRefresh={refreshNow}
-              onQuit={() => void quit.run()}
-            />
-            <LiveRegion message={blocked || live} />
-          </div>
-        </NavigationContext>
-      </SettingsContext>
+          </NavigationContext>
+        </SettingsContext>
+      </UpdateContext>
     </BackendContext>
   );
 }

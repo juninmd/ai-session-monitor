@@ -174,6 +174,14 @@ impl Shared {
         self.stop.send_replace(true);
     }
 
+    pub(crate) fn resume_after_failed_update(&self) -> bool {
+        if self.is_running() {
+            return false;
+        }
+        self.stop.send_replace(false);
+        true
+    }
+
     pub(crate) fn subscribe_stop(&self) -> watch::Receiver<bool> {
         self.stop.subscribe()
     }

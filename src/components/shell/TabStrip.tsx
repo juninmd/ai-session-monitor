@@ -1,7 +1,7 @@
 // Many tabs share a scrollable strip: icon and a short reading on top, the name below, then the bar.
 // Roving tabindex with automatic activation; arrows wrap, Home and End jump to the ends.
 import { type KeyboardEvent, useEffect } from 'react';
-import { harnessName, TAB_ORDER } from '../../app/harness';
+import { harnessName } from '../../app/harness';
 import { STATUS_GLYPH, summaryOf, type TabChip, tabChip } from '../../app/tabModel';
 import type { ViewContext } from '../../app/windowModel';
 import { t } from '../../i18n';
@@ -102,8 +102,9 @@ export function TabStrip({ views, selected, ctx, onSelect }: TabStripProps) {
       ?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
   }, [selected]);
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    const last = TAB_ORDER.length - 1;
-    const index = TAB_ORDER.indexOf(selected);
+    const ids = views.map((view) => view.id);
+    const last = ids.length - 1;
+    const index = ids.indexOf(selected);
     let target: number;
     switch (event.key) {
       case 'ArrowRight':
@@ -122,7 +123,7 @@ export function TabStrip({ views, selected, ctx, onSelect }: TabStripProps) {
         return;
     }
     event.preventDefault();
-    const id = TAB_ORDER[target];
+    const id = ids[target];
     if (id === undefined) return;
     onSelect(id);
     focusTab(id);

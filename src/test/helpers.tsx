@@ -6,6 +6,7 @@ import type { ReactNode } from 'react';
 import { vi } from 'vitest';
 import { App } from '../App';
 import { BackendContext } from '../app/backendContext';
+import { DraftProvider } from '../app/draftContext';
 import { type Navigation, NavigationContext } from '../app/navigation';
 import { SettingsContext } from '../app/settingsContext';
 import { useSettingsState } from '../app/useSettingsState';
@@ -65,7 +66,9 @@ function Stack({ backend, navigation, children }: StackProps) {
   return (
     <BackendContext value={backend}>
       <SettingsContext value={settings}>
-        <NavigationContext value={navigation}>{children}</NavigationContext>
+        <DraftProvider>
+          <NavigationContext value={navigation}>{children}</NavigationContext>
+        </DraftProvider>
       </SettingsContext>
     </BackendContext>
   );
