@@ -115,6 +115,13 @@ test('release gate verifies downloaded assets and fails closed for broken manife
     }
     writeFileSync(join(dir, f.asset.name), Buffer.from('corrupted installer'));
     assert.throws(() => check());
+
+    const draftRelease = structuredClone(f.release);
+    draftRelease.draft = true;
+    draftRelease.assets[0].browser_download_url =
+      'https://github.com/example/app/releases/download/untagged-abcdef123456/app_1.2.3_x64-setup.exe';
+    writeFileSync(join(dir, f.asset.name), f.bytes);
+    assert.doesNotThrow(() => check(f.manifest, draftRelease));
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

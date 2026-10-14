@@ -73,7 +73,11 @@ export function verifyRelease(manifest, release, tag, version, artifactsDir, pub
   for (const target of targets) {
     const platform = manifest.platforms[target];
     const asset = release.assets.find(
-      (item) => item.browser_download_url === platform.url || item.url === platform.url,
+      (item) =>
+        item.browser_download_url === platform.url ||
+        item.browser_download_url?.replace(/\/download\/untagged-[^/]+\//, `/download/${tag}/`) ===
+          platform.url ||
+        item.url === platform.url,
     );
     const url = new URL(platform.url);
     if (
