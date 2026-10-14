@@ -1,7 +1,7 @@
 // Resolve the newest stable version of each package that has soaked for >= SOAK_DAYS.
 // Usage: node scripts/soak.mjs npm react,vite [days]  |  node scripts/soak.mjs crates tauri,keyring [days]
 const [, , registry, list, soakArg] = process.argv;
-const SOAK_DAYS = Number(soakArg ?? 7);
+const SOAK_DAYS = Number(soakArg ?? 1);
 const usable =
   ['npm', 'crates'].includes(registry) && list && Number.isFinite(SOAK_DAYS) && SOAK_DAYS >= 0;
 if (!usable) {

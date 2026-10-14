@@ -87,11 +87,18 @@ rewritten every launch.
 
 ### D8. Supply chain
 
-pnpm `minimumReleaseAge: 10080` (7 days) and denied install scripts; direct Rust crates are
-pinned to versions that are at least 7 days old (`scripts/soak.mjs`, `cargo update --precise`);
+pnpm `minimumReleaseAge: 1440` (1 day) and denied install scripts; direct Rust crates are
+pinned to versions that are at least 1 day old (`scripts/soak.mjs`, `cargo update --precise`);
 the Rust toolchain (`rust-toolchain.toml`) and the package manager are pinned; `Cargo.lock` and
 `pnpm-lock.yaml` are committed. Transitive crates are not soak-checked individually; CI runs a
 RustSec audit instead.
+
+On 2026-10-14, the owner reduced the default release-age requirement from seven days to
+one day and explicitly approved an urgent exception for `rustls 0.23.46`, published at
+`2026-10-14T09:54:15.075873Z`. This exact release fixes RUSTSEC-2026-0346 through
+RUSTSEC-2026-0349 (see the [official release](https://github.com/rustls/rustls/releases/tag/v%2F0.23.46)).
+The registry checksum matches `Cargo.lock`; compatibility and security reviews cover the
+patch. The exception applies only to this version; other updates still require 24 hours.
 
 ### D9. Deviation from the default stack: plain CSS tokens, no Tailwind/shadcn
 

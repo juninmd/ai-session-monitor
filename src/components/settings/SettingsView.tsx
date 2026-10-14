@@ -1,5 +1,5 @@
 // Settings inside the flyout: general options first, then one collapsible group per source.
-import { useEffect, useRef, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { useBackend } from '../../app/backendContext';
 import { useDraftGuard } from '../../app/draftContext';
 import { describeError } from '../../app/errorText';
@@ -21,6 +21,7 @@ interface SettingsViewProps {
   /** The group an error action pointed at; it opens expanded. */
   section: SettingsSection | null;
   onBack: () => void;
+  overview?: ReactNode;
 }
 
 /** Sources with no vendor-documented interface and no other badge in the summary. */
@@ -72,7 +73,7 @@ function SourceGroup(props: {
   );
 }
 
-export function SettingsView({ section, onBack }: SettingsViewProps) {
+export function SettingsView({ section, onBack, overview }: SettingsViewProps) {
   const guard = useDraftGuard();
   const backend = useBackend();
   const api = useSettingsApi();
@@ -141,6 +142,7 @@ export function SettingsView({ section, onBack }: SettingsViewProps) {
         <output className="hint">{t('settings.loading')}</output>
       ) : (
         <fieldset className="settings-controls" disabled={guard?.locked}>
+          {overview}
           <GeneralSettings />
           <UpdateSettings />
           <section className="sg" aria-labelledby="sg-sources">

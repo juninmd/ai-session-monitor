@@ -1,4 +1,4 @@
-# A package must be at least 7 days old before it can be installed (supply-chain soak).
-minimumReleaseAge: 10080
+# A package must be at least 1 day old before it can be installed (supply-chain soak).
+minimumReleaseAge: 1440
 # Install scripts are denied by default; list a package here only after reading what it runs.
 onlyBuiltDependencies: []
