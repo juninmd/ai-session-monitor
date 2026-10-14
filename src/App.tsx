@@ -88,10 +88,12 @@ function AppBody({ backend, preview }: { backend: Backend; preview: boolean }) {
   const toTop = useCallback(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
   }, []);
+  const [detailsEpoch, setDetailsEpoch] = useState(0);
   const selectTab = useCallback(
     (id: HarnessId) => {
       const select = () => {
         setSelected(id);
+        setDetailsEpoch((epoch) => epoch + 1);
         toTop();
       };
       if (id !== selected && request) request(select);
@@ -255,7 +257,7 @@ function AppBody({ backend, preview }: { backend: Backend; preview: boolean }) {
                     !loadFailure &&
                     view &&
                     (preview ? (
-                      <PreviewPanel view={view} ctx={ctx} />
+                      <PreviewPanel view={view} ctx={ctx} epoch={detailsEpoch} />
                     ) : (
                       <HarnessPanel view={view} ctx={ctx} />
                     ))}

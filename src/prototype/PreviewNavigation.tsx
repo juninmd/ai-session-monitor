@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { harnessName } from '../app/harness';
 import { summaryOf } from '../app/tabModel';
 import type { ViewContext } from '../app/windowModel';
@@ -82,10 +82,32 @@ export function PreviewNavigation({
   );
 }
 
-function DetailAccordion({ view, ctx }: { view: HarnessView; ctx: ViewContext }) {
-  const [open, setOpen] = useState(false);
+function DetailAccordion({
+  view,
+  ctx,
+  epoch,
+}: {
+  view: HarnessView;
+  ctx: ViewContext;
+  epoch?: number;
+}) {
+  const [open, setOpen] = useState(true);
+  const detailsRef = useRef<HTMLDetailsElement>(null);
+
+  useEffect(() => {
+    setOpen(true);
+    if (epoch && epoch > 0) {
+      detailsRef.current?.scrollIntoView?.({ block: 'nearest', behavior: 'smooth' });
+    }
+  }, [epoch]);
+
   return (
-    <details className="preview-details" onToggle={(event) => setOpen(event.currentTarget.open)}>
+    <details
+      ref={detailsRef}
+      className="preview-details"
+      open={open}
+      onToggle={(event) => setOpen(event.currentTarget.open)}
+    >
       <summary>
         Detalhes de {harnessName(view.id)}
         <span className="preview-detail-count">
@@ -97,11 +119,19 @@ function DetailAccordion({ view, ctx }: { view: HarnessView; ctx: ViewContext })
   );
 }
 
-export function PreviewPanel({ view, ctx }: { view: HarnessView; ctx: ViewContext }) {
+export function PreviewPanel({
+  view,
+  ctx,
+  epoch,
+}: {
+  view: HarnessView;
+  ctx: ViewContext;
+  epoch?: number;
+}) {
   return (
     <section role="tabpanel" id={PANEL_ID} aria-labelledby={tabNameId(view.id)}>
       {view.state === 'ready' ? (
-        <DetailAccordion key={view.id} view={view} ctx={ctx} />
+        <DetailAccordion key={view.id} view={view} ctx={ctx} epoch={epoch} />
       ) : (
         <HarnessPanel view={view} ctx={ctx} />
       )}

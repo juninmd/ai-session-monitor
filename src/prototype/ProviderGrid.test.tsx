@@ -161,15 +161,17 @@ describe('compact provider quotas', () => {
     await user.click(screen.getByRole('button', { name: /^Configurar$/ }));
     expect(openSettings).toHaveBeenCalledWith('codex');
   });
-  it('starts with details collapsed and collapses them on provider change', async () => {
+  it('starts with details expanded and keeps them expanded on provider change', async () => {
     freezeClock();
     const user = userEvent.setup();
     render(<App backend={createMockBackend({ ...startFor('demo'), now: () => NOW })} preview />);
     await screen.findByRole('tab', { name: /^Claude Code/ });
-    expect(screen.getByRole('tabpanel').querySelector('details')).not.toHaveAttribute('open');
-    await user.click(screen.getByText('Detalhes de Claude Code'));
     expect(screen.getByRole('tabpanel').querySelector('details')).toHaveAttribute('open');
     await user.click(screen.getByRole('tab', { name: /^Codex/ }));
+    expect(screen.getByRole('tabpanel').querySelector('details')).toHaveAttribute('open');
+    await user.click(screen.getByText('Detalhes de Codex'));
     expect(screen.getByRole('tabpanel').querySelector('details')).not.toHaveAttribute('open');
+    await user.click(screen.getByRole('tab', { name: /^Codex/ }));
+    expect(screen.getByRole('tabpanel').querySelector('details')).toHaveAttribute('open');
   });
 });
