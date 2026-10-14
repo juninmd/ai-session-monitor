@@ -1,5 +1,6 @@
 // A saved-on-demand text setting (a file or folder path). Blank means "use the default" (null).
 import { type FormEvent, useState } from 'react';
+import { usePendingDraft } from '../../app/draftContext';
 import { fieldOf } from '../../app/errorText';
 import { fieldMessage } from '../../app/fieldErrors';
 import { useSettingsApi } from '../../app/settingsContext';
@@ -32,18 +33,22 @@ export function PathField({
   const [seen, setSeen] = useState(saved);
   const [status, setStatus] = useState<string | null>(null);
   const action = useAsyncAction((value: string | null) => save((s) => apply(s, value)));
+  usePendingDraft(id, draft.trim() !== (saved ?? ''), action.pending);
 
-  // A change that arrives from elsewhere (tray, another surface) replaces the draft.
+  // Follow stored changes only while clean; an external event must not erase an edited path.
   if (seen !== saved) {
+    if (draft.trim() === (seen ?? '')) setDraft(saved ?? '');
     setSeen(saved);
-    setDraft(saved ?? '');
   }
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     const trimmed = draft.trim();
     setStatus(null);
-    if (await action.run(trimmed === '' ? null : trimmed)) setStatus(t('settings.saved'));
+    if (await action.run(trimmed === '' ? null : trimmed)) {
+      setDraft((current) => (current.trim() === trimmed ? trimmed : current));
+      setStatus(t('settings.saved'));
+    }
   };
 
   const error = action.error ? fieldMessage(action.error, fieldOf(action.error)) : null;
@@ -53,6 +58,7 @@ export function PathField({
         id={id}
         label={label}
         value={draft}
+        disabled={action.pending}
         placeholder={placeholder}
         hint={hint}
         error={error}

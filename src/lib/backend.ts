@@ -22,11 +22,18 @@ import {
   ShimStatusSchema,
   type Snapshot,
   SnapshotSchema,
+  type UpdateStatus,
+  UpdateStatusSchema,
 } from './contract';
 
 export type Unsubscribe = () => void;
 
 export interface Backend {
+  getUpdateStatus(): Promise<UpdateStatus>;
+  checkUpdate(): Promise<UpdateStatus>;
+  downloadUpdate(): Promise<UpdateStatus>;
+  installUpdate(): Promise<UpdateStatus>;
+  onUpdateStatus(callback: (status: UpdateStatus) => void): Promise<Unsubscribe>;
   getSnapshot(): Promise<Snapshot>;
   /** Starts a collection now (all harnesses, or one); the result arrives through onSnapshot. */
   refresh(harness?: HarnessId): Promise<void>;
@@ -115,6 +122,11 @@ export function isTauriRuntime(): boolean {
 
 export function createTauriBackend(): Backend {
   return {
+    getUpdateStatus: () => callParsed(UpdateStatusSchema, COMMANDS.getUpdateStatus),
+    checkUpdate: () => callParsed(UpdateStatusSchema, COMMANDS.checkUpdate),
+    downloadUpdate: () => callParsed(UpdateStatusSchema, COMMANDS.downloadUpdate),
+    installUpdate: () => callParsed(UpdateStatusSchema, COMMANDS.installUpdate),
+    onUpdateStatus: (callback) => subscribe(EVENTS.updateStatus, UpdateStatusSchema, callback),
     getSnapshot: () => callParsed(SnapshotSchema, COMMANDS.getSnapshot),
     refresh: async (harness) => {
       await call(COMMANDS.refresh, { harness });

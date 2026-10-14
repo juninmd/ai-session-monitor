@@ -88,6 +88,12 @@ impl AppService {
         self.shared.request_stop();
     }
 
+    /// The sole exception to final shutdown: an installer failed to start after the scheduler
+    /// was drained. Only a fully unwound loop may be resumed; the shell supervises a new run.
+    pub fn resume_after_failed_update(&self) -> bool {
+        self.shared.resume_after_failed_update()
+    }
+
     /// `shutdown`, then waits until the loop has unwound (collections dropped, child processes
     /// killed), at most `grace`. For the shell's exit path, where the process ends right after.
     /// `false` when the wait ran out.

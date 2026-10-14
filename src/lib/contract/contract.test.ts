@@ -20,6 +20,9 @@ import {
   SHIM_STATES,
   ShimStatusSchema,
   SnapshotSchema,
+  UPDATE_FAILURES,
+  UPDATE_PHASES,
+  UpdateStatusSchema,
   VIEW_STATES,
 } from '.';
 
@@ -75,6 +78,17 @@ describe('settings.json', () => {
 });
 
 describe('ipc.json', () => {
+  it('pins updater states and rejects fields containing implementation or secret details', () => {
+    expect(UpdateStatusSchema.parse(ipc.updateStatus)).toEqual(ipc.updateStatus);
+    expect(ipc.updatePhases).toEqual([...UPDATE_PHASES]);
+    expect(ipc.updateFailures).toEqual([...UPDATE_FAILURES]);
+    expect(
+      UpdateStatusSchema.safeParse({ ...ipc.updateStatus, url: 'https://secret.example' }).success,
+    ).toBe(false);
+    expect(UpdateStatusSchema.safeParse({ ...ipc.updateStatus, totalBytes: -1 }).success).toBe(
+      false,
+    );
+  });
   it('parses secret status, shim statuses and the link and secret enumerations', () => {
     expect(SecretStatusSchema.parse(ipc.secretStatus)).toEqual(ipc.secretStatus);
     for (const status of ipc.shimStatuses) expect(ShimStatusSchema.parse(status)).toEqual(status);

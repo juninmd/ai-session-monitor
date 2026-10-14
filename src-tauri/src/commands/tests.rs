@@ -66,7 +66,7 @@ fn capability() -> (BTreeSet<String>, Vec<String>) {
 #[test]
 fn the_declared_commands_are_exactly_the_contract() {
     let contract = contract();
-    assert_eq!(contract.len(), 16);
+    assert_eq!(contract.len(), 20);
     assert_eq!(declared(), contract);
 }
 

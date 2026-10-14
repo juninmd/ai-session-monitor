@@ -164,3 +164,33 @@ pub async fn quit_app(app: AppHandle) -> Result<(), HarnessError> {
     app.exit(0);
     Ok(())
 }
+
+#[tauri::command]
+pub async fn get_update_status(
+    updater: State<'_, crate::update::Updater>,
+) -> Result<usage_model::UpdateStatus, HarnessError> {
+    Ok(updater.manager.status())
+}
+
+#[tauri::command]
+pub async fn check_update(
+    updater: State<'_, crate::update::Updater>,
+) -> Result<usage_model::UpdateStatus, HarnessError> {
+    Ok(updater.manager.check().await)
+}
+
+#[tauri::command]
+pub async fn download_update(
+    updater: State<'_, crate::update::Updater>,
+) -> Result<usage_model::UpdateStatus, HarnessError> {
+    Ok(updater.manager.download().await)
+}
+
+#[tauri::command]
+pub async fn install_update(
+    app: AppHandle,
+    service: Service<'_>,
+    updater: State<'_, crate::update::Updater>,
+) -> Result<usage_model::UpdateStatus, HarnessError> {
+    crate::update::install(app, updater.inner(), Arc::clone(service.inner())).await
+}

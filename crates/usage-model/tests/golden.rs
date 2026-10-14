@@ -8,7 +8,8 @@ use serde_json::{Value, json};
 use usage_model::settings::{LitellmScope, TlsMode};
 use usage_model::{
     ErrorCode, ExternalLink, HarnessHistory, HarnessId, HistoryEpoch, HistoryPoint, SecretKind,
-    SecretStatus, Settings, ShimState, ShimStatus, Snapshot,
+    SecretStatus, Settings, ShimState, ShimStatus, Snapshot, UpdateFailure, UpdatePhase,
+    UpdateStatus,
 };
 
 const NOW: i64 = 1_800_000_000;
@@ -118,6 +119,9 @@ fn ipc_payload_shapes_are_pinned() {
             "shimStates": ShimState::ALL,
             "shimStatuses": shims,
             "history": sample_history(),
+            "updatePhases": UpdatePhase::ALL,
+            "updateFailures": UpdateFailure::ALL,
+            "updateStatus": UpdateStatus::new("0.2.0", true),
         }),
     );
 }

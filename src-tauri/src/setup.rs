@@ -44,6 +44,7 @@ pub fn run(app: &mut App, overrides: &Overrides) -> Result<(), Reason> {
 
     // The service sets an unreadable settings file aside and announces it through the sink.
     let adapters = wiring::adapters(claude_dir::from_env(overrides));
+    let update_dir = paths.data_dir.clone();
     let service = AppService::new(paths, secret_store(overrides), sink.clone(), adapters)
         .map_err(|err| Reason::Service(err.code).because(&"the service refused to start"))?;
 
@@ -53,6 +54,7 @@ pub fn run(app: &mut App, overrides: &Overrides) -> Result<(), Reason> {
     app.manage(Arc::clone(&flyout));
     app.manage(Arc::clone(&service));
     app.manage(OpenOnLoad(AtomicBool::new(open_first)));
+    crate::update::attach(&handle, Arc::clone(&service), update_dir, !overrides.is_active());
 
     supervise_polling(Arc::clone(&service));
     refresh_shim_copy(service);
@@ -154,7 +156,7 @@ fn autostart(overrides: &Overrides) -> Option<Arc<Applier>> {
 
 /// The polling loop runs in a task of its own so that a panic in it ends that task and not the
 /// app; `supervisor` starts it again.
-fn supervise_polling(service: Arc<AppService>) {
+pub(crate) fn supervise_polling(service: Arc<AppService>) {
     let spawn = move || tauri::async_runtime::handle().inner().spawn(Arc::clone(&service).run());
     tauri::async_runtime::spawn(supervisor::supervise(spawn));
 }

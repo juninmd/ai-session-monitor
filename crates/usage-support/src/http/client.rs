@@ -26,12 +26,13 @@ const MAX_PEM_BYTES: usize = 1 << 20;
 /// Every request is checked against the URL policy first, so a refused request never reaches the
 /// network. Errors carry only non-secret params (see `classify`).
 pub struct SafeClient {
-    inner: Client,
-    timeout: Duration,
+    pub(super) inner: Client,
+    pub(super) timeout: Duration,
     max_body_bytes: usize,
     allow_loopback_http: bool,
     /// Normalized host that may be called without certificate verification, if any.
     insecure_host: Option<String>,
+    pub(super) release_tls: bool,
 }
 
 impl fmt::Debug for SafeClient {
@@ -102,6 +103,7 @@ impl SafeClient {
             max_body_bytes: options.max_body_bytes.min(MAX_BODY_CAP),
             allow_loopback_http: options.allow_loopback_http,
             insecure_host,
+            release_tls: matches!(options.tls, TlsPolicy::System),
         })
     }
 

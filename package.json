@@ -1,7 +1,7 @@
 {
   "name": "ai-session-monitor",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Tray flyout that shows how much of your AI coding sessions is left",
   "license": "MIT",
   "type": "module",
@@ -16,7 +16,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
     "format": "biome format --write .",
-    "test": "vitest run --reporter=dot",
+    "test": "vitest run --reporter=dot && node --test scripts/verify-release.test.mjs",
     "tauri": "tauri",
     "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },

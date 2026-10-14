@@ -3,6 +3,9 @@
 @import "./shell.css";
 @import "./brand.css";
 @import "./tabs.css";
+@import "./providers.css";
+@import "./update.css";
+@import "./draft.css";
 @import "./gauge.css";
 @import "./windows.css";
 @import "./history.css";

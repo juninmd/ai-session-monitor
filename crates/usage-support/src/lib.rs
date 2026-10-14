@@ -7,6 +7,7 @@ pub mod proc;
 pub mod redact;
 pub mod secret;
 pub mod time;
+pub mod update;
 
 pub use fsutil::{atomic_write, read_capped, read_json_capped};
 pub use http::{

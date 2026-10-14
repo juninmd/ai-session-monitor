@@ -21,6 +21,10 @@
     "allow-open-link",
     "allow-hide-flyout",
     "allow-set-flyout-height",
-    "allow-quit-app"
+    "allow-quit-app",
+    "allow-get-update-status",
+    "allow-check-update",
+    "allow-download-update",
+    "allow-install-update"
   ]
 }

@@ -80,6 +80,7 @@ describe('inside Tauri', () => {
       [COMMANDS.getSnapshot]: await model.getSnapshot(),
       [COMMANDS.getSettings]: await model.getSettings(),
       [COMMANDS.secretStatus]: await model.secretStatus(),
+      [COMMANDS.getUpdateStatus]: await model.getUpdateStatus(),
     } as Record<string, unknown>;
     bridge.invoke.mockImplementation(async (command: string) => {
       if (fail !== null && command === COMMANDS.getSnapshot) throw fail;
@@ -100,15 +101,17 @@ describe('inside Tauri', () => {
     expect(commands).toEqual(expect.arrayContaining([COMMANDS.getSnapshot, COMMANDS.getSettings]));
   });
 
-  it('listens to all three events and leaves one listener each, despite StrictMode', async () => {
+  it('leaves one listener for every event, despite StrictMode', async () => {
     const { unlisten } = await fakeBridge();
     await boot();
     await screen.findByRole('heading', { name: 'Sessão de 5 horas' });
     await vi.waitFor(() =>
-      expect(bridge.listen.mock.calls.length - unlisten.mock.calls.length).toBe(3),
+      expect(bridge.listen.mock.calls.length - unlisten.mock.calls.length).toBe(4),
     );
     const events = new Set(bridge.listen.mock.calls.map(([event]) => event));
-    expect(events).toEqual(new Set([EVENTS.snapshot, EVENTS.settingsChanged, EVENTS.flyoutShown]));
+    expect(events).toEqual(
+      new Set([EVENTS.snapshot, EVENTS.settingsChanged, EVENTS.flyoutShown, EVENTS.updateStatus]),
+    );
   });
 
   it('shows a failed first read in words and never the raw rejection', async () => {

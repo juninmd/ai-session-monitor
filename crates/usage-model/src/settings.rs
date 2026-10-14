@@ -131,6 +131,8 @@ pub struct GeneralSettings {
     pub interval_secs: u32,
     /// Start with Windows. Off until the user opts in because it writes a Run registry entry.
     pub autostart: bool,
+    /// Check public GitHub releases in the background. Download and install require a click.
+    pub auto_update_check: bool,
     /// Harness the tray ring follows. `None` means the lowest available percentage of all.
     pub tray_source: Option<HarnessId>,
     /// Available percentage at or below which a window turns to the warning colour.
@@ -157,6 +159,7 @@ impl Default for GeneralSettings {
         Self {
             interval_secs: 60,
             autostart: false,
+            auto_update_check: true,
             tray_source: None,
             warn_at_pct: 25,
             notify_on_out: false,

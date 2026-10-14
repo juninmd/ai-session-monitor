@@ -100,5 +100,33 @@
       "settingsPath": "C:\\Users\\someone\\.claude\\settings.json",
       "state": "unreadable"
     }
-  ]
+  ],
+  "updateFailures": [
+    "check",
+    "download",
+    "signature",
+    "install"
+  ],
+  "updatePhases": [
+    "idle",
+    "checking",
+    "current",
+    "available",
+    "downloading",
+    "ready",
+    "installing",
+    "error",
+    "unavailable"
+  ],
+  "updateStatus": {
+    "availableVersion": null,
+    "checkedAt": null,
+    "currentVersion": "0.2.0",
+    "downloadedBytes": 0,
+    "failure": null,
+    "installable": true,
+    "notes": null,
+    "phase": "idle",
+    "totalBytes": null
+  }
 }

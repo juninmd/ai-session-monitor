@@ -29,6 +29,7 @@ mod summary;
 mod supervisor;
 mod tooltip;
 mod tray;
+mod update;
 mod wiring;
 #[cfg(feature = "collectors")]
 mod wiring_collectors;
@@ -41,12 +42,13 @@ pub fn run() {
     if let Some(root) = overrides.data_root() {
         context.config_mut().app.app_directories_override =
             Some(AppDirectoriesOverride::Root(root));
+        // An isolated smoke must never hand its commands to the owner's running instance.
+        context.config_mut().identifier.push_str(".smoke");
     }
     let built = tauri::Builder::default()
         // First, so a second launch hands over and exits before anything else starts.
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| setup::reopen(app)))
         .plugin(tauri_plugin_notification::init())
-        .plugin(tauri_plugin_updater::Builder::new().build())
         .invoke_handler(tauri::generate_handler![
             commands::get_snapshot,
             commands::refresh,
@@ -64,6 +66,10 @@ pub fn run() {
             commands::hide_flyout,
             commands::set_flyout_height,
             commands::quit_app,
+            commands::get_update_status,
+            commands::check_update,
+            commands::download_update,
+            commands::install_update,
         ])
         .on_page_load(setup::on_page_load)
         .setup(move |app| {

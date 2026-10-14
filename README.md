@@ -31,8 +31,8 @@ Nunca mais seja pego de surpresa pelo fim da janela de 5 horas do Claude, pela c
 - ⚡ **Estimativa de Ritmo (Burn Rate):** Sabe em quanto tempo sua cota vai acabar se continuar codando no ritmo atual.
 - 🛡️ **Zero-Trust & Privacidade Total:** Suas chaves ficam guardadas no **Windows Credential Manager**. O app é estritamente **read-only**, não grava em servidores remotos e o webview não tem acesso à internet externa.
 - 📊 **Histórico Local de 35 Dias:** Visualize tendências de consumo diretamente pelo app. Os dados ficam salvos apenas na sua máquina em `history.json` e podem ser desativados a qualquer momento.
-- 🎛️ **Abas Parametrizáveis:** Ative, desative ou reordene provedores conforme suas preferências nas Configurações.
-- 🔄 **Atualizações Automáticas Integradas:** O aplicativo verifica novas versões em segundo plano com binários criptograficamente assinados via **Minisign**.
+- 🎛️ **Navegação entre Provedores:** Busque uma ferramenta e veja o estado de todas no quadro “Todas as ferramentas”. Ative ou desative fontes nas Configurações.
+- 🔄 **Releases Assinadas:** O pipeline do GitHub gera instaladores com **Minisign** e verifica o manifesto, os bytes baixados e as assinaturas antes da publicação. A integração da consulta e instalação no aplicativo está em desenvolvimento.
 - 🔔 **Alertas Inteligentes:** Notificações discretas na bandeja do Windows quando uma sessão atingir níveis de alerta ou esgotamento.
 
 ---
@@ -84,7 +84,7 @@ Projetado sob o princípio do **privilégio mínimo**:
 Acesse a página de **[Releases](https://github.com/juninmd/ai-session-monitor/releases)** e baixe a versão mais recente do instalador:
 - `AI.Session.Monitor_<versao>_x64-setup.exe` (Instalador NSIS por usuário, não requer elevação de administrador).
 
-O aplicativo cria automaticamente o ícone na bandeja do sistema e configura atualizações automáticas silenciosas verificadas por chave pública Minisign.
+O aplicativo cria o ícone na bandeja do sistema. O fluxo de atualização implementado consulta o GitHub automaticamente a cada 6 horas (configurável), mostra a nova versão e permite baixar e instalar após confirmação. O instalador é verificado por assinatura antes da execução. A primeira publicação com esse fluxo e a prova de upgrade entre versões assinadas ainda estão pendentes; veja [o progresso e as validações](docs/ui-updater-progress.md).
 
 ---
 

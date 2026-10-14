@@ -2,6 +2,7 @@
 // first and the key after them, so the refresh the key triggers already sees a complete setup.
 import { type FormEvent, useEffect, useRef, useState } from 'react';
 import { useBackend } from '../../app/backendContext';
+import { usePendingDraft } from '../../app/draftContext';
 import { fieldOf } from '../../app/errorText';
 import { fieldMessage } from '../../app/fieldErrors';
 import {
@@ -81,6 +82,7 @@ export function LitellmForm({ showTitle = true, onSaved }: LitellmFormProps) {
   // A stored key is only good for the connection it was entered for; a move drops it.
   const keyFits = secrets.litellm && sameDestination(saved, draft);
   const [seen, setSeen] = useState(() => JSON.stringify(saved));
+  const [seenDraft, setSeenDraft] = useState(() => JSON.stringify(toDraft(saved)));
   const [secret, setSecretText] = useState('');
   const [errors, setErrors] = useState<DraftErrors>({});
   const [status, setStatus] = useState<string | null>(null);
@@ -88,12 +90,18 @@ export function LitellmForm({ showTitle = true, onSaved }: LitellmFormProps) {
   const [advanced, setAdvanced] = useState(() => toDraft(saved).tlsMode !== 'system');
   const [focusTick, setFocusTick] = useState(0);
   const formRef = useRef<HTMLFormElement>(null);
+  usePendingDraft(
+    'litellm-url',
+    secret !== '' || JSON.stringify(draft) !== JSON.stringify(toDraft(saved)),
+    pending,
+  );
 
-  // Saved settings that changed elsewhere replace the draft; our own save lands here too.
+  // External settings may update a clean form, but must not erase edited fields or pasted keys.
   const savedJson = JSON.stringify(saved);
   if (seen !== savedJson) {
     setSeen(savedJson);
-    setDraft(toDraft(saved));
+    if (secret === '' && JSON.stringify(draft) === seenDraft) setDraft(toDraft(saved));
+    setSeenDraft(JSON.stringify(toDraft(saved)));
     // Settings arrive after the first render; a non-default transport must not stay hidden.
     if (saved.tls.mode !== 'system') setAdvanced(true);
   }
@@ -127,9 +135,15 @@ export function LitellmForm({ showTitle = true, onSaved }: LitellmFormProps) {
     setErrors({});
     setPending(true);
     try {
-      await save((current) => ({ ...current, litellm: fromDraft(current.litellm, draft) }));
+      const normalized = await save((current) => ({
+        ...current,
+        litellm: fromDraft(current.litellm, draft),
+      }));
+      setDraft((current) =>
+        JSON.stringify(current) === JSON.stringify(draft) ? toDraft(normalized.litellm) : current,
+      );
       if (typed) await setSecret('litellm', secret.trim());
-      setSecretText('');
+      setSecretText((current) => (current === secret ? '' : current));
       await backend.refresh('litellm');
       setStatus(t('litellm.saved'));
       onSaved?.();
@@ -151,102 +165,104 @@ export function LitellmForm({ showTitle = true, onSaved }: LitellmFormProps) {
   const entityLabel = draft.scope === 'team' ? t('litellm.entity.team') : t('litellm.entity.user');
   return (
     <form ref={formRef} className="card form" noValidate onSubmit={submit}>
-      {showTitle && (
-        <h3 className="brand-title">
-          <HarnessLogo id="litellm" size={32} />
-          {connected ? t('litellm.title_edit') : t('litellm.title')}
-        </h3>
-      )}
-      <TextField
-        id="litellm-url"
-        type="url"
-        label={t('litellm.url')}
-        placeholder={t('litellm.url_placeholder')}
-        hint={t('litellm.url_hint')}
-        value={draft.baseUrl}
-        error={errors.baseUrl}
-        onChange={(baseUrl) => update({ baseUrl })}
-        onBlur={checkUrlNow}
-      />
-      <SecretInput
-        id="litellm-key"
-        label={t('litellm.key')}
-        value={secret}
-        saved={secrets.litellm}
-        placeholder={keyFits ? t('secret.placeholder_keep') : undefined}
-        hint={secrets.litellm && !keyFits ? t('litellm.key_rebind') : t('secret.hint')}
-        error={errors.key}
-        onChange={(value) => {
-          setSecretText(value);
-          setStatus(null);
-        }}
-      />
-      <div className="field">
-        <span className="field-title">{t('litellm.scope')}</span>
-        <Segmented
-          name="litellm-scope"
-          legend={t('litellm.scope')}
-          value={draft.scope}
-          options={SCOPE_OPTIONS}
-          onChange={(scope) => update({ scope })}
-        />
-      </div>
-      {draft.scope !== 'key' && (
+      <fieldset className="form settings-controls" disabled={pending}>
+        {showTitle && (
+          <h3 className="brand-title">
+            <HarnessLogo id="litellm" size={32} />
+            {connected ? t('litellm.title_edit') : t('litellm.title')}
+          </h3>
+        )}
         <TextField
-          id="litellm-entity"
-          label={entityLabel}
-          value={draft.entityId}
-          error={errors.entityId}
-          onChange={(entityId) => update({ entityId })}
+          id="litellm-url"
+          type="url"
+          label={t('litellm.url')}
+          placeholder={t('litellm.url_placeholder')}
+          hint={t('litellm.url_hint')}
+          value={draft.baseUrl}
+          error={errors.baseUrl}
+          onChange={(baseUrl) => update({ baseUrl })}
+          onBlur={checkUrlNow}
         />
-      )}
-      <details
-        className="adv"
-        open={advanced}
-        onToggle={(event) => setAdvanced(event.currentTarget.open)}
-      >
-        <summary>{t('litellm.advanced')}</summary>
-        <TextField
-          id="litellm-header"
-          label={t('litellm.auth_header')}
-          hint={t('litellm.auth_header_hint')}
-          value={draft.authHeader}
-          error={errors.authHeader}
-          onChange={(authHeader) => update({ authHeader })}
+        <SecretInput
+          id="litellm-key"
+          label={t('litellm.key')}
+          value={secret}
+          saved={secrets.litellm}
+          placeholder={keyFits ? t('secret.placeholder_keep') : undefined}
+          hint={secrets.litellm && !keyFits ? t('litellm.key_rebind') : t('secret.hint')}
+          error={errors.key}
+          onChange={(value) => {
+            setSecretText(value);
+            setStatus(null);
+          }}
         />
-        <SelectRow
-          id="litellm-poll"
-          label={t('litellm.poll')}
-          value={draft.pollIntervalSecs}
-          options={numericOptions(
-            LITELLM_POLL_PRESETS,
-            LIMITS.litellmPollSecs,
-            draft.pollIntervalSecs,
-            intervalLabel,
-          )}
-          onChange={(pollIntervalSecs) => update({ pollIntervalSecs })}
-        />
-        <SelectRow
-          id="litellm-timeout"
-          label={t('litellm.timeout')}
-          value={draft.timeoutSecs}
-          options={numericOptions(
-            TIMEOUT_PRESETS,
-            LIMITS.litellmTimeoutSecs,
-            draft.timeoutSecs,
-            secondsLabel,
-          )}
-          onChange={(timeoutSecs) => update({ timeoutSecs })}
-        />
-        <LitellmTlsFields draft={draft} errors={errors} update={update} />
-      </details>
-      <div className="actions">
-        <button type="submit" className="btn primary" disabled={pending}>
-          {pending ? t('litellm.saving') : t('litellm.save')}
-        </button>
-      </div>
-      {errors.form && <ErrorLine id="litellm-form-err">{errors.form}</ErrorLine>}
-      <output className="result">{status}</output>
+        <div className="field">
+          <span className="field-title">{t('litellm.scope')}</span>
+          <Segmented
+            name="litellm-scope"
+            legend={t('litellm.scope')}
+            value={draft.scope}
+            options={SCOPE_OPTIONS}
+            onChange={(scope) => update({ scope })}
+          />
+        </div>
+        {draft.scope !== 'key' && (
+          <TextField
+            id="litellm-entity"
+            label={entityLabel}
+            value={draft.entityId}
+            error={errors.entityId}
+            onChange={(entityId) => update({ entityId })}
+          />
+        )}
+        <details
+          className="adv"
+          open={advanced}
+          onToggle={(event) => setAdvanced(event.currentTarget.open)}
+        >
+          <summary>{t('litellm.advanced')}</summary>
+          <TextField
+            id="litellm-header"
+            label={t('litellm.auth_header')}
+            hint={t('litellm.auth_header_hint')}
+            value={draft.authHeader}
+            error={errors.authHeader}
+            onChange={(authHeader) => update({ authHeader })}
+          />
+          <SelectRow
+            id="litellm-poll"
+            label={t('litellm.poll')}
+            value={draft.pollIntervalSecs}
+            options={numericOptions(
+              LITELLM_POLL_PRESETS,
+              LIMITS.litellmPollSecs,
+              draft.pollIntervalSecs,
+              intervalLabel,
+            )}
+            onChange={(pollIntervalSecs) => update({ pollIntervalSecs })}
+          />
+          <SelectRow
+            id="litellm-timeout"
+            label={t('litellm.timeout')}
+            value={draft.timeoutSecs}
+            options={numericOptions(
+              TIMEOUT_PRESETS,
+              LIMITS.litellmTimeoutSecs,
+              draft.timeoutSecs,
+              secondsLabel,
+            )}
+            onChange={(timeoutSecs) => update({ timeoutSecs })}
+          />
+          <LitellmTlsFields draft={draft} errors={errors} update={update} />
+        </details>
+        <div className="actions">
+          <button type="submit" className="btn primary" disabled={pending}>
+            {pending ? t('litellm.saving') : t('litellm.save')}
+          </button>
+        </div>
+        {errors.form && <ErrorLine id="litellm-form-err">{errors.form}</ErrorLine>}
+        <output className="result">{status}</output>
+      </fieldset>
     </form>
   );
 }

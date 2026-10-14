@@ -3,6 +3,7 @@
 // has a small state machine, and every change emits a snapshot. No network, no files, no clock
 // reads beyond the injected one.
 import { type Backend, BackendError, type Unsubscribe } from '../lib/backend';
+import type { UpdateStatus } from '../lib/contract';
 import {
   type ExternalLink,
   HARNESS_IDS,
@@ -26,6 +27,7 @@ import type { Env } from './fixtures';
 import { demoHistory } from './history';
 import { type ScenarioName, startFor, viewsFor } from './scenarios';
 import { normalizeSettings, validateSettings } from './settingsRules';
+import { MockUpdater } from './updater';
 
 export interface MockOptions {
   scenario?: ScenarioName;
@@ -43,6 +45,14 @@ const reject = (code: HarnessError['code'], params: Record<string, string> = {})
   new BackendError({ code, retryable: false, params });
 
 export class MockBackend implements Backend {
+  readonly updater = new MockUpdater();
+  getUpdateStatus = () =>
+    this.call('get_update_status', () => structuredClone(this.updater.status));
+  checkUpdate = () => this.call('check_update', () => this.updater.check(this.clock()));
+  downloadUpdate = () => this.call('download_update', () => this.updater.download());
+  installUpdate = () => this.call('install_update', () => this.updater.install());
+  onUpdateStatus = (callback: (status: UpdateStatus) => void) =>
+    this.listen(this.updater.listeners, callback);
   /** Names of the commands received, oldest first. Tests read it; the UI never does. */
   readonly calls: string[] = [];
   readonly openedLinks: ExternalLink[] = [];

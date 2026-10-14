@@ -3,8 +3,10 @@
 // This reads the Rust enum definitions themselves and compares their wire names with the Zod lists.
 import { describe, expect, it } from 'vitest';
 import settingsRs from '../../../crates/usage-model/src/settings.rs?raw';
+import updateRs from '../../../crates/usage-model/src/update.rs?raw';
 import viewRs from '../../../crates/usage-model/src/view.rs?raw';
 import { LITELLM_SCOPES, TimeFormatSchema, WeekFormatSchema } from './settings';
+import { UPDATE_FAILURES, UPDATE_PHASES } from './update';
 import { AMOUNT_UNITS, ERROR_CODES, SEVERITIES, WINDOW_KINDS } from './view';
 
 /** serde's `rename_all = "snake_case"` for a variant name: `DaysHours` -> `days_hours`. */
@@ -32,6 +34,8 @@ function wireNames(source: string, name: string): string[] {
 describe('wire enums', () => {
   it.each([
     ['WindowKind', viewRs, WINDOW_KINDS],
+    ['UpdatePhase', updateRs, UPDATE_PHASES],
+    ['UpdateFailure', updateRs, UPDATE_FAILURES],
     ['AmountUnit', viewRs, AMOUNT_UNITS],
     ['Severity', viewRs, SEVERITIES],
     ['ErrorCode', viewRs, ERROR_CODES],
