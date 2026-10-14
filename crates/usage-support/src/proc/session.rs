@@ -107,6 +107,11 @@ impl LineSession {
         if line.contains(['\n', '\r']) || line.len() > self.max_line {
             return Err(HarnessError::new(ErrorCode::InvalidInput, false));
         }
+        if self.phase == Phase::Eof || matches!(self.guard.child.try_wait(), Ok(Some(_))) {
+            self.stdin = None;
+            self.phase = Phase::Eof;
+            return Err(not_running());
+        }
         let Some(stdin) = self.stdin.as_mut() else { return Err(not_running()) };
         let mut framed = Vec::with_capacity(line.len() + 1);
         framed.extend_from_slice(line.as_bytes());
@@ -117,7 +122,14 @@ impl LineSession {
         })
         .await;
         match written {
-            Ok(Ok(())) => Ok(()),
+            Ok(Ok(())) => {
+                if matches!(self.guard.child.try_wait(), Ok(Some(_))) {
+                    self.stdin = None;
+                    self.phase = Phase::Eof;
+                    return Err(not_running());
+                }
+                Ok(())
+            }
             Ok(Err(_)) => {
                 self.stdin = None;
                 Err(not_running())
