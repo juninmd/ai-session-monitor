@@ -35,7 +35,7 @@ async function start(): Promise<void> {
   createRoot(container).render(
     <StrictMode>
       <ErrorBoundary>
-        <App backend={backend} />
+        <App backend={backend} preview />
       </ErrorBoundary>
     </StrictMode>,
   );

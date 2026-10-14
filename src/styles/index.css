@@ -12,3 +12,8 @@
 @import "./feedback.css";
 @import "./controls.css";
 @import "./forms.css";
+@import "../prototype/preview.css";
+@import "../prototype/grid.css";
+@import "../prototype/details.css";
+@import "../prototype/actions.css";
+@import "../prototype/overview.css";
