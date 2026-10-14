@@ -91,7 +91,7 @@ describe('inside Tauri', () => {
   it('talks to the bridge, not to the mock, and marks the host as Tauri', async () => {
     await fakeBridge();
     await boot();
-    await screen.findByRole('heading', { name: /^Providers ativos/ });
+    await screen.findByRole('tab', { name: /Claude Code/ });
     expect(document.documentElement.dataset.host).toBe('tauri');
     const commands = bridge.invoke.mock.calls.map(([command]) => command);
     expect(commands).toEqual(expect.arrayContaining([COMMANDS.getSnapshot, COMMANDS.getSettings]));

@@ -80,7 +80,6 @@ describe('discreet provider details', () => {
     render(<App backend={backend} preview />);
     await screen.findByRole('tab', { name: /^Claude Code/ });
     expect(history).not.toHaveBeenCalled();
-    await user.click(screen.getByText('Detalhes de Claude Code'));
     await screen.findByRole('button', { name: 'Histórico' });
     expect(history).not.toHaveBeenCalled();
     await user.click(screen.getByRole('button', { name: 'Histórico' }));
@@ -94,7 +93,6 @@ describe('discreet provider details', () => {
     await user.click(screen.getByRole('button', { name: 'Atualizar agora' }));
     expect(history).toHaveBeenCalledTimes(1);
     await user.click(screen.getByRole('tab', { name: /^Codex/ }));
-    await user.click(screen.getByText('Detalhes de Codex'));
     const toggle = await screen.findByRole('button', { name: 'Histórico' });
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
     await user.click(toggle);
