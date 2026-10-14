@@ -40,7 +40,7 @@ cargo fmt --all -- --check
 cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace
 UPDATE_GOLDEN=1 cargo test -p usage-model --test golden   # regenerate contract/{snapshot,settings,ipc}.json after an intentional shape change
-node scripts/soak.mjs npm react,vite [days]               # comma-separated; newest version at least [days] old (default 7)
+node scripts/soak.mjs npm react,vite [days]               # comma-separated; newest version at least [days] old (default 1)
 node scripts/soak.mjs crates tauri,keyring [days]          # same, for crates
 ```
 
@@ -70,7 +70,7 @@ node scripts/soak.mjs crates tauri,keyring [days]          # same, for crates
   touch secrets assert absence in the serialized output.
 - Unofficial sources (Antigravity, OpenCode, Kimi Code, z.ai, Claude OAuth) stay opt-in and badged. Do not add
   another unofficial source without an entry in `docs/data-sources.md`.
-- Dependencies: direct crates and npm packages must be at least 7 days old (soak script);
+- Dependencies: direct crates and npm packages must be at least 1 day old (soak script);
   pnpm denies install scripts (`onlyBuiltDependencies: []`). Do not hand-edit lockfiles.
 - No `unsafe` (workspace-wide `forbid`). `unwrap` is denied outside tests; `expect` and `print!`
   warn. Files stay under 300 lines.

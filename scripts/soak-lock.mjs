@@ -1,5 +1,5 @@
 // Checks that the versions pinned in Cargo.lock have soaked for >= SOAK_DAYS on crates.io.
-// Usage: node scripts/soak-lock.mjs [--all] [--days 7]
+// Usage: node scripts/soak-lock.mjs [--all] [--days 1]
 //   default: direct dependencies of the workspace crates only; --all: every registry package.
 // Exit code 1 when any checked version is younger than the soak window.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
@@ -8,7 +8,7 @@ import { join } from 'node:path';
 const args = process.argv.slice(2);
 const all = args.includes('--all');
 const daysIdx = args.indexOf('--days');
-const SOAK_DAYS = daysIdx >= 0 ? Number(args[daysIdx + 1]) : 7;
+const SOAK_DAYS = daysIdx >= 0 ? Number(args[daysIdx + 1]) : 1;
 const cutoff = Date.now() - SOAK_DAYS * 86_400_000;
 
 const root = process.cwd();

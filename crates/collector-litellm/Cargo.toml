@@ -22,7 +22,7 @@ tokio = { workspace = true, features = ["net", "test-util"] }
 # per run, no key material is committed. Same versions as usage-support's dev-dependencies.
 rcgen = { version = "0.14.10", default-features = false, features = ["aws_lc_rs", "pem"] }
 tokio-rustls = { version = "0.26.6", default-features = false, features = ["aws_lc_rs", "tls12"] }
-rustls = { version = "0.23.45", default-features = false, features = ["std", "aws_lc_rs", "tls12"] }
+rustls = { version = "0.23.46", default-features = false, features = ["std", "aws_lc_rs", "tls12"] }
 
 [lints]
 workspace = true

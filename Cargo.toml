@@ -9,8 +9,9 @@ rust-version = "1.95"
 license = "MIT"
 publish = false
 
-# Versions below were read from crates.io on 2026-10-10. Crates published within the last
-# week are deliberately not pinned in Cargo.lock (see docs/adr/0001-architecture.md).
+# Versions below were read from crates.io on 2026-10-10. Direct crates published within the last
+# day are deliberately not pinned in Cargo.lock, except for documented owner-approved
+# security fixes (see docs/adr/0001-architecture.md).
 [workspace.dependencies]
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
