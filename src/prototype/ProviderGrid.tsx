@@ -12,7 +12,7 @@ import { SourceInfo } from './SourceInfo';
 
 interface GridProps {
   views: readonly HarnessView[];
-  selected: HarnessId;
+  selected: HarnessId | null;
   ctx: ViewContext;
   onSelect: (id: HarnessId) => void;
 }
@@ -20,9 +20,10 @@ interface GridProps {
 function ProviderCard({
   view,
   selected,
+  rovingId,
   ctx,
   onSelect,
-}: Omit<GridProps, 'views'> & { view: HarnessView }) {
+}: Omit<GridProps, 'views'> & { view: HarnessView; rovingId: HarnessId | undefined }) {
   const [sourceFocus, setSourceFocus] = useState(false);
   const chip = tabChip(view, summaryOf(view, ctx), ctx);
   const quotas = gridQuotas(view, ctx);
@@ -35,7 +36,7 @@ function ProviderCard({
       className="tab"
       aria-selected={view.id === selected}
       aria-controls={PANEL_ID}
-      tabIndex={view.id === selected ? 0 : -1}
+      tabIndex={view.id === rovingId ? 0 : -1}
       onClick={() => onSelect(view.id)}
       onFocus={(event) => setSourceFocus(event.currentTarget.matches(':focus-visible'))}
       onBlur={() => setSourceFocus(false)}
@@ -74,14 +75,24 @@ function ProviderCard({
 }
 
 export function ProviderGrid({ views, selected, ctx, onSelect }: GridProps) {
+  // With nothing selected, Tab still reaches the grid through its first card.
+  const rovingId = selected ?? views[0]?.id;
   useEffect(() => {
-    document
-      .getElementById(tabId(selected))
-      ?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
+    if (selected) {
+      document
+        .getElementById(tabId(selected))
+        ?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
+    }
   }, [selected]);
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     const ids = views.map((view) => view.id);
-    const index = ids.indexOf(selected);
+    if (selected === null && ids[0] && event.key.startsWith('Arrow')) {
+      event.preventDefault();
+      onSelect(ids[0]);
+      focusTab(ids[0]);
+      return;
+    }
+    const index = selected === null ? -1 : ids.indexOf(selected);
     const columns = getComputedStyle(event.currentTarget).gridTemplateColumns.split(' ').length;
     let target: number;
     switch (event.key) {
@@ -115,7 +126,14 @@ export function ProviderGrid({ views, selected, ctx, onSelect }: GridProps) {
   return (
     <div className="tabs" role="tablist" aria-label={t('tabs.label')} onKeyDown={onKeyDown}>
       {views.map((view) => (
-        <ProviderCard key={view.id} view={view} selected={selected} ctx={ctx} onSelect={onSelect} />
+        <ProviderCard
+          key={view.id}
+          view={view}
+          selected={selected}
+          rovingId={rovingId}
+          ctx={ctx}
+          onSelect={onSelect}
+        />
       ))}
     </div>
   );
