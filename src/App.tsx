@@ -89,10 +89,12 @@ function AppBody({ backend, preview }: { backend: Backend; preview: boolean }) {
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
   }, []);
   const [detailsEpoch, setDetailsEpoch] = useState(0);
+  const [deselected, setDeselected] = useState(false);
   const selectTab = useCallback(
     (id: HarnessId) => {
       const select = () => {
         setSelected(id);
+        setDeselected(false);
         setDetailsEpoch((epoch) => epoch + 1);
         toTop();
       };
@@ -205,7 +207,7 @@ function AppBody({ backend, preview }: { backend: Backend; preview: boolean }) {
                     <PreviewNavigation
                       views={views}
                       active={visible}
-                      selected={selected}
+                      selected={preview && deselected ? null : selected}
                       ctx={ctx}
                       onSelect={selectTab}
                       loaded={settingsApi.loaded}
@@ -256,8 +258,14 @@ function AppBody({ backend, preview }: { backend: Backend; preview: boolean }) {
                   {!inSettings &&
                     !loadFailure &&
                     view &&
+                    !(preview && deselected) &&
                     (preview ? (
-                      <PreviewPanel view={view} ctx={ctx} epoch={detailsEpoch} />
+                      <PreviewPanel
+                        view={view}
+                        ctx={ctx}
+                        epoch={detailsEpoch}
+                        onDeselect={() => setDeselected(true)}
+                      />
                     ) : (
                       <HarnessPanel view={view} ctx={ctx} />
                     ))}

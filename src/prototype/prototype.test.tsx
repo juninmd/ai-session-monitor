@@ -1,4 +1,4 @@
-import { act, render, renderHook, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, renderHook, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { App } from '../App';
@@ -174,5 +174,19 @@ describe('preview interactions', () => {
     );
     expect(screen.queryByRole('tab', { name: /^Claude Code/ })).toBeNull();
     expect(screen.getByRole('tabpanel')).toHaveAccessibleName('Codex');
+  });
+  it('deselects the provider when its detail is double-clicked and reselects on a card click', async () => {
+    freezeClock();
+    const backend = createMockBackend({ ...startFor('demo'), now: () => NOW });
+    const user = userEvent.setup();
+    render(<App backend={backend} preview />);
+    const claude = await screen.findByRole('tab', { name: /^Claude Code/ });
+    expect(claude).toHaveAttribute('aria-selected', 'true');
+    fireEvent.doubleClick(document.querySelector('.preview-details') as HTMLElement);
+    expect(claude).toHaveAttribute('aria-selected', 'false');
+    expect(screen.queryByRole('tabpanel')).toBeNull();
+    await user.click(claude);
+    expect(claude).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('tabpanel')).toBeVisible();
   });
 });

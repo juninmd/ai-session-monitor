@@ -23,7 +23,7 @@ export function PreviewNavigation({
 }: {
   views: readonly HarnessView[];
   active: readonly HarnessView[];
-  selected: HarnessId;
+  selected: HarnessId | null;
   ctx: ViewContext;
   onSelect: (id: HarnessId) => void;
   loaded: boolean;
@@ -86,10 +86,12 @@ function DetailAccordion({
   view,
   ctx,
   epoch,
+  onDeselect,
 }: {
   view: HarnessView;
   ctx: ViewContext;
   epoch?: number;
+  onDeselect: () => void;
 }) {
   const [open, setOpen] = useState(true);
   const detailsRef = useRef<HTMLDetailsElement>(null);
@@ -107,6 +109,7 @@ function DetailAccordion({
       className="preview-details"
       open={open}
       onToggle={(event) => setOpen(event.currentTarget.open)}
+      onDoubleClick={onDeselect}
     >
       <summary>
         Detalhes de {harnessName(view.id)}
@@ -123,15 +126,23 @@ export function PreviewPanel({
   view,
   ctx,
   epoch,
+  onDeselect,
 }: {
   view: HarnessView;
   ctx: ViewContext;
   epoch?: number;
+  onDeselect: () => void;
 }) {
   return (
     <section role="tabpanel" id={PANEL_ID} aria-labelledby={tabNameId(view.id)}>
       {view.state === 'ready' ? (
-        <DetailAccordion key={view.id} view={view} ctx={ctx} epoch={epoch} />
+        <DetailAccordion
+          key={view.id}
+          view={view}
+          ctx={ctx}
+          epoch={epoch}
+          onDeselect={onDeselect}
+        />
       ) : (
         <HarnessPanel view={view} ctx={ctx} />
       )}
