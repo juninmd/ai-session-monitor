@@ -3,6 +3,7 @@
 // that never fits a card still appears here.
 import { groupName } from '../../app/layout';
 import { modelWindow, type ViewContext, type WindowModel } from '../../app/windowModel';
+import { hasMessage, t } from '../../i18n';
 import type { HarnessView, UsageWindow } from '../../lib/contract';
 
 export interface SheetGroup {
@@ -10,6 +11,8 @@ export interface SheetGroup {
   id: string | null;
   /** The pool's own heading, or null when the windows are independent. */
   title: string | null;
+  /** Why the pool is separate, when the catalog explains it. */
+  note: string | null;
   windows: WindowModel[];
 }
 
@@ -21,6 +24,12 @@ export interface QuotaSheet {
   readable: number;
 }
 
+/** The pool's own explanation, the same one the current interface prints under the heading. */
+function poolNote(id: string): string | null {
+  const key = `group.note.${id}`;
+  return hasMessage(key) ? t(key) : null;
+}
+
 export function sheetOf(view: HarnessView, ctx: ViewContext): QuotaSheet {
   const byGroup = new Map<string | null, WindowModel[]>();
   for (const window of view.windows) {
@@ -30,6 +39,7 @@ export function sheetOf(view: HarnessView, ctx: ViewContext): QuotaSheet {
   const groups: SheetGroup[] = [...byGroup.entries()].map(([id, windows]) => ({
     id,
     title: id === null ? null : groupName(id),
+    note: id === null ? null : poolNote(id),
     windows,
   }));
   // Pools first: a grouped quota is only meaningful next to the pool it shares.

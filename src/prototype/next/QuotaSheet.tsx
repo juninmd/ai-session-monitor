@@ -18,6 +18,7 @@ import { t } from '../../i18n';
 import { durationParts, formatAmountValue, formatPercent, spokenDuration } from '../../i18n/format';
 import type { HarnessView } from '../../lib/contract';
 import { sheetOf } from './quotas';
+import { windowLabel } from './wording';
 
 const STATUS_WORD: Record<string, string> = {
   ok: 'tranquilo',
@@ -71,11 +72,14 @@ function RenewLine({ model, ctx }: { model: WindowModel; ctx: ViewContext }) {
 function WindowCard({
   model,
   ctx,
+  label,
   stale,
   depth,
 }: {
   model: WindowModel;
   ctx: ViewContext;
+  /** The pool plus the window, or the source's own title when the quota is independent. */
+  label: string;
   stale: boolean;
   /** 3 above a pool, 4 inside one, so the document never skips a level. */
   depth: 3 | 4;
@@ -90,7 +94,7 @@ function WindowCard({
       <header className="nx-chip-head">
         <Heading className="nx-chip-title">
           {model.cadenceGuessed && <EstimateMark />}
-          {model.title}
+          {label}
         </Heading>
         {status !== null && <span className="nx-chip-status">{STATUS_WORD[status]}</span>}
         <span className="nx-chip-pct" data-status={status ?? 'none'}>
@@ -129,12 +133,18 @@ export function QuotaSheet({ view, ctx }: { view: HarnessView; ctx: ViewContext 
     <div className="nx-sheet">
       {sheet.groups.map((group) => (
         <section className="nx-sheet-group" key={group.id ?? 'plain'}>
-          {group.title !== null && <h3 className="nx-sheet-pool">{group.title}</h3>}
+          {group.title !== null && (
+            <h3 className="nx-sheet-pool">
+              {group.title}
+              {group.note !== null && <span className="nx-sheet-note"> · {group.note}</span>}
+            </h3>
+          )}
           {group.windows.map((model) => (
             <WindowCard
               key={model.window.id}
               model={model}
               ctx={ctx}
+              label={windowLabel(view.id, model.window)}
               stale={view.stale}
               depth={group.title === null ? 3 : 4}
             />

@@ -16,6 +16,7 @@ import { availablePct } from '../../lib/usage';
 import { trendOf } from './historyModel';
 import { readableWindows } from './quotas';
 import { TrendChart } from './TrendChart';
+import { windowLabel } from './wording';
 
 const TREND_ICON = { more: 'alert', less: 'check', similar: 'clock', first: 'clock' } as const;
 
@@ -58,7 +59,7 @@ export function HistoryBoard({ view, ctx }: { view: HarnessView; ctx: ViewContex
               aria-pressed={window.id === active.id}
               onClick={() => setPicked(window.id)}
             >
-              {windowTitle(view.id, window)}
+              {windowLabel(view.id, window)}
               {window.usedPct !== null && (
                 <b className="nx-chip-btn-pct">
                   {formatPercent(sharePct(availablePct(window) ?? 0, used))}
