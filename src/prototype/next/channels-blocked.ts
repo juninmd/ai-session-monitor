@@ -1,0 +1,77 @@
+// Channels that exist but that this app must not read: every one of them needs an OAuth token, a
+// cookie, a browser session or a master key. They are listed so the decision is explicit rather
+// than an omission.
+import type { Channel } from './channels';
+
+export const BLOCKED: readonly Channel[] = [
+  {
+    id: 'openrouter-activity',
+    harness: 'OpenRouter',
+    title: 'Gasto diário por modelo',
+    shape: 'fact',
+    how: 'GET /api/v1/activity. Documentado, mas exige management key: a chave de inferência leva 403 (mesma situação do /credits).',
+    confidence: 'Alta',
+    reach: 'forbidden',
+    source: 'openrouter.ai/docs (activity)',
+  },
+  {
+    id: 'litellm-global-spend',
+    harness: 'LiteLLM',
+    title: 'Gasto global por modelo',
+    shape: 'fact',
+    how: '/global/spend/models e /global/spend/report. Exigem a master key do proxy, não a chave do usuário.',
+    confidence: 'Média',
+    reach: 'forbidden',
+    source: 'LiteLLM Swagger',
+  },
+  {
+    id: 'opencode-console-budget',
+    harness: 'OpenCode',
+    title: 'Orçamento e saldo do Zen',
+    shape: 'window',
+    how: 'Console /api/billing/status, /api/billing/account, /api/usage/cost-by-day. Existem, mas só atrás do login na Console (OAuth), não com a chave colada.',
+    confidence: 'Média',
+    reach: 'forbidden',
+    source: 'opencode-quota',
+  },
+  {
+    id: 'codex-wham',
+    harness: 'Codex',
+    title: 'Limites por recurso e resets bancados',
+    shape: 'window',
+    how: 'chatgpt.com/backend-api/wham/usage e /wham/rate-limit-reset-credits: limite semanal de code review, limites nomeados com janela própria, expiração de resets. É o backend privado do CLI, com auth.json e cabeçalhos próprios.',
+    confidence: 'Média',
+    reach: 'forbidden',
+    source: 'ai-usagebar vendor-endpoints',
+  },
+  {
+    id: 'antigravity-cloudcode',
+    harness: 'Antigravity',
+    title: 'Quota e plano pela Cloud Code',
+    shape: 'window',
+    how: 'POST daily-cloudcode-pa.googleapis.com/v1internal:retrieveUserQuotaSummary e :loadCodeAssist. Exige o token OAuth salvo pela IDE, que o app nunca lê.',
+    confidence: 'Média',
+    reach: 'forbidden',
+    source: 'ai-usagebar',
+  },
+  {
+    id: 'kimi-console',
+    harness: 'Kimi Code',
+    title: 'Detalhe de frequência no console',
+    shape: 'fact',
+    how: 'O console da plataforma expõe limites por modelo, mas só por sessão de navegador. Sem host novo, sem cookie, sem scraping — fica fora.',
+    confidence: 'Média',
+    reach: 'forbidden',
+    source: 'kimi-cli #2150',
+  },
+  {
+    id: 'cursor-dashboard',
+    harness: 'Cursor',
+    title: 'Pools incluídos e gasto sob demanda',
+    shape: 'window',
+    how: 'cursor.com/api/usage-summary e o Connect-RPC GetClientVisibleCreditGrants. Exigem cabeçalhos de navegador e podem devolver 403 na borda.',
+    confidence: 'Média',
+    reach: 'forbidden',
+    source: 'ai-usagebar',
+  },
+];

@@ -1,0 +1,165 @@
+/* The stage chrome (surface switch), the evidence list and the side-by-side comparison. */
+
+.nx-surfaces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-block-end: 0.5rem;
+}
+
+.nx-surfaces > button {
+  appearance: none;
+  display: grid;
+  gap: 0.05rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: var(--raise);
+  color: var(--ink-2);
+  text-align: start;
+  cursor: pointer;
+}
+
+.nx-surfaces > button:hover {
+  background: var(--raise-2);
+  color: var(--ink);
+}
+
+.nx-surfaces > button[aria-pressed="true"] {
+  border-color: color-mix(in oklab, var(--accent) 60%, var(--line));
+  background: color-mix(in oklab, var(--accent) 8%, var(--raise));
+  color: var(--ink);
+}
+
+.nx-surfaces > button small {
+  color: var(--ink-3);
+  font-size: var(--fs-xs);
+}
+
+/* ---------- sources ---------- */
+
+.nx-sources {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.nx-chan-list {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.nx-chan {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line-2);
+  border-radius: var(--r-ctl);
+  background: var(--solid);
+}
+
+.nx-chan[data-reach="now"] {
+  border-left-color: var(--accent);
+}
+
+.nx-chan[data-reach="forbidden"] {
+  border-left-color: var(--crit);
+}
+
+.nx-chan[data-outcome="ok"] {
+  border-left-color: var(--accent);
+}
+
+.nx-chan[data-outcome="error"] {
+  border-left-color: var(--crit);
+}
+
+.nx-chan-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.nx-chan-head > strong {
+  font-size: var(--fs-sm);
+}
+
+.nx-chan-title {
+  color: var(--ink-2);
+  font-size: var(--fs-sm);
+}
+
+.nx-chan-how {
+  color: var(--ink-2);
+  font-size: var(--fs-xs);
+  overflow-wrap: anywhere;
+}
+
+.nx-chan-caveat {
+  color: var(--warn-fill);
+  font-size: var(--fs-xs);
+  overflow-wrap: anywhere;
+}
+
+/* ---------- comparison ---------- */
+
+/* Both panes keep the application's real 27 rem frame, so the comparison is about the density the
+   app actually has; the columns are sized to it and the pair is centred on the wider stage. */
+.nx-compare {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 27rem));
+  justify-content: center;
+  gap: 1rem;
+  align-items: start;
+}
+
+.nx-compare-head {
+  margin-block-end: 0.5rem;
+  color: var(--ink-2);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.nx-compare-col {
+  min-inline-size: 0;
+}
+
+html[data-prototype="next"] .nx-compare .flyout {
+  margin: 0;
+  max-block-size: calc(100vh - 5.25rem);
+}
+
+@media (max-width: 60rem) {
+  .nx-compare {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (forced-colors: active) {
+  .nx-headline,
+  .nx-card,
+  .nx-h-row,
+  .nx-chan,
+  .nx-note,
+  .nx-connect,
+  .nx-pick-item,
+  .nx-palette {
+    border: 1px solid CanvasText;
+  }
+
+  .nx-card[data-tier="blocked"],
+  .nx-card[data-tier="risk"],
+  .nx-card[data-tier="watch"] {
+    box-shadow: inset 3px 0 0 CanvasText;
+  }
+
+  .nx-h-row[data-kind="short"] .nx-bar,
+  .nx-h-row[data-kind="out"] .nx-bar,
+  .nx-h-row[data-kind="unknown"] .nx-bar,
+  .nx-h-row[data-kind="broken"] .nx-bar {
+    background: Canvas;
+  }
+}

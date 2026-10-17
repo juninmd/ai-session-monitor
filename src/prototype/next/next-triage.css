@@ -1,0 +1,164 @@
+/* The triage surface: the headline, the rows ordered by urgency and the shared detail panel. */
+.nx-triage,
+.nx-rows {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.nx-headline {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid color-mix(in oklab, var(--accent) 32%, var(--line));
+  border-radius: var(--r-card);
+  background: color-mix(in oklab, var(--accent) 7%, var(--raise));
+}
+
+.nx-headline[data-tone="attention"] {
+  border-color: color-mix(in oklab, var(--crit) 45%, var(--line));
+  background: color-mix(in oklab, var(--crit) 8%, var(--raise));
+}
+
+.nx-headline > .ico {
+  margin-block-start: 0.1rem;
+  color: var(--accent);
+}
+
+.nx-headline[data-tone="attention"] > .ico {
+  color: var(--crit);
+}
+
+.nx-headline-text {
+  font-size: var(--fs-md);
+  font-weight: 600;
+  text-wrap: pretty;
+}
+
+.nx-headline-sub {
+  margin-block-start: 0.15rem;
+  color: var(--ink-3);
+  font-size: var(--fs-xs);
+}
+
+.nx-headline-jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.1rem;
+  margin-block-start: 0.25rem;
+}
+
+.nx-headline-jump .link-btn {
+  color: var(--crit);
+}
+
+.nx-card {
+  appearance: none;
+  display: grid;
+  gap: 0.35rem;
+  inline-size: 100%;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: var(--raise);
+  text-align: start;
+  cursor: pointer;
+}
+
+.nx-card:hover {
+  background: var(--raise-2);
+}
+
+.nx-card[aria-pressed="true"] {
+  border-color: color-mix(in oklab, var(--accent) 65%, var(--line));
+  background: color-mix(in oklab, var(--accent) 5%, var(--raise));
+}
+
+/* A provider that will be blocked before it renews gets a left rule, not a shout. */
+.nx-card[data-tier="blocked"],
+.nx-card[data-tier="risk"] {
+  box-shadow: inset 3px 0 0 var(--crit);
+}
+
+.nx-card[data-tier="watch"] {
+  box-shadow: inset 3px 0 0 var(--warn-fill);
+}
+
+.nx-card[data-tier="broken"] {
+  box-shadow: inset 3px 0 0 var(--line-2);
+}
+
+.nx-card-top {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-inline-size: 0;
+}
+
+.nx-card-top > .nx-name {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+
+.nx-pct {
+  flex: none;
+  font: 600 var(--fs-md) / 1.1 var(--font-disp);
+  font-variant-numeric: tabular-nums;
+}
+
+.nx-pct[data-status="warn"] {
+  color: var(--warn-fill);
+}
+
+.nx-pct[data-status="crit"],
+.nx-pct[data-status="out"] {
+  color: var(--crit);
+}
+
+.nx-verdict {
+  color: var(--ink-2);
+  font-size: var(--fs-sm);
+  text-wrap: pretty;
+}
+
+.nx-verdict[data-tier="blocked"],
+.nx-verdict[data-tier="risk"] {
+  color: var(--crit);
+  font-weight: 600;
+}
+
+.nx-verdict[data-tier="watch"] {
+  color: var(--warn-fill);
+  font-weight: 600;
+}
+
+/* The rows that are fine where they are, or that have nothing to report but that: one line of
+   text with the bar under it, the same shape the current grid card uses. */
+.nx-line {
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.6rem;
+  box-shadow: none;
+}
+
+.nx-line .nx-meta {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- detail panel ---------- */
+
+.nx-panel {
+  display: grid;
+  gap: 0.4rem;
+  padding-block-start: 0.6rem;
+  border-block-start: 1px solid var(--line-2);
+}
+
+.nx-panel-title {
+  font-size: var(--fs-base);
+  font-weight: 600;
+}
