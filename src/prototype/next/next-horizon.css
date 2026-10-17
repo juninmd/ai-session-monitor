@@ -1,0 +1,114 @@
+/* The horizon surface: one bar per provider, from now to that window's reset. */
+.nx-horizon {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.nx-h-row {
+  appearance: none;
+  display: grid;
+  gap: 0.3rem;
+  inline-size: 100%;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: var(--raise);
+  text-align: start;
+  cursor: pointer;
+}
+
+.nx-h-row:hover {
+  background: var(--raise-2);
+}
+
+.nx-h-row[aria-pressed="true"] {
+  border-color: color-mix(in oklab, var(--accent) 65%, var(--line));
+}
+
+.nx-h-head {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-inline-size: 0;
+}
+
+.nx-h-quota {
+  overflow: hidden;
+  color: var(--ink-3);
+  font-size: var(--fs-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nx-h-figure {
+  margin-inline-start: auto;
+  flex: none;
+  color: var(--ink-2);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.nx-h-figure[data-kind="short"],
+.nx-h-figure[data-kind="out"] {
+  color: var(--crit);
+  font-weight: 600;
+}
+
+.nx-h-track {
+  display: block;
+  block-size: 0.5rem;
+}
+
+.nx-h-track .nx-bar {
+  block-size: 100%;
+  border-radius: var(--r-bar);
+}
+
+.nx-h-foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.nx-h-renew {
+  flex: none;
+  white-space: nowrap;
+}
+
+/* The unfilled part of the track is time with no quota: it reads red when there is a shortfall,
+   and a hatch when nothing can be projected. The fill keeps the status colour the rest of the
+   interface prints, so a provider can never be "fine" here and "critical" in the triage. */
+.nx-h-row[data-kind="short"] .nx-bar,
+.nx-h-row[data-kind="out"] .nx-bar {
+  background: color-mix(in oklab, var(--crit) 24%, var(--raise-2));
+}
+
+.nx-h-row[data-kind="unknown"] .nx-bar,
+.nx-h-row[data-kind="broken"] .nx-bar {
+  background:
+    repeating-linear-gradient(135deg, var(--line-2) 0 3px, transparent 3px 7px), var(--raise-2);
+}
+
+.nx-h-row[data-kind="short"] .nx-bar i,
+.nx-h-row[data-kind="out"] .nx-bar i {
+  background: color-mix(in oklab, var(--fill, var(--accent)) 70%, var(--raise-2));
+}
+
+.nx-spark {
+  display: block;
+  block-size: 1.1rem;
+  color: var(--accent);
+  opacity: 0.65;
+}
+
+.nx-h-row[data-kind="short"] .nx-spark,
+.nx-h-row[data-kind="out"] .nx-spark {
+  color: var(--crit);
+}
+
+.nx-spark svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}

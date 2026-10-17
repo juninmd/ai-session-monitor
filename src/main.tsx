@@ -23,10 +23,13 @@ async function start(): Promise<void> {
   // The browser host draws a page and a shadow around the flyout; the Tauri window does not.
   document.documentElement.dataset.host = isTauriRuntime() ? 'tauri' : 'browser';
   // The visual preview is browser-only and uses its own fabricated, in-memory backend.
-  if (
-    !isTauriRuntime() &&
-    new URLSearchParams(window.location.search).get('prototype') === 'grid'
-  ) {
+  const prototype = new URLSearchParams(window.location.search).get('prototype');
+  if (!isTauriRuntime() && (prototype === 'grid' || prototype === 'next')) {
+    if (prototype === 'next') {
+      const { startNext } = await import('./prototype/next/start');
+      startNext(container);
+      return;
+    }
     const { startPrototype } = await import('./prototype/start');
     startPrototype(container);
     return;
