@@ -13,6 +13,16 @@ pub(crate) enum Pool {
     Other(String),
 }
 
+/// A model family that keeps an allowance of its own even when the name also mentions Gemini.
+///
+/// The vendor said so for Argon, when it reached paid Pro plans on 2026-10-15: "a separate
+/// weekly-only Argon quota for Pro on top of the existing Gemini bucket for 3.8 Flash", and a
+/// remaining Flash balance "should not be read as the amount of Argon work still available".
+/// Folding the two would merge allowances that do not share, which is the one thing a quota view
+/// must never do. An entry is added here only with vendor evidence; every other name keeps the
+/// shared-pool rule below.
+const SEPARATE_FAMILIES: [&str; 1] = ["argon"];
+
 impl Pool {
     pub(crate) fn id(&self) -> &str {
         match self {
@@ -27,6 +37,12 @@ impl Pool {
     pub(crate) fn of_name(text: &str) -> Option<Self> {
         let (mut gemini, mut third_party) = (false, false);
         for word in tokens(text).into_iter().filter_map(|token| token.word()) {
+            // Before anything else: a family with an allowance of its own is its own pool, whatever
+            // the rest of the name says.
+            if let Some(family) = SEPARATE_FAMILIES.iter().find(|family| word.starts_with(**family))
+            {
+                return Some(Self::Other((*family).to_owned()));
+            }
             gemini |= word.starts_with("gemini");
             third_party |= word.starts_with("claude")
                 || word.starts_with("gpt")
@@ -105,6 +121,19 @@ mod tests {
             ("gpt5", Pool::ClaudeGpt),
         ] {
             assert_eq!(Pool::of_name(name), Some(pool), "{name}");
+        }
+    }
+
+    #[test]
+    fn a_family_with_its_own_allowance_never_joins_a_shared_pool() {
+        // Argon is a weekly allowance of its own, on top of the Gemini bucket for 3.8 Flash, so a
+        // name that mentions Argon is never the shared Gemini pool.
+        for name in ["Gemini 4 Argon", "Argon", "gemini-4-argon (Pro)"] {
+            assert_eq!(Pool::of_name(name), Some(Pool::Other("argon".into())), "{name}");
+        }
+        // The shared pool is unchanged: Pro and Flash still answer as one.
+        for name in ["Gemini 3.8 Flash", "Gemini 3 Pro (Low)", "Gemini Models (beta)"] {
+            assert_eq!(Pool::of_name(name), Some(Pool::Gemini), "{name}");
         }
     }
 
