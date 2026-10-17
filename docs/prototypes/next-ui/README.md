@@ -29,6 +29,31 @@ Everything that decides status, pace and expiry comes from `src/lib/usage.ts` (`
 `paceOf`, `summarize`) through `src/app/windowModel.ts`. The prototype adds **no new rule**; it
 changes where the existing numbers are printed and in what order.
 
+## What the demo turns on
+
+The fabricated data is the kitchen sink the proposal is judged against, so the prototype backend
+switches on both opt-in paths that widen a source without changing it:
+
+- **Claude's per-model weekly caps.** `claude.oauthUsage` is on, so the 5 h window and the
+  all-models week are joined by **Opus**, **Sonnet** and **Fable** — each its own pool in the sheet,
+  exactly as `collector-claude` emits them (`fable:weekly`, carrying the label the source gave).
+  Without that switch the per-model caps never reach a view at all, which is why an earlier draft of
+  this branch showed none of them.
+- **Antigravity's Argon allowance.** Paid Pro plans were given a **weekly-only Argon allowance of
+  its own** in October 2026, on top of the Gemini bucket for 3.8 Flash, and the fixture carries it as
+  a third group. The sheet names the pool and repeats the reason: "Cota semanal própria, separada da
+  do Gemini."
+
+**An open question, flagged rather than assumed.** The fixture models Argon as a group of its own —
+the shape that needs no collector change, because `Pool::of_name`
+(`crates/collector-antigravity/src/quota/model.rs`) folds *any* group whose name mentions Gemini into
+the single `gemini` pool, and `merge`'s `tidy` then keeps only the most-used window per cadence. So
+if Antigravity instead reports it as "Gemini 4 Argon", or as a third bucket inside the Gemini group,
+the app would merge two allowances the vendor says are independent ("a remaining Flash balance should
+not be read as the amount of Argon work still available"). Which shape the CLI really sends has not
+been verified here; it needs a live `/usage` body before either the fixture or the collector is
+treated as settled.
+
 ## Surfaces
 
 ### Triagem — "do I need to act?"
@@ -218,23 +243,26 @@ amounts — the honesty rule the tests pin, confirmed in the browser.
 | [Triagem, carregando](08-triagem-loading.png) | `mock=loading`: "Lendo 5 fontes…", never "sem leitura" |
 | [Triagem, claro](09-triagem-light.png) | The same surface in the light theme |
 | [Detalhe e histórico](10-detalhe-historico.png) | The redesigned detail: one ficha per window with the real gauge, the trend against the earlier renewals, the chart with the projection and the "now" marker, and the additional information |
+| [Claude por modelo](11-claude-por-modelo.png) | Claude's per-model weekly caps as pools of their own: *Opus*, *Sonnet* and *Fable*, beside the 5 h window and the all-models week, with the opt-in badge that says where they come from |
+| [Argon no Antigravity](12-antigravity-argon.png) | The three Antigravity pools: *Gemini* ("Pro e Flash dividem a mesma cota."), *Claude e GPT-OSS* and *Argon* ("Cota semanal própria, separada da do Gemini.") |
 
 No capture shows interaction: hover, focus-visible, the palette's arrow keys, the wizard's steps
 after the first, and any transition still need a human at a keyboard.
 
 ## Tests
 
-`src/prototype/next/*.test.ts(x)` — 85 tests. The models: urgency order and the wording of each
-verdict, the quota sheet's grouping and the pooled name, the comparison against the earlier renewals
-and the projection's anchor and guards, the command list, its filtering, and what the copied summary
-may contain, and every pure helper of the wizard. The rendering: tier order in the DOM, two providers
-per row, several windows per card, the headline tone and its jump links, the shared detail with its
-heading order, the loading and empty states, a stale reading printing no number, no amount and no
-pace, arrow-key navigation with a single tab stop, Ctrl+K opening, filtering, running and closing
-with focus restored, the trend chart as one described image with its projection, the history staying
-unrequested when the setting is off and when the horizon trend is off, the wizard walking from a
-missing key to a first reading and surviving a detour into settings, the evidence list, and both
-panes of the comparison including an assertion that no element id repeats.
+`src/prototype/next/*.test.ts(x)` — 90 tests. The models: urgency order and the wording of every
+verdict, the quota sheet's grouping, pooled name and pool note, the comparison against the earlier
+renewals with the projection's anchor and its two guards, the command list, its filtering and what the
+copied summary may contain, and every pure helper of the wizard. The rendering: tier order in the DOM,
+two providers per row, several windows per card, the headline tone and its jump links, the shared
+detail with its heading order, the loading and empty states, a stale reading printing no number, no
+amount and no pace, a reading at the threshold getting words rather than only a colour, arrow-key
+navigation with a single tab stop, Ctrl+K opening, filtering, running and closing with focus restored,
+the trend chart as one described image carrying the projection, the history staying unrequested when
+the setting is off and when the horizon trend is off, Claude's per-model caps, Antigravity's Argon
+pool, the wizard walking from a missing key to a first reading and surviving a detour into settings,
+the evidence list, and both panes of the comparison including an assertion that no element id repeats.
 
 ```sh
 pnpm exec vitest run src/prototype/next

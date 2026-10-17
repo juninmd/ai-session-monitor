@@ -2,6 +2,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import triageCss from './next-triage.css?raw';
+import { nextBackend } from './start';
 import { mount, panel, RANK, rows } from './testHarness';
 
 describe('triage surface', () => {
@@ -81,6 +82,42 @@ describe('triage surface', () => {
     expect(notes.every((note) => (note.textContent ?? '').trim() !== '')).toBe(true);
   });
 
+  it('shows the per-model weekly caps a source reports, Fable included', async () => {
+    const { user } = mount('demo', {
+      settings: (draft) => {
+        draft.claude.oauthUsage = true;
+      },
+    });
+    await rows('data-tier');
+    const claude = [...document.querySelectorAll<HTMLElement>('button[data-tier]')].find((tile) =>
+      tile.textContent?.includes('Claude Code'),
+    );
+    if (claude === undefined) throw new Error('no Claude tile');
+    await user.click(claude);
+    const detail = panel('Claude Code');
+    expect(detail.textContent).toContain('Fable');
+    expect(detail.textContent).toContain('Opus');
+    expect(detail.textContent).toContain('Sonnet');
+    // Each model cap is its own section of the sheet, not folded into the all-models windows.
+    expect(detail.querySelectorAll('.nx-sheet-group').length).toBeGreaterThanOrEqual(4);
+  });
+
+  it('gives a pool that keeps its own allowance its own section and explanation', async () => {
+    const { user } = mount();
+    await rows('data-tier');
+    const antigravity = [...document.querySelectorAll<HTMLElement>('button[data-tier]')].find(
+      (tile) => tile.textContent?.includes('Antigravity'),
+    );
+    if (antigravity === undefined) throw new Error('no Antigravity tile');
+    await user.click(antigravity);
+    const detail = panel('Antigravity');
+    const pools = [...detail.querySelectorAll('.nx-sheet-pool')].map((node) => node.textContent);
+    expect(pools.some((text) => text?.includes('Argon'))).toBe(true);
+    // The Argon allowance is weekly-only and separate, and the sheet says so.
+    expect(detail.textContent).toContain('Cota semanal própria');
+    expect(pools.some((text) => text?.includes('Gemini'))).toBe(true);
+  });
+
   it('keeps the detail heading order, never skipping a level', async () => {
     mount();
     await rows('data-tier');
@@ -146,6 +183,19 @@ describe('triage surface', () => {
     expect(list.every((row) => row.getAttribute('data-tier') === 'loading')).toBe(true);
     expect(document.querySelector('.nx-headline-text')?.textContent).toMatch(/^Lendo /);
     expect(screen.getAllByText('lendo').length).toBeGreaterThan(0);
+  });
+
+  it('turns on the sample paths a review needs to see', async () => {
+    const backend = nextBackend('?mock=demo');
+    const settings = await backend.getSettings();
+    expect(settings.claude.oauthUsage).toBe(true);
+    const snapshot = await backend.getSnapshot();
+    const ids = (id: string) =>
+      snapshot.views.find((view) => view.id === id)?.windows.map((window) => window.id) ?? [];
+    // Claude's per-model caps, Fable included, and Antigravity's separate Argon allowance.
+    expect(ids('claude')).toContain('fable:weekly');
+    expect(ids('claude')).toContain('opus:weekly');
+    expect(ids('antigravity')).toContain('argon:weekly');
   });
 
   it('invites the first run when nothing is being monitored', async () => {

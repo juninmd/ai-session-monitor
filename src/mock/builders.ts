@@ -93,7 +93,19 @@ const POOLS = {
   crit: { gem5: 96, gemWeek: 70, cg5: 100, cgWeek: 55 },
 } as const;
 
-export function antigravityView(env: Env, mood: Mood, unknownPool = false): HarnessView {
+/**
+ * The Argon allowance Antigravity gave paid Pro plans in October 2026: a weekly-only allowance of
+ * its own, on top of the Gemini bucket, so a Flash balance is not the Argon balance. Ultra also
+ * carries a five hour meter for it, which this sample does not model.
+ */
+const ARGON = { ok: 12, warn: 46, crit: 88 } as const;
+
+export function antigravityView(
+  env: Env,
+  mood: Mood,
+  unknownPool = false,
+  argon = false,
+): HarnessView {
   const u = POOLS[mood];
   const unknown = (value: number) => (unknownPool ? null : value);
   const pool = (group: string, five: number | null, week: number | null) => [
@@ -120,6 +132,18 @@ export function antigravityView(env: Env, mood: Mood, unknownPool = false): Harn
     windows: [
       ...pool('gemini', u.gem5, u.gemWeek),
       ...pool('claude_gpt', unknown(u.cg5), unknown(u.cgWeek)),
+      ...(argon
+        ? [
+            windowOf(env, {
+              id: 'argon:weekly',
+              kind: 'weekly',
+              group: 'argon',
+              usedPct: ARGON[mood],
+              windowMinutes: 10080,
+              resetsInMin: 5120,
+            }),
+          ]
+        : []),
     ],
     notices: unknownPool
       ? [notice('antigravity_pool_unknown', 'warn', { pool: 'claude_gpt' })]

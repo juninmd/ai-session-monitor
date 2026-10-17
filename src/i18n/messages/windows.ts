@@ -111,9 +111,11 @@ export const windowMessages = {
   'group.sonnet': 'Sonnet',
   'group.gemini': 'Gemini',
   'group.claude_gpt': 'Claude e GPT-OSS',
+  'group.argon': 'Argon',
   'group.numbered': 'Grupo {n}',
   'group.note.gemini': 'Pro e Flash dividem a mesma cota.',
   'group.note.claude_gpt': 'Cota separada da do Gemini.',
+  'group.note.argon': 'Cota semanal própria, separada da do Gemini.',
 
   'facts.title.default': 'Detalhes',
   'facts.title.litellm': 'Limites da chave',

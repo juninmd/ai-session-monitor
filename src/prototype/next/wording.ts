@@ -7,8 +7,9 @@ import {
   rowTitle,
   type ViewContext,
   type WindowModel,
+  windowTitle,
 } from '../../app/windowModel';
-import type { UsageWindow } from '../../lib/contract';
+import type { HarnessId, UsageWindow } from '../../lib/contract';
 
 /**
  * "Opus · Semana" for a quota that belongs to a pool or a per-model group, "5 horas" for a plain
@@ -17,6 +18,15 @@ import type { UsageWindow } from '../../lib/contract';
 export function quotaName(window: UsageWindow): string {
   const base = rowTitle(window);
   return window.group === null ? base : `${groupName(window.group)} · ${base}`;
+}
+
+/**
+ * The name a list gives one window. An independent quota keeps the name the source's own title
+ * resolves to ("Semana, todos os modelos", "Sessão de 5 horas"); a quota that shares a pool is
+ * named by the pool and the window, so three per-model weeks never read as the same row.
+ */
+export function windowLabel(harness: HarnessId, window: UsageWindow): string {
+  return window.group === null ? windowTitle(harness, window) : quotaName(window);
 }
 
 /** "renova em 3 h 10" / "volta às 18:40" / "sem horário de renovação". */

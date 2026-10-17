@@ -18,7 +18,9 @@ export function nextBackend(search = window.location.search) {
   const start = startFor(scenario);
   for (const id of HARNESS_IDS) start.settings[id].enabled = ENABLED.includes(id);
   start.settings.general.showUsed = true;
-  start.settings.claude.oauthUsage = false;
+  // Claude's per-model weekly caps (Opus, Sonnet and any other label the source names) only reach
+  // the view through the opt-in per-model path, so the proposal turns it on to show them.
+  start.settings.claude.oauthUsage = true;
   const secrets = { ...start.secrets };
   for (const id of MISSING_KEYS) secrets[id] = false;
   return createMockBackend({ scenario, settings: start.settings, secrets, latencyMs: 60 });
