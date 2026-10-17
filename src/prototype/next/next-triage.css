@@ -1,6 +1,5 @@
-/* The triage surface: the headline, the rows ordered by urgency and the shared detail panel. */
-.nx-triage,
-.nx-rows {
+/* The triage surface: the headline and the compact grid of providers, ordered by urgency. */
+.nx-triage {
   display: grid;
   gap: 0.6rem;
 }
@@ -52,11 +51,22 @@
   color: var(--crit);
 }
 
-.nx-card {
-  appearance: none;
+/* ---------- the tile grid ---------- */
+
+/* Two providers per row at the flyout's real width, so each card has room for its own windows.
+   The whole alarm lives in the headline; a card states facts and never shouts. */
+.nx-tiles {
   display: grid;
-  gap: 0.35rem;
-  inline-size: 100%;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: 0.4rem;
+}
+
+.nx-tile {
+  appearance: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-inline-size: 0;
   padding: 0.5rem 0.6rem;
   border: 1px solid var(--line);
   border-radius: var(--r-card);
@@ -65,37 +75,23 @@
   cursor: pointer;
 }
 
-.nx-card:hover {
+.nx-tile:hover {
   background: var(--raise-2);
 }
 
-.nx-card[aria-pressed="true"] {
+.nx-tile[aria-pressed="true"] {
   border-color: color-mix(in oklab, var(--accent) 65%, var(--line));
   background: color-mix(in oklab, var(--accent) 5%, var(--raise));
 }
 
-/* A provider that will be blocked before it renews gets a left rule, not a shout. */
-.nx-card[data-tier="blocked"],
-.nx-card[data-tier="risk"] {
-  box-shadow: inset 3px 0 0 var(--crit);
-}
-
-.nx-card[data-tier="watch"] {
-  box-shadow: inset 3px 0 0 var(--warn-fill);
-}
-
-.nx-card[data-tier="broken"] {
-  box-shadow: inset 3px 0 0 var(--line-2);
-}
-
-.nx-card-top {
+.nx-tile-head {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.25rem;
   min-inline-size: 0;
 }
 
-.nx-card-top > .nx-name {
+.nx-tile-head > .nx-name {
   flex: 1 1 auto;
   min-inline-size: 0;
 }
@@ -115,50 +111,135 @@
   color: var(--crit);
 }
 
-.nx-verdict {
+/* A window spent past its cap says how far over, next to the reading. */
+.nx-tile-over {
+  flex: none;
+  color: var(--crit);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The remark, not the alarm: a dot and a few words in the quiet ink. */
+.nx-tile-note {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
   color: var(--ink-2);
-  font-size: var(--fs-sm);
+  font-size: var(--fs-xs);
   text-wrap: pretty;
 }
 
-.nx-verdict[data-tier="blocked"],
-.nx-verdict[data-tier="risk"] {
-  color: var(--crit);
-  font-weight: 600;
+.nx-tile-note > i {
+  flex: none;
+  inline-size: 0.4rem;
+  block-size: 0.4rem;
+  border-radius: 50%;
+  background: var(--ink-3);
 }
 
-.nx-verdict[data-tier="watch"] {
-  color: var(--warn-fill);
-  font-weight: 600;
+.nx-tile[data-tier="blocked"] .nx-tile-note > i,
+.nx-tile[data-tier="risk"] .nx-tile-note > i {
+  background: var(--crit);
 }
 
-/* The rows that are fine where they are, or that have nothing to report but that: one line of
-   text with the bar under it, the same shape the current grid card uses. */
-.nx-line {
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.35rem 0.6rem;
-  box-shadow: none;
+.nx-tile[data-tier="watch"] .nx-tile-note > i {
+  background: var(--warn-fill);
 }
 
-.nx-line .nx-meta {
-  flex: 1 1 auto;
+/* The pool a card's rows belong to, said once instead of in every row. */
+.nx-tile-group {
+  overflow: hidden;
+  color: var(--ink-3);
+  font-size: var(--fs-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- one quota window inside a card ---------- */
+
+.nx-q {
+  display: grid;
+  gap: 0.15rem;
   min-inline-size: 0;
+}
+
+.nx-q-text {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: baseline;
+  gap: 0.4rem;
+  min-inline-size: 0;
+  color: var(--ink-2);
+  font-size: var(--fs-xs);
+}
+
+.nx-q-name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* ---------- detail panel ---------- */
+.nx-q-renew,
+.nx-q-pct {
+  flex: none;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.nx-q-renew {
+  color: var(--ink-3);
+}
+
+/* The row the header number comes from, so the card explains itself. */
+.nx-q[data-limiting] .nx-q-name,
+.nx-q[data-limiting] .nx-q-pct {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.nx-q-pct[data-status="crit"],
+.nx-q-pct[data-status="out"] {
+  color: var(--crit);
+  font-weight: 600;
+}
+
+.nx-q .nx-bar {
+  block-size: 3px;
+}
+
+.nx-q-amount {
+  color: var(--ink-3);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.nx-tile-more {
+  margin-block-start: auto;
+  color: var(--ink-3);
+  font-size: var(--fs-xs);
+}
+
+/* ---------- detail panel shell ---------- */
 
 .nx-panel {
   display: grid;
-  gap: 0.4rem;
-  padding-block-start: 0.6rem;
+  gap: 0.6rem;
+  padding-block-start: 0.7rem;
   border-block-start: 1px solid var(--line-2);
 }
 
 .nx-panel-title {
-  font-size: var(--fs-base);
+  font-size: var(--fs-md);
   font-weight: 600;
+}
+
+.nx-detail-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nx-detail-head > .nx-panel-title {
+  flex: 1 1 auto;
+  min-inline-size: 0;
 }
