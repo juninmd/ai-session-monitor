@@ -1,56 +1,8 @@
-// The proposed surfaces, rendered on fabricated data. These assertions are about behaviour the
-// current interface does not have: urgency order, a headline, and a keyboard-first command list.
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+// The two list surfaces, rendered on fabricated data: the urgency-ordered grid and the horizon.
+import { screen, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import type { Settings } from '../../lib/contract';
-import { createMockBackend } from '../../mock';
-import { type ScenarioName, startFor } from '../../mock/scenarios';
-import { freezeClock, NOW } from '../../test/helpers';
-import { NextStage } from './NextStage';
-
-const RANK: Record<string, number> = {
-  blocked: 0,
-  risk: 1,
-  broken: 2,
-  watch: 3,
-  loading: 4,
-  fine: 5,
-  unknown: 6,
-};
-
-const OPTIONS = { now: () => NOW, latencyMs: 0 };
-
-interface MountOptions {
-  secrets?: Record<string, boolean>;
-  settings?: (draft: Settings) => void;
-}
-
-function mount(scenario: ScenarioName = 'demo', options: MountOptions = {}) {
-  freezeClock();
-  const start = startFor(scenario);
-  const settings = structuredClone(start.settings);
-  options.settings?.(settings);
-  const backend = createMockBackend({
-    scenario,
-    settings,
-    secrets: { ...start.secrets, ...options.secrets },
-    ...OPTIONS,
-  });
-  const user = userEvent.setup();
-  render(<NextStage backend={backend} />);
-  return { backend, user };
-}
-
-/** The rows of a list surface: buttons, marked by the tier or kind they carry. */
-async function rows(attribute: 'data-tier' | 'data-kind'): Promise<HTMLElement[]> {
-  await waitFor(() => expect(document.querySelector(`button[${attribute}]`)).not.toBeNull());
-  return [...document.querySelectorAll<HTMLElement>(`button[${attribute}]`)];
-}
-
-function panel(name: string) {
-  return screen.getByRole('region', { name });
-}
+import triageCss from './next-triage.css?raw';
+import { mount, panel, RANK, rows } from './testHarness';
 
 describe('triage surface', () => {
   it('lists every reachable provider in tier order and never puts a calm one first', async () => {
@@ -62,14 +14,94 @@ describe('triage surface', () => {
     expect(ranks[0]).toBeLessThanOrEqual(1);
   });
 
-  it('shows the projection, the renewal and the headline together', async () => {
+  it('fits several providers per row and several quotas per provider', async () => {
     mount();
     await rows('data-tier');
-    expect(screen.getAllByText(/Esgota às/).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/renova em /).length).toBeGreaterThan(0);
+    // z.ai reports three windows; the card must show all three rather than one.
+    const zai = [...document.querySelectorAll<HTMLElement>('button[data-tier]')].find((tile) =>
+      tile.textContent?.includes('z.ai'),
+    );
+    if (zai === undefined) throw new Error('no z.ai tile');
+    expect(zai.querySelectorAll('.nx-q')).toHaveLength(3);
+  });
+
+  it('lays the grid out for two providers per row, wide enough for the quotas to fit', () => {
+    // jsdom has no layout, so the density claim is pinned against the stylesheet itself.
+    expect(triageCss).toMatch(
+      /\.nx-tiles\s*\{[^}]*grid-template-columns:\s*repeat\(auto-fill,\s*minmax\(10rem,\s*1fr\)\)/,
+    );
+  });
+
+  it('keeps the renewal on the card and the projection in its own words', async () => {
+    mount();
+    const list = await rows('data-tier');
+    expect(screen.getAllByText(/sem cota/).length).toBeGreaterThan(0);
+    // Each window row prints its own reading and renewal, so a card explains its own number.
+    expect(list[0]?.textContent).toMatch(/%/);
+    expect(list[0]?.textContent).toMatch(/\d+(h|min|d)/);
+    expect(panel('Codex').textContent).toContain('renova em');
     const headline = document.querySelector('.nx-headline');
     expect(headline?.getAttribute('data-tone')).toBe('attention');
     expect(headline?.textContent).toMatch(/esgota|atenção/i);
+  });
+
+  it('draws the trend as one image with a description, projection included', async () => {
+    mount();
+    await rows('data-tier');
+    await waitFor(() => expect(panel('Codex').querySelector('svg.nx-chart')).not.toBeNull());
+    const chart = panel('Codex').querySelector('svg.nx-chart');
+    expect(chart?.getAttribute('role')).toBe('img');
+    expect(chart?.getAttribute('aria-labelledby')).toBeTruthy();
+    expect(chart?.querySelector('.nx-chart-now')).not.toBeNull();
+    expect(chart?.querySelector('.nx-chart-proj')).not.toBeNull();
+  });
+
+  it('never prints an old reading as a current one, in the card or the detail', async () => {
+    mount('stale');
+    await rows('data-tier');
+    const detail = panel('Codex');
+    expect(detail.textContent).toContain('Percentual desconhecido');
+    expect(detail.textContent).not.toContain('No ritmo atual');
+    expect(detail.querySelectorAll('.gauge-void').length).toBeGreaterThan(0);
+    expect(detail.querySelector('.nx-chart-now')).toBeNull();
+    // A stale reading has no live number, so it must not print an amount either — on the card or
+    // in the detail.
+    expect(detail.textContent).not.toMatch(/de US\$|gastos, sem teto/);
+    const litellm = [...document.querySelectorAll<HTMLElement>('button[data-tier]')].find((tile) =>
+      tile.textContent?.includes('LiteLLM'),
+    );
+    if (litellm !== undefined) expect(litellm.textContent).not.toMatch(/US\$/);
+  });
+
+  it('gives a reading at the threshold its own words, not only a colour', async () => {
+    mount();
+    await rows('data-tier');
+    const notes = [...document.querySelectorAll<HTMLElement>('.nx-tile-note')];
+    expect(notes.length).toBeGreaterThan(0);
+    expect(notes.every((note) => (note.textContent ?? '').trim() !== '')).toBe(true);
+  });
+
+  it('keeps the detail heading order, never skipping a level', async () => {
+    mount();
+    await rows('data-tier');
+    const levels = [...panel('Codex').querySelectorAll('h1,h2,h3,h4,h5,h6')].map((heading) =>
+      Number(heading.tagName.slice(1)),
+    );
+    expect(levels[0]).toBe(2);
+    for (let index = 1; index < levels.length; index += 1) {
+      expect(levels[index]).toBeLessThanOrEqual((levels[index - 1] ?? 0) + 1);
+    }
+  });
+
+  it('does not ask for history when the user turned it off', async () => {
+    const { backend } = mount('demo', {
+      settings: (draft) => {
+        draft.general.historyEnabled = false;
+      },
+    });
+    await rows('data-tier');
+    expect(backend.calls).not.toContain('get_history');
+    expect(panel('Codex').textContent).not.toContain('Histórico');
   });
 
   it('offers a jump to every provider the headline names', async () => {
@@ -87,6 +119,8 @@ describe('triage surface', () => {
     if (target === undefined) throw new Error('no Codex row');
     await user.click(target);
     expect(panel('Codex')).toBeVisible();
+    expect(panel('Codex').textContent).toContain('Histórico');
+    expect(panel('Codex').textContent).toContain('Informações adicionais');
   });
 
   it('moves the selection with the arrow keys and keeps one tab stop', async () => {
@@ -111,7 +145,7 @@ describe('triage surface', () => {
     const list = await rows('data-tier');
     expect(list.every((row) => row.getAttribute('data-tier') === 'loading')).toBe(true);
     expect(document.querySelector('.nx-headline-text')?.textContent).toMatch(/^Lendo /);
-    expect(screen.getAllByText('Lendo…').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('lendo').length).toBeGreaterThan(0);
   });
 
   it('invites the first run when nothing is being monitored', async () => {
@@ -141,156 +175,20 @@ describe('horizon surface', () => {
     expect(screen.getAllByText(/esgota às|já esgotado/i).length).toBeGreaterThan(0);
   });
 
-  it('only asks for history once the trend is switched on', async () => {
+  it('only asks every provider for its history once the trend is switched on', async () => {
     const { backend, user } = mount();
     await rows('data-tier');
+    // The open detail panel always charts its one provider; the grid must not add to that.
+    const afterPanel = backend.calls.filter((call) => call === 'get_history').length;
+    expect(afterPanel).toBeLessThanOrEqual(1);
     await user.click(screen.getByRole('button', { name: /^Horizonte/ }));
     await rows('data-kind');
-    expect(backend.calls).not.toContain('get_history');
+    expect(backend.calls.filter((call) => call === 'get_history')).toHaveLength(afterPanel);
     await user.click(screen.getByRole('checkbox', { name: /Mostrar tendência/ }));
-    await waitFor(() => expect(backend.calls).toContain('get_history'));
-  });
-});
-
-describe('command palette', () => {
-  it('opens with Ctrl+K, filters and runs the highlighted command', async () => {
-    const { user } = mount();
-    await rows('data-tier');
-    fireEvent.keyDown(window, { key: 'k', ctrlKey: true });
-    const dialog = await screen.findByRole('dialog', { name: 'Comando rápido' });
-    await user.type(within(dialog).getByRole('combobox'), 'codex');
-    await user.keyboard('{Enter}');
-    expect(screen.queryByRole('dialog', { name: 'Comando rápido' })).toBeNull();
-    expect(panel('Codex')).toBeVisible();
-  });
-
-  it('closes on Escape and returns focus to whatever opened it', async () => {
-    const { user } = mount();
-    await rows('data-tier');
-    const opener = screen.getByRole('button', { name: /^Triagem/ });
-    opener.focus();
-    fireEvent.keyDown(window, { key: 'k', ctrlKey: true });
-    const dialog = await screen.findByRole('dialog', { name: 'Comando rápido' });
-    await user.type(within(dialog).getByRole('combobox'), 'nada-a-ver');
-    expect(within(dialog).getByText('Nada encontrado')).toBeVisible();
-    await user.keyboard('{Escape}');
-    expect(screen.queryByRole('dialog', { name: 'Comando rápido' })).toBeNull();
-    expect(document.activeElement).toBe(opener);
-  });
-
-  it('runs a whole-fleet refresh from the palette', async () => {
-    const { backend, user } = mount();
-    await rows('data-tier');
-    fireEvent.keyDown(window, { key: 'k', ctrlKey: true });
-    const dialog = await screen.findByRole('dialog', { name: 'Comando rápido' });
-    await user.type(within(dialog).getByRole('combobox'), 'atualizar todas');
-    await user.keyboard('{Enter}');
-    expect(backend.calls).toContain('refresh');
-    expect(screen.queryByRole('dialog', { name: 'Comando rápido' })).toBeNull();
-  });
-
-  it('lists the command surface without opening the dialog', async () => {
-    const { user } = mount();
-    await rows('data-tier');
-    await user.click(screen.getByRole('button', { name: /^Comando/ }));
-    expect(screen.getByRole('heading', { name: /Comando rápido/ })).toBeVisible();
-    expect(screen.getByRole('button', { name: 'Abrir comando rápido' })).toBeVisible();
-    expect(screen.queryByRole('dialog')).toBeNull();
-  });
-});
-
-describe('guided first run and the evidence list', () => {
-  it('asks for the key of a source that cannot read yet, then walks to the first reading', async () => {
-    const { user } = mount('demo', { secrets: { kimi: false } });
-    await rows('data-tier');
-    await user.click(screen.getByRole('button', { name: /^Primeiro uso/ }));
-    // Kimi is on but has no key, so it is already picked and the wizard owes us a credential step.
-    await user.click(screen.getByRole('button', { name: /^Continuar com/ }));
-    await user.click(screen.getByRole('button', { name: 'Já conectei' }));
-    await user.click(screen.getByRole('button', { name: /Ler agora/ }));
-    await user.click(screen.getByRole('button', { name: 'Concluir' }));
-    expect(screen.getByRole('button', { name: 'Ir para o painel' })).toBeVisible();
-  });
-
-  it('skips the credential step when every chosen source already has what it needs', async () => {
-    const { user } = mount();
-    await rows('data-tier');
-    await user.click(screen.getByRole('button', { name: /^Primeiro uso/ }));
-    await user.click(screen.getByRole('button', { name: /^Continuar com/ }));
-    expect(screen.getByRole('heading', { name: /O que cada fonte respondeu/ })).toBeVisible();
-  });
-
-  it('keeps the wizard step and the picked list when a source sends us to its settings', async () => {
-    const { user } = mount('demo', {
-      settings: (draft) => {
-        draft.claude.shimConsent = false;
-      },
-    });
-    await rows('data-tier');
-    await user.click(screen.getByRole('button', { name: /^Primeiro uso/ }));
-    await user.click(screen.getByRole('button', { name: /^Continuar com/ }));
-    await user.click(screen.getByRole('button', { name: 'Ver detalhes' }));
-    expect(document.querySelector('#grp-claude')).not.toBeNull();
-    await user.click(screen.getByRole('button', { name: 'Configurações' }));
-    expect(screen.getByRole('button', { name: 'Já conectei' })).toBeVisible();
-  });
-
-  it('does not switch a source off just because it has no key yet', async () => {
-    const { backend, user } = mount('demo', { secrets: { kimi: false } });
-    await rows('data-tier');
-    await user.click(screen.getByRole('button', { name: /^Primeiro uso/ }));
-    await user.click(screen.getByRole('button', { name: /^Continuar com/ }));
-    expect((await backend.getSettings()).kimi.enabled).toBe(true);
-  });
-
-  it('lists the quota channels that are reachable and the ones that are not', async () => {
-    const { user } = mount();
-    await rows('data-tier');
-    await user.click(screen.getByRole('button', { name: /^Canais de cota/ }));
-    expect(screen.getByRole('heading', { name: 'O que ainda dá para ler' })).toBeVisible();
-    expect(screen.getByText('Créditos de uso (orçamento mensal)')).toBeVisible();
-    expect(screen.getByText(/Orçamentos por escopo, com reset/)).toBeVisible();
-    expect(screen.getByRole('heading', { name: /Existe, mas fora das regras/ })).toBeVisible();
-    expect(screen.getAllByText(/precisa de entrada própria em docs\/data-sources.md/).length).toBe(
-      2,
+    await waitFor(() =>
+      expect(backend.calls.filter((call) => call === 'get_history').length).toBeGreaterThan(
+        afterPanel,
+      ),
     );
   });
 });
-
-describe('side-by-side comparison', () => {
-  it('puts the current interface next to the proposal on the same fabricated data', async () => {
-    const { user } = mount();
-    await rows('data-tier');
-    await user.click(screen.getByRole('button', { name: /^Comparar/ }));
-    expect(screen.getByRole('region', { name: 'Interface atual' })).toBeVisible();
-    expect(screen.getByRole('region', { name: 'Proposta' })).toBeVisible();
-  });
-
-  it('leaves the comparison when settings open, so no element id appears twice', async () => {
-    const { user } = mount();
-    await rows('data-tier');
-    await user.click(screen.getByRole('button', { name: /^Comparar/ }));
-    // The second gear is the proposal pane's; the first belongs to the current interface.
-    const gears = screen.getAllByRole('button', { name: 'Configurações' });
-    const mine = gears[1];
-    if (mine === undefined) throw new Error('the proposal pane has no settings toggle');
-    await user.click(mine);
-    expect(screen.queryByRole('region', { name: 'Proposta' })).toBeNull();
-    const ids = [...document.querySelectorAll('[id]')].map((node) => node.id);
-    expect(ids.length).toBe(new Set(ids).size);
-  });
-
-  it('keeps the proposal within its own ids so the two panes never share one', async () => {
-    const { user } = mount();
-    await rows('data-tier');
-    await user.click(screen.getByRole('button', { name: /^Comparar/ }));
-    const namespaced = [...document.querySelectorAll('[id]')].filter((node) =>
-      node.id.startsWith('nx-'),
-    );
-    expect(namespaced.length).toBeGreaterThan(3);
-    const ids = [...document.querySelectorAll('[id]')].map((node) => node.id);
-    expect(ids.length).toBe(new Set(ids).size);
-  });
-});
-
-/** The rows of a list surface: buttons, marked by the tier or kind they carry. */

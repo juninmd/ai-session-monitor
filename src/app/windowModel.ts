@@ -185,8 +185,10 @@ export function gaugeTip(m: WindowModel, ctx: ViewContext): string {
 }
 
 export function gaugeLabel(m: WindowModel, title: string = m.title): string {
-  if (m.shown === null) return t('gauge.label_unknown', { title });
+  // The window's own state comes first: a reset window is not "unknown", and a silence around it
+  // must not be described as a missing percentage.
   if (m.expired) return t('gauge.label_expired', { title });
+  if (m.shown === null) return t('gauge.label_unknown', { title });
   const named = m.cadenceGuessed ? `${title} (${t('estimate.word')})` : title;
   return tq('gauge.label', m.showUsed, { title: named, pct: formatPercent(m.shown) });
 }

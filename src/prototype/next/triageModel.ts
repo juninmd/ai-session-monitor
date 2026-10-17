@@ -13,7 +13,6 @@ import {
 import { formatAge, formatClock, formatDuration } from '../../i18n/format';
 import type { HarnessId, HarnessView, UsageWindow } from '../../lib/contract';
 import type { Pace, Status } from '../../lib/usage';
-import { quotaName } from './wording';
 
 export type Tier = 'blocked' | 'risk' | 'broken' | 'loading' | 'watch' | 'fine' | 'unknown';
 
@@ -32,11 +31,14 @@ export interface TriageRow {
   view: HarnessView;
   /** The limiting window, when the view has a reading to stand on. */
   model: WindowModel | null;
-  /** The name of the limiting quota, with its pool when it belongs to one. */
-  windowName: string | null;
   tier: Tier;
   /** One sentence, in the words a person would use. */
   verdict: string;
+  /**
+   * The same verdict cut for a card: "esgotado · volta 10:41", "26 h sem cota", "antigo". Empty
+   * when the reading needs no remark, which is what keeps a healthy card quiet.
+   */
+  short: string;
   /** Epoch seconds the quota runs out, null when it will not. */
   runsOutAt: number | null;
   /** The full projection, for the tooltip and the screen reader. */
@@ -79,6 +81,16 @@ export function compareUrgency(a: TriageRow, b: TriageRow): number {
   return share(a) - share(b);
 }
 
+/**
+ * A reading at the threshold with no projection still needs a remark of its own: colour must never
+ * be the only signal the card gives, and in forced-colors it would be the only one.
+ */
+function statusNote(status: Status | null): string {
+  if (status === 'crit') return 'crítico';
+  if (status === 'warn') return 'no limite';
+  return '';
+}
+
 function brokenVerdict(view: HarnessView, ctx: ViewContext): string {
   if (view.error === null) {
     return view.readAt === null
@@ -92,16 +104,28 @@ function tierVerdict(
   view: HarnessView,
   model: WindowModel | null,
   ctx: ViewContext,
-): { verdict: string; runsOutAt: number | null } {
-  if (isBroken(view)) return { verdict: brokenVerdict(view, ctx), runsOutAt: null };
-  if (view.state === 'loading') return { verdict: 'Lendo…', runsOutAt: null };
-  if (model === null) return { verdict: 'Sem leitura', runsOutAt: null };
+): { verdict: string; short: string; runsOutAt: number | null } {
+  if (isBroken(view)) {
+    return {
+      verdict: brokenVerdict(view, ctx),
+      short: view.error === null ? 'antigo' : 'falha',
+      runsOutAt: null,
+    };
+  }
+  if (view.state === 'loading') {
+    return { verdict: 'Lendo…', short: 'lendo', runsOutAt: null };
+  }
+  if (model === null) {
+    return { verdict: 'Sem leitura', short: 'sem leitura', runsOutAt: null };
+  }
   const fmt = durationFormat(ctx.settings);
   switch (model.pace.kind) {
     case 'out': {
       const when = model.window.resetsAt;
+      const back = when === null ? null : formatClock(when, ctx.nowSecs);
       return {
-        verdict: `Esgotado · volta ${when === null ? 'sem data' : formatClock(when, ctx.nowSecs).label}`,
+        verdict: `Esgotado · volta ${back === null ? 'sem data' : back.label}`,
+        short: back === null ? 'esgotado' : `esgotado · volta ${back.text}`,
         runsOutAt: ctx.nowSecs,
       };
     }
@@ -109,15 +133,20 @@ function tierVerdict(
       const at = model.pace.runwayMin;
       return {
         verdict: `Esgota ${formatClock(Math.round(ctx.nowSecs + at * 60), ctx.nowSecs).label} · ${formatDuration(model.pace.earlyMin, fmt, model.long)} sem cota`,
+        short: `${formatDuration(model.pace.earlyMin, fmt, model.long)} sem cota`,
         runsOutAt: ctx.nowSecs + at * 60,
       };
     }
     case 'fine':
-      return { verdict: 'Dura até renovar', runsOutAt: null };
+      return { verdict: 'Dura até renovar', short: statusNote(model.status), runsOutAt: null };
     case 'early':
-      return { verdict: 'Cedo para prever', runsOutAt: null };
+      return { verdict: 'Cedo para prever', short: statusNote(model.status), runsOutAt: null };
     case 'unknown':
-      return { verdict: 'Sem base para prever', runsOutAt: null };
+      return {
+        verdict: 'Sem base para prever',
+        short: statusNote(model.status),
+        runsOutAt: null,
+      };
   }
 }
 
@@ -132,9 +161,9 @@ export function triageRow(view: HarnessView, ctx: ViewContext): TriageRow {
   return {
     view,
     model: shown,
-    windowName: window === null ? null : quotaName(window),
     tier,
     verdict: bare.verdict,
+    short: bare.short,
     runsOutAt: bare.runsOutAt,
     detail: shown === null ? bare.verdict : (paceLine(shown, ctx)?.text ?? bare.verdict),
   };

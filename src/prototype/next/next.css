@@ -2,6 +2,7 @@
    every selector here is either scoped to `html[data-prototype="next"]` or prefixed with `nx-`:
    the production flyout must not inherit a single rule from this file. */
 @import "./next-triage.css";
+@import "./next-detail.css";
 @import "./next-horizon.css";
 @import "./next-palette.css";
 @import "./next-sources.css";

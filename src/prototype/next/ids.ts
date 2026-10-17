@@ -13,6 +13,11 @@ export function nxNameId(id: HarnessId): string {
   return `nx-name-${id}`;
 }
 
+/** The detail panel's own heading id: the tile already owns `nx-name-<id>`. */
+export function nxTitleId(id: HarnessId): string {
+  return `nx-title-${id}`;
+}
+
 export function focusRow(id: HarnessId): void {
   document.getElementById(nxTabId(id))?.focus();
 }

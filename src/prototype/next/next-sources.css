@@ -140,7 +140,8 @@ html[data-prototype="next"] .nx-compare .flyout {
 
 @media (forced-colors: active) {
   .nx-headline,
-  .nx-card,
+  .nx-tile,
+  .nx-chip,
   .nx-h-row,
   .nx-chan,
   .nx-note,
@@ -150,10 +151,20 @@ html[data-prototype="next"] .nx-compare .flyout {
     border: 1px solid CanvasText;
   }
 
-  .nx-card[data-tier="blocked"],
-  .nx-card[data-tier="risk"],
-  .nx-card[data-tier="watch"] {
-    box-shadow: inset 3px 0 0 CanvasText;
+  /* Selection and severity are drawn with colour in the normal theme, so both need a shape here. */
+  .nx-tile[aria-pressed="true"],
+  .nx-h-row[aria-pressed="true"],
+  .nx-chip-btn[aria-pressed="true"],
+  .nx-pick-item[aria-pressed="true"] {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+
+  .nx-tile[data-tier="blocked"] .nx-tile-note > i,
+  .nx-tile[data-tier="risk"] .nx-tile-note > i,
+  .nx-tile[data-tier="watch"] .nx-tile-note > i {
+    background: CanvasText;
+    outline: 1px solid CanvasText;
   }
 
   .nx-h-row[data-kind="short"] .nx-bar,
