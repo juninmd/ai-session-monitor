@@ -51,7 +51,9 @@
 //!   that says so). No server is a normal state (`NotRunning`, retryable).
 //! - The CSRF token lives in a `Secret` from the command line to the request header and appears
 //!   in no error, notice, fact or log.
-//! - Pools: Gemini Pro and Flash share one (`gemini`), Claude and GPT-OSS another (`claude_gpt`).
+//! - Pools: Gemini Pro and Flash share one (`gemini`), Claude and GPT-OSS another (`claude_gpt`),
+//!   and a family the vendor gave an allowance of its own keeps a third (`argon` for Gemini 4
+//!   Argon), so a separate allowance is never merged into a shared one.
 //!   Windows are `<pool>:five_hour` and `<pool>:weekly`; `used_pct` is `(1 - remainingFraction)
 //!   * 100`. A missing or out-of-range share is unknown (`None`), never 0 %, with the notice
 //!   `antigravity_pool_unknown`.
