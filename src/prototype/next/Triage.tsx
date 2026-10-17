@@ -1,18 +1,21 @@
-// Triage: the proposed home. One headline answers "do I need to act?", then the providers are
-// listed by urgency instead of in a fixed order, with the projection — the most valuable signal —
-// printed on the row that owns it instead of hidden inside its detail panel.
+// Triage: the proposed home. One headline answers "do I need to act?"; below it every provider sits
+// in one grid of two per row, ordered by urgency rather than by registration. The wider card is
+// spent on detail — each provider's own quota windows with their reading and renewal — while the
+// alarm stays in the headline and the card itself only states the facts.
 import { type KeyboardEvent, useMemo } from 'react';
 import { harnessName } from '../../app/harness';
 import { showsUsed } from '../../app/quota';
+import { summaryOf, tabChip } from '../../app/tabModel';
 import type { ViewContext } from '../../app/windowModel';
 import { Icon } from '../../components/icons';
-import { formatPercent } from '../../i18n/format';
-import type { HarnessId, HarnessView } from '../../lib/contract';
+import { formatAmountValue, formatPercent } from '../../i18n/format';
+import type { HarnessId, HarnessView, UsageWindow } from '../../lib/contract';
+import { compactQuota, gridQuotas } from '../quotaModel';
 import { GroupHead, Logo, ShareBar, type Tone } from './Bits';
 import { nxNameId, nxTabId } from './ids';
 import { headlineOf, type TriageBoard, type TriageRow, triageOf } from './triageModel';
 import { useRovingTabs } from './useRovingTabs';
-import { renewalText } from './wording';
+import { quotaName } from './wording';
 
 export interface TriageProps {
   views: readonly HarnessView[];
@@ -22,73 +25,122 @@ export interface TriageProps {
   onConfigure: () => void;
 }
 
+/** How many windows one card opens with; the rest stay one click away in the detail. */
 function readingOf(row: TriageRow): { pct: number | null; tone: Tone } {
   if (row.model === null) return { pct: null, tone: 'none' };
   return { pct: row.model.shown, tone: row.model.status ?? 'none' };
 }
 
-function RowOption({
+function Amount({ window }: { window: UsageWindow }) {
+  const amount = window.amount;
+  if (amount === null) return null;
+  const used = formatAmountValue(amount.used, amount.unit);
+  return (
+    <span className="nx-q-amount">
+      {amount.limit === null ? used : `${used} de ${formatAmountValue(amount.limit, amount.unit)}`}
+    </span>
+  );
+}
+
+function QuotaRows({ row, ctx }: { row: TriageRow; ctx: ViewContext }) {
+  const quotas = gridQuotas(row.view, ctx);
+  if (quotas.windows.length === 0) {
+    const chip = tabChip(row.view, summaryOf(row.view, ctx), ctx);
+    return <span className="nx-meta">{chip.kind === 'text' ? chip.text : 'Carregando'}</span>;
+  }
+  const limiting = row.model?.window.id;
+  return (
+    <>
+      {quotas.group !== null && (
+        <span className="nx-tile-group" title={quotas.group}>
+          {quotas.group}
+        </span>
+      )}
+      {quotas.windows.map((window) => {
+        const quota = compactQuota(row.view, window, ctx);
+        return (
+          <span
+            className="nx-q"
+            key={window.id}
+            data-limiting={window.id === limiting || undefined}
+          >
+            <span className="nx-q-text">
+              <span className="nx-q-name" title={quotaName(window)}>
+                {quota.name}
+              </span>
+              <span className="nx-q-renew">{quota.renewal}</span>
+              <span className="nx-q-pct" data-status={quota.status}>
+                {quota.reading}
+              </span>
+            </span>
+            <ShareBar pct={quota.shown} tone={quota.status ?? 'none'} label={quota.spoken} />
+            {!row.view.stale && !quota.model.expired && <Amount window={window} />}
+          </span>
+        );
+      })}
+    </>
+  );
+}
+
+function Tile({
   row,
   ctx,
   selected,
   onSelect,
   onKeyDown,
-  compact,
 }: {
   row: TriageRow;
   ctx: ViewContext;
   selected: boolean;
   onSelect: (id: HarnessId) => void;
   onKeyDown: (event: KeyboardEvent<HTMLElement>) => void;
-  compact: boolean;
 }) {
   const { id } = row.view;
   const { pct, tone } = readingOf(row);
   const name = harnessName(id);
-  const renewal = renewalText(row.model, ctx);
-  // A comfortable row is one line about its quota; anything else leads with why it is not fine.
-  const parts = compact
-    ? row.tier === 'fine'
-      ? [row.windowName, renewal]
-      : [row.verdict, row.windowName]
-    : [row.windowName, renewal];
-  const meta = parts.filter((part) => part !== null && part !== '').join(' · ');
+  const quotas = gridQuotas(row.view, ctx);
+  const over = row.model?.over ?? null;
   return (
-    <li>
-      <button
-        type="button"
-        id={nxTabId(id)}
-        className={compact ? 'nx-card nx-line' : 'nx-card'}
-        aria-pressed={selected}
-        tabIndex={selected ? 0 : -1}
-        data-tier={row.tier}
-        onKeyDown={onKeyDown}
-        onClick={() => onSelect(id)}
-      >
-        <span className="nx-card-top">
-          <Logo id={id} size={compact ? 16 : 18} />
-          <span className="nx-name" id={nxNameId(id)}>
-            {name}
-          </span>
-          {compact && <span className="nx-meta">{meta}</span>}
-          <span className="nx-pct" data-status={tone}>
-            {formatPercent(pct)}
-          </span>
+    <button
+      type="button"
+      id={nxTabId(id)}
+      className="nx-tile"
+      aria-pressed={selected}
+      tabIndex={selected ? 0 : -1}
+      data-tier={row.tier}
+      title={row.detail}
+      onKeyDown={onKeyDown}
+      onClick={() => onSelect(id)}
+    >
+      <span className="nx-tile-head">
+        <Logo id={id} size={16} />
+        <span className="nx-name" id={nxNameId(id)}>
+          {name}
         </span>
-        <ShareBar pct={pct} tone={tone} label={`${name}: ${formatPercent(pct)}`} />
-        {!compact && (
-          <>
-            <span className="nx-verdict" data-tier={row.tier} title={row.detail}>
-              {row.verdict}
-            </span>
-            <span className="nx-meta">
-              {meta}
-              <span className="vh"> {row.detail}</span>
-            </span>
-          </>
+        {over !== null && (
+          <span className="nx-tile-over">
+            {'+'}
+            {formatPercent(over - 100)}
+          </span>
         )}
-      </button>
-    </li>
+        <span className="nx-pct" data-status={tone}>
+          {formatPercent(pct)}
+        </span>
+      </span>
+      {row.short !== '' && (
+        <span className="nx-tile-note" data-tier={row.tier}>
+          <i aria-hidden="true" />
+          {row.short}
+        </span>
+      )}
+      <QuotaRows row={row} ctx={ctx} />
+      {quotas.extra > 0 && (
+        <span className="nx-tile-more">
+          +{quotas.extra} {quotas.extra === 1 ? 'cota' : 'cotas'} nos detalhes
+        </span>
+      )}
+      <span className="vh">{row.verdict}</span>
+    </button>
   );
 }
 
@@ -101,12 +153,6 @@ export function Triage({ views, ctx, selected, onSelect, onConfigure }: TriagePr
     onSelect,
   );
   const shown = showsUsed(ctx.settings);
-  const groups = [
-    { key: 'attention', title: 'Precisa de atenção', rows: triage.attention, compact: false },
-    { key: 'loading', title: 'Lendo', rows: triage.loading, compact: true },
-    { key: 'fine', title: 'Em dia', rows: triage.fine, compact: true },
-    { key: 'unknown', title: 'Sem leitura', rows: triage.unknown, compact: true },
-  ].filter((group) => group.rows.length > 0);
 
   if (triage.rows.length === 0) {
     return (
@@ -146,26 +192,21 @@ export function Triage({ views, ctx, selected, onSelect, onConfigure }: TriagePr
           )}
         </div>
       </section>
-      <div className="nx-rows">
-        {groups.map((group) => (
-          <section key={group.key} className="nx-section">
-            <GroupHead title={group.title} count={group.rows.length} />
-            <ul className="nx-list">
-              {group.rows.map((row) => (
-                <RowOption
-                  key={row.view.id}
-                  row={row}
-                  ctx={ctx}
-                  selected={row.view.id === selected}
-                  onSelect={onSelect}
-                  onKeyDown={onKeyDown}
-                  compact={group.compact}
-                />
-              ))}
-            </ul>
-          </section>
-        ))}
-      </div>
+      <section className="nx-section">
+        <GroupHead title="Por urgência" count={triage.rows.length} />
+        <div className="nx-tiles">
+          {triage.rows.map((row) => (
+            <Tile
+              key={row.view.id}
+              row={row}
+              ctx={ctx}
+              selected={row.view.id === selected}
+              onSelect={onSelect}
+              onKeyDown={onKeyDown}
+            />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

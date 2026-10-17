@@ -8,6 +8,7 @@ import { asStale, problem, viewOf, type WindowSpec, windowOf } from '../../mock/
 import { startFor } from '../../mock/scenarios';
 import { NOW } from '../../test/helpers';
 import { headlineOf, triageOf, triageRow } from './triageModel';
+import { quotaName } from './wording';
 
 const settings = structuredClone(defaultSettings);
 const ctx: ViewContext = { nowSecs: NOW, settings };
@@ -111,7 +112,7 @@ describe('triage verdicts', () => {
     expect(row.runsOutAt).toBe(ctx.nowSecs);
   });
 
-  it('names the pool a grouped quota belongs to', () => {
+  it('names the pool a grouped quota belongs to, so the row is not just "5 horas"', () => {
     const pooled = viewOf('antigravity', {
       windows: [
         windowOf(env, {
@@ -132,11 +133,14 @@ describe('triage verdicts', () => {
         }),
       ],
     });
-    expect(triageRow(pooled, ctx).windowName).toBe('Claude e GPT-OSS · 5 horas');
+    const first = pooled.windows[0];
+    if (first === undefined) throw new Error('no window');
+    expect(quotaName(first)).toBe('Gemini · 5 horas');
   });
 
   it('says a comfortable reading reaches its renewal and never invents a pace', () => {
     expect(triageRow(fine, ctx).verdict).toBe('Dura até renovar');
+    expect(triageRow(fine, ctx).short).toBe('');
     expect(triageRow(unknown, ctx).verdict).toBe('Sem leitura');
     expect(triageRow(unknown, ctx).tier).toBe('unknown');
   });

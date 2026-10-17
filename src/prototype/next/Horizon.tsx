@@ -112,6 +112,8 @@ export function Horizon({ views, ctx, selected, onSelect, trend, onTrend }: Hori
   );
   const covers = horizon.rows.filter((row) => row.kind === 'lasts').length;
   const next = horizon.soonest?.model;
+  // The per-row trend costs one history request per provider, so it also waits for the setting.
+  const showTrend = trend && ctx.settings.general.historyEnabled;
   return (
     <div className="nx-horizon">
       <section className="nx-note">
@@ -130,7 +132,7 @@ export function Horizon({ views, ctx, selected, onSelect, trend, onTrend }: Hori
           <label>
             <input
               type="checkbox"
-              checked={trend}
+              checked={showTrend}
               onChange={(event) => onTrend(event.target.checked)}
             />
             Mostrar tendência (busca o histórico de cada provider)
@@ -149,7 +151,7 @@ export function Horizon({ views, ctx, selected, onSelect, trend, onTrend }: Hori
                 selected={row.view.id === selected}
                 onSelect={onSelect}
                 onKeyDown={onKeyDown}
-                trend={trend}
+                trend={showTrend}
               />
             ))}
           </ul>
