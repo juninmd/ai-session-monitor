@@ -4,7 +4,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { cooldownLeft, waitText } from './app/cooldown';
 import { DraftProvider, useDraftGuard } from './app/draftContext';
-import { harnessName, type SettingsSection, TAB_ORDER } from './app/harness';
+import { harnessName, TAB_ORDER } from './app/harness';
 import { sharePct, showsUsed } from './app/quota';
 import { useAsyncAction } from './app/useAsyncAction';
 import { useFlyoutHeight } from './app/useFlyoutHeight';
@@ -13,11 +13,12 @@ import { useSettingsState } from './app/useSettingsState';
 import { useSnapshotState } from './app/useSnapshotState';
 import { useUpdateState } from './app/useUpdateState';
 import type { ViewContext } from './app/windowModel';
-import type { Screen, Surface } from './home/Fly';
+import type { Surface } from './home/Fly';
 import { Home } from './home/Home';
 import { useCommands } from './home/useCommands';
 import { useHomeShell } from './home/useHomeShell';
 import { useHomeView } from './home/useHomeView';
+import { useSettingsScreen } from './home/useSettingsScreen';
 import { t } from './i18n';
 import type { Backend } from './lib/backend';
 import type { HarnessId } from './lib/contract';
@@ -38,7 +39,6 @@ function AppBody({ backend }: { backend: Backend }) {
   const { nowSecs, sync } = useNowSecs();
   const [surface, setSurface] = useState<Surface>('triagem');
   const [preferred, setPreferred] = useState<HarnessId>(TAB_ORDER[0] ?? 'claude');
-  const [screen, setScreen] = useState<Screen>({ kind: 'surface' });
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
   const [trend, setTrend] = useState(false);
@@ -86,31 +86,19 @@ function AppBody({ backend }: { backend: Backend }) {
     [request],
   );
 
-  const closeSettings = useCallback(() => {
-    setScreen({ kind: 'surface' });
-    toTop();
-  }, [toTop]);
-  const openSettings = useCallback(
-    (section: SettingsSection | null) => {
-      const open = () => {
-        setDetailOpen(false);
-        setScreen({ kind: 'settings', section });
-        toTop();
-      };
-      if (screen.kind === 'surface') guarded(open);
-      else open();
-    },
-    [guarded, screen.kind, toTop],
-  );
-  const toggleSettings = useCallback(() => {
-    setDetailOpen(false);
-    if (screen.kind === 'settings') guarded(closeSettings);
-    else openSettings(null);
-  }, [guarded, closeSettings, openSettings, screen.kind]);
-  const navigation = useMemo(
-    () => ({ openSettings: (section?: SettingsSection) => openSettings(section ?? null) }),
-    [openSettings],
-  );
+  const hideDetail = useCallback(() => setDetailOpen(false), []);
+  const {
+    screen,
+    inSettings,
+    sectionOpen,
+    openSettings,
+    closeSettings,
+    requestCloseSettings,
+    toggleSettings,
+    onSection,
+    closeSection,
+    navigation,
+  } = useSettingsScreen({ guarded, hideDetail, toTop });
 
   const changeSurface = useCallback(
     (next: Surface) => {
@@ -206,15 +194,16 @@ function AppBody({ backend }: { backend: Backend }) {
   });
 
   const { run: refreshAll } = refresh;
-  const inSettings = screen.kind === 'settings';
   useHomeShell({
     backend,
     request,
     settingsOpen: inSettings,
+    sectionOpen,
     selected,
     detailOpen,
     paletteOpen,
     closePalette,
+    closeSection,
     closeSettings,
     closeDetail,
     hide: () => void hide.run(),
@@ -272,7 +261,8 @@ function AppBody({ backend }: { backend: Backend }) {
         onClosePalette: closePalette,
         onToggleSettings: toggleSettings,
         onOpenSettings: openSettings,
-        onCloseSettings: closeSettings,
+        onSection,
+        onCloseSettings: requestCloseSettings,
         onFinishOnboarding: () => {
           setRunDone(true);
           setSurface('triagem');

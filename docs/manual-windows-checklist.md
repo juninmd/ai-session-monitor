@@ -56,8 +56,9 @@ of the per-source steps did not change with the interface.
 - [ ] Left click opens the flyout next to the icon; a second left click closes it and does **not**
       reopen it. Repeat 10 times quickly.
 - [ ] Clicking another window, the desktop or the taskbar hides the flyout. Alt+Tab away hides it.
-- [ ] Escape inside the flyout closes the palette, then the drawer, then the settings, and hides
-      the flyout only when nothing else is open (the webview owns focus on open).
+- [ ] Escape inside the flyout closes the palette, then the settings section, then the settings,
+      then the provider detail, and hides the flyout only when nothing else is open (the webview
+      owns focus on open).
 - [ ] Right button and middle button on the icon never toggle the flyout.
 - [ ] Known limitation, record the behaviour: focus lost within about 250 ms of opening is
       ignored on purpose (the tray click itself shuffles focus), so the flyout stays until the
@@ -292,7 +293,10 @@ enforces it; repeat it after a Tauri upgrade.
       legible with nothing of the desktop showing through the text.
 - [ ] Dark and light system themes both render correctly.
 - [ ] No title bar, no taskbar button. Note whether the flyout appears in Alt+Tab.
-- [ ] Row order and focus rings work with the keyboard; Escape closes the drawer, then the
-      settings, then the flyout.
+- [ ] Row order and focus rings work with the keyboard; Escape closes the palette, then the open
+      settings section, then the settings, then the provider detail, then the flyout.
+- [ ] A settings section opens in the same lateral drawer as a provider detail, wide enough that the
+      rows keep their rhythm and leaving a 20 px reveal of the dimmed menu; the scrim, the arrow and
+      Escape all leave the section, and the keyboard goes back to the row that opened it.
 - [ ] A provider selected from elsewhere (a palette jump, a settings link, consent, the stored
       selection on start) is highlighted and scrolled into view, never left offscreen.

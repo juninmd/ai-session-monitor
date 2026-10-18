@@ -5,8 +5,9 @@
   position: relative;
 }
 
-/* The list alone is short; while the detail is open the frame keeps enough height for it. */
-.nx-fly[data-detail] {
+/* The list alone can be short; while a layer is open the frame keeps enough height for it. */
+.nx-fly[data-detail],
+.nx-fly[data-section] {
   min-block-size: min(34rem, calc(100vh - 5.25rem));
 }
 
@@ -35,6 +36,12 @@
   background: var(--solid);
   border-inline-start: 1px solid var(--line-2);
   box-shadow: -14px 0 32px rgb(0 0 0 / 0.28);
+}
+
+/* Settings rows read as a list, not as a column: the drawer keeps the whole frame and leaves a
+   20 px reveal of the dimmed menu on the leading edge. */
+.nx-drawer[data-size="wide"] {
+  inline-size: calc(100% - 1.25rem);
 }
 
 @media (prefers-reduced-motion: no-preference) {

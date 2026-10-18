@@ -8,18 +8,13 @@ import { t } from '../../i18n';
 import { Icon } from '../icons';
 import { Note } from '../panel/Banner';
 import { ActionError } from '../panel/ErrorActions';
-import { LEVEL_TITLE, type SettingsLevel } from './levels';
+import { LEVEL_TITLE, type SettingsPane } from './levels';
 import { historySummary, monitoringSummary, sourcesSummary, updateSummary } from './summaries';
 
-const ROWS = [
-  'general',
-  'history',
-  'update',
-  'sources',
-] as const satisfies readonly SettingsLevel[];
+const ROWS = ['general', 'history', 'update', 'sources'] as const satisfies readonly SettingsPane[];
 
 /** Every row a section can be opened from, in the order the screen reads them. */
-export function SettingsMenu({ onOpen }: { onOpen: (level: SettingsLevel) => void }) {
+export function SettingsMenu({ onOpen }: { onOpen: (pane: SettingsPane) => void }) {
   const api = useSettingsApi();
   const backend = useBackend();
   const update = useContext(UpdateContext);
@@ -33,11 +28,11 @@ export function SettingsMenu({ onOpen }: { onOpen: (level: SettingsLevel) => voi
   return (
     <div className="set-menu">
       <ul className="set-rows">
-        {ROWS.map((level) => (
-          <li key={level}>
-            <button type="button" className="set-row" onClick={() => onOpen(level)}>
-              <span className="set-row-name">{t(LEVEL_TITLE[level])}</span>
-              <span className="set-row-sum">{summary[level]}</span>
+        {ROWS.map((pane) => (
+          <li key={pane}>
+            <button type="button" className="set-row" onClick={() => onOpen(pane)}>
+              <span className="set-row-name">{t(LEVEL_TITLE[pane])}</span>
+              <span className="set-row-sum">{summary[pane]}</span>
               <Icon name="next" />
             </button>
           </li>

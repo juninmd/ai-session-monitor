@@ -1,17 +1,19 @@
 import { act, screen, within } from '@testing-library/react';
 import type { UserEvent } from '@testing-library/user-event';
-import { useEffect, useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { type SettingsSection, TAB_ORDER } from '../../app/harness';
+import { SettingsScreen } from '../../home/settingsHarness';
 import { BackendError } from '../../lib/backend';
 import { problem } from '../../mock/fixtures';
 import { type PanelOptions, renderPanel, settingsWith } from '../../test/helpers';
-import { SettingsView } from './SettingsView';
 
 function open(section: SettingsSection | null = null, options: PanelOptions = {}) {
-  const onBack = vi.fn();
-  const harness = renderPanel(<SettingsView section={section} onBack={onBack} />, options);
-  return { ...harness, onBack };
+  const onCloseSettings = vi.fn();
+  const harness = renderPanel(
+    <SettingsScreen initial={section} onCloseSettings={onCloseSettings} />,
+    options,
+  );
+  return { ...harness, onCloseSettings };
 }
 
 const group = (id: string) => document.getElementById(`grp-${id}`) as HTMLDetailsElement;
@@ -20,6 +22,10 @@ const menu = () => screen.findByRole('heading', { level: 2, name: 'Configuraçõ
 /** One menu row, named by the section it leads with; the state follows in the same button. */
 const row = (name: string) => screen.getByRole('button', { name: new RegExp(`^${name}`) });
 const heading = (name: string) => screen.getByRole('heading', { level: 2, name });
+/** The section drawer's own arrow, which leaves the section and not the screen. */
+const back = () => within(screen.getByRole('dialog')).getByRole('button', { name: 'Voltar' });
+/** The menu's arrow, which is the only way out of the screen itself. */
+const leaveScreen = () => screen.getByRole('button', { name: 'Voltar' });
 
 async function openSources(user: UserEvent) {
   await menu();
@@ -50,9 +56,9 @@ describe('the settings screen', () => {
   });
 
   it('goes back with the back button', async () => {
-    const { user, onBack } = open();
-    await user.click(screen.getByRole('button', { name: 'Voltar' }));
-    expect(onBack).toHaveBeenCalledTimes(1);
+    const { user, onCloseSettings } = open();
+    await user.click(leaveScreen());
+    expect(onCloseSettings).toHaveBeenCalledTimes(1);
   });
 
   it('tells where the secrets live', async () => {
@@ -65,14 +71,7 @@ describe('the settings screen', () => {
 describe('a section arriving from outside', () => {
   it('steers the screen after the menu was already shown', async () => {
     const steer = { current: (_: SettingsSection | null) => {} };
-    function Steered() {
-      const [section, setSection] = useState<SettingsSection | null>(null);
-      useEffect(() => {
-        steer.current = setSection;
-      });
-      return <SettingsView section={section} onBack={() => {}} />;
-    }
-    renderPanel(<Steered />);
+    renderPanel(<SettingsScreen steer={steer} />);
     await menu();
 
     act(() => steer.current('codex'));
@@ -144,7 +143,9 @@ describe('the source groups', () => {
   it('stay shut for the general section, which has no group', async () => {
     open('general');
     await screen.findByRole('heading', { level: 2, name: 'Monitoramento e alertas' });
-    expect(heading('Monitoramento e alertas')).toHaveFocus();
+    // The drawer takes the keyboard on its own controls; the section it opened has no group to
+    // hand it to.
+    expect(back()).toHaveFocus();
     expect(document.querySelectorAll('details.grp')).toHaveLength(0);
   });
 });
@@ -212,7 +213,7 @@ describe('when only the Credential Manager cannot be read', () => {
 
     await user.click(row('Monitoramento e alertas'));
     expect(screen.getAllByRole('switch').length).toBeGreaterThan(0);
-    await user.click(screen.getByRole('button', { name: 'Voltar' }));
+    await user.click(back());
 
     await openSources(user);
     for (const id of TAB_ORDER) expect(group(id)).toBeInTheDocument();
@@ -235,7 +236,8 @@ describe('when only the Credential Manager cannot be read', () => {
     await screen.findByRole('alert');
     await user.click(screen.getByRole('button', { name: 'Tentar de novo' }));
     await vi.waitFor(() => expect(screen.queryByRole('alert')).toBeNull());
-    // The button went with the notice; the keyboard waits on the section it belonged to.
+    // The button went with the notice; the keyboard waits on the section it belonged to, which is
+    // now the drawer's own heading.
     expect(heading('Fontes de dados')).toHaveFocus();
     await user.click(within(group('opencode')).getByText('OpenCode'));
     expect(await within(group('opencode')).findByText('Chave salva')).toBeVisible();

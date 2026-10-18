@@ -18,6 +18,7 @@ import { DetailDrawer } from './Drawer';
 import { Horizon } from './Horizon';
 import { Onboarding } from './Onboarding';
 import type { PaletteCommand } from './paletteModel';
+import { SettingsDrawer } from './SettingsDrawer';
 import { Sources } from './Sources';
 import { Triage } from './Triage';
 
@@ -76,6 +77,8 @@ export interface FlyProps {
   onClosePalette: () => void;
   onToggleSettings: () => void;
   onOpenSettings: (section: SettingsSection | null) => void;
+  /** Opens one settings section over the flyout, or closes it with null. */
+  onSection: (section: SettingsSection | null) => void;
   onCloseSettings: () => void;
   onFinishOnboarding: () => void;
   onConfigure: () => void;
@@ -118,6 +121,7 @@ export function Fly(props: FlyProps) {
     onClosePalette,
     onToggleSettings,
     onOpenSettings,
+    onSection,
     onCloseSettings,
     onFinishOnboarding,
     onConfigure,
@@ -131,6 +135,7 @@ export function Fly(props: FlyProps) {
       className="flyout nx-fly"
       data-surface={surface}
       data-detail={detailOpen || undefined}
+      data-section={(inSettings && screen.section !== null) || undefined}
     >
       <Header
         tray={tray}
@@ -172,7 +177,13 @@ export function Fly(props: FlyProps) {
             </p>
           )}
           {!inSettings && !loaded && <output className="hint">Lendo as fontes…</output>}
-          {inSettings && <SettingsView section={screen.section} onBack={onCloseSettings} />}
+          {inSettings && (
+            <SettingsView
+              section={screen.section}
+              onSection={onSection}
+              onCloseSettings={onCloseSettings}
+            />
+          )}
           {!inSettings && failure !== null && (
             <section className="card notice" data-status="crit">
               <h2>{t('load.title')}</h2>
@@ -227,6 +238,9 @@ export function Fly(props: FlyProps) {
           onRefresh={() => onRefreshView(view.id)}
         />
       )}
+      {/* A section covers the whole frame, not the scrolling body: it must not scroll away with
+          the menu it lands on. */}
+      {inSettings && <SettingsDrawer section={screen.section} onSection={onSection} />}
       <Footer readAt={readAt} nowSecs={nowSecs} onRefresh={onRefresh} onQuit={onQuit} />
       {/* The palette opens from anywhere in the flyout, so it listens for Ctrl+K itself (App). */}
       {paletteOpen && <CommandPalette commands={commands} onClose={onClosePalette} />}
