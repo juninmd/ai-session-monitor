@@ -1,0 +1,102 @@
+/* The evidence list: every quota, budget and reset channel, by how far the app can reach it. */
+
+.nx-sources {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.nx-chan-list {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.nx-chan {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line-2);
+  border-radius: var(--r-ctl);
+  background: var(--solid);
+}
+
+.nx-chan[data-reach="now"] {
+  border-left-color: var(--accent);
+}
+
+.nx-chan[data-reach="forbidden"] {
+  border-left-color: var(--crit);
+}
+
+.nx-chan[data-outcome="ok"] {
+  border-left-color: var(--accent);
+}
+
+.nx-chan[data-outcome="error"] {
+  border-left-color: var(--crit);
+}
+
+.nx-chan-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.nx-chan-head > strong {
+  font-size: var(--fs-sm);
+}
+
+.nx-chan-title {
+  color: var(--ink-2);
+  font-size: var(--fs-sm);
+}
+
+.nx-chan-how {
+  color: var(--ink-2);
+  font-size: var(--fs-xs);
+  overflow-wrap: anywhere;
+}
+
+.nx-chan-caveat {
+  color: var(--warn-fill);
+  font-size: var(--fs-xs);
+  overflow-wrap: anywhere;
+}
+
+@media (forced-colors: active) {
+  .nx-headline,
+  .nx-tile,
+  .nx-chip,
+  .nx-h-row,
+  .nx-chan,
+  .nx-note,
+  .nx-connect,
+  .nx-pick-item,
+  .nx-palette {
+    border: 1px solid CanvasText;
+  }
+
+  /* Selection and severity are drawn with colour in the normal theme, so both need a shape here. */
+  .nx-tile[aria-pressed="true"],
+  .nx-h-row[aria-pressed="true"],
+  .nx-chip-btn[aria-pressed="true"],
+  .nx-pick-item[aria-pressed="true"] {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+
+  .nx-tile[data-tier="blocked"] .nx-tile-note > i,
+  .nx-tile[data-tier="risk"] .nx-tile-note > i,
+  .nx-tile[data-tier="watch"] .nx-tile-note > i {
+    background: CanvasText;
+    outline: 1px solid CanvasText;
+  }
+
+  .nx-h-row[data-kind="short"] .nx-bar,
+  .nx-h-row[data-kind="out"] .nx-bar,
+  .nx-h-row[data-kind="unknown"] .nx-bar,
+  .nx-h-row[data-kind="broken"] .nx-bar {
+    background: Canvas;
+  }
+}

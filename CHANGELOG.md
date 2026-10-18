@@ -76,6 +76,14 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Changed
 
+- The flyout has one home screen instead of a tab per harness: **Triagem** (every reachable provider
+  in one urgency-ordered grid, each card carrying its own quota windows and renewals), **Horizonte**
+  (one runway bar per provider, from now to that window's renewal) and **Canais de cota** (the
+  evidence list of channels the app reads, could read or must not read). The detail of a provider
+  opens beside the list in a lateral drawer, and **Ctrl+K** opens a command palette that jumps to a
+  provider, refreshes one source or the fleet, copies the fleet state as text and opens a source's
+  settings. The previous grid iteration, its `?prototype=` routes and the review-only surfaces
+  (inline command list, side-by-side comparison) were removed; the browser dev loop keeps `?mock=`.
 - Node engines floor is `^22.22.2 || ^24.15.0 || >=26`.
 - The Cargo bin of the shim is `aism-statusline-shim`; the sidecar stem stays `statusline-shim` and
   a test keeps the two apart.

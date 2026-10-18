@@ -1,0 +1,40 @@
+/* The share bar: a 3 px track under a reading, reused by the home's cards and the tray ring. */
+.t-bar {
+  display: block;
+  block-size: 0.1875rem;
+  overflow: hidden;
+  border-radius: 2px;
+  --bar: var(--accent);
+  background: color-mix(in oklab, var(--bar) 22%, var(--raise-2));
+}
+
+.t-bar i {
+  display: block;
+  block-size: 100%;
+  background: var(--bar);
+}
+
+.t-bar[data-status="warn"] {
+  --bar: var(--warn-fill);
+}
+
+.t-bar[data-status="crit"],
+.t-bar[data-status="out"] {
+  --bar: var(--crit);
+}
+
+.t-bar.off {
+  background: repeating-linear-gradient(90deg, var(--line-2) 0 4px, transparent 4px 7px);
+}
+
+@media (forced-colors: active) {
+  .t-bar {
+    outline: 1px solid ButtonText;
+    outline-offset: -1px;
+  }
+
+  .t-bar i {
+    forced-color-adjust: none;
+    background: Highlight;
+  }
+}

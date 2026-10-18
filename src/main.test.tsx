@@ -48,8 +48,8 @@ describe('in a browser', () => {
   it('runs on fabricated data and marks the host as a browser', async () => {
     await boot();
     // The first boot in a worker is cold and the mock adds real latency; 1 s starves under CPU load.
-    await screen.findByRole('heading', { name: /^Providers ativos/ }, { timeout: 5000 });
-    expect(await screen.findByRole('tab', { name: /Claude Code/ })).toBeVisible();
+    await screen.findByRole('button', { name: /^Codex/ }, { timeout: 5000 });
+    expect(screen.getByRole('button', { name: /^Triagem/ })).toBeVisible();
     expect(document.documentElement.dataset.host).toBe('browser');
     expect(bridge.invoke).not.toHaveBeenCalled();
     expect(bridge.listen).not.toHaveBeenCalled();
@@ -57,14 +57,17 @@ describe('in a browser', () => {
 
   it('picks the scenario named in the query string', async () => {
     await boot('?mock=errors');
-    expect(await screen.findByRole('heading', { name: 'Falha ao instalar' })).toBeVisible();
+    await screen.findByRole('button', { name: /^Triagem/ });
+    await vi.waitFor(() =>
+      expect(document.querySelector('button[data-tier="broken"]')).not.toBeNull(),
+    );
   });
 
   it.each(['?mock=nope', '?mock=__proto__', '?mock=%00', '?mock='])(
     'falls back to the demo for %s',
     async (search) => {
       await boot(search);
-      expect(await screen.findByRole('heading', { name: /^Providers ativos/ })).toBeVisible();
+      expect(await screen.findByRole('button', { name: /^Codex/ })).toBeVisible();
     },
   );
 });
@@ -91,7 +94,7 @@ describe('inside Tauri', () => {
   it('talks to the bridge, not to the mock, and marks the host as Tauri', async () => {
     await fakeBridge();
     await boot();
-    await screen.findByRole('tab', { name: /Claude Code/ });
+    await screen.findByRole('button', { name: /^Codex/ });
     expect(document.documentElement.dataset.host).toBe('tauri');
     const commands = bridge.invoke.mock.calls.map(([command]) => command);
     expect(commands).toEqual(expect.arrayContaining([COMMANDS.getSnapshot, COMMANDS.getSettings]));
@@ -100,7 +103,7 @@ describe('inside Tauri', () => {
   it('leaves one listener for every event, despite StrictMode', async () => {
     const { unlisten } = await fakeBridge();
     await boot();
-    await screen.findByRole('heading', { name: /^Providers ativos/ });
+    await screen.findByRole('button', { name: /^Triagem/ });
     await vi.waitFor(() =>
       expect(bridge.listen.mock.calls.length - unlisten.mock.calls.length).toBe(4),
     );

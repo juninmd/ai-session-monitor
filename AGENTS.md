@@ -17,6 +17,7 @@ comments and commits are English. Decisions: `docs/adr/0001-architecture.md`. Wi
 | `crates/app-core` | Window-free core: settings store, hub, scheduler, notification plan, `AppService` | usage-model, usage-support (no collectors) |
 | `src-tauri` | Composition root: tray, flyout window, keyring, wiring, commands | app-core, collectors |
 | `src` | React UI; talks only to `Backend` (`src/lib/backend.ts`) | `src/lib/contract` |
+| `src/home` | The flyout's own surfaces — triagem, horizonte, canais de cota, the lateral detail and the Ctrl+K palette — which `App` composes | `src/app`, `src/components` |
 | `contract` | Golden files pinning Rust and TypeScript to the same wire shape | - |
 
 Rules that keep the boundaries honest:
@@ -34,7 +35,7 @@ Run from the repository root. Toolchains are pinned (`rust-toolchain.toml`, `pac
 ```sh
 pnpm install --frozen-lockfile     # Node 22.22.2+, 24.15+ or 26+ (package.json engines)
 pnpm verify                     # biome check, tsc --noEmit, vitest, vite build
-pnpm dev                        # UI in a browser on 127.0.0.1:1420 with a mock backend (?mock=demo|fresh|healthy|critical|stale|errors|loading)
+pnpm dev                        # UI in a browser on 127.0.0.1:1420 with a mock backend (?mock=demo|fresh|healthy|critical|stale|errors|loading; Ctrl+K switches scenario there)
 pnpm tauri dev                  # the real app (tray + flyout)
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets -- -D warnings

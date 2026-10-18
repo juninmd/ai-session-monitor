@@ -1,15 +1,15 @@
 # Data sources
 
-What the app reads for each tab, how much that source can be trusted, what it sends, and how to
+What the app reads for each source, how much that source can be trusted, what it sends, and how to
 turn it off. Facts were verified against vendor documentation or source on 2026-10-10/11; items
 marked *unverified* have never been exercised against a live account.
 
 ## Principles
 
-- **Official first.** Each tab uses a documented interface when one exists. Anything else is
+- **Official first.** Each source uses a documented interface when one exists. Anything else is
   badged **não oficial** in the UI and stays behind an explicit consent switch.
-- **Consent before reading.** A tab whose source touches another tool's files or processes stays in
-  *needs consent* and does no I/O until you agree. Disabling a tab stops all reads for it.
+- **Consent before reading.** A source whose collector touches another tool's files or processes stays in
+  *needs consent* and does no I/O until you agree. Disabling a source stops all reads for it.
 - **Unknown is not zero.** A missing value is shown as unknown. A window whose reset time has
   passed is shown as reset, without a status.
 - **Read-only toward providers.** The app never writes to a provider, never refreshes or stores a
@@ -38,7 +38,7 @@ marked *unverified* have never been exercised against a live account.
 | CLI cost and side effects | Cost 0 and one process of about 5 s CPU per run. The user's global Claude Code hooks may fire on it, and `--no-session-persistence` is what keeps the run out of the session history (an older Claude Code that lacks the flag fails and falls back to the API). The answer is cached for 10 min (`cli-usage*.json` beside the OAuth cache), a failure for 30 min, never on every 30 s tick; runs never overlap and the child dies with the app (dropping a poll kills its process tree; a hard kill of the app leaves the child to finish by itself within the 20 s limit). If the CLI is absent or fails, the OAuth API below is the fallback; if it answers with no per-model line (plans with only the all-models cap), nothing is added and the API is not asked. |
 | CLI never | The access token is **never read or sent** on this path (the CLI uses its own login). Everything after the limits block (the "What's contributing" section: plugin, MCP and subagent names, request counts) is ignored and never reaches the view, the cache, a log or an error. Trust: the fixed paths are user-writable with no signature check, so anything able to plant a file there already runs as the user, but the tray app would execute it every 10 minutes once the option is on. |
 | Optional (fallback) | *OAuth usage* (same opt-in; used only when the CLI above is absent or fails; unofficial): `GET https://api.anthropic.com/api/oauth/usage` with the access token Claude Code already holds. Undocumented; it may violate Anthropic's terms and may be rate limited. The token is read from Claude Code's credentials file, kept in memory, never refreshed or written. It is asked only while the status-line data is fresh and at most once per 300 s, so an idle machine never polls it. Failures never hide the statusLine data (one `claude_oauth_partial` notice). Never exercised against a live account (*unverified*). |
-| Off switch | Uninstall the shim in the tab (restores `settings.json`); or disable the tab. |
+| Off switch | Uninstall the shim in the Claude detail (restores `settings.json`); or disable the source. |
 
 ## Codex — official (app-server)
 
@@ -49,7 +49,7 @@ marked *unverified* have never been exercised against a live account.
 | Limits | The command is documented as experimental, so fields are treated as optional. Pro plans currently report no 5 h window; API-key sign-in reports no plan windows. Not signed in is its own state. |
 | Fallback | If the app-server cannot run, the newest `token_count.rate_limits` event in `~/.codex/sessions/**/rollout-*.jsonl` is read (tail only, only that object, never message content) and labelled *last seen*. |
 | Never | `auth.json` and the ChatGPT backend usage endpoint are not used. |
-| Off switch | Withdraw consent or disable the tab. |
+| Off switch | Withdraw consent or disable the source. |
 
 ## Antigravity — não oficial (agy CLI, or the IDE's local language server)
 
@@ -61,7 +61,7 @@ marked *unverified* have never been exercised against a live account.
 | Mechanism (IDE) | Finds same-user `language_server*` processes (`sysinfo`; the command line is read only for name matches), takes the token, ports and `--app_data_dir` from the arguments, lists listening ports with `%SystemRoot%\System32\netstat.exe -ano -p tcp`, and calls the loopback endpoint (self-signed certificate accepted **only** for `127.0.0.1`). Plain HTTP is tried only on the extension-server port, on loopback. The token is a local credential: kept in memory, never logged or shown. Budget: 4 s per request, at most 4 servers and 6 HTTPS ports each, 28 s per poll (shared with the 15 s CLI attempt). |
 | States | Neither the CLI nor the IDE found → *not running* (a normal state). Shape changed → *endpoint changed* instead of a made-up number. A pool no response mentions gets no window; a pool with an unreadable share gets a window with unknown use and one `antigravity_pool_unknown` notice. |
 | Never | Google's cloud endpoints and the Antigravity OAuth tokens are not used. The CLI token file (`~/.gemini/antigravity-cli/antigravity-oauth-token`) is never read, and the CLI is never asked to run a prompt (only `/usage`). Trust: the CLI path is user-writable and has no signature or ownership check, so anything able to plant a file there already runs as the user, but the tray app would execute it on each poll once consent is given. |
-| Off switch | Withdraw consent or disable the tab. |
+| Off switch | Withdraw consent or disable the source. |
 
 ## OpenCode — não oficial (Go usage endpoint + local estimate)
 
@@ -70,8 +70,8 @@ marked *unverified* have never been exercised against a live account.
 | Remote | `GET https://opencode.ai/zen/go/v1/usage` with your OpenCode Go API key as Bearer: rolling (5 h), weekly and monthly *percent used* and reset times. Built by the OpenCode maintainers but undocumented. The host is a constant; the key is never sent anywhere else. |
 | Errors | 401/403 are reported as *could not verify the key or the Go subscription* (valid keys have been rejected by the service), with a link to the console, never as a certain "bad key". |
 | Local estimate | With consent, the app opens OpenCode's `opencode.db` **read-only** and sums numeric cost and token fields of assistant messages for 5 h / 7 d / 30 d. This is a list-price estimate for this PC, **not quota**: it is never turned into a percentage or a reset time. Credential, account and prompt tables are never queried. |
-| Pay-as-you-go | Zen balance has no key-readable API; the tab offers a link to the billing page instead of a made-up balance. |
-| Off switch | Clear the key, withdraw the local-estimate consent, or disable the tab. |
+| Pay-as-you-go | Zen balance has no key-readable API; the source offers a link to the billing page instead of a made-up balance. |
+| Off switch | Clear the key, withdraw the local-estimate consent, or disable the source. |
 
 ## LiteLLM — official (proxy API, parametrizable)
 
@@ -85,7 +85,7 @@ marked *unverified* have never been exercised against a live account.
 | Rules | https only (plain http only for loopback); no credentials, query or fragment in the URL; a path prefix is kept; no redirects. TLS modes: system store, custom CA (PEM file) or *insecure for one confirmed host* (shown with a warning). |
 | Semantics | A key without `max_budget` is shown as *no cap configured* — absent does not mean unlimited; `max_budget = 0` counts as no cap, and a cap that lives only in a linked budget table is not read. Budget resets come from a proxy sweep and can lag a few minutes. TPM/RPM are static caps, not live usage. |
 | Confidence | Response shapes come from the proxy source (v1.104.2) and its docs, never from a live proxy: a different proxy surfaces as *endpoint changed*, not as invented numbers. |
-| Off switch | Clear the key or disable the tab. |
+| Off switch | Clear the key or disable the source. |
 
 ## Kimi Code — não oficial (coding usages endpoint)
 
@@ -97,7 +97,7 @@ marked *unverified* have never been exercised against a live account.
 | Errors | 401/403 are reported as *could not verify the key* (the service also rejects keys of accounts without the Kimi Code plan), never as a certain bad key. A body that is neither shape is *endpoint changed*. |
 | Never | No cookies, no browser session, no scraping of the console, no reading of `~/.kimi` or any other tool's credentials. The key is only what you paste into the app. |
 | Confidence | **Medium.** Shapes come from two independent sources: the vendor's own CLI source (`MoonshotAI/kimi-cli`, `src/kimi_cli/ui/shell/usage.py` and `auth/platforms.py`, opened 2026-10-11/12) and the CodexBar project docs and plugin (`steipete/CodexBar`, `docs/kimi.md`), cross-checked with a third-party write-up (steeman.be, opened 2026-10-11). Never exercised against a live account; the console page `https://www.kimi.com/code/console` could not be verified (single-page app), so the link is unconfirmed. |
-| Off switch | Clear the key or disable the tab. |
+| Off switch | Clear the key or disable the source. |
 
 ## z.ai — não oficial (GLM Coding Plan quota endpoint)
 
@@ -109,7 +109,7 @@ marked *unverified* have never been exercised against a live account.
 | In-band failures | The service can answer HTTP 200 with `success: false` and a `code`. 401/403 and the in-band codes 1000, 1001 and 1003 (documented as authentication failures at `https://docs.z.ai/api-reference/api-code`, opened 2026-10-12; that page lists no 1002 or 1004, which stay *endpoint changed*, and it describes the general API, not this monitor endpoint specifically) map to *could not verify the key*, 429 to rate-limited, 5xx to server error, anything else to *endpoint changed*. The `msg` text is never read or shown. |
 | Never | No cookies, no browser session, no dashboard scraping, no reading of other tools' credentials (Claude Code's z.ai environment variables included). The key is only what you paste into the app. |
 | Confidence | **Medium.** The vendor's `zai-org/ZCode` document `docs/coding-plan-quota-remaining-api.md` and the `akitaonrails/ai-usagebar` source (`src/zai/types.rs`, `fetch.rs`, `docs/vendor-endpoints.md`) agree on the path, fields and unit codes (opened 2026-10-11/12); the CodexBar plugin and one blog send the key as Bearer instead, so the header form is the main residual risk (a wrong form surfaces as *could not verify the key*). Never exercised against a live account; the key page `https://z.ai/manage-apikey/apikey-list` could not be verified (single-page app). |
-| Off switch | Clear the key or disable the tab. |
+| Off switch | Clear the key or disable the source. |
 
 ## OpenRouter — oficial (key and credits endpoints)
 
@@ -123,7 +123,7 @@ marked *unverified* have never been exercised against a live account.
 | Failures | On the key document: 401/403 `unauthorized` (not ambiguous: the API is documented), 402 `bad_response` with `httpStatus = 402`, 429 `rate_limited` (honours `Retry-After`, capped at 1 h), 5xx `server_error`, 404 `endpoint_changed`. Response text is never read or shown. |
 | Never | No cookies, no browser session, no dashboard scraping, no management key requirement, no reading of other tools' credentials. The key is only what you paste into the app. |
 | Confidence | **High** on paths and fields (official docs), *unverified* in practice: never exercised against a live account. `limit_remaining` semantics after a reset were taken from the docs text only. |
-| Off switch | Clear the key or disable the tab. |
+| Off switch | Clear the key or disable the source. |
 
 ## DeepSeek — oficial (balance endpoint)
 
@@ -135,7 +135,7 @@ marked *unverified* have never been exercised against a live account.
 | Failures | 401/403 `unauthorized` (not ambiguous), 402 `bad_response` with `httpStatus = 402` (the service's "insufficient balance" has no code of its own), 429 `rate_limited`, 5xx `server_error`, 404 `endpoint_changed`. Response text is never read or shown. |
 | Never | No cookies, no browser session, no dashboard scraping. The key is only what you paste into the app. |
 | Confidence | **High** on the path and fields (official docs), *unverified* in practice: never exercised against a live account. |
-| Off switch | Clear the key or disable the tab. |
+| Off switch | Clear the key or disable the source. |
 
 ## DeepInfra — oficial (billing endpoints, one unit unverified)
 
@@ -149,7 +149,7 @@ marked *unverified* have never been exercised against a live account.
 | Failures | On the checklist: 401/403 `unauthorized` (not ambiguous: documented API), 429 `rate_limited`, 5xx `server_error`, 404 `endpoint_changed`, a body without a numeric `stripe_balance` `endpoint_changed`. The usage call failing only drops `usage_month`. Response text is never read or shown. |
 | Never | No cookies (the reference lists an optional `session` cookie; the app never sends one), no dashboard scraping. The key is only what you paste into the app. |
 | Confidence | **High** on paths and field names (official reference), *unverified* in practice: never exercised against a live account. |
-| Off switch | Clear the key or disable the tab. |
+| Off switch | Clear the key or disable the source. |
 
 ## Moonshot — oficial (balance endpoint)
 
@@ -161,7 +161,7 @@ marked *unverified* have never been exercised against a live account.
 | Failures | 401/403 `unauthorized` (the documented 401 also covers a key of the other platform; not ambiguous), 429 `rate_limited`, 5xx `server_error`, 404 `endpoint_changed`. Response text is never read or shown. |
 | Never | No cookies, no browser session, no dashboard scraping, no `.cn` host. The key is only what you paste into the app. The console link `https://platform.moonshot.ai/console/api-keys` could not be verified (single-page app). |
 | Confidence | **High** on the path and fields (official docs), *unverified* in practice: never exercised against a live account. |
-| Off switch | Clear the key or disable the tab. |
+| Off switch | Clear the key or disable the source. |
 
 ## Novita — oficial (billing balance endpoint)
 
@@ -173,7 +173,7 @@ marked *unverified* have never been exercised against a live account.
 | Failures | The reference documents **no error codes or error body**, so the status mapping is the generic one: 401/403 `unauthorized` (not ambiguous: documented API), 429 `rate_limited`, 5xx `server_error`, 404 `endpoint_changed`. Response text is never read or shown. |
 | Never | No cookies, no browser session, no dashboard scraping. The key is only what you paste into the app. The key page `https://novita.ai/settings/key-management` could not be verified (single-page app). |
 | Confidence | **High** on path, header and fields (official docs), *unverified* in practice: never exercised against a live account. |
-| Off switch | Clear the key or disable the tab. |
+| Off switch | Clear the key or disable the source. |
 
 ## Ollama Cloud — oficial (balance endpoint)
 
@@ -186,7 +186,7 @@ marked *unverified* have never been exercised against a live account.
 | Failures | 401 `unauthorized` (documented: invalid credentials), 403 `unauthorized` (documented as *account suspended*; the app cannot tell it apart and says it could not verify the key), 429 `rate_limited` (honours `Retry-After`), 503 `server_error` ("balance reporting temporarily unavailable"), 404 `endpoint_changed`. Response text is never read or shown. |
 | Never | No cookies, no browser session, no dashboard scraping, no reading of the CLI credentials. The key is only what you paste into the app. |
 | Confidence | **High** on path and fields for the current-plan shape (official docs); the legacy shape comes from the same page, and the tolerated `used_percent` / `usage` variants from the task brief; none seen live. *Unverified* in practice: never exercised against a live account. |
-| Off switch | Clear the key or disable the tab. |
+| Off switch | Clear the key or disable the source. |
 
 ## MiniMax — NÃO oficial (token_plan/remains route, schema unpublished)
 
@@ -198,7 +198,7 @@ marked *unverified* have never been exercised against a live account.
 | Failures | 401/403 `unauthorized` (not documented, so treated as the usual rule), 429 `rate_limited`, 5xx `server_error`, 404 `endpoint_changed`. A 200 whose `base_resp.status_code` is not 0 is `bad_response` (the code meaning is not documented, so it is not interpreted). A body without a `model_remains` list, or whose entries are all unreadable, is `endpoint_changed`; response text is never read or shown. |
 | Never | No cookies, no browser session, no dashboard scraping, no China host, no pay-as-you-go key. The key is only what you paste into the app. The key page `https://platform.minimax.io/user-center/basic-information/interface-key` could not be verified (single-page app). |
 | Confidence | **Low.** Route and field names come from community clients, not from MiniMax. Never exercised against a live account: the first live run must compare the percentages with the console. |
-| Off switch | Clear the key or disable the tab. |
+| Off switch | Clear the key or disable the source. |
 
 ## Local files
 

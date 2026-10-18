@@ -1,0 +1,189 @@
+/* The home: the surfaces of the flyout and the pieces they share. Loaded by src/styles/index.css,
+   so every selector here is prefixed with `nx-`: the panels the rest of the app renders — the
+   settings screen, the harness panel, the history table — keep their own rules. */
+@import "./home-triage.css";
+@import "./home-detail.css";
+@import "./home-drawer.css";
+@import "./home-horizon.css";
+@import "./home-palette.css";
+@import "./home-sources.css";
+
+/* The frame carries the promoted home's chrome: a rule under the header, the surface switch and a
+   slightly tighter body than the plain flyout. */
+.nx-fly {
+  background: var(--solid);
+}
+
+.nx-fly .fly-head {
+  padding: 0.6rem 0.7rem;
+  border-block-end: 1px solid var(--line);
+}
+
+.nx-fly .fly-body {
+  padding: 0.7rem;
+}
+
+.nx-slot[hidden] {
+  display: none;
+}
+
+/* ---------- the surface switch ---------- */
+
+.nx-surfaces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.5rem 0.7rem 0;
+}
+
+.nx-surfaces > button {
+  appearance: none;
+  display: grid;
+  gap: 0.05rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: var(--raise);
+  color: var(--ink-2);
+  text-align: start;
+  cursor: pointer;
+}
+
+.nx-surfaces > button:hover {
+  background: var(--raise-2);
+  color: var(--ink);
+}
+
+.nx-surfaces > button[aria-pressed="true"] {
+  border-color: color-mix(in oklab, var(--accent) 60%, var(--line));
+  background: color-mix(in oklab, var(--accent) 8%, var(--raise));
+  color: var(--ink);
+}
+
+.nx-surfaces > button small {
+  color: var(--ink-3);
+  font-size: var(--fs-xs);
+}
+
+/* The one line that answers "did that work?" for a copied summary. */
+.nx-notice {
+  padding: 0.35rem 0.55rem;
+  border: 1px solid color-mix(in oklab, var(--accent) 32%, var(--line));
+  border-radius: var(--r-card);
+  background: color-mix(in oklab, var(--accent) 7%, var(--raise));
+  color: var(--ink-2);
+  font-size: var(--fs-xs);
+}
+
+/* Scoped on purpose: an unscoped `kbd` rule here would restyle the settings screen. */
+.nx-palette kbd {
+  padding: 0.05rem 0.3rem;
+  border: 1px solid var(--line-2);
+  border-radius: 4px;
+  background: var(--raise-2);
+  font-family: var(--font);
+  font-size: var(--fs-xs);
+}
+
+/* ---------- shared pieces ---------- */
+
+/* `.t-bar` carries `grid-area: b` for the tab strip's own template. Outside that grid the bar
+   collapses into the first row and drags the next line up with it, so it must be reset here
+   exactly as `grid.css` and `details.css` do. */
+.nx-bar {
+  grid-area: auto;
+  inline-size: 100%;
+}
+
+.nx-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.nx-meta {
+  color: var(--ink-3);
+  font-size: var(--fs-xs);
+  text-wrap: pretty;
+}
+
+.nx-section {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.nx-section-head {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--ink-2);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.nx-count {
+  padding: 0.05rem 0.35rem;
+  border-radius: 999px;
+  background: var(--raise-2);
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.nx-tag {
+  padding: 0.05rem 0.4rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink-3);
+  font-size: var(--fs-xs);
+}
+
+.nx-tag[data-detected="true"] {
+  border-color: color-mix(in oklab, var(--accent) 45%, var(--line));
+  color: var(--accent);
+}
+
+.nx-tag[data-shape="window"] {
+  border-color: color-mix(in oklab, var(--accent) 40%, var(--line));
+  color: var(--accent);
+}
+
+.nx-note {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: var(--raise);
+}
+
+.nx-note h3 {
+  font-size: var(--fs-base);
+}
+
+.nx-note-line {
+  margin-block-end: 0.15rem;
+}
+
+.nx-trend {
+  margin-block-start: 0.3rem;
+  color: var(--ink-2);
+  font-size: var(--fs-xs);
+}
+
+.nx-trend label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+}
+
+.nx-list {
+  display: grid;
+  gap: 0.45rem;
+}

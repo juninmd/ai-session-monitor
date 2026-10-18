@@ -1,10 +1,16 @@
-# Active provider grid prototype
+# Active provider grid prototype (historical)
 
-Browser-only preview of a compact session monitor, based on `master` at
-`1783bd9a8d3eddea5c482fa5f17d060946371313`. All readings, settings and credentials are
-fabricated and held in memory. Reloading restores the demonstration.
+> **Status: removed.** This was a browser-only preview of a compact session monitor, and its UI no
+> longer exists: `src/prototype/` (and with it `?prototype=grid`) was deleted when the proposal in
+> [`../next-ui/`](../next-ui/README.md) was promoted to be the app's only front end. The captures and
+> the notes below are the record of that iteration; every instruction to open `?prototype=grid` or to
+> use the preview controls is history, not a runnable route.
 
-Run `pnpm dev` and open:
+Based on `master` at
+`1783bd9a8d3eddea5c482fa5f17d060946371313`. All readings, settings and credentials were
+fabricated and held in memory. Reloading restored the demonstration.
+
+The preview ran on `pnpm dev` at:
 
 <http://127.0.0.1:1420/?prototype=grid&mock=demo>
 
@@ -80,9 +86,9 @@ later installed version has not been verified. The prototype offers only command
 
 ## Prototype boundary
 
-The normal browser route and Tauri launch keep the existing UI. `prototype=grid` only
-activates outside Tauri. No profiles, real credentials, collectors or system settings
-are read or changed by this preview.
+The normal browser route and the Tauri launch kept the interface of the time; `prototype=grid`
+only activated outside Tauri. No profiles, real credentials, collectors or system settings
+were read or changed by that preview.
 
 The tray at the bottom of the preview and its notification are browser simulations.
 Windows' native tray tooltip has a 127 UTF-16-unit limit (`src-tauri/src/tooltip.rs`),

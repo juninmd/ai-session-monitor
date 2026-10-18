@@ -1,21 +1,28 @@
-# Proposed interface (triagem, horizonte, comando, primeiro uso)
+# The home screen (triagem, horizonte, canais de cota)
 
-Browser-only preview of a reworked home screen, based on `master` at `9d24f26`. All readings,
-settings and credentials are fabricated and held in memory; reloading restores the demonstration.
-Nothing here reads a profile, the Credential Manager or the network.
+This started as a browser-only preview of a reworked home screen, based on `master` at `9d24f26`.
+It was promoted: `src/home/` is now the app's only UI, rendered by `App` in both the browser and
+the Tauri window. All readings, settings and credentials are fabricated and held in memory when the
+UI runs outside Tauri; reloading restores the demonstration. Nothing here reads a profile, the
+Credential Manager or the network.
 
 Run `pnpm dev` and open:
 
-<http://127.0.0.1:1420/?prototype=next&mock=demo>
+<http://127.0.0.1:1420/?mock=demo>
 
-The surface switch at the top selects what to review; the scenario links replace the fabricated
-data. `?prototype=grid` still opens the previous prototype untouched.
+`?mock=` picks the fabricated data (`demo`, `fresh`, `healthy`, `critical`, `stale`, `errors`,
+`loading`); in the browser the same list is reachable from Ctrl+K.
+
+Two surfaces the preview used for review are **not** part of the app: the *Comando* surface (the
+palette itself stays, opened with Ctrl+K) and the side-by-side *Comparar* view. The first run is not
+a navigation item either: the wizard takes the place of the surfaces while nothing readable is
+configured.
 
 ## Why this exists
 
 The current interface answers "how much is left?" well and "will it last?" badly. Concretely:
 
-| Signal | Where it lives today | Why that is a problem |
+| Signal | Where it lived in the previous UI | Why that is a problem |
 |---|---|---|
 | Share of each quota | grid card (`ProviderGrid`, three columns ≈ 7.5 rem each) | quota names are truncated, the card carries up to three bars plus a "+N" counter |
 | **Will it run out before the reset?** | inside one provider's detail, 11 px, computed by `paceOf` | it is the most actionable number on the screen and the least visible |
@@ -76,7 +83,7 @@ treated as settled.
 - `loading` is its own tier. The first snapshot puts every enabled source in `loading`
   (`docs/ipc.md`), so treating it as "no reading" would report a gap that does not exist; the
   headline says "Lendo N fontes…" and the cards say "lendo" instead of a dash.
-- Selecting a card opens the detail below it, so nothing learned there is lost.
+- Selecting a card opens the detail beside it, so nothing learned there is lost.
 
 ### Dados de uma cota
 
@@ -128,20 +135,22 @@ and a way straight into that source's settings; the summary keeps a count of war
   fetches nothing until both are true: one request per provider is not free. The detail panel
   charts the one provider it is open on, which is one request.
 
-### Comando — Ctrl+K
+### Comando — Ctrl+K (the surface itself was review-only)
 
 - One box for: jump to a provider, refresh everything or one source, copy the fleet state as text,
-  open the settings of a provider, switch the demonstration scenario. The list is built from data
-  (`paletteModel.ts`), so it never goes stale.
+  open the settings of a provider, switch the demonstration scenario (browser only). The list is
+  built from data (`paletteModel.ts`), so it never goes stale.
 - Types match on label first, then on hint and keywords; accents and case are folded.
-- Up/Down/Enter/Escape; the surface also lists every command so the content can be reviewed without
-  a keyboard.
+- Up/Down/Enter/Escape. The palette is opened from anywhere in the flyout with Ctrl+K; the review
+  surface that listed every command inline did not ship.
 - The palette is not modal (`role="dialog"`, no `aria-modal`): nothing behind it is made inert, it
   closes on Escape and on a click outside, the options are not tab stops (the arrow keys move
   `aria-activedescendant`), and Escape puts focus back on whatever opened it.
 
 ### Primeiro uso
 
+- Shown while nothing readable is configured, in place of every surface; the empty triage keeps a
+  way back to it ("Escolher fontes"), and it is not a navigation item.
 - Four steps: **Escolher** (what to monitor, with what already responds), **Conectar** (pasted keys
   through the existing `VendorKey`, permissions through the existing settings write),
   **Validar** (one reading, then what each source answered, in the flyout's own words),
@@ -187,32 +196,34 @@ Candidate new sources with an official channel and a credential that would fit: 
 GitHub Copilot (a plan-scoped PAT), Kiro CLI, Cline, Windsurf/Devin (service key, Enterprise),
 Command Code.
 
-### Comparar
+### Comparar (review only, did not ship)
 
-The current interface and the proposal in one document, on the same fabricated data. It is
-reachable while no settings screen is open: two `SettingsView` instances in one document would
-share every element id, so opening settings from either pane leaves the comparison and shows a
-single settings screen. Every id the proposal owns carries the `nx-` prefix (`ids.ts`), which keeps
-its rows, panel and name spans from colliding with the current interface's `tab-<id>`,
-`tab-name-<id>` and `panel` while both are on screen.
+The current interface and the proposal in one document, on the same fabricated data. It was
+reachable while no settings screen was open: two `SettingsView` instances in one document would
+share every element id, so opening settings from either pane left the comparison and showed a
+single settings screen. Every id the proposal owns carries the `nx-` prefix (`ids.ts`), which kept
+its rows, panel and name spans from colliding with the previous interface's `tab-<id>`,
+`tab-name-<id>` and `panel` while both were on screen. With the proposal promoted, the previous
+interface and this view are gone; the `nx-` prefix stays as the home's own namespace.
 
 ## Boundary and what is not proven
 
-- `?prototype=next` only activates outside Tauri; the Tauri launch and the plain browser route
-  keep the current interface. The backend is the in-memory mock, with 60 ms of fabricated latency.
-- No collector, contract or Rust file was changed. The proposal needs no wire change: every new
+- Outside Tauri the flyout runs on the in-memory mock, with 60 ms of fabricated latency in the
+  browser dev loop; inside Tauri the same components talk to the real backend. Nothing in the home
+  reads a profile, a credential or the network.
+- No collector, contract or Rust file was changed. The proposal needed no wire change: every new
   channel is either a `UsageWindow` or a `Fact`, both of which already exist in
   `crates/usage-model`.
 - One production line changed on purpose: `gaugeLabel` in `src/app/windowModel.ts` now checks
   whether a window already reset **before** checking for a missing percentage, so the accessible
   name matches the void meter the detail draws for that case. It is a wording fix with no rule
-  change, and the same label is used by the current interface.
-- The prototype's JavaScript ships as a code-split chunk of the release bundle and its CSS reaches
-  the main stylesheet, exactly like the `grid` prototype before it. Every selector added to
-  `src/styles/index.css` is scoped to `html[data-prototype="next"]` or prefixed `nx-`, so no rule
-  in the production flyout changes; an earlier draft had one unscoped `kbd` rule and it is now
-  scoped.
-- Reading a key's query string decides the scenario, exactly as the previous prototype does.
+  change.
+- The home's CSS reaches the main stylesheet through `src/styles/index.css`
+  (`@import "../home/home.css"`). Everything the surfaces own is prefixed `nx-` and the settings
+  screen, the harness panel and the history table keep their own rules; the review-only stage
+  chrome (`html[data-prototype]`, the `nx-stage` frame and the comparison) was removed when the
+  proposal was promoted.
+- Reading a key's query string decides the scenario (`?mock=`).
 - Not verified here: whether the mock's shapes match a live vendor answer for the channels that are
   not read yet. And the surfaces were reviewed by reading, by tests and in a headless browser's
   pixels, but not by a human with a keyboard or a screen reader: the feel of the roving tab stop,
@@ -220,38 +231,36 @@ its rows, panel and name spans from colliding with the current interface's `tab-
 
 ## Captures
 
-Taken from the production build (`pnpm build` + `pnpm preview`) in headless Chrome over the
-DevTools protocol, dark theme unless noted, 1440 px wide. The flyout keeps the application's real
-frame: **432 px wide** (27 rem) and capped at `calc(100vh - 5.25rem)`, so what is measured here is
-the density the app would actually have. Measured on `?prototype=next&mock=demo` at 1440×1000: the
-flyout is **432 × 916 px** (the cap, so it scrolls exactly as the app would), the grid resolves to
-**two 195.6 px columns**, and the five providers carry 2, 2, 2, 3 and 0 quota rows. In the
-comparison both panes measure 432 px inside a 928 px stage. On `?mock=stale` the detail prints `—`
-for both windows, draws two void meters, and has **zero** pace lines, zero "now" markers and zero
-amounts — the honesty rule the tests pin, confirmed in the browser.
+Taken in headless Chrome over the DevTools protocol against the app served on `127.0.0.1:1420` with a
+fabricated backend (`?mock=<scenario>`), dark theme unless noted, 1440 px wide. The flyout keeps the
+application's real frame: **432 px wide** (27 rem) and capped at `calc(100vh - 5.25rem)`, so what is
+measured here is the density the app actually has. Measured at 1440×1000: the grid resolves to
+**two 195.6 px columns** for the 14 providers the `demo` scenario reports, from three quota rows per
+card down to none. On `?mock=stale` the
+detail prints `—` for both windows, draws two void meters, and has **zero** pace lines, zero "now"
+markers and zero amounts — the honesty rule the tests pin, confirmed in the browser.
 
 | File | What it shows |
 |---|---|
-| [Triagem, dark](01-triagem-dark.png) | `mock=demo`: the headline naming the provider at risk, two providers per row with their quota windows, renewals and readings, and the shared detail below |
+| [Triagem, dark](01-triagem-dark.png) | `mock=demo`: the one-line headline naming the provider at risk and its jump links, two providers per row with their quota windows, renewals and readings — and no detail until one is activated |
 | [Triagem, crítico](02-triagem-critical.png) | `mock=critical`: four exhausted providers, each with a quiet dot and "esgotado · volta HH:MM", and four jump links in the headline |
 | [Horizonte](03-horizonte.png) | One runway bar per provider, the red uncovered remainder on Codex, "chega ao fim" fills, hatched rows where nothing can be projected |
-| [Comando](04-comando.png) | The command surface with the whole list built from data |
-| [Comando, paleta](04b-paleta.png) | The same page with Ctrl+K open |
-| [Primeiro uso](05-primeiro-uso.png) | Step 1, with each source marked "já responde", "sem leitura" or "precisa de chave" |
+| [Paleta](04-paleta.png) | Ctrl+K over the triage: the whole list built from data, filtered as you type |
+| [Primeiro uso](05-primeiro-uso.png) | `mock=fresh`: step 1, with each source marked "já responde", "sem leitura" or "precisa de chave" |
 | [Canais de cota](06-canais.png) | The whole evidence list, reachable and forbidden |
-| [Comparar](07-comparar.png) | Both interfaces at 432 px, side by side on a 58 rem stage |
 | [Triagem, carregando](08-triagem-loading.png) | `mock=loading`: "Lendo 5 fontes…", never "sem leitura" |
 | [Triagem, claro](09-triagem-light.png) | The same surface in the light theme |
-| [Detalhe e histórico](10-detalhe-historico.png) | The redesigned detail: one ficha per window with the real gauge, the trend against the earlier renewals, the chart with the projection and the "now" marker, and the additional information |
+| [Detalhe e histórico](10-detalhe-historico.png) | The detail's content: one ficha per window with the real gauge, the trend against the earlier renewals, the chart with the projection and the "now" marker, and the additional information |
 | [Claude por modelo](11-claude-por-modelo.png) | Claude's per-model weekly caps as pools of their own: *Opus*, *Sonnet* and *Fable*, beside the 5 h window and the all-models week, with the opt-in badge that says where they come from |
 | [Argon no Antigravity](12-antigravity-argon.png) | The three Antigravity pools: *Gemini* ("Pro e Flash dividem a mesma cota."), *Claude e GPT-OSS* and *Argon* ("Cota semanal própria, separada da do Gemini.") |
+| [Detalhe lateral](13-detalhe-lateral.png) | The detail opened the way the app opens it: a drawer against the trailing edge of the 432 px flyout, with the list dimmed behind it — the list keeps its full height and the audit gets the full width |
 
 No capture shows interaction: hover, focus-visible, the palette's arrow keys, the wizard's steps
 after the first, and any transition still need a human at a keyboard.
 
 ## Tests
 
-`src/prototype/next/*.test.ts(x)` — 90 tests. The models: urgency order and the wording of every
+`src/home/*.test.ts(x)` covers the models and the surfaces: urgency order and the wording of every
 verdict, the quota sheet's grouping, pooled name and pool note, the comparison against the earlier
 renewals with the projection's anchor and its two guards, the command list, its filtering and what the
 copied summary may contain, and every pure helper of the wizard. The rendering: tier order in the DOM,
@@ -262,8 +271,9 @@ navigation with a single tab stop, Ctrl+K opening, filtering, running and closin
 the trend chart as one described image carrying the projection, the history staying unrequested when
 the setting is off and when the horizon trend is off, Claude's per-model caps, Antigravity's Argon
 pool, the wizard walking from a missing key to a first reading and surviving a detour into settings,
-the evidence list, and both panes of the comparison including an assertion that no element id repeats.
+and the evidence list. The app-level suite (`src/App*.test.tsx`, `src/main.test.tsx`) keeps the
+height protocol, the announcements, the tray summary, the focus restoration and the mock scenarios.
 
 ```sh
-pnpm exec vitest run src/prototype/next
+pnpm exec vitest run src/home src/App
 ```

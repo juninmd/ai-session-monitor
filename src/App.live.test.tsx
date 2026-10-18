@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react';
+import { act, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { BackendError } from './lib/backend';
 import type { MockBackend } from './mock';
@@ -6,22 +6,26 @@ import { claudeView } from './mock/builders';
 import { problem } from './mock/fixtures';
 import { envOf, NOW, renderApp } from './test/helpers';
 
-const tab = (name: string) => screen.getByRole('tab', { name: new RegExp(`^${name}\\b`) });
-const ready = () => screen.findByRole('heading', { name: 'Sessão de 5 horas' });
+const tile = (name: string) => screen.getByRole('button', { name: new RegExp(`^${name}`) });
+const ready = () => screen.findByRole('button', { name: /^Codex/ });
+const drawer = () => screen.getByRole('dialog');
 const refreshes = (calls: readonly string[]) => calls.filter((call) => call === 'refresh').length;
 const footer = () => document.querySelector('.fly-foot') as HTMLElement;
+const renewals = () =>
+  [...document.querySelectorAll('.nx-q-renew')].map((node) => node.textContent ?? '');
 
 describe('when the flyout is shown again', () => {
-  it('refocuses the selected tab and reads everything once', async () => {
+  it('refocuses the selected row and reads everything once', async () => {
     const { user, backend } = renderApp();
     await ready();
-    await user.click(tab('Codex'));
+    await user.click(tile('Codex'));
+    await user.keyboard('{Escape}');
     screen.getByRole('button', { name: 'Atualizar agora' }).focus();
     const before = refreshes(backend.calls);
 
     act(() => backend.emitFlyoutShown());
 
-    expect(tab('Codex')).toHaveFocus();
+    expect(tile('Codex')).toHaveFocus();
     await vi.waitFor(() => expect(refreshes(backend.calls)).toBe(before + 1));
   });
 
@@ -64,12 +68,11 @@ describe('the 20 second tick', () => {
     const { backend } = renderApp({}, ['setInterval', 'clearInterval']);
     await ready();
     const asked = backend.calls.length;
-    const countdown = () => document.querySelector('.hero-time');
-    expect(countdown()).toHaveTextContent('1h53m');
+    const first = renewals()[0];
 
     run(60);
 
-    expect(countdown()).toHaveTextContent('1h52m');
+    expect(renewals()[0]).not.toBe(first);
     expect(footer()).toHaveTextContent('Lido há 1 min');
     expect(backend.calls).toHaveLength(asked);
   });
@@ -77,11 +80,11 @@ describe('the 20 second tick', () => {
   it('keeps the keyboard where it was', async () => {
     const { user } = renderApp({}, ['setInterval', 'clearInterval']);
     await ready();
-    await user.click(tab('Codex'));
-    tab('Codex').focus();
+    await user.click(tile('Codex'));
+    await user.keyboard('{Escape}');
     run(40);
-    expect(tab('Codex')).toHaveFocus();
-    expect(tab('Codex')).toHaveAttribute('aria-selected', 'true');
+    expect(tile('Codex')).toHaveFocus();
+    expect(tile('Codex')).toHaveAttribute('aria-pressed', 'true');
   });
 });
 
@@ -90,7 +93,7 @@ describe('the live region', () => {
 
   it('stays silent for the first snapshot, however bad it is', async () => {
     renderApp({ scenario: 'critical' });
-    await screen.findByRole('heading', { name: 'Sessão de 5 horas' });
+    await ready();
     expect(live()).toBeEmptyDOMElement();
   });
 
@@ -160,9 +163,9 @@ describe('when the event bridge is broken', () => {
 describe('a manual refresh during a rate-limit cool-down', () => {
   it('is still sent but tells the person why nothing will happen yet', async () => {
     const { user, backend } = renderApp({ scenario: 'stale' });
-    await screen.findByRole('tab', { name: /^LiteLLM\b/ });
-    await user.click(tab('LiteLLM'));
-    await user.click(screen.getByRole('button', { name: 'Atualizar agora' }));
+    await screen.findByRole('button', { name: /^LiteLLM/ });
+    await user.click(tile('LiteLLM'));
+    await user.click(within(drawer()).getByRole('button', { name: 'Atualizar LiteLLM' }));
 
     const live = document.querySelector('output[aria-live="polite"]') as HTMLElement;
     expect(live).toHaveTextContent(
@@ -174,7 +177,8 @@ describe('a manual refresh during a rate-limit cool-down', () => {
   it('says nothing special for a source that is not cooling', async () => {
     const { user } = renderApp({ scenario: 'stale' });
     await ready();
-    await user.click(screen.getByRole('button', { name: 'Atualizar agora' }));
+    await user.click(tile('Codex'));
+    await user.click(within(drawer()).getByRole('button', { name: 'Atualizar Codex' }));
     const live = document.querySelector('output[aria-live="polite"]') as HTMLElement;
     expect(live).not.toHaveTextContent(/Nova tentativa/);
   });

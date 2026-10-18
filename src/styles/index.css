@@ -2,8 +2,7 @@
 @import "./base.css";
 @import "./shell.css";
 @import "./brand.css";
-@import "./tabs.css";
-@import "./providers.css";
+@import "./bar.css";
 @import "./update.css";
 @import "./draft.css";
 @import "./gauge.css";
@@ -12,9 +11,4 @@
 @import "./feedback.css";
 @import "./controls.css";
 @import "./forms.css";
-@import "../prototype/preview.css";
-@import "../prototype/grid.css";
-@import "../prototype/details.css";
-@import "../prototype/actions.css";
-@import "../prototype/overview.css";
-@import "../prototype/next/next.css";
+@import "../home/home.css";
