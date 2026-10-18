@@ -1,100 +1,71 @@
-// Settings inside the flyout: general options first, then one collapsible group per source.
-import { type ReactNode, useEffect, useRef, useState } from 'react';
-import { useBackend } from '../../app/backendContext';
+// Settings inside the flyout, in two levels: a short menu of sections, and one section at a time in
+// the body. A deep link (an error action's button, the provider drawer) skips straight to a section.
+import { useEffect, useRef, useState } from 'react';
 import { useDraftGuard } from '../../app/draftContext';
 import { describeError } from '../../app/errorText';
-import { harnessName, type SettingsSection, TAB_ORDER } from '../../app/harness';
+import type { SettingsSection } from '../../app/harness';
+import { SETTINGS_TITLE_ID } from '../../app/homeIds';
 import { useSettingsApi } from '../../app/settingsContext';
-import { isEnabled } from '../../app/settingsPatch';
-import { useAsyncAction } from '../../app/useAsyncAction';
 import { t } from '../../i18n';
 import type { HarnessId } from '../../lib/contract';
-import { HarnessLogo } from '../brand/HarnessLogo';
 import { Icon } from '../icons';
-import { Banner, Note } from '../panel/Banner';
-import { ActionError } from '../panel/ErrorActions';
 import { GeneralSettings } from './GeneralSettings';
-import { SOURCE_GROUPS } from './SourceGroups';
+import { HistorySettings } from './HistorySettings';
+import { LEVEL_TITLE, levelOf, type SettingsLevel, sourceOf } from './levels';
+import { SettingsMenu } from './SettingsMenu';
+import { SourcesSection } from './SourcesSection';
 import { UpdateSettings } from './UpdateSettings';
 
 interface SettingsViewProps {
-  /** The group an error action pointed at; it opens expanded. */
+  /** The section an error action or the gear pointed at; the menu opens when it is null. */
   section: SettingsSection | null;
   onBack: () => void;
-  overview?: ReactNode;
 }
 
-/** Sources with no vendor-documented interface and no other badge in the summary. */
-const UNOFFICIAL: ReadonlySet<HarnessId> = new Set(['antigravity', 'kimi', 'zai']);
-
-function GroupSummary({ harness, onClick }: { harness: HarnessId; onClick: () => void }) {
-  const { settings } = useSettingsApi();
-  const on = isEnabled(settings, harness);
-  return (
-    // biome-ignore lint/a11y/noStaticElementInteractions: native summary provides keyboard activation and disclosure semantics.
-    <summary
-      onClick={(event) => {
-        event.preventDefault();
-        onClick();
-      }}
-    >
-      <HarnessLogo id={harness} size={20} />
-      <span className="grp-name">{harnessName(harness)}</span>
-      {UNOFFICIAL.has(harness) && (
-        <span className="chip warnchip">
-          <Icon name="warn" />
-          {t('settings.unofficial_chip')}
-        </span>
-      )}
-      <span className={on ? 'grp-state on' : 'grp-state'}>
-        {on ? t('settings.on') : t('settings.off')}
-      </span>
-    </summary>
-  );
-}
-
-function SourceGroup(props: {
-  harness: HarnessId;
-  open: boolean;
-  onToggle: (open: boolean) => void;
-}) {
-  const { harness, open, onToggle } = props;
-  const Body = SOURCE_GROUPS[harness];
-  return (
-    <details id={`grp-${harness}`} className="grp" open={open}>
-      <GroupSummary harness={harness} onClick={() => onToggle(!open)} />
-      {/* Mounted only while open: a collapsed group neither polls nor keeps a stale draft. */}
-      {open && (
-        <div className="grp-body">
-          <Body />
-        </div>
-      )}
-    </details>
-  );
-}
-
-export function SettingsView({ section, onBack, overview }: SettingsViewProps) {
-  const guard = useDraftGuard();
-  const backend = useBackend();
+export function SettingsView({ section, onBack }: SettingsViewProps) {
   const api = useSettingsApi();
+  const guard = useDraftGuard();
   const rootRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const sourcesRef = useRef<HTMLHeadingElement>(null);
-  const help = useAsyncAction(() => backend.openLink('project_readme'));
-  const [open, setOpen] = useState<ReadonlySet<HarnessId>>(
-    () => new Set(section !== null && section !== 'general' ? [section] : []),
-  );
+  const [level, setLevel] = useState<SettingsLevel>(() => levelOf(section));
+  const [open, setOpen] = useState<ReadonlySet<HarnessId>>(() => {
+    const source = sourceOf(section);
+    return new Set(source === null ? [] : [source]);
+  });
+  // The source whose group should take the focus: the one a deep link named, until the user moves
+  // the screen themselves. Opening a section from the menu focuses its heading instead.
+  const [focusSource, setFocusSource] = useState<HarnessId | null>(() => sourceOf(section));
+  const applied = useRef(section);
 
+  // Where the level's focus goes: the deep-linked group, else the level's own heading. The effect is
+  // idempotent, so StrictMode's second pass in development lands in the same place.
   useEffect(() => {
+    const group =
+      api.loaded && level === 'sources' && focusSource !== null
+        ? rootRef.current?.querySelector<HTMLElement>(`#grp-${focusSource}`)
+        : null;
+    if (group) {
+      group.scrollIntoView({ block: 'nearest' });
+      group.querySelector('summary')?.focus();
+      return;
+    }
     headingRef.current?.focus();
-  }, []);
+  }, [api.loaded, focusSource, level]);
 
+  // A new section arriving from outside steers the screen, even while settings are already open.
   useEffect(() => {
-    if (!api.loaded || section === null || section === 'general') return;
-    const group = rootRef.current?.querySelector<HTMLElement>(`#grp-${section}`);
-    group?.scrollIntoView({ block: 'nearest' });
-    group?.querySelector('summary')?.focus();
-  }, [api.loaded, section]);
+    if (applied.current === section) return;
+    applied.current = section;
+    const source = sourceOf(section);
+    setLevel(levelOf(section));
+    setFocusSource(source);
+    if (source !== null) setOpen((current) => new Set([...current, source]));
+  }, [section]);
+
+  const openSection = (next: SettingsLevel) => {
+    setFocusSource(null);
+    setLevel(next);
+  };
 
   const toggle = (harness: HarnessId, isOpen: boolean) => {
     const apply = () =>
@@ -109,20 +80,21 @@ export function SettingsView({ section, onBack, overview }: SettingsViewProps) {
     else apply();
   };
 
+  // The arrow leaves the section it is in, and leaving the screen is guarded like any form.
+  const back = () => {
+    const leave = level === 'menu' ? onBack : () => setLevel('menu');
+    if (guard) guard.request(leave);
+    else leave();
+  };
   const failure = api.loadError ? describeError(api.loadError) : null;
   return (
     <div ref={rootRef} className="settings">
       <div className="set-head">
-        <button
-          type="button"
-          className="icon-btn"
-          aria-label={t('settings.back')}
-          onClick={() => (guard ? guard.request(onBack) : onBack())}
-        >
+        <button type="button" className="icon-btn" aria-label={t('settings.back')} onClick={back}>
           <Icon name="back" />
         </button>
-        <h2 id="settings-title" ref={headingRef} tabIndex={-1}>
-          {t('settings.title')}
+        <h2 id={SETTINGS_TITLE_ID} ref={headingRef} tabIndex={-1}>
+          {t(LEVEL_TITLE[level])}
         </h2>
       </div>
       {failure ? (
@@ -142,48 +114,17 @@ export function SettingsView({ section, onBack, overview }: SettingsViewProps) {
         <output className="hint">{t('settings.loading')}</output>
       ) : (
         <fieldset className="settings-controls" disabled={guard?.locked}>
-          {overview}
-          <GeneralSettings />
-          <UpdateSettings />
-          <section className="sg" aria-labelledby="sg-sources">
-            <h3 id="sg-sources" ref={sourcesRef} tabIndex={-1}>
-              {t('settings.sources')}
-            </h3>
-            {api.secretsError && (
-              <Banner tone="warn">
-                <p role="alert">{t('settings.secrets_unreadable')}</p>
-                <div className="actions">
-                  <button
-                    type="button"
-                    className="btn"
-                    onClick={() => {
-                      // A successful read removes this banner, and the focused button with it.
-                      sourcesRef.current?.focus();
-                      api.reload();
-                    }}
-                  >
-                    {t('action.retry')}
-                  </button>
-                </div>
-              </Banner>
-            )}
-            {TAB_ORDER.map((harness) => (
-              <SourceGroup
-                key={harness}
-                harness={harness}
-                open={open.has(harness)}
-                onToggle={(isOpen) => toggle(harness, isOpen)}
-              />
-            ))}
-          </section>
-          <Note icon="lock">{t('settings.secrets_note')}</Note>
-          <div className="actions">
-            <button type="button" className="btn" onClick={() => void help.run()}>
-              {t('settings.help')}
-              <Icon name="external" />
-            </button>
-          </div>
-          {help.error && <ActionError error={help.error} />}
+          {level === 'menu' && <SettingsMenu onOpen={openSection} />}
+          {level === 'general' && <GeneralSettings />}
+          {level === 'history' && <HistorySettings enabled={api.settings.general.historyEnabled} />}
+          {level === 'update' && <UpdateSettings />}
+          {level === 'sources' && (
+            <SourcesSection
+              open={open}
+              onToggle={toggle}
+              focusHeading={() => headingRef.current?.focus()}
+            />
+          )}
         </fieldset>
       )}
     </div>

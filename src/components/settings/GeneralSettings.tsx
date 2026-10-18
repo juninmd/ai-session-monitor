@@ -21,7 +21,6 @@ import {
 } from '../../lib/contract';
 import type { Option } from '../forms/fields';
 import { SettingSegmented, SettingSelect, SettingSwitch } from '../forms/SettingControls';
-import { HistorySettings } from './HistorySettings';
 
 const patch = (settings: Settings, change: Partial<General>): Settings => ({
   ...settings,
@@ -113,12 +112,6 @@ export function GeneralSettings() {
           options={WEEK_OPTIONS}
           apply={(current, weekFormat) => patch(current, { weekFormat })}
         />
-        <div className="srow">
-          <div className="lbl">
-            <span>{t('settings.theme')}</span>
-            <small className="hint">{t('settings.theme_hint')}</small>
-          </div>
-        </div>
       </section>
       <section className="sg" aria-labelledby="sg-alerts">
         <h3 id="sg-alerts">{t('settings.alerts')}</h3>
@@ -151,7 +144,6 @@ export function GeneralSettings() {
           apply={(current, notifyOnReset) => patch(current, { notifyOnReset })}
         />
       </section>
-      <HistorySettings enabled={g.historyEnabled} />
     </>
   );
 }

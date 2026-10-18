@@ -1,6 +1,7 @@
 import { screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { renderApp, renderPanel } from '../../test/helpers';
+import { VendorKey } from '../setup/KeyConnect';
 import { LitellmForm } from '../setup/LitellmForm';
 import { SettingsView } from './SettingsView';
 
@@ -88,11 +89,16 @@ describe('pending settings edits', () => {
     expect((await backend.getSettings()).codex.binaryPath).toBe('my-draft.exe');
   });
 
-  it('blocks installation for a pasted key and never echoes it in the warning', async () => {
-    const { user, backend } = renderPanel(<SettingsView section="openrouter" onBack={() => {}} />);
-    const key =
-      document.getElementById('openrouter-key') ??
-      (await screen.findByLabelText('Chave de API do OpenRouter'));
+  it('blocks installation for a pasted key held anywhere, and never echoes it', async () => {
+    // A key form stays mounted behind the settings screen (the first-run wizard is kept alive), so
+    // the Atualizações section can be on screen with a pasted key waiting next to it.
+    const { user, backend } = renderPanel(
+      <>
+        <SettingsView section="update" onBack={() => {}} />
+        <VendorKey harness="openrouter" />
+      </>,
+    );
+    const key = await screen.findByLabelText('Chave de API do OpenRouter');
     await user.type(key, 'fabricated-sensitive-key');
     await user.click(await screen.findByRole('button', { name: 'Buscar atualização' }));
     await user.click(await screen.findByRole('button', { name: 'Baixar atualização' }));
@@ -106,7 +112,7 @@ describe('pending settings edits', () => {
   it('guards header navigation, Escape and quit without asking twice after discard', async () => {
     const { user, backend } = renderApp({ scenario: 'healthy' });
     await user.click(screen.getByRole('button', { name: 'Configurações' }));
-    await screen.findByRole('heading', { name: 'Fontes de dados' });
+    await user.click(await screen.findByRole('button', { name: /^Fontes de dados/ }));
     await user.click(
       within(document.getElementById('grp-codex') as HTMLElement).getByText('Codex', {
         selector: '.grp-name',
