@@ -1,5 +1,6 @@
 import { act, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { RANK } from './home/testHarness';
 import { BackendError } from './lib/backend';
 import { problem } from './mock/fixtures';
 import { renderApp } from './test/helpers';
@@ -20,32 +21,30 @@ const NAMES = [
   'MiniMax',
   'LiteLLM',
 ];
-const tab = (name: string) => screen.getByRole('tab', { name: new RegExp(`^${name}\\b`) });
-const ready = () => screen.findByRole('heading', { name: 'Sessão de 5 horas' });
+const tile = (name: string) => screen.getByRole('button', { name: new RegExp(`^${name}`) });
+const nav = (name: string) => screen.getByRole('button', { name: new RegExp(`^${name}`) });
+// The reading follows the name with no space ("Codex18%"), so the match stops at the name.
+const ready = () => screen.findByRole('button', { name: /^Codex/ });
 const gear = () => screen.getByRole('button', { name: 'Configurações' });
+const drawer = () => screen.getByRole('dialog');
 
 describe('the shell', () => {
-  it('shows the title, all the tools in order and the first panel', async () => {
+  it('shows the title, the surfaces and every monitored provider in urgency order', async () => {
     renderApp();
     expect(screen.getByRole('heading', { level: 1, name: 'AI Session Monitor' })).toBeVisible();
-    const tabs = screen.getAllByRole('tab');
-    expect(tabs).toHaveLength(NAMES.length);
-    for (const [index, name] of NAMES.entries()) {
-      expect(tabs[index]).toHaveAccessibleName(new RegExp(`^${name}\\b`));
-    }
-    expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
-    expect(await ready()).toBeVisible();
-    expect(screen.getByRole('tabpanel')).toHaveAccessibleName('Claude Code');
-  });
-
-  it('summarises every tool in its tab, in words as well as numbers', async () => {
-    renderApp();
+    // The switch only appears once the stored settings say what is being monitored.
+    expect(await screen.findByRole('button', { name: /^Triagem/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    expect(nav('Horizonte')).toBeVisible();
+    expect(nav('Canais de cota')).toBeVisible();
     await ready();
-    expect(tab('Claude Code')).toHaveAccessibleName('Claude Code 52% disponível, dentro do ritmo');
-    expect(tab('Codex')).toHaveAccessibleName('Codex 18% disponível, atenção');
-    expect(tab('Antigravity')).toHaveAccessibleName('Antigravity 46% disponível, dentro do ritmo');
-    expect(tab('OpenCode')).toHaveAccessibleName('OpenCode 79% disponível, dentro do ritmo');
-    expect(tab('LiteLLM')).toHaveAccessibleName('LiteLLM falha na leitura');
+    const tiles = [...document.querySelectorAll<HTMLElement>('button[data-tier]')];
+    expect(tiles).toHaveLength(NAMES.length);
+    const ranks = tiles.map((node) => RANK[node.getAttribute('data-tier') ?? 'unknown'] ?? 6);
+    expect(ranks).toEqual([...ranks].sort((a, b) => a - b));
+    for (const name of NAMES) expect(tile(name)).toBeVisible();
   });
 
   it('puts the lowest availability on the title, where the tray icon takes it from', async () => {
@@ -63,7 +62,7 @@ describe('the shell', () => {
       'title',
       'Sem leitura disponível',
     );
-    expect(screen.getByText('Ainda sem leitura')).toBeVisible();
+    expect(screen.getByText('Lendo as fontes…')).toBeVisible();
   });
 
   it('shows the age of the newest reading, from the clock it was given', async () => {
@@ -73,49 +72,40 @@ describe('the shell', () => {
   });
 });
 
-describe('moving between tools', () => {
-  it('shows the panel of the tab that was clicked, and names it after the tab', async () => {
-    const { user } = renderApp();
-    await ready();
-    await user.click(tab('Codex'));
-    expect(tab('Codex')).toHaveAttribute('aria-selected', 'true');
-    expect(tab('Claude Code')).toHaveAttribute('aria-selected', 'false');
-    expect(screen.getByRole('tabpanel')).toHaveAccessibleName('Codex');
-    expect(await screen.findByRole('heading', { name: 'Janela de 5 horas' })).toBeVisible();
-    expect(screen.queryByRole('heading', { name: 'Sessão de 5 horas' })).toBeNull();
-  });
-
-  it('follows the arrow keys', async () => {
-    const { user } = renderApp();
-    await ready();
-    tab('Claude Code').focus();
-    await user.keyboard('{ArrowRight}');
-    expect(tab('Codex')).toHaveFocus();
-    expect(screen.getByRole('tabpanel')).toHaveAccessibleName('Codex');
-    await user.keyboard('{End}');
-    expect(tab('LiteLLM')).toHaveFocus();
-    expect(screen.getByRole('tabpanel')).toHaveAccessibleName('LiteLLM');
-  });
-
-  it('starts every panel at the top', async () => {
+describe('moving between surfaces', () => {
+  it('shows the surface that was clicked, and starts it at the top', async () => {
     const { user } = renderApp();
     await ready();
     const body = document.querySelector('.fly-body') as HTMLElement;
     body.scrollTop = 160;
-    expect(body.scrollTop).toBe(160);
-    await user.click(tab('Antigravity'));
+    await user.click(nav('Horizonte'));
+    expect(screen.getByRole('heading', { name: 'Chego até a renovação?' })).toBeVisible();
+    expect(document.querySelector('button[data-tier]')).toBeNull();
     expect(body.scrollTop).toBe(0);
+    await user.click(nav('Canais de cota'));
+    expect(screen.getByRole('heading', { name: 'O que ainda dá para ler' })).toBeVisible();
+    await user.click(nav('Triagem'));
+    expect(await ready()).toBeVisible();
   });
 
-  it('shows the failure of a tool in its own panel, with one way forward', async () => {
+  it('shows the failure of a tool in its own drawer, with one way forward', async () => {
     const { user } = renderApp();
     await ready();
-    await user.click(tab('LiteLLM'));
-    const panel = screen.getByRole('tabpanel');
-    expect(await within(panel).findByRole('heading', { level: 2 })).toHaveTextContent(
-      'Chave ou login recusado',
-    );
-    expect(within(panel).getAllByRole('button')).toHaveLength(1);
+    await user.click(tile('LiteLLM'));
+    const panel = drawer();
+    expect(
+      await within(panel).findByRole('heading', { name: 'Chave ou login recusado' }),
+    ).toBeVisible();
+    const block = panel.querySelector('.card.notice') as HTMLElement;
+    expect(within(block).getAllByRole('button')).toHaveLength(1);
+  });
+
+  it('opens the detail only for the provider that was activated', async () => {
+    const { user } = renderApp();
+    await ready();
+    expect(screen.queryByRole('dialog')).toBeNull();
+    await user.click(tile('Antigravity'));
+    expect(within(drawer()).getByRole('heading', { level: 2, name: 'Antigravity' })).toBeVisible();
   });
 });
 
@@ -148,38 +138,51 @@ describe('the buttons', () => {
     expect(alert).toHaveTextContent('Algo deu errado.');
     expect(alert).not.toHaveTextContent('0x7ffe');
   });
+
+  it('opens the update settings from the banner, without downloading anything', async () => {
+    const { user, backend } = renderApp();
+    await ready();
+    await act(async () => {
+      await backend.checkUpdate();
+    });
+    const banner = await screen.findByText('Versão 0.2.0 disponível');
+    await user.click(within(banner.closest('.update-banner') as HTMLElement).getByRole('button'));
+    expect(await screen.findByRole('heading', { name: /^Atualizações$/ })).toBeVisible();
+    expect(backend.calls).not.toContain('download_update');
+    expect(backend.calls).not.toContain('install_update');
+  });
 });
 
 describe('settings', () => {
-  it('open from the gear, replace the tabs, and close from the same button', async () => {
+  it('open from the gear, replace the surfaces, and close from the same button', async () => {
     const { user } = renderApp();
     await ready();
     expect(gear()).toHaveAttribute('aria-pressed', 'false');
     await user.click(gear());
     expect(gear()).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.queryByRole('tablist')).toBeNull();
+    expect(screen.queryByRole('button', { name: /^Triagem/ })).toBeNull();
     expect(screen.getByRole('region', { name: 'Configurações' })).toBeVisible();
     expect(screen.getByRole('heading', { level: 2, name: 'Configurações' })).toHaveFocus();
     await user.click(gear());
-    expect(screen.getByRole('tablist')).toBeVisible();
+    expect(nav('Triagem')).toBeVisible();
     expect(gear()).toHaveAttribute('aria-pressed', 'false');
   });
 
-  it('give focus back to the tab the user came from', async () => {
+  it('give focus back to the row the user came from', async () => {
     const { user } = renderApp();
     await ready();
-    await user.click(tab('Codex'));
-    await user.click(gear());
+    await user.click(tile('Codex'));
+    await user.click(within(drawer()).getByRole('button', { name: 'Configurar Codex' }));
     await user.click(screen.getByRole('button', { name: 'Voltar' }));
-    expect(tab('Codex')).toHaveFocus();
-    expect(tab('Codex')).toHaveAttribute('aria-selected', 'true');
+    expect(tile('Codex')).toHaveFocus();
+    expect(tile('Codex')).toHaveAttribute('aria-pressed', 'true');
   });
 
   it('open on the group of the source whose error asked for it', async () => {
     const { user } = renderApp({ scenario: 'errors' });
-    await screen.findByRole('heading', { name: 'Falha ao instalar' });
-    await user.click(tab('Codex'));
-    await user.click(await screen.findByRole('button', { name: 'Abrir configurações' }));
+    await screen.findByRole('button', { name: /^Triagem/ });
+    await user.click(tile('Codex'));
+    await user.click(await within(drawer()).findByRole('button', { name: 'Abrir configurações' }));
     const group = document.getElementById('grp-codex') as HTMLDetailsElement;
     await vi.waitFor(() => expect(group).toHaveAttribute('open'));
     await vi.waitFor(() => expect(group.querySelector('summary')).toHaveFocus());
@@ -187,11 +190,22 @@ describe('settings', () => {
 });
 
 describe('Escape', () => {
-  it('hides the flyout from the tabs', async () => {
+  it('hides the flyout from the surfaces', async () => {
     const { user, backend } = renderApp();
     await ready();
     await user.keyboard('{Escape}');
     expect(backend.calls).toContain('hide_flyout');
+  });
+
+  it('closes the drawer first, and hides only once nothing else is open', async () => {
+    const { user, backend } = renderApp();
+    await ready();
+    await user.click(tile('Codex'));
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(backend.calls).not.toContain('hide_flyout');
+    await user.keyboard('{Escape}');
+    expect(backend.calls.filter((call) => call === 'hide_flyout')).toHaveLength(1);
   });
 
   it('goes back from settings first, and hides only on the next press', async () => {
@@ -199,7 +213,7 @@ describe('Escape', () => {
     await ready();
     await user.click(gear());
     await user.keyboard('{Escape}');
-    expect(screen.getByRole('tablist')).toBeVisible();
+    expect(nav('Triagem')).toBeVisible();
     expect(backend.calls).not.toContain('hide_flyout');
     await user.keyboard('{Escape}');
     expect(backend.calls.filter((call) => call === 'hide_flyout')).toHaveLength(1);

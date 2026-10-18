@@ -2,6 +2,7 @@
 // source off, which the tab then shows as "Desligado" with a one-click way back.
 import type { ReactNode } from 'react';
 import { useBackend } from '../../app/backendContext';
+import { parkFocus } from '../../app/homeIds';
 import { useSettingsApi } from '../../app/settingsContext';
 import { withEnabled } from '../../app/settingsPatch';
 import { useAsyncAction } from '../../app/useAsyncAction';
@@ -10,7 +11,6 @@ import type { HarnessId } from '../../lib/contract';
 import { Banner } from '../panel/Banner';
 import { ActionError } from '../panel/ErrorActions';
 import { InfoCard } from '../panel/StateCards';
-import { focusTab } from '../shell/TabStrip';
 
 interface ConsentCardProps {
   harness: HarnessId;
@@ -29,9 +29,9 @@ function ConsentCard(props: ConsentCardProps) {
   const skip = useAsyncAction(() => save((s) => withEnabled(s, harness, false)));
   const failure = allow.error ?? skip.error;
   // Either action replaces this card, and a disabled or removed button drops the keyboard on
-  // <body>: park it on the tab first, which stays mounted.
+  // <body>: park it on the row, the drawer or the settings screen first.
   const keepOnTab = (run: () => Promise<boolean>) => () => {
-    focusTab(harness);
+    parkFocus(harness);
     void run();
   };
   return (

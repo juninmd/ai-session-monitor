@@ -91,7 +91,7 @@ export const DATA: Record<ScenarioName, Makers> = {
   demo: {
     claude: (env) => claudeView(env, 'ok'),
     codex: (env) => codexView(env, 'warn'),
-    antigravity: (env) => antigravityView(env, 'ok', true),
+    antigravity: (env) => antigravityView(env, 'ok', true, true),
     opencode: (env) => opencodeView(env, 'ok'),
     kimi: (env) => kimiView(env, 'ok'),
     zai: (env) => zaiView(env, 'warn'),

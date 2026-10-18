@@ -1,38 +1,39 @@
-import { screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { screen, within } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import { renderApp } from './test/helpers';
 
-const tab = (name: string) => screen.getByRole('tab', { name: new RegExp(`^${name}\\b`) });
+const tile = (name: string) => screen.getByRole('button', { name: new RegExp(`^${name}`) });
+const ready = () => screen.findByRole('button', { name: /^Codex/ });
+const drawer = () => screen.getByRole('dialog');
 
-// Chromium drops the keyboard on <body> when the focused control is disabled or removed. A card
-// that replaces itself after a click must leave the keyboard on something that stays mounted.
+// Chromium drops the keyboard on <body> when the focused control is disabled or removed. An action
+// that replaces its own card must leave the keyboard on something that stays mounted: here the row
+// behind the drawer, and the settings screen an error card opens.
 describe('the keyboard when an action replaces its own card', () => {
-  it('stays on the tab after Claude Code consent installs the command', async () => {
-    const { user } = renderApp({ scenario: 'fresh' });
-    (await screen.findByRole('button', { name: 'Instalar comando' })).focus();
-    await user.keyboard('{Enter}');
-    expect(
-      await screen.findByRole('heading', { name: 'Aguardando a primeira leitura' }),
-    ).toBeVisible();
-    expect(tab('Claude Code')).toHaveFocus();
+  it('moves into the drawer, and back to the row that opened it', async () => {
+    const { user } = renderApp();
+    await ready();
+    await user.click(tile('Codex'));
+    expect(document.getElementById('nx-drawer-close')).toHaveFocus();
+    await user.keyboard('{Escape}');
+    expect(tile('Codex')).toHaveFocus();
   });
 
-  it('stays on the tab after Codex consent', async () => {
-    const { user } = renderApp({ scenario: 'fresh' });
-    await user.click(tab('Codex'));
-    (await screen.findByRole('button', { name: 'Permitir leitura' })).focus();
-    await user.keyboard('{Enter}');
-    expect(await screen.findByRole('heading', { name: 'Janela de 5 horas' })).toBeVisible();
-    expect(tab('Codex')).toHaveFocus();
+  it('lands on the group of the source whose error action it followed', async () => {
+    const { user } = renderApp({ scenario: 'errors' });
+    await screen.findByRole('button', { name: /^Triagem/ });
+    await user.click(tile('Codex'));
+    await user.click(await within(drawer()).findByRole('button', { name: 'Abrir configurações' }));
+    const group = document.getElementById('grp-codex') as HTMLDetailsElement;
+    await vi.waitFor(() => expect(group.querySelector('summary')).toHaveFocus());
   });
 
-  it('stays on the tab when "Agora não" switches the source off', async () => {
-    const { user } = renderApp({ scenario: 'fresh' });
-    (await screen.findByRole('button', { name: 'Agora não' })).focus();
-    await user.keyboard('{Enter}');
-    expect(
-      await screen.findByRole('heading', { name: 'Claude Code está desligado' }),
-    ).toBeVisible();
-    expect(tab('Claude Code')).toHaveFocus();
+  it('returns to the row after leaving the settings an action opened', async () => {
+    const { user } = renderApp({ scenario: 'errors' });
+    await screen.findByRole('button', { name: /^Triagem/ });
+    await user.click(tile('Codex'));
+    await user.click(await within(drawer()).findByRole('button', { name: 'Abrir configurações' }));
+    await user.click(screen.getByRole('button', { name: 'Voltar' }));
+    expect(tile('Codex')).toHaveFocus();
   });
 });

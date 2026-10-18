@@ -1,0 +1,80 @@
+/* The lateral detail: a drawer against the trailing edge of the flyout, with the list dimmed
+   behind it. A 27 rem flyout cannot show two columns, so this is how the audit keeps its own
+   width without making the list shorter. */
+.nx-fly {
+  position: relative;
+}
+
+/* The list alone is short; while the detail is open the frame keeps enough height for it. */
+.nx-fly[data-detail] {
+  min-block-size: min(34rem, calc(100vh - 5.25rem));
+}
+
+.nx-drawer-host {
+  position: absolute;
+  inset: 0;
+  z-index: 25;
+}
+
+.nx-drawer-scrim {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  /* Dark on both themes: a light scrim disappears over a dark list. */
+  background: light-dark(rgb(15 18 24 / 0.3), rgb(0 0 0 / 0.5));
+  cursor: default;
+}
+
+.nx-drawer {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  inline-size: min(100%, 24rem);
+  background: var(--solid);
+  border-inline-start: 1px solid var(--line-2);
+  box-shadow: -14px 0 32px rgb(0 0 0 / 0.28);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nx-drawer {
+    animation: nx-slide-in 0.16s ease-out;
+  }
+}
+
+@keyframes nx-slide-in {
+  from {
+    translate: 12% 0;
+    opacity: 0.4;
+  }
+}
+
+.nx-drawer-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.35rem 0.4rem;
+  border-block-end: 1px solid var(--line);
+}
+
+.nx-drawer-bar > .nx-panel-title {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nx-drawer-body {
+  overflow: auto;
+  padding: 0.6rem;
+  scrollbar-width: thin;
+}
+
+/* The drawer is the whole surface inside itself: no outer rule, no second heading. */
+.nx-drawer-body .nx-panel {
+  gap: 0.5rem;
+  padding-block-start: 0;
+  border-block-start: 0;
+}

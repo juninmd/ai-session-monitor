@@ -20,7 +20,7 @@ interface InfoCardProps {
   children?: ReactNode;
 }
 
-/** The prototype's notice card: round icon badge, heading, body and an action row. */
+/** The notice card every state uses: round icon badge, heading, body and an action row. */
 export function InfoCard({ icon, title, logo, children }: InfoCardProps) {
   return (
     <section className="card notice">

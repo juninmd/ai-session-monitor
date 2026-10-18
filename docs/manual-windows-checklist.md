@@ -5,6 +5,11 @@ focus, and what the app does to the OS (registry, Credential Manager, toasts). R
 release and after any change to `src-tauri/`. Record the Windows build, display setup and result
 in the PR.
 
+Where this says **tab**, read the provider's card on the **Triagem** surface (or its row on
+**Horizonte**) and the detail that opens beside it in the lateral drawer; where it says **tab
+strip**, read the surface switch (Triagem, Horizonte, Canais de cota) above the body. The wording
+of the per-source steps did not change with the interface.
+
 ## Setup
 
 - One Windows 10 22H2 and one Windows 11 machine if possible; a second monitor with a different
@@ -51,7 +56,8 @@ in the PR.
 - [ ] Left click opens the flyout next to the icon; a second left click closes it and does **not**
       reopen it. Repeat 10 times quickly.
 - [ ] Clicking another window, the desktop or the taskbar hides the flyout. Alt+Tab away hides it.
-- [ ] Escape inside the flyout hides it with no click first (the webview owns focus on open).
+- [ ] Escape inside the flyout closes the palette, then the drawer, then the settings, and hides
+      the flyout only when nothing else is open (the webview owns focus on open).
 - [ ] Right button and middle button on the icon never toggle the flyout.
 - [ ] Known limitation, record the behaviour: focus lost within about 250 ms of opening is
       ignored on purpose (the tray click itself shuffles focus), so the flyout stays until the
@@ -69,10 +75,10 @@ in the PR.
       that holds the icon (the primary one) with correct coordinates.
 - [ ] Monitors at 100 % and 150 %: the flyout is 432 logical px wide and crisp on both, and does
       not jump after opening.
-- [ ] Small work area (for example 1366x768 at 150 %): the body scrolls, header and tab strip
+- [ ] Small work area (for example 1366x768 at 150 %): the body scrolls, header and surface switch
       stay, height never drops below 200 logical px, 8 px margin all round.
-- [ ] Switching tabs changes the content height without flicker; with a bottom taskbar the
-      bottom edge stays put.
+- [ ] Opening another provider's detail changes the content height without flicker; with a bottom
+      taskbar the bottom edge stays put.
 
 ## Right-click menu
 
@@ -171,18 +177,20 @@ with virtual time; this is the check in a real session.
 
 ## Quota history
 
-- [ ] Debug build with `AISM_DATA_DIR` on a throwaway folder: after a few polls the tab's
-      "Histórico" (collapsed at first) opens with a chart, a "Pico de N% ..." sentence and "Ver em
-      tabela". `history.json` appears within about a minute and holds only ids, times and numbers.
-- [ ] Keyboard only: Tab reaches "Histórico", Enter or Space opens it, the window selector works,
-      "Ver em tabela" opens. Narrator reads the chart's title and description and the sentence.
+- [ ] Debug build with `AISM_DATA_DIR` on a throwaway folder: after a few polls the provider's
+      detail shows "Histórico" with a chart, a "Pico de N% ..." sentence and "Ver em tabela"
+      (collapsed). `history.json` appears within about a minute and holds only ids, times and
+      numbers.
+- [ ] Keyboard only: the window chips under "Histórico" are reachable and switch the chart, and
+      "Ver em tabela" opens the readings table. Narrator reads the chart's title and description
+      and the sentence.
 - [ ] Light and dark themes and high contrast: the current line stays heavier than the earlier
       ones and keeps its "atual N%" label; with "reduzir animações" on, the chevron does not turn
       smoothly.
 - [ ] Put garbage in `history.json` while the app is closed, then start it: no toast, the history
       is empty, `history.corrupt.json` holds the bytes.
-- [ ] Settings, "Histórico de uso": switch it off and the section disappears from the tabs;
-      "Limpar histórico" asks first, then deletes `history.json`; Cancelar keeps it.
+- [ ] Settings, "Histórico de uso": switch it off and the section disappears from the provider
+      details; "Limpar histórico" asks first, then deletes `history.json`; Cancelar keeps it.
 
 ## Secrets
 
@@ -196,8 +204,9 @@ switch keeps secrets in memory (`AISM_MEMORY_SECRETS`) and never reaches the Cre
       `ai-session-monitor/deepseek`, DeepInfra `ai-session-monitor/deepinfra`, Moonshot
       `ai-session-monitor/moonshot`, Novita `ai-session-monitor/novita`, Ollama Cloud
       `ai-session-monitor/ollama` and MiniMax `ai-session-monitor/minimax`.
-- [ ] With fourteen tabs the strip scrolls sideways in the flyout: Tab lands on the selected tab,
-      the arrow keys move and wrap, the focused tab scrolls into view and shows a visible ring.
+- [ ] With fourteen providers the triage scrolls in the flyout: the arrow keys move the highlight
+      and wrap, the focused row scrolls into view and shows a visible ring, and only the selected
+      row is a tab stop.
 - [ ] Kimi Code and z.ai tabs: with no key they show the setup card and the "não oficial" badge;
       with a real key the windows match the vendor's own page; a wrong key reads "não foi possível
       verificar a chave", not "chave errada". The console links open the vendor page.
@@ -245,7 +254,7 @@ overrides in a debug build.
 - [ ] `pnpm tauri dev` without a staged sidecar: install fails with an error in the UI and the app
       keeps running.
 - [ ] `CLAUDE_CONFIG_DIR` set to a fabricated folder in the shell that launches the exe (release
-      build, or a debug build with no `AISM_*` set): the Claude tab and the shim install follow
+      build, or a debug build with no `AISM_*` set): the Claude detail and the shim install follow
       that folder instead of `~\.claude`, unless a folder is typed in the settings, which wins. A
       blank value changes nothing. A debug build with any `AISM_*` override ignores the variable
       on purpose.
@@ -254,7 +263,7 @@ overrides in a debug build.
 - [ ] App update with the command installed: after starting the new build, the copy under the data
       dir `bin` folder matches the new bundled `statusline-shim.exe` (compare hashes) and
       `settings.json` is byte for byte unchanged. With Claude Code running (copy busy), the app
-      still starts, the tab stays *installed*, and the next start replaces the copy.
+      still starts, the detail stays *installed*, and the next start replaces the copy.
 
 ## Webview permissions
 
@@ -283,6 +292,7 @@ enforces it; repeat it after a Tauri upgrade.
       legible with nothing of the desktop showing through the text.
 - [ ] Dark and light system themes both render correctly.
 - [ ] No title bar, no taskbar button. Note whether the flyout appears in Alt+Tab.
-- [ ] Tab order and focus rings work with the keyboard; Escape closes.
-- [ ] With the strip scrolled, a tab selected from elsewhere (settings link, consent, stored tab on
-      start) scrolls into view and is never left offscreen.
+- [ ] Row order and focus rings work with the keyboard; Escape closes the drawer, then the
+      settings, then the flyout.
+- [ ] A provider selected from elsewhere (a palette jump, a settings link, consent, the stored
+      selection on start) is highlighted and scrolled into view, never left offscreen.

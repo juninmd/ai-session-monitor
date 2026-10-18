@@ -39,7 +39,7 @@ webview never shows raw error text.
 |---|---|---|
 | `snapshot` | `Snapshot` | Whenever any view changed. |
 | `settings-changed` | `Settings` | After a successful `save_settings` (also from another surface). |
-| `flyout-shown` | none | The flyout became visible. The webview refocuses the selected tab and calls `refresh()`; the scheduler skips collectors that are fresh. |
+| `flyout-shown` | none | The flyout became visible. The webview refocuses what the user was on (the settings heading, the open detail or the selected row) and calls `refresh()`; the scheduler skips collectors that are fresh. |
 | `update-status` | `UpdateStatus` | Updater transitions and download progress (throttled to 100 ms). |
 
 ## GitHub update protocol
@@ -76,13 +76,13 @@ An external settings event updates clean fields but preserves local edits.
   re-opens it does not immediately close it) and on `Esc` pressed in the webview (`hide_flyout`).
 - The webview owns its height: after each render it measures its content and calls
   `set_flyout_height`. Width is fixed at 432 px (27 rem). When the content is taller than the work
-  area the panel body scrolls; the header and tab strip stay.
+  area the panel body scrolls; the header and the surface switch stay.
 - First launch only (`general.firstRunDone = false`): the shell opens the flyout once and then
   sets the flag through `save_settings`.
 
 ## View semantics
 
-- Tab order: `claude`, `codex`, `antigravity`, `opencode`, `kimi`, `zai`, `openrouter`, `deepseek`, `deepinfra`, `moonshot`, `novita`, `ollama`, `minimax`, `litellm` (`HarnessId::ALL`).
+- Order of the views (and of the rows): `claude`, `codex`, `antigravity`, `opencode`, `kimi`, `zai`, `openrouter`, `deepseek`, `deepinfra`, `moonshot`, `novita`, `ollama`, `minimax`, `litellm` (`HarnessId::ALL`).
 - `state`: `disabled` (user switched it off) | `needs_consent` (nothing is read until the user
   agrees) | `needs_setup` (configuration missing: LiteLLM URL/key, OpenCode key and no local
   consent, Kimi Code, z.ai, OpenRouter, DeepSeek, DeepInfra, Moonshot, Novita, Ollama Cloud or MiniMax key) | `loading` (first read in flight) | `ready` | `no_data` (the source works but has

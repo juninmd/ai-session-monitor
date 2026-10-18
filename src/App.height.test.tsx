@@ -37,6 +37,7 @@ function layout(box: { root: number; content: number }) {
 const heightCalls = (calls: readonly string[]) =>
   calls.filter((call) => call === 'set_flyout_height').length;
 const settle = () => new Promise((resolve) => setTimeout(resolve, 140));
+const ready = () => screen.findByRole('button', { name: /^Codex/ });
 
 beforeEach(() => {
   FakeResizeObserver.all = [];
@@ -44,10 +45,10 @@ beforeEach(() => {
 });
 
 describe('the height protocol', () => {
-  it('reports the natural height of header, tabs and the whole content, rounded up', async () => {
+  it('reports the natural height of header, switch and the whole content, rounded up', async () => {
     const { backend } = renderApp();
     layout({ root: 580.4, content: 900 });
-    await screen.findByRole('heading', { name: 'Sessão de 5 horas' });
+    await ready();
     act(() => FakeResizeObserver.all[0]?.fire());
     // root 580.4 minus the 400 px window onto the body, plus its 900 px of content
     await vi.waitFor(() => expect(backend.lastFlyoutHeight).toBe(1081));
@@ -56,7 +57,7 @@ describe('the height protocol', () => {
   it('is one report for a burst of changes, and none for a repeat', async () => {
     const { backend } = renderApp();
     layout({ root: 580, content: 900 });
-    await screen.findByRole('heading', { name: 'Sessão de 5 horas' });
+    await ready();
     for (let i = 0; i < 5; i++) act(() => FakeResizeObserver.all[0]?.fire());
     await vi.waitFor(() => expect(backend.lastFlyoutHeight).toBe(1080));
     await settle();
@@ -69,7 +70,7 @@ describe('the height protocol', () => {
     const box = { root: 580, content: 900 };
     const { backend } = renderApp();
     layout(box);
-    await screen.findByRole('heading', { name: 'Sessão de 5 horas' });
+    await ready();
     act(() => FakeResizeObserver.all[0]?.fire());
     await vi.waitFor(() => expect(backend.lastFlyoutHeight).toBe(1080));
 
@@ -80,7 +81,7 @@ describe('the height protocol', () => {
 
   it('never asks for a height before there is a layout to measure', async () => {
     const { backend } = renderApp();
-    await screen.findByRole('heading', { name: 'Sessão de 5 horas' });
+    await ready();
     await settle();
     expect(heightCalls(backend.calls)).toBe(0);
   });
