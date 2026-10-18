@@ -173,6 +173,8 @@ describe('settings', () => {
     await ready();
     await user.click(tile('Codex'));
     await user.click(within(drawer()).getByRole('button', { name: 'Configurar Codex' }));
+    // The first arrow leaves the source's section; the second leaves the settings screen.
+    await user.click(screen.getByRole('button', { name: 'Voltar' }));
     await user.click(screen.getByRole('button', { name: 'Voltar' }));
     expect(tile('Codex')).toHaveFocus();
     expect(tile('Codex')).toHaveAttribute('aria-pressed', 'true');

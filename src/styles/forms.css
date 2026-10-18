@@ -191,3 +191,60 @@ select {
 .srow .lbl small {
   display: block;
 }
+
+/* The settings menu: one row per section, its name left and the current state right. */
+.set-menu {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.set-rows {
+  display: grid;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.set-row {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  inline-size: 100%;
+  min-block-size: 2.4rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: var(--raise);
+  color: var(--ink);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.set-row:hover {
+  background: var(--raise-2);
+}
+
+.set-row:focus-visible {
+  outline-offset: -1px;
+}
+
+.set-row-name {
+  font-size: var(--fs-base);
+  font-weight: 600;
+}
+
+.set-row-sum {
+  margin-inline-start: auto;
+  color: var(--ink-3);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+.set-row .ico {
+  flex: none;
+  color: var(--ink-3);
+}

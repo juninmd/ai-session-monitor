@@ -18,8 +18,7 @@ export function HistorySettings({ enabled }: { enabled: boolean }) {
   const backToButton = () => document.getElementById(CLEAR_BUTTON)?.focus();
 
   return (
-    <section className="sg" aria-labelledby="sg-history">
-      <h3 id="sg-history">{t('settings.history')}</h3>
+    <section className="sg">
       <SettingSwitch
         id="set-history"
         label={t('settings.history_enabled')}

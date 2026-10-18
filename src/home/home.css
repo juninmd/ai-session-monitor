@@ -29,40 +29,37 @@
 
 /* ---------- the surface switch ---------- */
 
+/* Three words of chrome, not three cards: a surface is a mode, not the content. */
 .nx-surfaces {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  padding: 0.5rem 0.7rem 0;
+  gap: 0.1rem;
+  padding: 0.3rem 0.55rem 0.05rem;
 }
 
 .nx-surfaces > button {
   appearance: none;
-  display: grid;
-  gap: 0.05rem;
-  padding: 0.4rem 0.6rem;
-  border: 1px solid var(--line);
-  border-radius: var(--r-card);
-  background: var(--raise);
-  color: var(--ink-2);
-  text-align: start;
+  padding: 0.2rem 0.5rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-3);
+  font-size: var(--fs-xs);
+  font-weight: 600;
   cursor: pointer;
 }
 
 .nx-surfaces > button:hover {
   background: var(--raise-2);
-  color: var(--ink);
+  color: var(--ink-2);
 }
 
 .nx-surfaces > button[aria-pressed="true"] {
-  border-color: color-mix(in oklab, var(--accent) 60%, var(--line));
-  background: color-mix(in oklab, var(--accent) 8%, var(--raise));
+  background: var(--raise-2);
   color: var(--ink);
 }
 
-.nx-surfaces > button small {
-  color: var(--ink-3);
-  font-size: var(--fs-xs);
+.nx-surfaces > button:focus-visible {
+  outline-offset: -1px;
 }
 
 /* The one line that answers "did that work?" for a copied summary. */

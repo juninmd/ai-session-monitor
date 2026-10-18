@@ -49,8 +49,7 @@ function UpdateBody({ api }: { api: UpdateApi }) {
         ? t('update.available', { version: status.availableVersion ?? '—' })
         : t(`update.${status?.phase ?? 'idle'}`);
   return (
-    <section className="sg update-settings" aria-labelledby="sg-update">
-      <h3 id="sg-update">{t('update.title')}</h3>
+    <section className="sg update-settings">
       {status && <p className="hint">{t('update.version', { version: status.currentVersion })}</p>}
       <SettingSwitch
         id="set-auto-update"

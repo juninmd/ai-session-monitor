@@ -145,10 +145,10 @@ export function Fly(props: FlyProps) {
               key={item.id}
               type="button"
               aria-pressed={surface === item.id}
+              title={item.hint}
               onClick={() => onSurface(item.id)}
             >
               {item.label}
-              <small>{item.hint}</small>
             </button>
           ))}
         </nav>
@@ -159,7 +159,7 @@ export function Fly(props: FlyProps) {
         {...(inSettings ? { role: 'region', 'aria-labelledby': 'settings-title' } : {})}
       >
         <div className="fly-content">
-          {!inSettings && <UpdateBanner onOpen={() => onOpenSettings('general')} />}
+          {!inSettings && <UpdateBanner onOpen={() => onOpenSettings('update')} />}
           {shellFailure && <ActionError error={shellFailure} />}
           {eventsFailed && (
             <Banner tone="warn">

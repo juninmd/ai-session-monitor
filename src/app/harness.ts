@@ -8,8 +8,8 @@ export function harnessName(id: HarnessId): string {
   return t(`harness.${id}`);
 }
 
-/** Where a settings group lives: a harness or the general options. */
-export type SettingsSection = HarnessId | 'general';
+/** Where a settings group lives: a harness, or one of the app's own sections. */
+export type SettingsSection = HarnessId | 'general' | 'update';
 
 /** The vendor page an "open the console" action leads to; OpenCode is the default. */
 export function consoleLink(id: HarnessId): ExternalLink {

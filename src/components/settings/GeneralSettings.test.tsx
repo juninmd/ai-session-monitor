@@ -128,9 +128,10 @@ describe('segmented choices', () => {
 });
 
 describe('the theme', () => {
-  it('follows Windows and offers no control that would pretend otherwise', () => {
+  it('follows Windows, with no row and no control that would pretend otherwise', () => {
     renderPanel(<GeneralSettings />);
-    expect(screen.getByText('Segue o Windows.')).toBeVisible();
+    // The old "Tema · Segue o Windows." line carried no control, so it is gone.
+    expect(screen.queryByText('Segue o Windows.')).toBeNull();
     expect(screen.queryByRole('radio', { name: /claro|escuro/i })).toBeNull();
     expect(screen.queryByLabelText('Tema')).toBeNull();
   });

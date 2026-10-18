@@ -21,6 +21,7 @@ const PATHS = {
       <path d="M5.5 8H13" />
     </>
   ),
+  next: <path d="m6.5 3.5 4.5 4.5-4.5 4.5" />,
   check: (
     <>
       <circle cx="8" cy="8" r="6" />

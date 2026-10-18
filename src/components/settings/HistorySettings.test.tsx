@@ -2,13 +2,14 @@ import { screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { BackendError } from '../../lib/backend';
 import { renderPanel } from '../../test/helpers';
-import { GeneralSettings } from './GeneralSettings';
+import { HistorySettings } from './HistorySettings';
 
 const clearButton = () => screen.getByRole('button', { name: 'Limpar histórico' });
+const show = () => renderPanel(<HistorySettings enabled />);
 
 describe('history settings', () => {
   it('saves the switch like any other setting', async () => {
-    const { user, backend } = renderPanel(<GeneralSettings />);
+    const { user, backend } = show();
     const toggle = screen.getByRole('switch', { name: 'Guardar o histórico de uso' });
     expect(toggle).toBeChecked();
     await user.click(toggle);
@@ -18,12 +19,12 @@ describe('history settings', () => {
   });
 
   it('says what is stored and where', () => {
-    renderPanel(<GeneralSettings />);
+    show();
     expect(screen.getByText(/só porcentagens e horários/)).toBeVisible();
   });
 
   it('asks before erasing, and cancelling erases nothing', async () => {
-    const { user, backend } = renderPanel(<GeneralSettings />);
+    const { user, backend } = show();
     await user.click(clearButton());
     expect(screen.getByText(/Apagar todo o histórico salvo/)).toBeVisible();
     expect(backend.calls).not.toContain('clear_history');
@@ -34,7 +35,7 @@ describe('history settings', () => {
   });
 
   it('erases after the confirmation and announces it', async () => {
-    const { user, backend } = renderPanel(<GeneralSettings />);
+    const { user, backend } = show();
     await user.click(clearButton());
     await user.click(screen.getByRole('button', { name: 'Apagar' }));
     await waitFor(() => expect(backend.calls).toContain('clear_history'));
@@ -43,7 +44,7 @@ describe('history settings', () => {
   });
 
   it('shows a mapped message, not the raw error, when erasing fails', async () => {
-    const { user, backend } = renderPanel(<GeneralSettings />);
+    const { user, backend } = show();
     vi.spyOn(backend, 'clearHistory').mockRejectedValue(
       new BackendError({ code: 'internal', retryable: true, params: { where: 'C:\\raw\\path' } }),
     );
