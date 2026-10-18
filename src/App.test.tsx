@@ -174,10 +174,36 @@ describe('settings', () => {
     await user.click(tile('Codex'));
     await user.click(within(drawer()).getByRole('button', { name: 'Configurar Codex' }));
     // The first arrow leaves the source's section; the second leaves the settings screen.
-    await user.click(screen.getByRole('button', { name: 'Voltar' }));
+    await user.click(within(drawer()).getByRole('button', { name: 'Voltar' }));
     await user.click(screen.getByRole('button', { name: 'Voltar' }));
     expect(tile('Codex')).toHaveFocus();
     expect(tile('Codex')).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('opens a section over the menu, and hands the keyboard back to the row that asked', async () => {
+    const { user } = renderApp();
+    await ready();
+    await user.click(gear());
+    const row = await screen.findByRole('button', { name: /^Histórico de uso/ });
+    await user.click(row);
+    expect(screen.getByRole('dialog')).toHaveClass('nx-drawer');
+    expect(screen.getByRole('heading', { level: 2, name: 'Histórico de uso' })).toBeVisible();
+    const close = within(drawer()).getByRole('button', { name: 'Voltar' });
+    expect(close).toHaveFocus();
+    await user.click(close);
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(screen.getByRole('button', { name: /^Histórico de uso/ })).toBeVisible();
+    expect(row).toHaveFocus();
+  });
+
+  it('never leaves the provider detail and a settings drawer open together', async () => {
+    const { user } = renderApp();
+    await ready();
+    await user.click(tile('Codex'));
+    await user.click(within(drawer()).getByRole('button', { name: 'Configurar Codex' }));
+    // One dialog only: `drawer()` throws on two, and the detail's own bar left with it.
+    expect(within(drawer()).getByRole('heading', { name: 'Fontes de dados' })).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Atualizar Codex' })).toBeNull();
   });
 
   it('open on the group of the source whose error asked for it', async () => {
@@ -217,6 +243,20 @@ describe('Escape', () => {
     await user.keyboard('{Escape}');
     expect(nav('Triagem')).toBeVisible();
     expect(backend.calls).not.toContain('hide_flyout');
+    await user.keyboard('{Escape}');
+    expect(backend.calls.filter((call) => call === 'hide_flyout')).toHaveLength(1);
+  });
+
+  it('leaves the open section before the settings screen behind it', async () => {
+    const { user, backend } = renderApp();
+    await ready();
+    await user.click(gear());
+    await user.click(await screen.findByRole('button', { name: /^Fontes de dados/ }));
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(screen.getByRole('region', { name: 'Configurações' })).toBeVisible();
+    await user.keyboard('{Escape}');
+    expect(nav('Triagem')).toBeVisible();
     await user.keyboard('{Escape}');
     expect(backend.calls.filter((call) => call === 'hide_flyout')).toHaveLength(1);
   });

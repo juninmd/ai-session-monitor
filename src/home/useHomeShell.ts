@@ -1,6 +1,6 @@
 // The shell behaviour around the home: the keyboard when the flyout comes back, Escape in its
-// priority order (palette, settings, detail, hide) and the focus that returns after the settings
-// close. App owns the state these read; the hook only subscribes and routes keys.
+// priority order (palette, settings section, settings, detail, hide) and the focus that returns
+// after the settings close. App owns the state these read; the hook only subscribes and routes keys.
 import { useCallback, useEffect, useRef } from 'react';
 import { focusRow, NX_DRAWER_CLOSE_ID, SETTINGS_TITLE_ID } from '../app/homeIds';
 import { useEscape } from '../app/useEscape';
@@ -13,10 +13,14 @@ export interface HomeShell {
   /** The draft guard: leaving a form with unsaved edits asks first. */
   request: ((action: () => void) => void) | undefined;
   settingsOpen: boolean;
+  /** One settings section is over the screen, and leaves before the screen itself does. */
+  sectionOpen: boolean;
   selected: HarnessId;
   detailOpen: boolean;
   paletteOpen: boolean;
   closePalette: () => void;
+  /** Leaves the open section, back to the menu. Unguarded: Escape guards it. */
+  closeSection: () => void;
   closeSettings: () => void;
   closeDetail: () => void;
   hide: () => void;
@@ -30,10 +34,12 @@ export function useHomeShell(input: HomeShell): void {
     backend,
     request,
     settingsOpen,
+    sectionOpen,
     selected,
     detailOpen,
     paletteOpen,
     closePalette,
+    closeSection,
     closeSettings,
     closeDetail,
     hide,
@@ -54,11 +60,14 @@ export function useHomeShell(input: HomeShell): void {
   });
 
   useEscape(() => {
+    const leave = (action: () => void) => {
+      if (request) request(action);
+      else action();
+    };
     if (paletteOpen) closePalette();
-    else if (settingsOpen) {
-      if (request) request(closeSettings);
-      else closeSettings();
-    } else if (detailOpen) closeDetail();
+    else if (sectionOpen) leave(closeSection);
+    else if (settingsOpen) leave(closeSettings);
+    else if (detailOpen) closeDetail();
     else hide();
   });
 

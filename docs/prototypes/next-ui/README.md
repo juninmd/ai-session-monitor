@@ -196,6 +196,20 @@ Candidate new sources with an official channel and a credential that would fit: 
 GitHub Copilot (a plan-scoped PAT), Kiro CLI, Cline, Windsurf/Devin (service key, Enterprise),
 Command Code.
 
+### Configurações
+
+Open from the header's gear. The first screen is four rows — *Monitoramento e alertas*, *Histórico
+de uso*, *Atualizações*, *Fontes de dados* — each naming its current state ("1 min · adaptativo ·
+avisa em 25%", "Ligado · 35 dias", "Automáticas · v0.1.0", "14 fontes · 3 não oficiais"), with the
+secrets note and the help link below. It replaced one ~1500 px scroll.
+
+A section opens the way the provider detail does: a lateral drawer over the menu, wide
+(`calc(100% - 1.25rem)`) so the label-left/control-right rows keep their width, and the frame keeps
+a minimum height while it is open so the drawer has room. It closes with the arrow, the scrim or
+Escape — which walks out in order: palette, section, settings, detail, hide. A deep link (an
+error action, the gear in the provider drawer, the wizard's "Ver detalhes") opens *Fontes de dados*
+with that source expanded and focused.
+
 ### Comparar (review only, did not ship)
 
 The current interface and the proposal in one document, on the same fabricated data. It was
@@ -254,6 +268,8 @@ markers and zero amounts — the honesty rule the tests pin, confirmed in the br
 | [Claude por modelo](11-claude-por-modelo.png) | Claude's per-model weekly caps as pools of their own: *Opus*, *Sonnet* and *Fable*, beside the 5 h window and the all-models week, with the opt-in badge that says where they come from |
 | [Argon no Antigravity](12-antigravity-argon.png) | The three Antigravity pools: *Gemini* ("Pro e Flash dividem a mesma cota."), *Claude e GPT-OSS* and *Argon* ("Cota semanal própria, separada da do Gemini.") |
 | [Detalhe lateral](13-detalhe-lateral.png) | The detail opened the way the app opens it: a drawer against the trailing edge of the 432 px flyout, with the list dimmed behind it — the list keeps its full height and the audit gets the full width |
+| [Configurações](14-configuracoes.png) | The settings menu: four rows, each naming its current state, the secrets note and the help link — it fits without a scroll |
+| [Seção das configurações](15-configuracao-secao.png) | A settings section opened the way the provider detail opens: a drawer over the menu, wide enough to keep the label-left/control-right rhythm of every row |
 
 No capture shows interaction: hover, focus-visible, the palette's arrow keys, the wizard's steps
 after the first, and any transition still need a human at a keyboard.

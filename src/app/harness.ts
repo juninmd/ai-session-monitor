@@ -9,7 +9,12 @@ export function harnessName(id: HarnessId): string {
 }
 
 /** Where a settings group lives: a harness, or one of the app's own sections. */
-export type SettingsSection = HarnessId | 'general' | 'update';
+export type SettingsSection = HarnessId | 'general' | 'history' | 'sources' | 'update';
+
+/** True for the ids that name a provider, so a section can be narrowed back to a harness. */
+export function isHarnessId(value: string): value is HarnessId {
+  return (HARNESS_IDS as readonly string[]).includes(value);
+}
 
 /** The vendor page an "open the console" action leads to; OpenCode is the default. */
 export function consoleLink(id: HarnessId): ExternalLink {

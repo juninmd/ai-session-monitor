@@ -40,6 +40,19 @@ describe('when the flyout is shown again', () => {
     expect(screen.getByRole('heading', { level: 2, name: 'Configurações' })).toHaveFocus();
   });
 
+  it('lands inside the section drawer, not on the menu behind its scrim', async () => {
+    const { user, backend } = renderApp();
+    await ready();
+    await user.click(screen.getByRole('button', { name: 'Configurações' }));
+    await user.click(await screen.findByRole('button', { name: /^Fontes de dados/ }));
+    within(drawer()).getByRole('button', { name: 'Voltar' }).focus();
+
+    act(() => backend.emitFlyoutShown());
+
+    expect(screen.getByRole('heading', { level: 2, name: 'Fontes de dados' })).toHaveFocus();
+    expect(document.getElementById('settings-title')).toHaveTextContent('Fontes de dados');
+  });
+
   it('brings the countdowns up to date at once instead of waiting for the next tick', async () => {
     const { backend } = renderApp();
     await ready();

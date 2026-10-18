@@ -34,7 +34,7 @@ describe('the keyboard when an action replaces its own card', () => {
     await user.click(tile('Codex'));
     await user.click(await within(drawer()).findByRole('button', { name: 'Abrir configurações' }));
     // The first arrow leaves the source's section; the second leaves the settings screen.
-    await user.click(screen.getByRole('button', { name: 'Voltar' }));
+    await user.click(within(drawer()).getByRole('button', { name: 'Voltar' }));
     await user.click(screen.getByRole('button', { name: 'Voltar' }));
     expect(tile('Codex')).toHaveFocus();
   });
