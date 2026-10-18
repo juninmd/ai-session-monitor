@@ -15,18 +15,20 @@ import {
 function ChannelCard({ channel }: { channel: Channel }) {
   return (
     <li className="nx-chan" data-reach={channel.reach}>
-      <p className="nx-chan-head">
-        <strong>{channel.harness}</strong>
-        <span className="nx-chan-title">{channel.title}</span>
-        <span className="nx-tag" data-shape={channel.shape}>
-          {channel.shape === 'window' ? 'janela' : 'fato'}
-        </span>
-      </p>
-      <p className="nx-chan-how">{channel.how}</p>
-      {channel.caveat !== undefined && <p className="nx-chan-caveat">{channel.caveat}</p>}
-      <p className="nx-meta">
-        confiança {channel.confidence.toLowerCase()} · fonte: {channel.source}
-      </p>
+      <details>
+        <summary className="nx-chan-head">
+          <strong>{channel.harness}</strong>
+          <span className="nx-chan-title">{channel.title}</span>
+          <span className="nx-tag" data-shape={channel.shape}>
+            {channel.shape === 'window' ? 'janela' : 'fato'}
+          </span>
+        </summary>
+        <p className="nx-chan-how">{channel.how}</p>
+        {channel.caveat !== undefined && <p className="nx-chan-caveat">{channel.caveat}</p>}
+        <p className="nx-meta">
+          confiança {channel.confidence.toLowerCase()} · fonte: {channel.source}
+        </p>
+      </details>
     </li>
   );
 }
@@ -53,23 +55,30 @@ export function Sources() {
         const items = CHANNELS.filter((channel) => channel.reach === reach);
         if (items.length === 0) return null;
         return (
-          <section className="nx-section" key={reach}>
-            <h3 className="nx-section-head">
-              <Icon name={REACH_ICON[reach]} />
-              {REACH_LABEL[reach]}
-              <span className="nx-count">{items.length}</span>
-            </h3>
+          <details className="nx-section" key={reach} open={reach === 'now'}>
+            <summary>
+              <h3 className="nx-section-head">
+                <Icon name={REACH_ICON[reach]} />
+                {REACH_LABEL[reach]}
+                <span className="nx-count">{items.length}</span>
+              </h3>
+            </summary>
             <p className="nx-meta nx-note-line">{REACH_NOTE[reach]}</p>
             <ul className="nx-chan-list">
               {items.map((channel) => (
                 <ChannelCard key={channel.id} channel={channel} />
               ))}
             </ul>
-          </section>
+          </details>
         );
       })}
-      <section className="nx-section">
-        <h3 className="nx-section-head">Fontes candidatas</h3>
+      <details className="nx-section">
+        <summary>
+          <h3 className="nx-section-head">
+            Fontes candidatas
+            <span className="nx-count">{CANDIDATES.length}</span>
+          </h3>
+        </summary>
         <p className="nx-meta nx-note-line">
           Ferramentas com canal de uso oficial e uma credencial que caberia no modelo atual.
         </p>
@@ -85,7 +94,7 @@ export function Sources() {
             </li>
           ))}
         </ul>
-      </section>
+      </details>
     </div>
   );
 }

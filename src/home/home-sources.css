@@ -2,18 +2,33 @@
 
 .nx-sources {
   display: grid;
-  gap: 0.7rem;
+  gap: 0.4rem;
+}
+
+.nx-sources summary {
+  cursor: pointer;
+  list-style-position: inside;
+}
+
+.nx-sources summary h3 {
+  display: inline-flex;
+}
+
+.nx-chan-head {
+  display: inline-flex;
+  min-width: 0;
 }
 
 .nx-chan-list {
   display: grid;
-  gap: 0.35rem;
+  gap: 0.25rem;
+  margin-top: 0.3rem;
 }
 
 .nx-chan {
   display: grid;
   gap: 0.15rem;
-  padding: 0.45rem 0.6rem;
+  padding: 0.25rem 0.5rem;
   border: 1px solid var(--line);
   border-left: 3px solid var(--line-2);
   border-radius: var(--r-ctl);
