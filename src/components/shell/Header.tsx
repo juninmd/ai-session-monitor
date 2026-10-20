@@ -12,9 +12,10 @@ interface HeaderProps {
   settingsOpen: boolean;
   onRefresh: () => void;
   onToggleSettings: () => void;
+  onQuit: () => void;
 }
 
-export function Header({ tray, settingsOpen, onRefresh, onToggleSettings }: HeaderProps) {
+export function Header({ tray, settingsOpen, onRefresh, onToggleSettings, onQuit }: HeaderProps) {
   // A new key restarts the spin on every press, even while the previous turn is still running.
   const [spins, setSpins] = useState(0);
   const trayLabel = tray
@@ -48,6 +49,15 @@ export function Header({ tray, settingsOpen, onRefresh, onToggleSettings }: Head
           onClick={onToggleSettings}
         >
           <Icon name="sliders" />
+        </button>
+        <button
+          type="button"
+          className="icon-btn"
+          aria-label={t('header.quit')}
+          title={t('header.quit')}
+          onClick={onQuit}
+        >
+          <Icon name="power" />
         </button>
       </div>
     </header>

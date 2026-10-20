@@ -15,7 +15,7 @@
         "label": "flyout",
         "title": "AI Session Monitor",
         "width": 432,
-        "height": 560,
+        "height": 600,
         "visible": false,
         "decorations": false,
         "transparent": true,

@@ -125,7 +125,7 @@ describe('t', () => {
   });
 
   it('never fills in more than the template asks for', () => {
-    expect(t('footer.refresh', { age: 'ignored' })).toBe('Atualizar');
+    expect(t('header.quit', { age: 'ignored' })).toBe('Sair');
   });
 });
 
