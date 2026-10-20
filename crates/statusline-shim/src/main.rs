@@ -15,6 +15,11 @@
 //! in the user's status line, and a failure here must cost the app a data point, not the user a
 //! working terminal. The file is skipped when nothing changed in the last 5 s, and real limits are
 //! kept through payloads that carry none (every session starts with one).
+//!
+//! On Windows it is a GUI-subsystem binary: a console exe started by a window-less Claude Code host
+//! (VS Code, the desktop app) flashes a console at every refresh. Redirected standard handles that
+//! the parent passes in still work.
+#![cfg_attr(windows, windows_subsystem = "windows")]
 
 mod args;
 mod atomic;
