@@ -142,91 +142,94 @@ export function Fly(props: FlyProps) {
         settingsOpen={inSettings}
         onRefresh={onRefresh}
         onToggleSettings={onToggleSettings}
+        onQuit={onQuit}
       />
-      {surfaces && (
-        <nav className="nx-surfaces" aria-label="Painéis do monitor">
-          {SURFACES.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              aria-pressed={surface === item.id}
-              title={item.hint}
-              onClick={() => onSurface(item.id)}
-            >
-              {item.label}
-            </button>
-          ))}
-        </nav>
-      )}
-      <div
-        ref={scrollRef}
-        className="fly-body"
-        {...(inSettings ? { role: 'region', 'aria-labelledby': 'settings-title' } : {})}
-      >
-        <div className="fly-content">
-          {!inSettings && <UpdateBanner onOpen={() => onOpenSettings('update')} />}
-          {shellFailure && <ActionError error={shellFailure} />}
-          {eventsFailed && (
-            <Banner tone="warn">
-              <p>{t('load.events')}</p>
-            </Banner>
-          )}
-          {notice !== '' && (
-            <p className="nx-notice" role="status">
-              {notice}
-            </p>
-          )}
-          {!inSettings && !loaded && <output className="hint">Lendo as fontes…</output>}
-          {inSettings && (
-            <SettingsView
-              section={screen.section}
-              onSection={onSection}
-              onCloseSettings={onCloseSettings}
-            />
-          )}
-          {!inSettings && failure !== null && (
-            <section className="card notice" data-status="crit">
-              <h2>{t('load.title')}</h2>
-              <p>{failure}</p>
-              <div className="actions">
-                <button type="button" className="btn primary" onClick={onRetry}>
-                  {t('action.retry')}
-                </button>
-              </div>
-            </section>
-          )}
-          {surfaces && surface === 'triagem' && (
-            <Triage
-              views={active}
-              ctx={ctx}
-              selected={selected}
-              onSelect={onSelect}
-              onOpen={onOpen}
-              onConfigure={onConfigure}
-            />
-          )}
-          {surfaces && surface === 'horizonte' && (
-            <Horizon
-              views={active}
-              ctx={ctx}
-              selected={selected}
-              onSelect={onSelect}
-              onOpen={onOpen}
-              trend={trend}
-              onTrend={onTrend}
-            />
-          )}
-          {surfaces && surface === 'canais' && <Sources />}
-          {/* Kept mounted whichever surface is on screen: opening a source's settings from the
-              wizard would otherwise throw the picked list and the step away. */}
-          <div className="nx-slot" hidden={inSettings || !firstRun || failure !== null}>
-            <Onboarding
-              key={wizardRun}
-              views={views}
-              ctx={ctx}
-              onOpenSettings={onOpenSettings}
-              onFinish={onFinishOnboarding}
-            />
+      <div className="nx-main">
+        {surfaces && (
+          <nav className="nx-surfaces" aria-label="Painéis do monitor">
+            {SURFACES.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                aria-pressed={surface === item.id}
+                title={item.hint}
+                onClick={() => onSurface(item.id)}
+              >
+                {item.label}
+              </button>
+            ))}
+          </nav>
+        )}
+        <div
+          ref={scrollRef}
+          className="fly-body"
+          {...(inSettings ? { role: 'region', 'aria-labelledby': 'settings-title' } : {})}
+        >
+          <div className="fly-content">
+            {!inSettings && <UpdateBanner onOpen={() => onOpenSettings('update')} />}
+            {shellFailure && <ActionError error={shellFailure} />}
+            {eventsFailed && (
+              <Banner tone="warn">
+                <p>{t('load.events')}</p>
+              </Banner>
+            )}
+            {notice !== '' && (
+              <p className="nx-notice" role="status">
+                {notice}
+              </p>
+            )}
+            {!inSettings && !loaded && <output className="hint">Lendo as fontes…</output>}
+            {inSettings && (
+              <SettingsView
+                section={screen.section}
+                onSection={onSection}
+                onCloseSettings={onCloseSettings}
+              />
+            )}
+            {!inSettings && failure !== null && (
+              <section className="card notice" data-status="crit">
+                <h2>{t('load.title')}</h2>
+                <p>{failure}</p>
+                <div className="actions">
+                  <button type="button" className="btn primary" onClick={onRetry}>
+                    {t('action.retry')}
+                  </button>
+                </div>
+              </section>
+            )}
+            {surfaces && surface === 'triagem' && (
+              <Triage
+                views={active}
+                ctx={ctx}
+                selected={selected}
+                onSelect={onSelect}
+                onOpen={onOpen}
+                onConfigure={onConfigure}
+              />
+            )}
+            {surfaces && surface === 'horizonte' && (
+              <Horizon
+                views={active}
+                ctx={ctx}
+                selected={selected}
+                onSelect={onSelect}
+                onOpen={onOpen}
+                trend={trend}
+                onTrend={onTrend}
+              />
+            )}
+            {surfaces && surface === 'canais' && <Sources />}
+            {/* Kept mounted whichever surface is on screen: opening a source's settings from the
+                wizard would otherwise throw the picked list and the step away. */}
+            <div className="nx-slot" hidden={inSettings || !firstRun || failure !== null}>
+              <Onboarding
+                key={wizardRun}
+                views={views}
+                ctx={ctx}
+                onOpenSettings={onOpenSettings}
+                onFinish={onFinishOnboarding}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -241,7 +244,7 @@ export function Fly(props: FlyProps) {
       {/* A section covers the whole frame, not the scrolling body: it must not scroll away with
           the menu it lands on. */}
       {inSettings && <SettingsDrawer section={screen.section} onSection={onSection} />}
-      <Footer readAt={readAt} nowSecs={nowSecs} onQuit={onQuit} />
+      <Footer readAt={readAt} nowSecs={nowSecs} />
       {/* The palette opens from anywhere in the flyout, so it listens for Ctrl+K itself (App). */}
       {paletteOpen && <CommandPalette commands={commands} onClose={onClosePalette} />}
     </div>

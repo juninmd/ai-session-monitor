@@ -123,6 +123,10 @@ describe('t', () => {
   it('accepts numbers as parameters', () => {
     expect(t('error.http', { httpStatus: 429 })).toBe('Código HTTP: 429.');
   });
+
+  it('never fills in more than the template asks for', () => {
+    expect(t('header.quit', { age: 'ignored' })).toBe('Sair');
+  });
 });
 
 describe('hasMessage', () => {

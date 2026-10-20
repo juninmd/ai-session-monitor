@@ -3,12 +3,14 @@
    width without making the list shorter. */
 .nx-fly {
   position: relative;
+  /* A little taller than the content alone asks for, so the rail never looks cramped. */
+  min-block-size: min(37rem, calc(100vh - 5.25rem));
 }
 
 /* The list alone can be short; while a layer is open the frame keeps enough height for it. */
 .nx-fly[data-detail],
 .nx-fly[data-section] {
-  min-block-size: min(34rem, calc(100vh - 5.25rem));
+  min-block-size: min(37rem, calc(100vh - 5.25rem));
 }
 
 .nx-drawer-host {

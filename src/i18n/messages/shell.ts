@@ -18,6 +18,7 @@ export const shellMessages = {
 
   'header.refresh': 'Atualizar agora',
   'header.settings': 'Configurações',
+  'header.quit': 'Sair',
   'header.tray': 'Menor disponível: {pct}',
   'header.tray_used': 'Maior uso: {pct}',
   'header.tray_none': 'Sem leitura disponível',
@@ -57,7 +58,6 @@ export const shellMessages = {
 
   'footer.read_ago': 'Lido há {age}',
   'footer.never': 'Ainda sem leitura',
-  'footer.quit': 'Sair',
 
   'live.warn': '{name}: atenção, {pct} disponível.',
   'live.warn_used': '{name}: atenção, {pct} usado.',

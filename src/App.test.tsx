@@ -114,10 +114,11 @@ describe('the buttons', () => {
     const { user, backend } = renderApp();
     await ready();
     await user.click(screen.getByRole('button', { name: 'Atualizar agora' }));
+    expect(screen.queryByRole('button', { name: 'Atualizar' })).toBeNull();
     expect(backend.calls.filter((call) => call === 'refresh')).toHaveLength(1);
   });
 
-  it('quit the app from the footer', async () => {
+  it('quit the app from the header', async () => {
     const { user, backend } = renderApp();
     await ready();
     await user.click(screen.getByRole('button', { name: 'Sair' }));

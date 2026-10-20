@@ -30,17 +30,33 @@
 /* ---------- the surface switch ---------- */
 
 /* Three words of chrome, not three cards: a surface is a mode, not the content. */
-.nx-surfaces {
+.nx-main {
   display: flex;
-  gap: 0.1rem;
-  padding: 0.3rem 0.55rem 0.05rem;
+  flex: 1 1 auto;
+  min-block-size: 0;
+}
+
+.nx-main > .fly-body {
+  min-inline-size: 0;
+}
+
+/* A vertical rail beside the body: the frame is narrow, the labels are short. */
+.nx-surfaces {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  inline-size: 5.6rem;
+  padding: 0.7rem 0.35rem;
+  border-inline-end: 1px solid var(--line);
 }
 
 .nx-surfaces > button {
   appearance: none;
-  padding: 0.2rem 0.5rem;
+  padding: 0.4rem 0.5rem;
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--r-ctl);
+  text-align: start;
   background: transparent;
   color: var(--ink-3);
   font-size: var(--fs-xs);

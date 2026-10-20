@@ -130,7 +130,7 @@ describe('pending settings edits', () => {
     await user.keyboard('{Escape}');
     expect(screen.queryByRole('alertdialog')).toBeNull();
     expect(screen.getByLabelText('Caminho do executável do Codex')).toHaveValue('draft');
-    // Quit is guarded by the same registry, wherever the draft is held. The footer sits behind the
+    // Quit is guarded by the same registry, wherever the draft is held. The header sits behind the
     // scrim while a drawer is open and jsdom does not hit-test: this case is about the guard.
     await user.click(screen.getByRole('button', { name: 'Sair' }));
     expect(backend.calls).not.toContain('quit_app');
