@@ -241,7 +241,7 @@ export function Fly(props: FlyProps) {
       {/* A section covers the whole frame, not the scrolling body: it must not scroll away with
           the menu it lands on. */}
       {inSettings && <SettingsDrawer section={screen.section} onSection={onSection} />}
-      <Footer readAt={readAt} nowSecs={nowSecs} onRefresh={onRefresh} onQuit={onQuit} />
+      <Footer readAt={readAt} nowSecs={nowSecs} onQuit={onQuit} />
       {/* The palette opens from anywhere in the flyout, so it listens for Ctrl+K itself (App). */}
       {paletteOpen && <CommandPalette commands={commands} onClose={onClosePalette} />}
     </div>

@@ -114,8 +114,7 @@ describe('the buttons', () => {
     const { user, backend } = renderApp();
     await ready();
     await user.click(screen.getByRole('button', { name: 'Atualizar agora' }));
-    await user.click(screen.getByRole('button', { name: 'Atualizar' }));
-    expect(backend.calls.filter((call) => call === 'refresh')).toHaveLength(2);
+    expect(backend.calls.filter((call) => call === 'refresh')).toHaveLength(1);
   });
 
   it('quit the app from the footer', async () => {
@@ -127,7 +126,6 @@ describe('the buttons', () => {
 
   it.each([
     ['Atualizar agora', 'refresh'],
-    ['Atualizar', 'refresh'],
     ['Sair', 'quit'],
   ] as const)('say so in words when "%s" fails, without the raw error', async (label, method) => {
     const { user, backend } = renderApp();
