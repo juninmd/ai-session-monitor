@@ -1,0 +1,91 @@
+/* Motion: small, purposeful and fully off under prefers-reduced-motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .t-bar i {
+    transition: inline-size 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: nx-grow 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    transform-origin: left center;
+  }
+
+  .nx-tile,
+  .nx-q {
+    animation: nx-rise 0.28s ease-out backwards;
+  }
+
+  .nx-tile:nth-child(2) {
+    animation-delay: 40ms;
+  }
+  .nx-tile:nth-child(3) {
+    animation-delay: 80ms;
+  }
+  .nx-tile:nth-child(4) {
+    animation-delay: 120ms;
+  }
+  .nx-tile:nth-child(n + 5) {
+    animation-delay: 160ms;
+  }
+
+  .nx-tile,
+  .nx-cmd,
+  .nx-pick-item,
+  button {
+    transition:
+      background-color 0.15s,
+      border-color 0.15s,
+      translate 0.15s,
+      box-shadow 0.15s;
+  }
+
+  .nx-tile:hover {
+    translate: 0 -1px;
+    box-shadow: 0 3px 10px light-dark(rgb(16 24 40 / 0.12), rgb(0 0 0 / 0.35));
+  }
+
+  button:active:not(:disabled) {
+    translate: 0 1px;
+  }
+
+  .nx-scrim-backdrop {
+    animation: nx-fade 0.15s ease-out;
+  }
+
+  .nx-palette {
+    animation: nx-pop 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nx-headline[data-tone="attention"] > .ico {
+    animation: nx-pulse 2s ease-in-out infinite;
+  }
+}
+
+@keyframes nx-grow {
+  from {
+    scale: 0 1;
+  }
+}
+
+@keyframes nx-rise {
+  from {
+    translate: 0 6px;
+    opacity: 0;
+  }
+}
+
+@keyframes nx-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes nx-pop {
+  from {
+    translate: 0 -8px;
+    scale: 0.97;
+    opacity: 0;
+  }
+}
+
+@keyframes nx-pulse {
+  50% {
+    opacity: 0.45;
+  }
+}

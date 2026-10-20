@@ -57,7 +57,6 @@ export const shellMessages = {
 
   'footer.read_ago': 'Lido há {age}',
   'footer.never': 'Ainda sem leitura',
-  'footer.refresh': 'Atualizar',
   'footer.quit': 'Sair',
 
   'live.warn': '{name}: atenção, {pct} disponível.',
