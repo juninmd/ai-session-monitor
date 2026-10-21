@@ -39,3 +39,20 @@ describe('the keyboard when an action replaces its own card', () => {
     expect(tile('Codex')).toHaveFocus();
   });
 });
+
+describe('surface shortcuts', () => {
+  it('switches the vertical tab with Alt+digit', async () => {
+    const { user } = renderApp();
+    await ready();
+    await user.keyboard('{Alt>}2{/Alt}');
+    expect(screen.getByRole('button', { name: /^Horizonte/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await user.keyboard('{Alt>}1{/Alt}');
+    expect(screen.getByRole('button', { name: /^Triagem/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+  });
+});
