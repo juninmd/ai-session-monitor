@@ -165,6 +165,15 @@ describe('triage surface', () => {
     expect(panel('Codex').textContent).not.toContain('Histórico');
   });
 
+  it('copies the stored readings as CSV from an icon in the history header', async () => {
+    const { user } = mount();
+    await openDetail(user, 'Codex');
+    await user.click(await screen.findByRole('button', { name: 'Copiar leituras em CSV' }));
+    expect(await screen.findByText('Leituras copiadas em CSV.')).toBeInTheDocument();
+    const copied = await navigator.clipboard.readText();
+    expect(copied).toMatch(/^harness,window,resets_at,read_at,used_pct/);
+  });
+
   it('offers a jump to every provider the headline names', async () => {
     mount();
     await rows('data-tier');
