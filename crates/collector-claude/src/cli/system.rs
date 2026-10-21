@@ -23,9 +23,7 @@ const TIMEOUT: Duration = Duration::from_secs(20);
 const MAX_STDOUT: usize = 256 << 10;
 const MAX_STDERR: usize = 16 << 10;
 /// Cost bound in case a future version treats `/usage` as a prompt; the local command costs 0.
-/// `--no-session-persistence` keeps the polls out of the user's session history. Loading only the
-/// `project` settings (the neutral working directory has none) keeps the user's global hooks and
-/// plugins from firing on every poll, where a hook that opens a terminal would steal the focus.
+/// unverified: not yet exercised manually
 const ARGS: [&str; 8] = [
     "-p",
     "/usage",
