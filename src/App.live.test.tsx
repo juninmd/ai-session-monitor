@@ -20,7 +20,7 @@ describe('when the flyout is shown again', () => {
     await ready();
     await user.click(tile('Codex'));
     await user.keyboard('{Escape}');
-    screen.getByRole('button', { name: 'Atualizar agora' }).focus();
+    screen.getByRole('button', { name: /^(Atualizar agora|Tentar de novo)/ }).focus();
     const before = refreshes(backend.calls);
 
     act(() => backend.emitFlyoutShown());

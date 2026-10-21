@@ -10,17 +10,28 @@ interface HeaderProps {
   /** `pct` is already the printed share (available, or used under `showUsed`). */
   tray: { pct: number; status: Status; showUsed: boolean } | null;
   settingsOpen: boolean;
+  /** Sources whose last read failed: the refresh icon turns into the retry for them. */
+  errorCount: number;
   onRefresh: () => void;
   onToggleSettings: () => void;
   onQuit: () => void;
 }
 
-export function Header({ tray, settingsOpen, onRefresh, onToggleSettings, onQuit }: HeaderProps) {
+export function Header({
+  tray,
+  settingsOpen,
+  errorCount,
+  onRefresh,
+  onToggleSettings,
+  onQuit,
+}: HeaderProps) {
   // A new key restarts the spin on every press, even while the previous turn is still running.
   const [spins, setSpins] = useState(0);
   const trayLabel = tray
     ? tq('header.tray', tray.showUsed, { pct: formatPercent(tray.pct) })
     : t('header.tray_none');
+  const refreshLabel =
+    errorCount > 0 ? t('header.retry', { count: errorCount }) : t('header.refresh');
   return (
     <header className="fly-head">
       <h1 className="fly-title" title={trayLabel}>
@@ -30,9 +41,11 @@ export function Header({ tray, settingsOpen, onRefresh, onToggleSettings, onQuit
       <div className="fly-actions">
         <button
           type="button"
-          className={spins > 0 ? 'icon-btn spin' : 'icon-btn'}
-          aria-label={t('header.refresh')}
-          title={t('header.refresh')}
+          className={['icon-btn', spins > 0 && 'spin', errorCount > 0 && 'warn']
+            .filter(Boolean)
+            .join(' ')}
+          aria-label={refreshLabel}
+          title={refreshLabel}
           onClick={() => {
             setSpins((count) => count + 1);
             onRefresh();

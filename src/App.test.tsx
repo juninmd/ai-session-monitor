@@ -113,7 +113,7 @@ describe('the buttons', () => {
   it('ask the backend to read everything now', async () => {
     const { user, backend } = renderApp();
     await ready();
-    await user.click(screen.getByRole('button', { name: 'Atualizar agora' }));
+    await user.click(screen.getByRole('button', { name: /^(Atualizar agora|Tentar de novo)/ }));
     expect(screen.queryByRole('button', { name: 'Atualizar' })).toBeNull();
     expect(backend.calls.filter((call) => call === 'refresh')).toHaveLength(1);
   });
@@ -126,17 +126,20 @@ describe('the buttons', () => {
   });
 
   it.each([
-    ['Atualizar agora', 'refresh'],
+    [/^(Atualizar agora|Tentar de novo)/, 'refresh'],
     ['Sair', 'quit'],
-  ] as const)('say so in words when "%s" fails, without the raw error', async (label, method) => {
-    const { user, backend } = renderApp();
-    await ready();
-    vi.spyOn(backend, method).mockRejectedValue(new Error('pipe closed at 0x7ffe'));
-    await user.click(screen.getByRole('button', { name: label }));
-    const alert = await screen.findByRole('alert');
-    expect(alert).toHaveTextContent('Algo deu errado.');
-    expect(alert).not.toHaveTextContent('0x7ffe');
-  });
+  ] as const)(
+    'say so in words when the %s button fails, without the raw error',
+    async (label, method) => {
+      const { user, backend } = renderApp();
+      await ready();
+      vi.spyOn(backend, method).mockRejectedValue(new Error('pipe closed at 0x7ffe'));
+      await user.click(screen.getByRole('button', { name: label }));
+      const alert = await screen.findByRole('alert');
+      expect(alert).toHaveTextContent('Algo deu errado.');
+      expect(alert).not.toHaveTextContent('0x7ffe');
+    },
+  );
 
   it('opens the update settings from the banner, without downloading anything', async () => {
     const { user, backend } = renderApp();

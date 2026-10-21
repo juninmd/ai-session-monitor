@@ -56,3 +56,18 @@ describe('surface shortcuts', () => {
     );
   });
 });
+
+describe('the header refresh icon', () => {
+  it('becomes the retry for sources that failed, with no extra button', async () => {
+    renderApp({ scenario: 'errors' });
+    await screen.findByRole('button', { name: /^Triagem/ });
+    expect(screen.getByRole('button', { name: /^Tentar de novo \(\d+ com erro\)/ })).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Atualizar agora' })).toBeNull();
+  });
+
+  it('keeps the plain label when nothing failed', async () => {
+    renderApp({ scenario: 'healthy' });
+    await screen.findByRole('button', { name: /^Triagem/ });
+    expect(screen.getByRole('button', { name: 'Atualizar agora' })).toBeVisible();
+  });
+});

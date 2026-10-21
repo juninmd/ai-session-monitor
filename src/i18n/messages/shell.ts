@@ -17,6 +17,7 @@ export const shellMessages = {
   'harness.litellm': 'LiteLLM',
 
   'header.refresh': 'Atualizar agora',
+  'header.retry': 'Tentar de novo ({count} com erro)',
   'header.settings': 'Configurações',
   'header.quit': 'Sair',
   'header.tray': 'Menor disponível: {pct}',
