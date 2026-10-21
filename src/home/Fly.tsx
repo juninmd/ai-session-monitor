@@ -135,6 +135,7 @@ export function Fly(props: FlyProps) {
       className="flyout nx-fly"
       data-surface={surface}
       data-detail={detailOpen || undefined}
+      data-density={ctx.settings.general.compact ? 'compact' : undefined}
       data-section={(inSettings && screen.section !== null) || undefined}
     >
       <Header
