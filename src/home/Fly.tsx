@@ -140,6 +140,7 @@ export function Fly(props: FlyProps) {
       <Header
         tray={tray}
         settingsOpen={inSettings}
+        errorCount={active.filter((item) => item.state === 'error').length}
         onRefresh={onRefresh}
         onToggleSettings={onToggleSettings}
         onQuit={onQuit}

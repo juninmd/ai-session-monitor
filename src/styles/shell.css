@@ -54,6 +54,10 @@ html[data-host="browser"] .flyout {
   cursor: pointer;
 }
 
+.icon-btn.warn {
+  color: var(--warn-fill);
+}
+
 .icon-btn:hover,
 .icon-btn[aria-pressed="true"] {
   background: var(--raise-2);
