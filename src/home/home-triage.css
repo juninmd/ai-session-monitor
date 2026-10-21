@@ -253,3 +253,13 @@
   flex: 1 1 auto;
   min-inline-size: 0;
 }
+
+/* Compact density: less padding and gap, the same facts. */
+[data-density="compact"] .nx-tiles {
+  gap: 0.25rem;
+}
+
+[data-density="compact"] .nx-tile {
+  gap: 0.15rem;
+  padding: 0.3rem 0.5rem;
+}

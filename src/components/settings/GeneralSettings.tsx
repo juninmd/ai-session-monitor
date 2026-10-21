@@ -43,6 +43,11 @@ const QUOTA_OPTIONS: readonly Option<'available' | 'used'>[] = [
   { value: 'used', label: t('settings.show_used_opt') },
 ];
 
+const DENSITY_OPTIONS: readonly Option<'comfortable' | 'compact'>[] = [
+  { value: 'comfortable', label: t('settings.density_comfortable') },
+  { value: 'compact', label: t('settings.density_compact') },
+];
+
 const TRAY_OPTIONS: readonly Option<HarnessId | 'lowest'>[] = [
   { value: 'lowest', label: t('settings.tray_lowest') },
   ...TAB_ORDER.map((id) => ({ value: id, label: harnessName(id) })),
@@ -97,6 +102,13 @@ export function GeneralSettings() {
           value={g.showUsed ? 'used' : 'available'}
           options={QUOTA_OPTIONS}
           apply={(current, mode) => patch(current, { showUsed: mode === 'used' })}
+        />
+        <SettingSegmented
+          id="set-density"
+          legend={t('settings.density')}
+          value={g.compact ? 'compact' : 'comfortable'}
+          options={DENSITY_OPTIONS}
+          apply={(current, mode) => patch(current, { compact: mode === 'compact' })}
         />
         <SettingSegmented
           id="set-time-format"

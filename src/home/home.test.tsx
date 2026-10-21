@@ -265,3 +265,21 @@ describe('horizon surface', () => {
     );
   });
 });
+
+describe('density setting', () => {
+  it('marks the flyout compact only when the setting is on', async () => {
+    mount('demo', {
+      settings: (draft) => {
+        draft.general.compact = true;
+      },
+    });
+    await rows('data-tier');
+    expect(document.querySelector('.nx-fly')).toHaveAttribute('data-density', 'compact');
+  });
+
+  it('keeps the comfortable spacing by default', async () => {
+    mount();
+    await rows('data-tier');
+    expect(document.querySelector('.nx-fly')).not.toHaveAttribute('data-density');
+  });
+});
