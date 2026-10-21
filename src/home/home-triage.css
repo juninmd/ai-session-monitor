@@ -263,3 +263,10 @@
   gap: 0.15rem;
   padding: 0.3rem 0.5rem;
 }
+
+.nx-tile-pin {
+  display: inline-grid;
+  font-size: 0.8rem;
+  flex: none;
+  color: var(--ink-2);
+}

@@ -57,6 +57,7 @@ fn snapshot_shape_is_pinned() {
 fn settings_shapes_are_pinned() {
     let mut custom_ca = Settings::default();
     custom_ca.general.tray_source = Some(HarnessId::Opencode);
+    custom_ca.general.pinned = vec![HarnessId::Codex, HarnessId::Claude];
     custom_ca.claude.config_dir = Some(r"D:\profiles\claude".into());
     custom_ca.litellm.base_url = Some("https://gateway.example.dev/litellm".into());
     custom_ca.litellm.scope = LitellmScope::Team;

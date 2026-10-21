@@ -283,3 +283,32 @@ describe('density setting', () => {
     expect(document.querySelector('.nx-fly')).not.toHaveAttribute('data-density');
   });
 });
+
+describe('pinned providers', () => {
+  it('lead the triage list in pin order and carry a pin marker', async () => {
+    mount('demo', {
+      settings: (draft) => {
+        draft.general.pinned = ['minimax', 'codex'];
+      },
+    });
+    const list = await rows('data-tier');
+    expect(list[0]?.textContent).toContain('MiniMax');
+    expect(list[1]?.textContent).toContain('Codex');
+    expect(list[0]?.querySelector('[aria-label="Fixado no topo"]')).not.toBeNull();
+    expect(list[2]?.querySelector('[aria-label="Fixado no topo"]')).toBeNull();
+  });
+
+  it('toggles from the detail drawer and moves the provider to the top', async () => {
+    const { user } = mount();
+    await openDetail(user, 'MiniMax');
+    await user.click(screen.getByRole('button', { name: 'Fixar MiniMax no topo' }));
+    await waitFor(async () => {
+      const list = await rows('data-tier');
+      expect(list[0]?.textContent).toContain('MiniMax');
+    });
+    expect(screen.getByRole('button', { name: 'Fixar MiniMax no topo' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+  });
+});

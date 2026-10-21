@@ -99,6 +99,7 @@ function Tile({
   onKeyDown: (event: KeyboardEvent<HTMLElement>) => void;
 }) {
   const { id } = row.view;
+  const pinned = ctx.settings.general.pinned.includes(id);
   const { pct, tone } = readingOf(row);
   const name = harnessName(id);
   const quotas = gridQuotas(row.view, ctx);
@@ -120,6 +121,11 @@ function Tile({
         <span className="nx-name" id={nxNameId(id)}>
           {name}
         </span>
+        {pinned && (
+          <span className="nx-tile-pin" role="img" aria-label="Fixado no topo">
+            <Icon name="pin" />
+          </span>
+        )}
         {over !== null && (
           <span className="nx-tile-over">
             {'+'}

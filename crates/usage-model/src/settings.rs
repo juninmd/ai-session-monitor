@@ -135,6 +135,8 @@ pub struct GeneralSettings {
     pub auto_update_check: bool,
     /// Harness the tray ring follows. `None` means the lowest available percentage of all.
     pub tray_source: Option<HarnessId>,
+    /// Providers the user keeps at the top of the triage list, in the order they were pinned.
+    pub pinned: Vec<HarnessId>,
     /// Available percentage at or below which a window turns to the warning colour.
     pub warn_at_pct: u8,
     pub notify_on_out: bool,
@@ -163,6 +165,7 @@ impl Default for GeneralSettings {
             autostart: false,
             auto_update_check: true,
             tray_source: None,
+            pinned: Vec::new(),
             warn_at_pct: 25,
             notify_on_out: false,
             notify_on_reset: false,
