@@ -155,6 +155,12 @@ export function GeneralSettings() {
           checked={g.notifyOnReset}
           apply={(current, notifyOnReset) => patch(current, { notifyOnReset })}
         />
+        <SettingSwitch
+          id="set-notify-risk"
+          label={t('settings.notify_risk')}
+          checked={g.notifyOnRisk}
+          apply={(current, notifyOnRisk) => patch(current, { notifyOnRisk })}
+        />
       </section>
     </>
   );

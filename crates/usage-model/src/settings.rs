@@ -141,6 +141,8 @@ pub struct GeneralSettings {
     pub warn_at_pct: u8,
     pub notify_on_out: bool,
     pub notify_on_reset: bool,
+    /// Warn once per window when the current pace would run it out before it renews.
+    pub notify_on_risk: bool,
     /// Used percentages (1..=99) that raise one toast each time a window crosses them. Empty
     /// switches the alerts off. Sorted, deduplicated, at most `MAX_ALERT_THRESHOLDS`.
     pub alert_thresholds: Vec<u8>,
@@ -169,6 +171,7 @@ impl Default for GeneralSettings {
             warn_at_pct: 25,
             notify_on_out: false,
             notify_on_reset: false,
+            notify_on_risk: false,
             alert_thresholds: DEFAULT_ALERT_THRESHOLDS.to_vec(),
             adaptive: true,
             history_enabled: true,

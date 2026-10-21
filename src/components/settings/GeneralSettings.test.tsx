@@ -85,6 +85,7 @@ describe('switches', () => {
     ['Iniciar com o Windows', 'autostart'],
     ['Avisar ao esgotar', 'notifyOnOut'],
     ['Avisar quando a janela resetar', 'notifyOnReset'],
+    ['Avisar se a cota deve acabar antes de renovar', 'notifyOnRisk'],
   ])('%s toggles %s and says which way it is', async (label, key) => {
     const { user, backend } = renderPanel(<GeneralSettings />);
     const control = screen.getByRole('switch', { name: label });
