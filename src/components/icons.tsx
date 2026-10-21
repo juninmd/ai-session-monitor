@@ -28,6 +28,7 @@ const PATHS = {
       <path d="M10.5 5.5v-2a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2" />
     </>
   ),
+  pin: <path d="M5.5 2.5h5M6.8 2.5v4L5 9h6L9.2 6.5v-4M8 9v4.5" />,
   check: (
     <>
       <circle cx="8" cy="8" r="6" />

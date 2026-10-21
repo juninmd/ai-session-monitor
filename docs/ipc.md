@@ -253,6 +253,7 @@ OpenRouter (`key_credits`) and DeepSeek (`user_balance`) are official and docume
 `general.showUsed` (default `false`) is presentation only: the UI, the tray tooltip and the "limite disponível"
 toast print the used share instead of the available one; every payload keeps `usedPct`, and the tray icon arc
 stays on the available share.
+`general.pinned` (default `[]`) lists providers the triage list keeps first, in pin order; presentation only.
 `general.compact` (default `false`) is presentation only: the flyout lists use tighter spacing.
 `app-core` plans them from snapshot changes and the shell shows them; title and body are
 ready-made pt-BR text and carry no path, key or raw error.

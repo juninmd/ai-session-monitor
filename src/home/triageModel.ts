@@ -183,7 +183,20 @@ export interface TriageBoard {
 }
 
 export function triageOf(views: readonly HarnessView[], ctx: ViewContext): TriageBoard {
-  const rows = views.map((view) => triageRow(view, ctx)).sort(compareUrgency);
+  const pinned = ctx.settings.general.pinned;
+  // Pinned providers lead in pin order; urgency still orders everything after them.
+  const pinRank = (row: TriageRow) => {
+    const at = pinned.indexOf(row.view.id);
+    return at === -1 ? Number.POSITIVE_INFINITY : at;
+  };
+  const rows = views
+    .map((view) => triageRow(view, ctx))
+    .sort((a, b) => {
+      const ra = pinRank(a);
+      const rb = pinRank(b);
+      if (ra !== rb) return ra < rb ? -1 : 1;
+      return compareUrgency(a, b);
+    });
   const inTier = (...tiers: Tier[]) => rows.filter((row) => tiers.includes(row.tier));
   return {
     attention: inTier('blocked', 'risk', 'broken', 'watch'),
