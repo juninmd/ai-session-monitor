@@ -84,7 +84,8 @@ mod windows {
             "@echo off\r\nif not \"%~1\"==\"-p\" exit /b 3\r\nif not \"%~2\"==\"/usage\" exit /b 3\r\n\
              if not \"%~3\"==\"--output-format\" exit /b 3\r\nif not \"%~4\"==\"json\" exit /b 3\r\n\
              if not \"%~5\"==\"--max-budget-usd\" exit /b 3\r\nif not \"%~6\"==\"0.02\" exit /b 3\r\n\
-             if not \"%~7\"==\"--no-session-persistence\" exit /b 3\r\nif not \"%~8\"==\"\" exit /b 3\r\n\
+             if not \"%~7\"==\"--setting-sources\" exit /b 3\r\nif not \"%~8\"==\"project\" exit /b 3\r\n\
+             if not \"%~9\"==\"--no-session-persistence\" exit /b 3\r\n\
              if not \"%CLAUDE_CONFIG_DIR%\"==\"{config_dir}\" exit /b 4\r\ntype \"{answer}\"\r\n"
         )
     }

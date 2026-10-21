@@ -23,8 +23,17 @@ const TIMEOUT: Duration = Duration::from_secs(20);
 const MAX_STDOUT: usize = 256 << 10;
 const MAX_STDERR: usize = 16 << 10;
 /// Cost bound in case a future version treats `/usage` as a prompt; the local command costs 0.
-/// `--no-session-persistence` keeps the polls out of the user's session history.
-const ARGS: [&str; 6] = ["-p", "/usage", "--output-format", "json", "--max-budget-usd", "0.02"];
+/// unverified: not yet exercised manually
+const ARGS: [&str; 8] = [
+    "-p",
+    "/usage",
+    "--output-format",
+    "json",
+    "--max-budget-usd",
+    "0.02",
+    "--setting-sources",
+    "project",
+];
 const NO_SESSION_FLAG: &str = "--no-session-persistence";
 
 #[derive(Debug)]
