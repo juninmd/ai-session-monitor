@@ -2,6 +2,9 @@
 export const historyMessages = {
   'history.title': 'Histórico',
   'history.window': 'Janela',
+  'history.copy_csv': 'Copiar leituras em CSV',
+  'history.copied': 'Leituras copiadas em CSV.',
+  'history.copy_failed': 'Não foi possível copiar as leituras.',
   'history.loading': 'Carregando o histórico',
   'history.failed': 'Não foi possível carregar o histórico agora.',
   'history.empty': 'Ainda sem histórico. As leituras aparecem aqui conforme o monitor roda.',

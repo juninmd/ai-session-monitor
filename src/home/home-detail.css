@@ -140,6 +140,12 @@
   font-weight: 600;
 }
 
+.nx-board-action {
+  margin-inline-start: auto;
+  inline-size: 1.6rem;
+  block-size: 1.6rem;
+}
+
 .nx-chips {
   display: flex;
   flex-wrap: wrap;
