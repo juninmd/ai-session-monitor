@@ -147,12 +147,13 @@ export function Fly(props: FlyProps) {
       <div className="nx-main">
         {surfaces && (
           <nav className="nx-surfaces" aria-label="Painéis do monitor">
-            {SURFACES.map((item) => (
+            {SURFACES.map((item, index) => (
               <button
                 key={item.id}
                 type="button"
                 aria-pressed={surface === item.id}
-                title={item.hint}
+                title={`${item.hint} (Alt+${index + 1})`}
+                aria-keyshortcuts={`Alt+${index + 1}`}
                 onClick={() => onSurface(item.id)}
               >
                 {item.label}

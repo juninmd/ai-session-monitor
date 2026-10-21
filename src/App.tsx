@@ -13,7 +13,7 @@ import { useSettingsState } from './app/useSettingsState';
 import { useSnapshotState } from './app/useSnapshotState';
 import { useUpdateState } from './app/useUpdateState';
 import type { ViewContext } from './app/windowModel';
-import type { Surface } from './home/Fly';
+import { SURFACES, type Surface } from './home/Fly';
 import { Home } from './home/Home';
 import { useCommands } from './home/useCommands';
 import { useHomeShell } from './home/useHomeShell';
@@ -142,6 +142,19 @@ function AppBody({ backend }: { backend: Backend }) {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [openPalette]);
+
+  // Alt+1..3 jump to a surface; the digit maps to its position in the vertical tab list.
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (!event.altKey || event.ctrlKey || event.metaKey || paletteOpen) return;
+      const target = SURFACES[Number(event.key) - 1];
+      if (target === undefined) return;
+      event.preventDefault();
+      changeSurface(target.id);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [changeSurface, paletteOpen]);
 
   // A manual refresh during a cool-down is dropped by the scheduler; say why instead of nothing.
   const refreshNow = useCallback(
