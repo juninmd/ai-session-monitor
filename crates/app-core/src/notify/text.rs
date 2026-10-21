@@ -87,6 +87,21 @@ pub(super) fn threshold(
     }
 }
 
+/// The pace projects the window running out `early_min` minutes before it renews.
+pub(super) fn pace_risk(harness: HarnessId, window: &UsageWindow, early_min: f64) -> Notification {
+    let (article, noun) = subject(window);
+    let early = span((early_min.max(0.0) * 60.0) as i64);
+    Notification {
+        kind: NotificationKind::PaceRisk,
+        harness,
+        window_id: window.id.clone(),
+        title: format!("{}: a cota deve acabar antes de renovar", harness_name(harness)),
+        body: format!(
+            "No ritmo atual, {article} {noun} esgota cerca de {early} antes de reiniciar."
+        ),
+    }
+}
+
 /// The reset came by the clock with no reading behind it, so the text claims no free percentage.
 pub(super) fn window_lapsed(harness: HarnessId, window: &UsageWindow) -> Notification {
     let (article, noun) = subject(window);

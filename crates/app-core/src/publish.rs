@@ -7,7 +7,7 @@ use std::collections::HashSet;
 use tokio::time::Instant;
 use usage_model::{HarnessView, Settings, Snapshot};
 
-use crate::notify::{self, Notification, ResetKey, ThresholdState};
+use crate::notify::{self, Notification, PaceState, ResetKey, ThresholdState};
 use crate::shared::Shared;
 use crate::timing::EMIT_MIN_GAP;
 
@@ -20,6 +20,7 @@ pub(crate) struct Publisher {
     /// Resets announced by the clock, kept while the window is still shown out with that reset.
     told: HashSet<ResetKey>,
     thresholds: ThresholdState,
+    pace: PaceState,
 }
 
 impl Publisher {
@@ -83,6 +84,7 @@ impl Publisher {
             None => Vec::new(),
         };
         notes.extend(self.thresholds.plan(self.published.as_ref(), &snapshot, &settings, now_secs));
+        notes.extend(self.pace.plan(self.published.as_ref(), &snapshot, &settings, now_secs));
         self.published = Some(snapshot.clone());
         self.last_emit = Some(now);
         self.flush_at = None;

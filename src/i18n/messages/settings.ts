@@ -40,6 +40,7 @@ export const settingsMessages = {
   'settings.adaptive_hint': 'Consulta menos vezes quando o uso está baixo e o reinício está longe.',
   'settings.notify_out': 'Avisar ao esgotar',
   'settings.notify_reset': 'Avisar quando a janela resetar',
+  'settings.notify_risk': 'Avisar se a cota deve acabar antes de renovar',
   'settings.sources': 'Fontes de dados',
   'settings.enabled': 'Ler esta fonte',
   'settings.unofficial_chip': 'não oficial',

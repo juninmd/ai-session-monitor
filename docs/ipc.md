@@ -249,6 +249,8 @@ OpenRouter (`key_credits`) and DeepSeek (`user_balance`) are official and docume
 ## Notifications
 
 `general.notifyOnOut` and `general.notifyOnReset` (both off by default) switch the desktop toasts;
+`general.notifyOnRisk` (off by default) adds one toast per window epoch when the pace (`Pace::Risk`) projects the window
+running out before it renews; a window first seen already at risk only sets the baseline.
 `general.alertThresholds` (default `[80, 95]`, empty = off) switches the usage-threshold toasts.
 `general.showUsed` (default `false`) is presentation only: the UI, the tray tooltip and the "limite disponível"
 toast print the used share instead of the available one; every payload keeps `usedPct`, and the tray icon arc

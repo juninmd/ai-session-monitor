@@ -6,10 +6,12 @@ use usage_model::status::{available_pct, is_expired};
 use usage_model::{HarnessId, Settings, Snapshot, ViewState};
 
 mod lapsed;
+mod pace;
 mod text;
 mod threshold;
 
 pub(crate) use lapsed::{ResetKey, key_of, lapsed_resets, next_lapse, still_waiting};
+pub(crate) use pace::PaceState;
 pub(crate) use text::settings_recovered;
 pub(crate) use threshold::ThresholdState;
 
@@ -22,6 +24,8 @@ pub enum NotificationKind {
     WindowReset,
     /// A window's used percentage crossed one of `general.alertThresholds`.
     ThresholdCrossed,
+    /// A window's pace projects it running out before it renews, told once per window epoch.
+    PaceRisk,
     /// The settings file was unusable and was set aside; defaults are in effect. `harness` and
     /// `window_id` carry no meaning for this kind (`Claude` and empty).
     SettingsRecovered,
