@@ -282,7 +282,7 @@
   padding: 0.55rem 0.65rem;
   border: 1px solid var(--line-2);
   border-radius: var(--r-card);
-  background: light-dark(rgb(255 255 255 / 0.88), rgb(43 47 53 / 0.88));
+  background: light-dark(rgb(255 255 255 / 0.97), rgb(43 47 53 / 0.97));
   backdrop-filter: blur(20px) saturate(1.5);
   box-shadow: var(--shadow);
   color: var(--ink-2);
