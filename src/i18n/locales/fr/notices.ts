@@ -30,6 +30,8 @@ export const noticeMessages = {
     'Les valeurs locales sont une estimation au tarif public, à partir de ce PC uniquement. Ce n’est pas le quota.',
   'notice.code.opencode_db_unreadable':
     'Impossible de lire la base de données OpenCode locale : {reason}.',
+  'notice.code.copilot_reset_derived':
+    'La date de réinitialisation est une estimation : GitHub documente que les requêtes premium sont réinitialisées le 1er de chaque mois, en UTC.',
   'notice.unknown': 'Notification non traduite : {code}',
   'notice.action.reinstall': 'Réinstaller',
   'notice.action.settings': 'Saisir la clé',

@@ -127,6 +127,8 @@ Window ids and kinds, per source:
 | `novita` | none: a balance has no percentage and no reset, so the view carries facts only | - |
 | `ollama` | current plan: `monthly` (money window with `amount` in `usd`, `resetsAt` = end of the period); legacy plan: `session` (kind `other`, no stated length) and `weekly`, percent only | `monthly`, `other`, `weekly` |
 | `minimax` | per model bucket (`group` = the model name, at most 16): `<model_slug>:interval` (kind from the stated length: 300 min `five_hour`, 1440 min `daily`, else `other`; reset from the time-left field) and `<model_slug>:weekly` (no stated length or reset). A zero total means no such quota: no window, not 0 %. | `five_hour`, `daily`, `weekly`, `other` |
+| `cursor` | `monthly` (the included allowance, a share only: no amount, since the plan may count cents or requests; `windowMinutes` = the billing cycle, `resetsAt` = its end); `on_demand` (spend beyond the plan, only with a real cap: `amount` in `usd`) | `monthly`; `budget` |
+| `copilot` | `premium_requests`, and for a finite free-tier quota `chat`, `completions` (`amount` in `requests` when entitlement and remaining are known; no `windowMinutes`; `resetsAt` = the response's date, else the 1st of the next UTC month, see `copilot_reset_derived`) | `monthly` |
 | `litellm` | `budget` (`label` = key alias); `limit:<duration>` (`label` = the raw duration); `model:<name>` (`group` and `label` = the model) | `budget` |
 
 Fact ids and units:
@@ -141,16 +143,21 @@ Fact ids and units:
 | `moonshot` | `balance` (available), `voucher`, `cash` (all `usd`; `cash` may be negative) |
 | `novita` | `balance`, `cash` (may be negative), `credit_limit`, `pending`, `owed` (all `usd`, converted from 1/10000 dollar) |
 | `ollama` | `included_balance` (current plans only), `purchased_balance` (both `usd`) |
+| `cursor` | `unlimited` (text `true`, instead of the included window); `on_demand_spend` (`usd`, spend with no cap) |
+| `copilot` | `premium_requests_unlimited`, `chat_unlimited`, `completions_unlimited` (text `unlimited`, instead of a window); `premium_requests_overage`, `chat_overage`, `completions_overage` (`requests`, only when positive) |
 | `minimax` | none: every figure is a quota share |
 | `litellm` | `rpm_limit`, `max_parallel_requests` (`requests`); `tpm_limit` (`tokens`); `expires` (`epoch_s`) |
 
 `meta` keys (display only): `alias`, `host`, `scope` (`key`, `user`, `team`) and `level` (`key`,
 `user`, `team`: where the budget was found) for LiteLLM; `local_estimate = true` for OpenCode when
-facts are a local estimate; `extra_source = cli_usage` (the `claude -p "/usage"` command) or `oauth_usage` (the fallback API) for
+facts are a local estimate; `token_source = pasted | local` and `reset_derived = true` for Copilot; `extra_source = cli_usage` (the `claude -p "/usage"` command) or `oauth_usage` (the fallback API) for
 Claude when some windows come from the opt-in per-model sources.
 
 Error params are non-secret and drive the wording: `reason` (per code: `install_failed`,
-`tls_error`, `endpoint_changed`, `not_running = no_port`, `unauthorized = no_token`), `field`
+`tls_error`, `endpoint_changed`, `not_running = no_port`, `unauthorized = no_token`; Cursor's store:
+`timeout = locked | timeout`, `endpoint_changed = schema`, `settings_unreadable = permission |
+not_a_database | other`; Copilot's token reader: `not_signed_in = not_found | unreadable |
+no_token`), `field`
 (see below), `retryAfterSecs`, `httpStatus` and `redirect`. `host`, `phase`, `rpcCode`, `code` and
 `where` are diagnostics for bug reports and are never shown to the person. On a notice,
 `reason` is an error code except for `opencode_db_unreadable`, which has its own list.
@@ -177,6 +184,7 @@ with a generic message that includes the code, so a missing translation is visib
 | `opencode_no_key` | info | Only the local estimate is shown; paste the Go API key for the real windows. |
 | `opencode_local_estimate` | info | Facts are a local list-price estimate for this PC, not quota. |
 | `opencode_db_unreadable` | warn | The local database could not be read or its schema changed (`reason` param: `invalid_path`, `not_found`, `permission`, `locked`, `not_a_database`, `schema`, `timeout`, `other`). |
+| `copilot_reset_derived` | info | The Copilot response carried no usable reset date, so the reset shown is derived (the 1st of the next month, 00:00 UTC, as GitHub documents for premium requests); the view also has `meta.reset_derived = "true"`. No params. Cursor emits no notice. |
 
 New codes are added by the collector that emits them and reported at integration so the UI
 catalog is updated in the same change.
@@ -282,6 +290,84 @@ ready-made localized text and carry no path, key or raw error.
 - Settings recovered: `settings.json` was unreadable, was kept as `settings.corrupt-<epoch>.json`
   and defaults are in effect. Shown once per start, before the first snapshot, whatever the two
   toggles say.
+
+## Local API
+
+An optional, read-only JSON endpoint on loopback, for scripts, status bars and widgets. Off by
+default: `general.localApi` (Settings, General) starts it, switching it off or quitting stops it.
+It is the only place the app listens on a port. Code: `crates/app-core/src/local_api`; the shell
+starts and stops it in `src-tauri/src/effects.rs` as the setting changes (`sink.rs` decides when).
+
+Port `6737` (`LOCAL_API_PORT`), address `127.0.0.1`. If the port is taken the app keeps running,
+writes one line to stderr (the error kind, nothing else) and tries again on the 30 s tick and on
+the next change of settings.
+
+| Request | Answer |
+|---|---|
+| `GET /v1/health` | `200 {"ok":true}` |
+| `GET /v1/limits` | `200` the readings below; `503 {"error":"unavailable"}` before the first snapshot exists |
+
+Errors are `{"error":"<slug>"}` (`bad_request` 400, `forbidden` 403, `not_found` 404,
+`method_not_allowed` 405 with `Allow: GET`, `request_timeout` 408, `headers_too_large` 431,
+`unavailable` 503). Every response has `Cache-Control: no-store`, `X-Content-Type-Options: nosniff`,
+`Connection: close` and never a CORS header.
+
+```json
+{
+  "version": 1,
+  "generatedAt": "2026-10-10T12:00:00Z",
+  "harnesses": [
+    {
+      "id": "claude", "name": "Claude Code", "state": "ready", "official": false,
+      "plan": "Max 5x", "stale": false,
+      "windows": [
+        { "id": "five_hour", "kind": "five_hour", "usedPct": 30.0, "availablePct": 70.0,
+          "resetsAt": "2026-10-10T13:00:00Z", "status": "ok" }
+      ],
+      "facts": [ { "id": "rpm", "number": 60.0, "text": null, "unit": "req" } ]
+    }
+  ]
+}
+```
+
+- Built from the same snapshot the flyout gets, in tab order; `disabled` harnesses are left out,
+  every other one is listed with its `state` (`ready`, `loading`, `needs_setup`, `needs_consent`,
+  `no_data`, `error`) so "needs setup" is told apart from "no data". `official` is `null` until a
+  source has answered. `kind` is the wire `WindowKind` (`five_hour`, `weekly`, `monthly`, `daily`,
+  `budget`, `other`); `status` is `ok`, `warn`, `crit` or `out` by the same rules as the tray
+  (`general.warnAtPct`).
+- Unknown is `null`, never `0`. A window whose `resetsAt` passed is expired: `usedPct`,
+  `availablePct` and `status` are `null` and there is no pace; `resetsAt` stays so a consumer sees
+  it passed. Timestamps are RFC 3339 in UTC (the webview wire uses epoch seconds).
+- Only presentation data. Never in the body: errors and their params, notices, `meta`, window
+  labels and groups, amounts, `readAt`, retry times, secrets. `facts` carry what the webview
+  already shows (`id`, `number`, `text`, `unit`). A test walks the keys of a body built from a
+  snapshot full of secret-looking data and fails on any field outside the shape above.
+
+Security model, every point covered by a test in `local_api/tests`:
+
+- Bound to `127.0.0.1` only (never `0.0.0.0`, never IPv6); a peer that is not loopback is dropped.
+- Only `GET`: other methods are `405` on a known path and `404` elsewhere.
+- `Host` must be `127.0.0.1:6737` or `localhost:6737` (DNS-rebinding defence), else `403`; a missing
+  or repeated `Host` is `400`. Any `Origin` header is `403`, so a web page cannot read it, and
+  with no CORS header a browser could not read a response anyway. These checks run before routing.
+- Bounded: the request head is at most 8 KiB and 64 header lines (`431`); one 5 s deadline covers
+  the whole head, so a client that trickles bytes is cut off like a silent one (`408`); 5 s write
+  timeout; at most 8 connections at once, the rest are closed unanswered; one request per
+  connection (no keep-alive, no pipelining); a body, `Transfer-Encoding`, a bare LF or a control
+  character is `400`.
+- Nothing about a request is ever logged. The API has no authentication: loopback plus the Host and
+  Origin rules keep out web pages, but any program running as the user can read the readings,
+  which is why it is opt-in.
+
+## Capture protection
+
+`general.hideFromCapture` (off by default) excludes the app's windows from screenshots, screen
+recordings and screen sharing: the shell calls `set_content_protected` on every webview window
+(on Windows `SetWindowDisplayAffinity(WDA_EXCLUDEFROMCAPTURE)`; a no-op where the OS has no such
+call). `ShellSink` applies it when the settings are adopted at start-up (the flyout already exists)
+and on every change, only when the value changes, through `Effects::set_content_protected`. The
+flyout is the only window the app has; a window added later must be covered by that same method.
 
 ## Data directory
 

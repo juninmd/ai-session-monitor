@@ -264,6 +264,8 @@ fn section_changed(id: HarnessId, old: &Settings, new: &Settings) -> bool {
     match id {
         HarnessId::Claude => old.claude != new.claude,
         HarnessId::Codex => old.codex != new.codex,
+        HarnessId::Cursor => old.cursor != new.cursor,
+        HarnessId::Copilot => old.copilot != new.copilot,
         HarnessId::Antigravity => old.antigravity != new.antigravity,
         HarnessId::Opencode => old.opencode != new.opencode,
         HarnessId::Kimi => old.kimi != new.kimi,

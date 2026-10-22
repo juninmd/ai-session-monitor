@@ -8,7 +8,13 @@ import type { HarnessId, Settings, UpdateStatus } from '../../lib/contract';
  * Sources with no vendor-documented interface. The chip in the group and the count in the menu row
  * read this one list, so a source is never badged in one place and counted in another.
  */
-export const UNOFFICIAL: ReadonlySet<HarnessId> = new Set(['antigravity', 'kimi', 'zai']);
+export const UNOFFICIAL: ReadonlySet<HarnessId> = new Set([
+  'antigravity',
+  'cursor',
+  'copilot',
+  'kimi',
+  'zai',
+]);
 
 /** Mirrors RETENTION_SECS in crates/app-core/src/history/ledger.rs. */
 export const HISTORY_RETENTION_DAYS = 35;

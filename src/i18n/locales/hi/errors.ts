@@ -27,6 +27,12 @@ export const errorMessages = {
   'error.unauthorized_ambiguous.zai.title': 'z.ai की कुंजी सत्यापित नहीं हो सकी',
   'error.unauthorized_ambiguous.zai.body':
     'सेवा ने अनुरोध अस्वीकार कर दिया। ऐसा वैध कुंजी के साथ भी होता है और GLM Coding प्लान के बिना खातों में भी। z.ai डैशबोर्ड में कुंजी और प्लान जाँचें।',
+  'error.unauthorized_ambiguous.cursor.title': 'Cursor का साइन-इन सत्यापित नहीं हो सका',
+  'error.unauthorized_ambiguous.cursor.body':
+    'सेवा ने अनुरोध अस्वीकार कर दिया। ऐसा समाप्त हो चुके या पुराने सत्र के साथ होता है, और बिना सक्रिय प्लान वाले खाते के साथ भी। साइन-इन नवीनीकृत करने के लिए Cursor खोलें और Cursor डैशबोर्ड में प्लान जाँचें।',
+  'error.unauthorized_ambiguous.copilot.title': 'GitHub टोकन सत्यापित नहीं हो सका',
+  'error.unauthorized_ambiguous.copilot.body':
+    'GitHub ने अनुरोध अस्वीकार कर दिया। ऐसा समाप्त हो चुके टोकन, फ़ाइन-ग्रेन्ड या ऐप टोकन, और Copilot के बिना खाते के साथ होता है। GitHub सेटिंग में टोकन और अपनी Copilot सदस्यता जाँचें।',
   'error.not_found.title': 'पता नहीं मिला',
   'error.not_found.body': 'सर्वर दिए गए पथ या ID को नहीं पहचानता। URL, दायरा और ID जाँचें।',
   'error.server_error.title': 'सर्वर त्रुटि',

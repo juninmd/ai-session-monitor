@@ -141,9 +141,6 @@ export const flyoutMessages = {
   'candidates.amp.credential': 'লোকাল CLI (`amp`)',
   'candidates.amp.offer':
     '`amp usage` ক্রেডিট ব্যালান্স ও অন্তর্ভুক্ত ব্যবহার ফেরত দেয়। Claude ও Antigravity-তে ইতিমধ্যে ব্যবহৃত একই স্থির-CLI পদ্ধতি।',
-  'candidates.copilot.credential': 'প্ল্যান-রিড স্কোপসহ PAT',
-  'candidates.copilot.offer':
-    'প্রিমিয়াম রিকোয়েস্ট, চ্যাট ও কমপ্লিশন, প্ল্যান ও রিসেটের তারিখসহ; REST বিলিং API দিয়ে AI ক্রেডিট বিলিং।',
   'candidates.kiro.credential': 'CLI-র নিজস্ব ক্রেডেনশিয়াল',
   'candidates.kiro.offer':
     'GetUsageLimits একটি মাত্র ক্রেডিট পুল ফেরত দেয়: ব্যবহৃত, সীমা, শতকরা হার ও রিসেটসহ।',

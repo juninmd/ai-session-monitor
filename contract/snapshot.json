@@ -54,6 +54,87 @@
       "windows": []
     },
     {
+      "error": null,
+      "facts": [],
+      "id": "cursor",
+      "meta": {},
+      "nextAttemptAt": null,
+      "notices": [],
+      "plan": "Pro",
+      "readAt": 1799999970,
+      "source": {
+        "id": "usage_summary",
+        "official": false
+      },
+      "stale": false,
+      "state": "ready",
+      "windows": [
+        {
+          "amount": null,
+          "group": null,
+          "id": "monthly",
+          "kind": "monthly",
+          "label": null,
+          "resetsAt": 1801200000,
+          "usedPct": 36.0,
+          "windowMinutes": 43200
+        },
+        {
+          "amount": {
+            "limit": 50.0,
+            "unit": "usd",
+            "used": 5.0
+          },
+          "group": null,
+          "id": "on_demand",
+          "kind": "budget",
+          "label": null,
+          "resetsAt": 1801200000,
+          "usedPct": 10.0,
+          "windowMinutes": null
+        }
+      ]
+    },
+    {
+      "error": null,
+      "facts": [
+        {
+          "id": "chat_unlimited",
+          "number": null,
+          "text": "unlimited",
+          "unit": null
+        }
+      ],
+      "id": "copilot",
+      "meta": {},
+      "nextAttemptAt": null,
+      "notices": [],
+      "plan": "Individual Pro",
+      "readAt": 1799999970,
+      "source": {
+        "id": "copilot_internal_user",
+        "official": false
+      },
+      "stale": false,
+      "state": "ready",
+      "windows": [
+        {
+          "amount": {
+            "limit": 300.0,
+            "unit": "requests",
+            "used": 192.0
+          },
+          "group": null,
+          "id": "premium_requests",
+          "kind": "monthly",
+          "label": null,
+          "resetsAt": 1801080000,
+          "usedPct": 64.0,
+          "windowMinutes": null
+        }
+      ]
+    },
+    {
       "error": {
         "code": "rate_limited",
         "params": {

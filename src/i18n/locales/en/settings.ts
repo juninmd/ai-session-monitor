@@ -18,6 +18,12 @@ export const settingsMessages = {
   'settings.show_used': 'Show quota as',
   'settings.show_available': 'available',
   'settings.show_used_opt': 'used',
+  'settings.hide_capture': 'Hide from screenshots and screen sharing',
+  'settings.hide_capture_hint':
+    'The flyout becomes invisible to screenshots, recordings and screen sharing (Windows and macOS; not supported on Linux).',
+  'settings.local_api': 'Local API',
+  'settings.local_api_hint':
+    'Serves the readings as read-only JSON at 127.0.0.1:{port} for scripts and status bars. Any program on this computer can read it. Off by default.',
   'settings.language': 'Language',
   'settings.language_hint': 'Applies to the panel and to notifications.',
   'settings.skin': 'Theme',
@@ -93,4 +99,8 @@ export const settingsMessages = {
     "Unofficial reading: it may run the installed agy only to read /usage (without spending tokens or reading login data) and/or read the IDE's local server, which only talks to 127.0.0.1.",
   'antigravity.note':
     "The reading comes from the installed agy (nothing needs to be open) or, without it, from the IDE's local server: in that case keep Antigravity open.",
+
+  'cursor.consent': 'Allow reading the Cursor sign-in token',
+  'cursor.consent_hint':
+    'Unofficial reading: reads the sign-in token Cursor keeps in its local database (read-only, that single entry) and sends it only to cursor.com.',
 } as const satisfies Record<string, string>;

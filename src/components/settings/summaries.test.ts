@@ -38,6 +38,6 @@ describe('the menu summaries', () => {
   });
 
   it('count every source and the unofficial ones the groups badge', () => {
-    expect(sourcesSummary()).toBe('14 fontes · 3 não oficiais');
+    expect(sourcesSummary()).toBe('16 fontes · 5 não oficiais');
   });
 });

@@ -53,6 +53,24 @@ export const errorDetailMessages = {
   'error.unauthorized.reason.no_token.body':
     'The monitor could not read the session token of the IDE local server. Restart Antigravity and try again.',
 
+  'error.timeout.reason.locked.body':
+    "Cursor's local database is in use right now. Try again in a moment.",
+  'error.timeout.reason.timeout.body':
+    "Reading Cursor's local database took too long. Try again in a moment.",
+  'error.endpoint_changed.reason.schema.body':
+    "Cursor's local database has a different layout than the monitor expects. The monitor may need an update.",
+  'error.settings_unreadable.reason.permission.body':
+    "No permission to open Cursor's local database. Check the permissions of the file.",
+  'error.settings_unreadable.reason.not_a_database.body':
+    'The Cursor file found is not a database.',
+  'error.settings_unreadable.reason.other.body': "Could not read Cursor's local database.",
+  'error.not_signed_in.reason.not_found.body':
+    "No GitHub token was found in the Copilot extension's folder. Sign in to Copilot in your editor, or paste a token in the settings.",
+  'error.not_signed_in.reason.no_token.body':
+    "The Copilot extension's files hold no token for github.com. Sign in to Copilot in your editor, or paste a token in the settings.",
+  'error.not_signed_in.reason.unreadable.body':
+    "Could not read the Copilot extension's sign-in file. Check the permissions of its folder.",
+
   'error.redirect':
     'The server tried to redirect the request, and the monitor does not follow redirects.',
   'error.retry_after': 'Wait requested by the source: {wait}.',

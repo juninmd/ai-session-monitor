@@ -18,7 +18,7 @@ pub(crate) const EMIT_MIN_GAP: Duration = Duration::from_millis(250);
 const COOLDOWN_DEFAULT: Duration = Duration::from_secs(5 * 60);
 const COOLDOWN_MAX: Duration = Duration::from_secs(30 * 60);
 const MAX_BACKOFF: Duration = Duration::from_secs(15 * 60);
-/// The OpenCode, Kimi, z.ai and every key-based balance endpoint are remote and rate-sensitive, and their
+/// The Cursor, Copilot, OpenCode, Kimi, z.ai and every key-based balance endpoint are remote and rate-sensitive, and their
 /// collectors leave the pacing to the caller. (The Claude OAuth endpoint paces itself in its collector, so Claude is not slowed.)
 const REMOTE_MIN_CADENCE: Duration = Duration::from_secs(300);
 /// 2^10 times any cadence already exceeds the cap, so the shift never needs to grow past it.
@@ -29,7 +29,9 @@ pub(crate) fn cadence(id: HarnessId, settings: &Settings) -> Duration {
     let local = Duration::from_secs(u64::from(settings.general.interval_secs));
     match id {
         HarnessId::Claude | HarnessId::Codex | HarnessId::Antigravity => local,
-        HarnessId::Opencode
+        HarnessId::Cursor
+        | HarnessId::Copilot
+        | HarnessId::Opencode
         | HarnessId::Kimi
         | HarnessId::Zai
         | HarnessId::Openrouter

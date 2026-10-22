@@ -43,6 +43,8 @@ Nunca mais seja pego de surpresa pelo fim da janela de 5 horas do Claude, pela c
 |---|---|---|:---:|
 | **Claude Code** | Sessão de 5 h e semana (% disponível, tempo até reiniciar, ritmo) e cotas por modelo (Opus, Sonnet, Haiku/Fable) | `rate_limits` via shim do `statusLine` ou `claude -p "/usage"` | Oficial *(Por modelo: Comunitário)* |
 | **Codex** | Janela de 5 h e semana, plano atual, créditos e recargas de reset | `codex app-server` (JSON-RPC local) | Oficial |
+| **Cursor** | Uso incluso do ciclo (% usado, reinício) e gasto sob demanda | `cursor.com/api/usage-summary` com o token de login lido do banco local do Cursor (opt-in) | Comunitário |
+| **GitHub Copilot** | Requisições premium do mês (% usado, reinício estimado), chat e completions ilimitados | `api.github.com/copilot_internal/user` com token colado ou lido do arquivo local da extensão (opt-in) | Comunitário |
 | **Antigravity** | Pools Gemini e Claude/GPT-OSS (5 h e semanal) | CLI `agy` (`/usage`) ou servidor local da IDE | Comunitário |
 | **OpenCode** | Janelas de 5 h, semana e mês no Go; estimativa de custo local | Endpoint de uso do Go + `opencode.db` (leitura local) | Comunitário |
 | **Kimi Code** | Janelas de 5 h, semana e pool mensal | Endpoint de uso Kimi Code via API Key | Comunitário |
@@ -179,7 +181,7 @@ Documentação de aprofundamento:
 
 ## ⚠️ Limitações Conhecidas
 
-- **Integrações Comunitárias:** Os endpoints de Antigravity, OpenCode, Kimi Code, z.ai e MiniMax não são APIs públicas documentadas e podem sofrer alterações pelos provedores. O app trata quebras sinalizando status de "indisponível" em vez de inventar dados.
+- **Integrações Comunitárias:** Os endpoints de Cursor, GitHub Copilot, Antigravity, OpenCode, Kimi Code, z.ai e MiniMax não são APIs públicas documentadas e podem sofrer alterações pelos provedores. O app trata quebras sinalizando status de "indisponível" em vez de inventar dados.
 - **Claude Code statusLine:** O statusLine só emite métricas enquanto o processo do Claude Code estiver em execução ativa.
 - **Inicialização com o Windows:** Caso desativada manualmente pelo Gerenciador de Tarefas do Windows, deve ser reativada por lá. Se o executável for movido de diretório, desligue e religue a opção nas configurações do app.
 - **Proxies Corporativos:** Devido à política estrita anti-interceptação de chaves, conexões através de proxy local podem necessitar de configuração direta ou CA corporativa na aba do LiteLLM.

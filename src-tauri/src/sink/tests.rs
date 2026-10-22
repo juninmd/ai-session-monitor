@@ -7,6 +7,7 @@ use super::*;
 
 mod autostart;
 mod language;
+mod privacy;
 
 const NOW: i64 = 1_800_000_000;
 
@@ -21,6 +22,11 @@ struct Recorder {
     autostart_failed: AtomicBool,
     /// Every language the tray menu was relabelled to.
     languages: Mutex<Vec<Language>>,
+    /// Every value the capture protection was set to.
+    protections: Mutex<Vec<bool>>,
+    /// Every value the local API was asked to be at, and whether its last start failed.
+    local_api: Mutex<Vec<bool>>,
+    local_api_failed: AtomicBool,
 }
 
 impl Recorder {
@@ -77,6 +83,18 @@ impl Effects for Arc<Recorder> {
 
     fn autostart_failed(&self) -> bool {
         self.autostart_failed.load(Ordering::SeqCst)
+    }
+
+    fn set_content_protected(&self, protected: bool) {
+        self.protections.lock().expect("lock").push(protected);
+    }
+
+    fn sync_local_api(&self, enabled: bool) {
+        self.local_api.lock().expect("lock").push(enabled);
+    }
+
+    fn local_api_failed(&self) -> bool {
+        self.local_api_failed.load(Ordering::SeqCst)
     }
 }
 

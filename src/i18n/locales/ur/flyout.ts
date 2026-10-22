@@ -144,9 +144,6 @@ export const flyoutMessages = {
   'candidates.amp.credential': 'مقامی CLI (`amp`)',
   'candidates.amp.offer':
     '`amp usage` کریڈٹ بیلنس اور شامل استعمال واپس کرتا ہے۔ وہی مقررہ-CLI طریقہ جو Claude اور Antigravity میں پہلے سے استعمال ہوتا ہے۔',
-  'candidates.copilot.credential': 'plan-read اسکوپ والا PAT',
-  'candidates.copilot.offer':
-    'پریمیم درخواستیں، چیٹ اور کمپلیشنز، پلان اور ری سیٹ کی تاریخ کے ساتھ؛ REST بلنگ API کے ذریعے AI کریڈٹ بلنگ۔',
   'candidates.kiro.credential': 'CLI کی اپنی credential',
   'candidates.kiro.offer':
     'GetUsageLimits ایک ہی کریڈٹ پول واپس کرتا ہے جس میں استعمال، حد، فیصد اور ری سیٹ ہوتا ہے۔',

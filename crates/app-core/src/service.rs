@@ -148,6 +148,7 @@ impl AppService {
         Ok(SecretStatus {
             litellm: self.exists(SecretKind::Litellm)?,
             opencode: self.exists(SecretKind::Opencode)?,
+            copilot: self.exists(SecretKind::Copilot)?,
             kimi: self.exists(SecretKind::Kimi)?,
             zai: self.exists(SecretKind::Zai)?,
             openrouter: self.exists(SecretKind::Openrouter)?,
@@ -171,6 +172,7 @@ impl AppService {
         SecretStatus {
             litellm: has(SecretKind::Litellm),
             opencode: has(SecretKind::Opencode),
+            copilot: has(SecretKind::Copilot),
             kimi: has(SecretKind::Kimi),
             zai: has(SecretKind::Zai),
             openrouter: has(SecretKind::Openrouter),
@@ -268,6 +270,7 @@ fn harness_of(kind: SecretKind) -> HarnessId {
     match kind {
         SecretKind::Litellm => HarnessId::Litellm,
         SecretKind::Opencode => HarnessId::Opencode,
+        SecretKind::Copilot => HarnessId::Copilot,
         SecretKind::Kimi => HarnessId::Kimi,
         SecretKind::Zai => HarnessId::Zai,
         SecretKind::Openrouter => HarnessId::Openrouter,

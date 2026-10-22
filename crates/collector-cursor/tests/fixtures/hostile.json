@@ -1,0 +1,18 @@
+{
+  "billingCycleStart": "2027-03-01T00:00:00Z",
+  "billingCycleEnd": "2027-02-01T00:00:00Z",
+  "membershipType": "pro\u0000\u001b[31m<b>FAKE</b>",
+  "limitType": "<script>alert(1)</script>",
+  "isUnlimited": "yes",
+  "individualUsage": {
+    "plan": {
+      "enabled": true,
+      "used": "NaN",
+      "limit": -5,
+      "remaining": 1e300,
+      "totalPercentUsed": 9999
+    },
+    "onDemand": { "enabled": true, "used": -5, "limit": 1e300, "remaining": "x" }
+  },
+  "teamUsage": "nope"
+}

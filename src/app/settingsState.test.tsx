@@ -21,6 +21,7 @@ describe('useSettingsState', () => {
     expect(result.current.secrets).toEqual({
       litellm: true,
       opencode: true,
+      copilot: true,
       kimi: true,
       zai: true,
       openrouter: true,
@@ -192,6 +193,7 @@ describe('useSettingsState', () => {
       expect(result.current.secrets).toEqual({
         litellm: false,
         opencode: false,
+        copilot: false,
         kimi: false,
         zai: false,
         openrouter: false,
@@ -211,6 +213,7 @@ describe('useSettingsState', () => {
       expect(result.current.secrets).toEqual({
         litellm: true,
         opencode: true,
+        copilot: true,
         kimi: true,
         zai: true,
         openrouter: true,
@@ -233,6 +236,7 @@ describe('useSettingsState', () => {
       expect(result.current.secrets).toEqual({
         litellm: true,
         opencode: true,
+        copilot: true,
         kimi: true,
         zai: true,
         openrouter: true,

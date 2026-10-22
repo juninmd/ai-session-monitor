@@ -72,6 +72,16 @@ export const channelsMessages = {
   'channels.litellm_budget.title': 'কী, ইউজার বা টিমের বাজেট',
   'channels.litellm_budget.how':
     'GET /key|user|team/info: spend, max_budget, budget_duration, budget_reset_at, মডেল অনুযায়ী বাজেট এবং স্থির rpm/tpm সীমা।',
+  'channels.cursor_usage_summary.title': 'অন্তর্ভুক্ত ব্যবহার ও অন-ডিমান্ড খরচ',
+  'channels.cursor_usage_summary.how':
+    'GET cursor.com/api/usage-summary, Cursor তার লোকাল ডেটাবেসে (state.vscdb, একটি এন্ট্রি, শুধু-পড়ার মোডে) যে লগইন টোকেন রাখে তা থেকে তৈরি সেশন কুকি দিয়ে: totalPercentUsed, billingCycleEnd ও individualUsage.onDemand।',
+  'channels.cursor_usage_summary.caveat':
+    'অনানুষ্ঠানিক এবং কখনো সরাসরি দেখা হয়নি: পথটি কমিউনিটির নোট থেকে নেওয়া, তাই ড্যাশবোর্ডের সঙ্গে মিলিয়ে নিন। এর জন্য অনুমতি ও “অনানুষ্ঠানিক” ব্যাজ লাগে।',
+  'channels.copilot_internal_user.title': 'প্রিমিয়াম রিকোয়েস্ট, চ্যাট ও কোড কমপ্লিশন',
+  'channels.copilot_internal_user.how':
+    'GET api.github.com/copilot_internal/user → quota_snapshots (percent_remaining, entitlement, remaining, unlimited, overage_count), copilot_plan ও quota_reset_date। টোকেনটি পেস্ট করা একটি, অথবা Copilot এক্সটেনশন apps.json বা hosts.json-এ যেটি রাখে।',
+  'channels.copilot_internal_user.caveat':
+    'অনানুষ্ঠানিক এবং কখনো সরাসরি দেখা হয়নি: পথটি GitHub-এর অভ্যন্তরীণ। উত্তরে ব্যবহারযোগ্য তারিখ না থাকলে রিসেট ধরে নেওয়া হয় (পরের মাসের 1 তারিখ, UTC) এবং অনুমান হিসেবে চিহ্নিত করা হয়।',
   'channels.openrouter_activity.title': 'মডেল অনুযায়ী দৈনিক খরচ',
   'channels.openrouter_activity.how':
     'GET /api/v1/activity। নথিভুক্ত, কিন্তু ম্যানেজমেন্ট কী লাগে: ইনফারেন্স কী 403 পায় (/credits-এর মতোই)।',
@@ -90,7 +100,7 @@ export const channelsMessages = {
   'channels.kimi_console.title': 'কনসোলে রেটের বিস্তারিত',
   'channels.kimi_console.how':
     'প্ল্যাটফর্ম কনসোল মডেল অনুযায়ী সীমা দেখায়, কিন্তু শুধু ব্রাউজার সেশনে। নতুন হোস্ট নয়, কুকি নয়, স্ক্র্যাপিং নয় — তাই বাদ।',
-  'channels.cursor_dashboard.title': 'অন্তর্ভুক্ত পুল ও অন-ডিমান্ড খরচ',
+  'channels.cursor_dashboard.title': 'ক্রেডিট গ্রান্ট ও পুলের বিস্তারিত',
   'channels.cursor_dashboard.how':
-    'cursor.com/api/usage-summary এবং Connect-RPC GetClientVisibleCreditGrants। ব্রাউজার হেডার লাগে এবং এজে 403 ফেরত আসতে পারে।',
+    'Connect-RPC GetClientVisibleCreditGrants এবং ড্যাশবোর্ডের পেজগুলো। এগুলোর জন্য ব্রাউজার হেডার লাগে এবং এজে 403 ফেরত আসতে পারে। usage-summary পথটি Cursor-এর রাখা টোকেন দিয়ে ইতিমধ্যে পড়া হয়।',
 } as const satisfies Record<string, string>;

@@ -29,6 +29,12 @@ export const errorMessages = {
   'error.unauthorized_ambiguous.zai.title': 'Не удалось проверить ключ z.ai',
   'error.unauthorized_ambiguous.zai.body':
     'Сервис отклонил запрос. Так бывает и с действующими ключами, и с аккаунтами без тарифа GLM Coding. Проверьте ключ и тариф в панели z.ai.',
+  'error.unauthorized_ambiguous.cursor.title': 'Не удалось проверить вход в Cursor',
+  'error.unauthorized_ambiguous.cursor.body':
+    'Сервис отклонил запрос. Так бывает с просроченным или устаревшим сеансом, а также с аккаунтом без активного тарифа. Откройте Cursor, чтобы обновить вход, и проверьте тариф на панели Cursor.',
+  'error.unauthorized_ambiguous.copilot.title': 'Не удалось проверить токен GitHub',
+  'error.unauthorized_ambiguous.copilot.body':
+    'GitHub отклонил запрос. Так бывает с просроченным токеном, с детализированным токеном или токеном приложения, а также с аккаунтом без Copilot. Проверьте токен и подписку Copilot в настройках GitHub.',
   'error.not_found.title': 'Адрес не найден',
   'error.not_found.body':
     'Сервер не распознаёт указанный путь или ID. Проверьте URL, область действия и ID.',

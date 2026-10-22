@@ -1,0 +1,4 @@
+{
+  "ghe.example.test": { "user": "fab-corp", "oauth_token": "gho_fabricatedEnterpriseToken0003" },
+  "github.com": { "user": "fab-user", "oauth_token": "gho_fabricatedHostsToken0002" }
+}

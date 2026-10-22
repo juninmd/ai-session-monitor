@@ -130,6 +130,7 @@ describe('saving a secret', () => {
             done({
               litellm: false,
               opencode: true,
+              copilot: false,
               kimi: false,
               zai: false,
               openrouter: false,

@@ -29,6 +29,8 @@ export const COLLECTORS = [
   'collector-antigravity',
   'collector-claude',
   'collector-codex',
+  'collector-cursor',
+  'collector-copilot',
   'collector-deepseek',
   'collector-deepinfra',
   'collector-moonshot',
@@ -61,11 +63,29 @@ const FIELD_PARAM = String.raw`with_param\(\s*"field"\s*,\s*"([A-Za-z]+)"\s*\)`;
 /** The shapes in which the crates spell what the UI has to word; emitted.test.ts pins each one. */
 export const PATTERN = {
   noticeCode:
-    /const\s+[A-Z_]+:\s*&str\s*=\s*"((?:claude|codex|antigravity|litellm|opencode)_[a-z_]+)"/g,
+    /const\s+[A-Z_]+:\s*&str\s*=\s*"((?:claude|codex|antigravity|litellm|opencode|copilot|cursor)_[a-z_]+)"/g,
   fact: new RegExp(`${FACT_STRUCT}|${FACT_ROW}`, 'g'),
   installReason: /\bfailed\(\s*"([a-z_]+)"\s*,/g,
   tlsReason: /"(ca_[a-z_]+)"/g,
   endpointReason: /\bchanged\(\s*"([a-z_]+)"\s*\)/g,
+  /** `Self::Locked => "locked"`: the closed vocabulary a store or token reader can name. */
+  reasonVariant: /\bSelf::[A-Z]\w*\s*=>\s*"([a-z_]+)"/g,
+  /** `id: format!("{id}_unlimited")`: Copilot builds its fact ids from the window id. */
+  factSuffix: /\bid:\s*format!\(\s*"\{id\}_([a-z_]+)"/g,
+  /** The `(server key, window id)` rows of Copilot's QUOTAS table: the second literal is the id. */
+  quotaId: /^\s*\(\s*"[a-z_]+"\s*,\s*"([a-z_]+)"\s*\),\s*$/gm,
   reasonParam: /with_param\(\s*"reason"\s*,\s*"([a-z_]+)"\s*\)/g,
   field: new RegExp(`${FIELD_CALL}|${FIELD_PARAM}`, 'g'),
 } as const;
+
+/**
+ * The fact ids one collector crate sends: spelled out, or (Copilot) built from a window id and a
+ * suffix, in which case every quota id carries every suffix.
+ */
+export function factIdsOf(crate: string): string[] {
+  const code = rustOf(crate);
+  const built = scan(code, PATTERN.quotaId).flatMap((id) =>
+    scan(code, PATTERN.factSuffix).map((suffix) => `${id}_${suffix}`),
+  );
+  return [...new Set([...scan(code, PATTERN.fact), ...built])].sort();
+}

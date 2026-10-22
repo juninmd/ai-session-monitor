@@ -54,6 +54,8 @@ describe('selects', () => {
       'Menor disponível',
       'Claude Code',
       'Codex',
+      'Cursor',
+      'GitHub Copilot',
       'Antigravity',
       'OpenCode',
       'Kimi Code',

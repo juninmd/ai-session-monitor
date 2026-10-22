@@ -35,6 +35,28 @@ export function alreadyChannels(): readonly Channel[] {
       reach: 'already',
       source: 'docs.litellm.ai',
     },
+    {
+      id: 'cursor-usage-summary',
+      harness: 'Cursor',
+      title: t('channels.cursor_usage_summary.title'),
+      shape: 'window',
+      how: t('channels.cursor_usage_summary.how'),
+      confidence: 'low',
+      reach: 'already',
+      source: 'docs/data-sources.md (CodexBar notes)',
+      caveat: t('channels.cursor_usage_summary.caveat'),
+    },
+    {
+      id: 'copilot-internal-user',
+      harness: 'GitHub Copilot',
+      title: t('channels.copilot_internal_user.title'),
+      shape: 'window',
+      how: t('channels.copilot_internal_user.how'),
+      confidence: 'low',
+      reach: 'already',
+      source: 'docs/data-sources.md (CodexBar notes)',
+      caveat: t('channels.copilot_internal_user.caveat'),
+    },
   ];
 }
 

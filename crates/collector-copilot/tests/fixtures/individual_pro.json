@@ -1,0 +1,16 @@
+{
+  "login": "fab-user",
+  "access_type_sku": "copilot_for_individual_pro",
+  "analytics_tracking_id": "fabricated-0000",
+  "chat_enabled": true,
+  "copilot_plan": "individual_pro",
+  "organization_login_list": [],
+  "endpoints": { "api": "https://api.individual.githubcopilot.com" },
+  "quota_reset_date": "2027-02-01",
+  "quota_reset_date_utc": "2027-02-01T00:00:00.000Z",
+  "quota_snapshots": {
+    "chat": { "entitlement": 0, "remaining": 0, "percent_remaining": 100, "unlimited": true, "overage_count": 0, "overage_permitted": false, "quota_id": "chat" },
+    "completions": { "entitlement": 0, "remaining": 0, "percent_remaining": 100, "unlimited": true, "overage_count": 0, "overage_permitted": false, "quota_id": "completions" },
+    "premium_interactions": { "entitlement": 300, "remaining": 220, "percent_remaining": 73.3333, "unlimited": false, "overage_count": 0, "overage_permitted": true, "quota_id": "premium_interactions" }
+  }
+}

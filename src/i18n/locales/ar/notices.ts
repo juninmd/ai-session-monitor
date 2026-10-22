@@ -27,6 +27,8 @@ export const noticeMessages = {
   'notice.code.opencode_local_estimate':
     'القيم المحلية تقدير بسعر القائمة، من هذا الكمبيوتر فقط. وهي ليست الحصة.',
   'notice.code.opencode_db_unreadable': 'تعذّرت قراءة قاعدة بيانات OpenCode المحلية: {reason}.',
+  'notice.code.copilot_reset_derived':
+    'تاريخ إعادة الضبط تقدير: يوثّق GitHub أن الطلبات المميزة تُعاد ضبطها في اليوم الأول من كل شهر بالتوقيت العالمي (UTC).',
   'notice.unknown': 'إشعار غير مترجم: {code}',
   'notice.action.reinstall': 'إعادة التثبيت',
   'notice.action.settings': 'إدخال المفتاح',

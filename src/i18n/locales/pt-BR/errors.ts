@@ -29,6 +29,12 @@ export const errorMessages = {
   'error.unauthorized_ambiguous.zai.title': 'Não foi possível verificar a chave do z.ai',
   'error.unauthorized_ambiguous.zai.body':
     'O serviço recusou a consulta. Isso acontece com chaves válidas e também com contas sem o plano GLM Coding. Confira a chave e o plano no painel do z.ai.',
+  'error.unauthorized_ambiguous.cursor.title': 'Não foi possível verificar o login do Cursor',
+  'error.unauthorized_ambiguous.cursor.body':
+    'O serviço recusou a consulta. Isso acontece com sessão vencida ou antiga e também com uma conta sem plano ativo. Abra o Cursor para renovar o login e confira o plano no painel do Cursor.',
+  'error.unauthorized_ambiguous.copilot.title': 'Não foi possível verificar o token do GitHub',
+  'error.unauthorized_ambiguous.copilot.body':
+    'O GitHub recusou a consulta. Isso acontece com token vencido, token de granularidade fina ou de aplicativo e conta sem Copilot. Confira o token e a assinatura do Copilot nas configurações do GitHub.',
   'error.not_found.title': 'Endereço não encontrado',
   'error.not_found.body':
     'O servidor não conhece o caminho ou o ID informado. Confira a URL, o escopo e o ID.',

@@ -73,6 +73,16 @@ export const channelsMessages = {
   'channels.litellm_budget.title': 'Orçamento da chave, do usuário ou do time',
   'channels.litellm_budget.how':
     'GET /key|user|team/info: spend, max_budget, budget_duration, budget_reset_at, orçamentos por modelo e limites estáticos de rpm/tpm.',
+  'channels.cursor_usage_summary.title': 'Uso incluído e gasto sob demanda',
+  'channels.cursor_usage_summary.how':
+    'GET cursor.com/api/usage-summary com o cookie de sessão montado a partir do token de login que o Cursor guarda no banco local (state.vscdb, uma entrada, somente leitura): totalPercentUsed, billingCycleEnd e individualUsage.onDemand.',
+  'channels.cursor_usage_summary.caveat':
+    'Não oficial e nunca visto ao vivo: a rota vem de notas da comunidade, então compare com o painel. Exige o consentimento e o selo “não oficial”.',
+  'channels.copilot_internal_user.title': 'Requisições premium, chat e completions',
+  'channels.copilot_internal_user.how':
+    'GET api.github.com/copilot_internal/user → quota_snapshots (percent_remaining, entitlement, remaining, unlimited, overage_count), copilot_plan e quota_reset_date. O token é um colado ou o que a extensão do Copilot guarda em apps.json ou hosts.json.',
+  'channels.copilot_internal_user.caveat':
+    'Não oficial e nunca visto ao vivo: a rota é interna do GitHub. Sem uma data utilizável na resposta, o reset é derivado (dia 1º do mês seguinte, em UTC) e marcado como estimativa.',
   'channels.openrouter_activity.title': 'Gasto diário por modelo',
   'channels.openrouter_activity.how':
     'GET /api/v1/activity. Documentado, mas exige management key: a chave de inferência leva 403 (mesma situação do /credits).',
@@ -91,9 +101,9 @@ export const channelsMessages = {
   'channels.kimi_console.title': 'Detalhe de frequência no console',
   'channels.kimi_console.how':
     'O console da plataforma expõe limites por modelo, mas só por sessão de navegador. Sem host novo, sem cookie, sem scraping — fica fora.',
-  'channels.cursor_dashboard.title': 'Pools incluídos e gasto sob demanda',
+  'channels.cursor_dashboard.title': 'Concessões de crédito e detalhe dos pools',
   'channels.cursor_dashboard.how':
-    'cursor.com/api/usage-summary e o Connect-RPC GetClientVisibleCreditGrants. Exigem cabeçalhos de navegador e podem devolver 403 na borda.',
+    'O Connect-RPC GetClientVisibleCreditGrants e as páginas do painel. Exigem cabeçalhos de navegador e podem devolver 403 na borda. A rota usage-summary já é lida com o token que o Cursor guarda.',
   'channels.caveat.new_host':
     'Host e caminho novos: precisa de entrada própria em docs/data-sources.md antes de ser lido.',
 } as const satisfies Record<string, string>;

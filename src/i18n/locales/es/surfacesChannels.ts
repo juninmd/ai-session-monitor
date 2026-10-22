@@ -93,7 +93,17 @@ export const channelsMessages = {
   'channels.kimi_console.title': 'Detalle de límites en la consola',
   'channels.kimi_console.how':
     'La consola de la plataforma expone límites por modelo, pero solo por sesión del navegador. Sin host nuevo, sin cookie, sin scraping: se queda fuera.',
-  'channels.cursor_dashboard.title': 'Reservas incluidas y gasto bajo demanda',
+  'channels.cursor_usage_summary.title': 'Uso incluido y gasto bajo demanda',
+  'channels.cursor_usage_summary.how':
+    'GET cursor.com/api/usage-summary con la cookie de sesión construida a partir del token de inicio de sesión que Cursor guarda en su base de datos local (state.vscdb, una entrada, solo lectura): totalPercentUsed, billingCycleEnd e individualUsage.onDemand.',
+  'channels.cursor_usage_summary.caveat':
+    'No oficial y nunca visto en vivo: la ruta procede de notas de la comunidad, así que compárala con el panel. Necesita el consentimiento y la insignia «no oficial».',
+  'channels.copilot_internal_user.title': 'Solicitudes premium, chat y completados',
+  'channels.copilot_internal_user.how':
+    'GET api.github.com/copilot_internal/user → quota_snapshots (percent_remaining, entitlement, remaining, unlimited, overage_count), copilot_plan y quota_reset_date. El token es uno pegado o el que la extensión de Copilot guarda en apps.json o hosts.json.',
+  'channels.copilot_internal_user.caveat':
+    'No oficial y nunca visto en vivo: la ruta es interna de GitHub. Sin una fecha utilizable en la respuesta, el restablecimiento se deduce (el día 1 del mes siguiente, UTC) y se marca como estimación.',
+  'channels.cursor_dashboard.title': 'Reservas de crédito y detalle del fondo',
   'channels.cursor_dashboard.how':
-    'cursor.com/api/usage-summary y el Connect-RPC GetClientVisibleCreditGrants. Necesitan encabezados de navegador y pueden devolver 403 en el borde.',
+    'El Connect-RPC GetClientVisibleCreditGrants y las páginas del panel. Necesitan encabezados de navegador y pueden devolver 403 en el borde. La ruta usage-summary ya se lee con el token que guarda Cursor.',
 } as const satisfies Record<string, string>;

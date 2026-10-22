@@ -18,6 +18,12 @@ export const settingsMessages = {
   'settings.show_used': 'Mostrar cota como',
   'settings.show_available': 'disponível',
   'settings.show_used_opt': 'usado',
+  'settings.hide_capture': 'Ocultar de capturas e compartilhamento de tela',
+  'settings.hide_capture_hint':
+    'O painel fica invisível em capturas de tela, gravações e compartilhamento de tela (Windows e macOS; sem suporte no Linux).',
+  'settings.local_api': 'API local',
+  'settings.local_api_hint':
+    'Serve as leituras como JSON somente leitura em 127.0.0.1:{port}, para scripts e barras de status. Qualquer programa deste computador consegue ler. Desligada por padrão.',
   'settings.language': 'Idioma',
   'settings.language_hint': 'Vale para o painel e para as notificações.',
   'settings.skin': 'Tema',
@@ -93,4 +99,8 @@ export const settingsMessages = {
     'Leitura não oficial: pode rodar o agy instalado só para ler /usage (sem gastar tokens nem ler dados de login) e/ou ler o servidor local da IDE, que só conversa com 127.0.0.1.',
   'antigravity.note':
     'A leitura vem do agy instalado (nada precisa estar aberto) ou, sem ele, do servidor local da IDE: aí mantenha o Antigravity aberto.',
+
+  'cursor.consent': 'Permitir a leitura do token de login do Cursor',
+  'cursor.consent_hint':
+    'Leitura não oficial: lê o token de login que o Cursor guarda no banco de dados local (somente leitura, só essa entrada) e o envia apenas ao cursor.com.',
 } as const satisfies Record<string, string>;

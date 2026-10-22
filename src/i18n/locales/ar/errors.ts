@@ -26,6 +26,12 @@ export const errorMessages = {
   'error.unauthorized_ambiguous.zai.title': 'تعذّر التحقق من مفتاح z.ai',
   'error.unauthorized_ambiguous.zai.body':
     'رفضت الخدمة الطلب. يحدث هذا مع المفاتيح الصحيحة وأيضًا مع الحسابات التي لا تملك باقة GLM Coding. تحقق من المفتاح والباقة في لوحة z.ai.',
+  'error.unauthorized_ambiguous.cursor.title': 'تعذّر التحقق من تسجيل الدخول إلى Cursor',
+  'error.unauthorized_ambiguous.cursor.body':
+    'رفضت الخدمة الطلب. يحدث هذا مع جلسة منتهية أو قديمة، وأيضًا مع حساب بلا باقة نشطة. افتح Cursor لتجديد تسجيل الدخول وتحقق من الباقة في لوحة Cursor.',
+  'error.unauthorized_ambiguous.copilot.title': 'تعذّر التحقق من رمز GitHub',
+  'error.unauthorized_ambiguous.copilot.body':
+    'رفض GitHub الطلب. يحدث هذا مع رمز منتهي، أو رمز دقيق الصلاحيات أو رمز تطبيق، ومع حساب بلا Copilot. تحقق من الرمز ومن اشتراك Copilot في إعدادات GitHub.',
   'error.not_found.title': 'العنوان غير موجود',
   'error.not_found.body':
     'لا يتعرف الخادم على المسار أو المعرّف المُدخل. تحقق من الرابط والنطاق والمعرّف.',

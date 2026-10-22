@@ -1,0 +1,6 @@
+{
+  "billingCycleStart": "2026-11-01T00:00:00Z",
+  "billingCycleEnd": "2026-12-01T00:00:00Z",
+  "membershipType": "free",
+  "individualUsage": { "plan": { "enabled": true, "used": 40, "limit": 50, "totalPercentUsed": 80 } }
+}

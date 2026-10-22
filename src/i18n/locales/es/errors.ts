@@ -29,6 +29,12 @@ export const errorMessages = {
   'error.unauthorized_ambiguous.zai.title': 'No se pudo verificar la clave de z.ai',
   'error.unauthorized_ambiguous.zai.body':
     'El servicio rechazó la solicitud. Esto ocurre con claves válidas y también con cuentas sin el plan GLM Coding. Revisa la clave y el plan en el panel de z.ai.',
+  'error.unauthorized_ambiguous.cursor.title': 'No se pudo verificar el inicio de sesión de Cursor',
+  'error.unauthorized_ambiguous.cursor.body':
+    'El servicio rechazó la solicitud. Esto ocurre con una sesión caducada o desactualizada y también con una cuenta sin un plan activo. Abre Cursor para renovar el inicio de sesión y revisa el plan en el panel de Cursor.',
+  'error.unauthorized_ambiguous.copilot.title': 'No se pudo verificar el token de GitHub',
+  'error.unauthorized_ambiguous.copilot.body':
+    'GitHub rechazó la solicitud. Esto ocurre con un token caducado, un token de acceso detallado o de una aplicación, y con una cuenta sin Copilot. Revisa el token y tu suscripción de Copilot en los ajustes de GitHub.',
   'error.not_found.title': 'Dirección no encontrada',
   'error.not_found.body':
     'El servidor no reconoce la ruta o el ID indicados. Revisa la URL, el alcance y el ID.',

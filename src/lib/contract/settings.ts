@@ -160,6 +160,9 @@ export const SettingsSchema = z.strictObject({
 });
 export type Settings = z.infer<typeof SettingsSchema>;
 
+// The loopback port of the optional local API (usage_model::settings::LOCAL_API_PORT).
+export const LOCAL_API_PORT = 6737;
+
 // Ranges the backend clamps to (Settings::normalize); the forms use them for their inputs.
 export const LIMITS = {
   intervalSecs: { min: 30, max: 3600 },

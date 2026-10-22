@@ -142,9 +142,6 @@ export const flyoutMessages = {
   'candidates.amp.credential': 'लोकल CLI (`amp`)',
   'candidates.amp.offer':
     '`amp usage` क्रेडिट बैलेंस और शामिल उपयोग देता है। वही निश्चित-CLI तरीका जो Claude और Antigravity में पहले से उपयोग होता है।',
-  'candidates.copilot.credential': 'प्लान-रीड स्कोप वाला PAT',
-  'candidates.copilot.offer':
-    'प्रीमियम अनुरोध, चैट और कंप्लीशन, प्लान और रीसेट तिथि के साथ; REST बिलिंग API से AI क्रेडिट बिलिंग।',
   'candidates.kiro.credential': 'CLI का अपना क्रेडेंशियल',
   'candidates.kiro.offer':
     'GetUsageLimits एक ही क्रेडिट पूल देता है: उपयोग, सीमा, प्रतिशत और रीसेट के साथ।',

@@ -1,0 +1,22 @@
+{
+  "billingCycleStart": "2027-01-01T00:00:00.000Z",
+  "billingCycleEnd": "2027-02-01T00:00:00.000Z",
+  "membershipType": "pro",
+  "limitType": "user",
+  "isUnlimited": false,
+  "individualUsage": {
+    "plan": {
+      "enabled": true,
+      "used": 1500,
+      "limit": 2000,
+      "remaining": 500,
+      "breakdown": { "included": 1500, "bonus": 0, "total": 1500 },
+      "autoPercentUsed": 40.0,
+      "apiPercentUsed": 10.0,
+      "totalPercentUsed": 37.5
+    },
+    "onDemand": { "enabled": false, "used": 0, "limit": null, "remaining": null }
+  },
+  "teamUsage": {},
+  "futureField": { "nested": [1, 2, 3] }
+}

@@ -17,6 +17,11 @@ export const windowMessages = {
   'window.deepinfra.budget': 'Limite de dépenses du compte',
   'window.ollama.monthly': 'Crédits inclus ce mois-ci',
   'window.ollama.other': 'Session',
+  'window.cursor.monthly': 'Utilisation incluse',
+  'window.cursor.on_demand': 'Dépenses à la demande',
+  'window.copilot.premium_requests': 'Requêtes premium',
+  'window.copilot.chat': 'Chat',
+  'window.copilot.completions': 'Complétions de code',
   'window.daily': 'Jour',
   'window.budget': 'Budget',
   'window.other': 'Fenêtre',
@@ -90,6 +95,8 @@ export const windowMessages = {
   'meta.level_tip':
     'Les chiffres du budget proviennent de ce niveau, et non de ce qui a été configuré.',
   'meta.local_estimate': 'Inclut une estimation locale',
+  'meta.token_source.pasted': 'Jeton collé',
+  'meta.token_source.local': 'Jeton de l’extension',
 
   'source.statusline': 'ligne d’état',
   'source.oauth_usage': 'API d’utilisation du compte',
@@ -108,6 +115,8 @@ export const windowMessages = {
   'source.balance_detail': 'API de solde Novita',
   'source.balance': 'API de solde Ollama Cloud',
   'source.token_plan_remains': 'route de quota du Token Plan MiniMax',
+  'source.usage_summary': 'résumé d’utilisation de Cursor',
+  'source.copilot_internal_user': 'route de quota GitHub Copilot',
   'source.local_db': 'base de données locale',
 
   'group.opus': 'Opus',
@@ -165,4 +174,13 @@ export const windowMessages = {
   'fact.local_tokens_5h': 'Jetons locaux, 5 heures',
   'fact.local_tokens_7d': 'Jetons locaux, 7 jours',
   'fact.plan_note': 'Forfait',
+  'fact.value.unlimited': 'Illimité',
+  'fact.unlimited': 'Utilisation incluse',
+  'fact.on_demand_spend': 'Dépenses à la demande',
+  'fact.premium_requests_unlimited': 'Requêtes premium',
+  'fact.chat_unlimited': 'Chat',
+  'fact.completions_unlimited': 'Complétions de code',
+  'fact.premium_requests_overage': 'Requêtes premium au-delà du quota',
+  'fact.chat_overage': 'Requêtes de chat au-delà du quota',
+  'fact.completions_overage': 'Complétions au-delà du quota',
 } as const satisfies Record<string, string>;

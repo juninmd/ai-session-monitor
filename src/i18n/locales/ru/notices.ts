@@ -29,6 +29,8 @@ export const noticeMessages = {
     'Локальные значения — оценка по прайс-листу, только по этому ПК. Это не квота.',
   'notice.code.opencode_db_unreadable':
     'Не удалось прочитать локальную базу данных OpenCode: {reason}.',
+  'notice.code.copilot_reset_derived':
+    'Дата сброса — оценка: по документации GitHub премиум-запросы сбрасываются 1-го числа каждого месяца по UTC.',
   'notice.unknown': 'Сообщение без перевода: {code}',
   'notice.action.reinstall': 'Установить заново',
   'notice.action.settings': 'Ввести ключ',

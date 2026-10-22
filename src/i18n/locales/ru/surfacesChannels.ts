@@ -93,7 +93,17 @@ export const channelsMessages = {
   'channels.kimi_console.title': 'Подробности лимитов в консоли',
   'channels.kimi_console.how':
     'Консоль платформы показывает лимиты по моделям, но только в рамках сеанса браузера. Без нового хоста, cookie и скрейпинга — поэтому остаётся за рамками.',
-  'channels.cursor_dashboard.title': 'Включённые пулы и расход по запросу',
+  'channels.cursor_usage_summary.title': 'Включённый расход и траты по запросу',
+  'channels.cursor_usage_summary.how':
+    'GET cursor.com/api/usage-summary с cookie сеанса, собранным из токена входа, который Cursor хранит в локальной базе данных (state.vscdb, одна запись, только чтение): totalPercentUsed, billingCycleEnd и individualUsage.onDemand.',
+  'channels.cursor_usage_summary.caveat':
+    'Неофициально и вживую не проверялось: маршрут взят из заметок сообщества, поэтому сравните его с панелью. Нужны согласие и значок «неофициальный».',
+  'channels.copilot_internal_user.title': 'Премиум-запросы, чат и автодополнение',
+  'channels.copilot_internal_user.how':
+    'GET api.github.com/copilot_internal/user → quota_snapshots (percent_remaining, entitlement, remaining, unlimited, overage_count), copilot_plan и quota_reset_date. Токен — вставленный или тот, что расширение Copilot хранит в apps.json или hosts.json.',
+  'channels.copilot_internal_user.caveat':
+    'Неофициально и вживую не проверялось: маршрут внутренний для GitHub. Если в ответе нет пригодной даты, сброс вычисляется (1-е число следующего месяца, UTC) и помечается как оценка.',
+  'channels.cursor_dashboard.title': 'Гранты кредитов и детали пулов',
   'channels.cursor_dashboard.how':
-    'cursor.com/api/usage-summary и Connect-RPC GetClientVisibleCreditGrants. Нужны заголовки браузера, а на границе может вернуться 403.',
+    'Connect-RPC GetClientVisibleCreditGrants и страницы панели. Нужны заголовки браузера, а на границе может вернуться 403. Маршрут usage-summary уже читается по токену, который хранит Cursor.',
 } as const satisfies Record<string, string>;

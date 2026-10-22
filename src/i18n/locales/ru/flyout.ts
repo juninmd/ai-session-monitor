@@ -161,9 +161,6 @@ export const flyoutMessages = {
   'candidates.amp.credential': 'Локальный CLI (`amp`)',
   'candidates.amp.offer':
     '`amp usage` возвращает баланс кредитов и включённый расход. Тот же шаблон с фиксированным CLI, что уже используется для Claude и Antigravity.',
-  'candidates.copilot.credential': 'PAT с правом чтения тарифа',
-  'candidates.copilot.offer':
-    'Премиум-запросы, чат и автодополнение, с тарифом и датой сброса; биллинг кредитов ИИ через REST API биллинга.',
   'candidates.kiro.credential': 'Собственные учётные данные CLI',
   'candidates.kiro.offer':
     'GetUsageLimits возвращает один пул кредитов с использованием, лимитом, процентом и сбросом.',

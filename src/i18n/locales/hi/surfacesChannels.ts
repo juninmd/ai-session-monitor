@@ -75,6 +75,16 @@ export const channelsMessages = {
   'channels.litellm_budget.title': 'कुंजी, उपयोगकर्ता या टीम का बजट',
   'channels.litellm_budget.how':
     'GET /key|user|team/info: spend, max_budget, budget_duration, budget_reset_at, मॉडल के अनुसार बजट और स्थिर rpm/tpm सीमाएँ।',
+  'channels.cursor_usage_summary.title': 'शामिल उपयोग और ऑन-डिमांड खर्च',
+  'channels.cursor_usage_summary.how':
+    'GET cursor.com/api/usage-summary, उस सत्र कुकी के साथ जो Cursor के लोकल डेटाबेस में रखे साइन-इन टोकन (state.vscdb, एक एंट्री, केवल पढ़ने के लिए) से बनती है: totalPercentUsed, billingCycleEnd और individualUsage.onDemand।',
+  'channels.cursor_usage_summary.caveat':
+    'अनौपचारिक और कभी लाइव नहीं देखा गया: यह रास्ता समुदाय के नोट्स से आया है, इसलिए डैशबोर्ड से तुलना करें। इसके लिए सहमति और “अनौपचारिक” बैज ज़रूरी हैं।',
+  'channels.copilot_internal_user.title': 'प्रीमियम अनुरोध, चैट और कंप्लीशन',
+  'channels.copilot_internal_user.how':
+    'GET api.github.com/copilot_internal/user → quota_snapshots (percent_remaining, entitlement, remaining, unlimited, overage_count), copilot_plan और quota_reset_date। टोकन या तो चिपकाया हुआ होता है या वह जो Copilot एक्सटेंशन apps.json या hosts.json में रखता है।',
+  'channels.copilot_internal_user.caveat':
+    'अनौपचारिक और कभी लाइव नहीं देखा गया: यह रास्ता GitHub का आंतरिक है। जवाब में उपयोगी तिथि न हो तो रीसेट निकाला जाता है (अगले माह की 1 तारीख़, UTC) और अनुमान के रूप में चिह्नित होता है।',
   'channels.openrouter_activity.title': 'मॉडल के अनुसार दैनिक खर्च',
   'channels.openrouter_activity.how':
     'GET /api/v1/activity। प्रलेखित है, पर मैनेजमेंट कुंजी चाहिए: इन्फ़रेंस कुंजी को 403 मिलता है (/credits जैसी ही स्थिति)।',
@@ -93,7 +103,7 @@ export const channelsMessages = {
   'channels.kimi_console.title': 'कंसोल में दर का विवरण',
   'channels.kimi_console.how':
     'प्लैटफ़ॉर्म कंसोल मॉडल के अनुसार सीमाएँ दिखाता है, पर केवल ब्राउज़र सत्र के भीतर। न नया होस्ट, न कुकी, न स्क्रैपिंग — यह बाहर ही रहता है।',
-  'channels.cursor_dashboard.title': 'शामिल पूल और ऑन-डिमांड खर्च',
+  'channels.cursor_dashboard.title': 'क्रेडिट ग्रांट और पूल का विवरण',
   'channels.cursor_dashboard.how':
-    'cursor.com/api/usage-summary और Connect-RPC GetClientVisibleCreditGrants। इनके लिए ब्राउज़र हेडर चाहिए और एज पर 403 मिल सकता है।',
+    'Connect-RPC GetClientVisibleCreditGrants और डैशबोर्ड के पेज। इनके लिए ब्राउज़र हेडर चाहिए और एज पर 403 मिल सकता है। usage-summary रास्ता पहले ही उस टोकन से पढ़ा जाता है जो Cursor रखता है।',
 } as const;

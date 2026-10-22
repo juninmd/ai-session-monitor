@@ -17,6 +17,8 @@ Sources were researched and retrieved on 2026-10-11. This file is not legal advi
 | Antigravity | `antigravity` | `antigravity.svg` | LobeHub Icons, `@lobehub/icons-static-svg@1.95.1`, [`icons/antigravity-color.svg`](https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.95.1/icons/antigravity-color.svg) | MIT, Copyright (c) 2023 LobeHub | Google LLC | `652128cf55a28bb958563ee372d0bd00208d9e6fd446f523f77aafd811eef8ca` | `a407bd965b3ebf72a818296cb8de82a9efd96bf28e2bac459615cc870f5e8bc0` | Sanitized only: root `width`, `height` and `style` removed. Everything after the root start tag is byte-identical (mask, blobs, filters). |
 | OpenCode | `opencode` | `opencode.mono.svg` | OpenCode identity mark, `anomalyco/opencode` tag `v1.19.0` (commit `733b2c627e5aec39cb33cc22373bdce33053ef2c`), [`packages/identity/mark.svg`](https://raw.githubusercontent.com/anomalyco/opencode/733b2c627e5aec39cb33cc22373bdce33053ef2c/packages/identity/mark.svg) | MIT, Copyright (c) 2025 opencode (the repository licence) | Anomaly Innovations, Inc. | `e29bbe33380ad1c1ada9134b52f229d30e9776d60481512c9d81f2bb6f37def9` | `6eac8cab9381fa85c0ab5c33a8627c3462878d5a3c54de93de3c815441df13b3` | Sanitized and recoloured to one ink: outer wrapper `svg` and trailing `style` removed, background tile dropped, white and `#5A5858` fills became `currentColor` (the inner block at `fill-opacity` 0.3), viewBox cropped to `64 64 384 384`, `<title>` added. Both `d` strings are untouched. |
 | LiteLLM | `litellm` | `litellm.mono.svg` | LiteLLM monogram, `BerriAI/litellm` tag `v1.105.0-rc.3` (commit `c09b4d5a09e6f5c09080c0762fb200d91572f331`), [`ui/litellm-dashboard/public/assets/logos/litellm_monogram.svg`](https://raw.githubusercontent.com/BerriAI/litellm/c09b4d5a09e6f5c09080c0762fb200d91572f331/ui/litellm-dashboard/public/assets/logos/litellm_monogram.svg) | MIT, Copyright (c) 2023 Berri AI | Berri AI | `69eaed389008a423e98590466c98b80f4ab7ffec47f4bda53ee0db3890775ba0` | `937486b8fb3a449c1662ad094a8bfdada1e2e8f73846b8ccabb8754aba39f58d` | Sanitized and recoloured to one ink: XML prolog, root `id` and `data-name`, `defs` and `style` removed, `class="cls-1"` became `fill="currentColor"` (was `#0117be`), whitespace between elements removed, `<title>` added. All seven `d` strings are untouched. |
+| Cursor | `cursor` | `cursor.mono.svg` | Simple Icons, `simple-icons@16.35.0`, [`icons/cursor.svg`](https://cdn.jsdelivr.net/npm/simple-icons@16.35.0/icons/cursor.svg) | CC0 1.0 (Simple Icons package licence) | Anysphere, Inc. | `71572a9be192cc069ec22b48d785e61d754eeed7edb7d082d615f6d5620f70ec` | `dcf8fe184f59c4a2e7f85c2e0067c4cdafdfcbf967600327aba16ac8b22f4e0d` | Recoloured to one ink and rewrapped: `role` removed, `<title>` kept, `fill="currentColor"` added to the path, no line break. The `d` string is untouched. |
+| GitHub Copilot | `copilot` | `copilot.mono.svg` | Simple Icons, `simple-icons@16.35.0`, [`icons/githubcopilot.svg`](https://cdn.jsdelivr.net/npm/simple-icons@16.35.0/icons/githubcopilot.svg) | CC0 1.0 (Simple Icons package licence) | GitHub, Inc. (Microsoft) | `c72c1e0018e84b3128c5a1ac43ec2be135ac6ec4eb9c0ea18ed76416d23f2af3` | `ebd60c0be79fdaab26d2f898eee645ad405476e22887c75143e1f15a2ad86914` | Recoloured to one ink and rewrapped: `role` removed, `<title>` kept, `fill="currentColor"` added to the path, no line break. The `d` string is untouched. |
 
 Each vendored file is a single line with no line break, so a checkout with line-ending conversion
 (`core.autocrlf`) cannot change its hash. Check them with
@@ -30,7 +32,7 @@ How the files are used, and what keeps them honest:
   `viewBox`, no `script`, `style`, `foreignObject`, `image`, `use`, event handler, `href` or remote
   `url()`.
 - Colour logos (Claude Code, Codex, Antigravity) keep their upstream colours. Mono logos
-  (OpenCode, LiteLLM) paint `currentColor`; `src/styles/brand.css` sets the ink.
+  (OpenCode, LiteLLM, Cursor, GitHub Copilot) paint `currentColor`; `src/styles/brand.css` sets the ink.
 - LiteLLM's brand kit allows only LiteLLM Blue `#0117BE` on light surfaces and white `#FFFFFF` on
   dark ones, with no other colour, opacity or effect. The stylesheet pins exactly those two values.
 - Size is the only transformation: a uniform scale (the tab strip and the settings rows nudge the
@@ -48,7 +50,7 @@ that covers the vendored logos covers these files.
 ## Trademarks
 
 Claude Code and Anthropic belong to Anthropic, PBC; Codex and OpenAI to OpenAI; Antigravity and
-Google to Google LLC; OpenCode to Anomaly Innovations, Inc.; Kimi to Moonshot AI; z.ai to Zhipu AI (Z.ai); OpenRouter to OpenRouter, Inc.; DeepSeek to Hangzhou DeepSeek Artificial Intelligence; DeepInfra to Deep Infra, Inc.; Moonshot to Moonshot AI; Novita to Novita AI; Ollama to Ollama, Inc.; MiniMax to MiniMax; LiteLLM to Berri AI. The logos are
+Google to Google LLC; Cursor to Anysphere, Inc.; GitHub and GitHub Copilot to GitHub, Inc.; OpenCode to Anomaly Innovations, Inc.; Kimi to Moonshot AI; z.ai to Zhipu AI (Z.ai); OpenRouter to OpenRouter, Inc.; DeepSeek to Hangzhou DeepSeek Artificial Intelligence; DeepInfra to Deep Infra, Inc.; Moonshot to Moonshot AI; Novita to Novita AI; Ollama to Ollama, Inc.; MiniMax to MiniMax; LiteLLM to Berri AI. The logos are
 trademarks of their owners. This app shows them only to identify the tool whose usage each tab
 displays. It is not affiliated with, endorsed by or sponsored by any of those companies, and the MIT
 licence of an icon set covers its artwork files, not any trademark right. No owner was asked for
@@ -87,6 +89,7 @@ What each owner publishes (summarized from the pages read on 2026-10-11), and wh
   say they are not built by or affiliated with the OpenCode team; this app does not use the name in
   its own and says so anyway. The app draws the mark in one ink, dropping the official dark tile and
   recolouring the two fills, so it is a derived monochrome variant of the official logo.
+- **Cursor and GitHub Copilot.** No trademark or logo-usage policy of Anysphere or GitHub was read for this change, so nothing here claims to know what they allow. Both marks come from Simple Icons (CC0 for the file, with the package's own disclaimer that the marks belong to their owners), are drawn in one ink at their natural proportions, and appear only to identify the tool whose usage the tab shows. Replace them with owner-supplied artwork if either owner objects or publishes a rule that forbids this use.
 - **LiteLLM.** The brand kit (`litellm.ai/brand-assets` and its Logo Guidelines PDF) offers the
   monogram for "app icons, favicons, social avatars, UI elements and small digital placements", in
   LiteLLM Blue `#0117BE` or white `#FFFFFF` only, used as provided, with no stretching, rotating,
@@ -136,6 +139,7 @@ byte-identical to the one in all three files; LiteLLM's file also opens with a p
 | `lobehub/lobe-icons` at `49a2130df7bfa5eb1b088261bff20a37e2967789` (the commit `@lobehub/icons-static-svg@1.95.1` was published from; the npm tarball ships no LICENSE file, its `package.json` declares MIT) | [`LICENSE`](https://raw.githubusercontent.com/lobehub/lobe-icons/49a2130df7bfa5eb1b088261bff20a37e2967789/LICENSE) | `add9d7531d1b21646317a8958e38fc727506fa39d24bdecb44154d943c82753a` |
 | `anomalyco/opencode` at `733b2c627e5aec39cb33cc22373bdce33053ef2c` | [`LICENSE`](https://raw.githubusercontent.com/anomalyco/opencode/733b2c627e5aec39cb33cc22373bdce33053ef2c/LICENSE) | `625f0f619133f89bbbb2abe37369613dfa1885eba1e50d02170deb62bb42cb6b` |
 | `BerriAI/litellm` at `c09b4d5a09e6f5c09080c0762fb200d91572f331` (MIT applies to everything outside `enterprise/`; the monogram lives under `ui/`) | [`LICENSE`](https://raw.githubusercontent.com/BerriAI/litellm/c09b4d5a09e6f5c09080c0762fb200d91572f331/LICENSE) | `b170d6bf8e8835dd357e011681db028f4d51e2fb0ea892058f56e01fb39b8273` |
+| `simple-icons/simple-icons`, npm `simple-icons@16.35.0` (CC0 1.0 covers the icon files; the marks stay the property of their owners, see the package `DISCLAIMER.md`) | [`LICENSE.md`](https://cdn.jsdelivr.net/npm/simple-icons@16.35.0/LICENSE.md) | `e9046848b63a5c92bff14e4accca80bd987e0623b74adf9226ce5198d312b79d` |
 
 Not wired yet: a built app or installer does not carry these notices. `src-tauri/tauri.conf.json`
 has no `bundle.resources` entry for this file and the UI has no About view. Ship this file with the

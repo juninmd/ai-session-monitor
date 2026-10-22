@@ -8,6 +8,8 @@ export const shellMessages = {
   'harness.kimi': 'Kimi Code',
   'harness.zai': 'z.ai',
   'harness.openrouter': 'OpenRouter',
+  'harness.cursor': 'Cursor',
+  'harness.copilot': 'GitHub Copilot',
   'harness.deepseek': 'DeepSeek',
   'harness.deepinfra': 'DeepInfra',
   'harness.moonshot': 'Moonshot',
@@ -108,6 +110,8 @@ export const shellMessages = {
   'action.console.novita': '打开 Novita 密钥页',
   'action.console.ollama': '打开 Ollama Cloud 密钥页',
   'action.console.minimax': '打开 MiniMax 密钥页',
+  'action.console.cursor': '打开 Cursor 控制台',
+  'action.console.copilot': '打开 GitHub Copilot 设置',
   'action.reinstall': '重新安装',
   'action.failed': '无法完成该操作。',
 } as const satisfies Record<string, string>;

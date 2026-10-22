@@ -1,6 +1,7 @@
 // One sample view per source and mood. Fabricated numbers only; see fixtures.ts.
 import type { HarnessId, HarnessView, Notice } from '../lib/contract';
 import { deepinfraView, minimaxView, moonshotView, novitaView, ollamaView } from './balances';
+import { copilotView, cursorView } from './editors';
 import { type Env, fact, type Mood, notice, viewOf, windowOf } from './fixtures';
 import { deepseekView, kimiView, openrouterView, zaiView } from './keyed';
 
@@ -247,6 +248,8 @@ export function litellmView(env: Env, mood: Mood): HarnessView {
 export const BUILDERS: Record<HarnessId, (env: Env, mood: Mood) => HarnessView> = {
   claude: claudeView,
   codex: codexView,
+  cursor: cursorView,
+  copilot: (env, mood) => copilotView(env, mood),
   antigravity: (env, mood) => antigravityView(env, mood),
   opencode: opencodeView,
   kimi: kimiView,

@@ -1,0 +1,10 @@
+{
+  "billingCycleStart": "2027-01-01T00:00:00.000Z",
+  "billingCycleEnd": "2027-02-01T00:00:00.000Z",
+  "membershipType": "pro_plus",
+  "isUnlimited": false,
+  "individualUsage": {
+    "plan": { "enabled": true, "used": 7000, "limit": 7000, "remaining": 0, "totalPercentUsed": 100 },
+    "onDemand": { "enabled": true, "used": 1250, "limit": 5000, "remaining": 3750 }
+  }
+}

@@ -25,6 +25,18 @@ export const setupMessages = {
   'antigravity.connect.detail':
     "With your permission, the monitor can run the installed agy only to read /usage (without spending tokens or reading login data) and/or read the IDE server's command line to get the local session token, talking only to 127.0.0.1. Nothing is written to disk or sent to the internet.",
   'antigravity.connect.allow': 'Allow local reading',
+  'cursor.connect.title': 'Connect to Cursor',
+  'cursor.connect.lead':
+    'With your permission, the monitor reads the sign-in token Cursor keeps in its local database and uses it to ask cursor.com how much of your plan is used. This route is unofficial and may stop working when Cursor changes.',
+  'cursor.connect.detail':
+    "Opens Cursor's local database (state.vscdb) in read-only mode and reads a single entry: the sign-in token. The token is sent only to cursor.com, the way the Cursor dashboard does, and is never saved or shown. No other entry (chats, files, e-mail) is read and nothing is written. Cursor publishes no API for plan usage, so compare the numbers with the dashboard the first time.",
+  'cursor.connect.allow': 'Allow reading',
+  'cursor.signin.title': 'Sign in to Cursor',
+  'cursor.signin.body':
+    'The monitor found no valid sign-in token. Open Cursor and sign in (opening it also renews an expired token), then read again.',
+  'cursor.dashboard': 'Open the Cursor dashboard',
+  'cursor.note':
+    'Unofficial reading of the Cursor usage summary, with the sign-in token Cursor keeps on this PC. Compare it with the dashboard. The included usage only shows as a percentage; unlimited plans have no window.',
 
   'shim.title': 'Status line command',
   'shim.state.not_installed': 'Not installed',
@@ -68,6 +80,18 @@ export const setupMessages = {
   'opencode.data_dir': 'OpenCode data folder',
   'opencode.data_dir_hint': 'Leave blank to use the default folder.',
   'opencode.save_settings': 'Save folder',
+  'copilot.title': 'Connect to GitHub Copilot',
+  'copilot.lead':
+    'Paste a GitHub token, or let the monitor read the one the Copilot extension keeps on disk, to see the premium requests used this month. This route is unofficial.',
+  'copilot.detail':
+    'Unofficial reading: it uses an internal GitHub endpoint that the Copilot editors call to show their own quota. It is undocumented and may change without notice. A pasted token stays in Windows Credential Manager. With your permission, the monitor instead reads the GitHub token the Copilot extension keeps on disk (two fixed files in its own folder, read-only). Either token is sent only to api.github.com. GitHub Enterprise tokens are not used. Compare the numbers with github.com/settings/copilot the first time.',
+  'copilot.key_label': 'GitHub token (optional)',
+  'copilot.console': 'Open the GitHub Copilot settings',
+  'copilot.local_label': 'Read the Copilot extension token (this PC only)',
+  'copilot.local_hint':
+    'Unofficial: reads the GitHub token the Copilot extension keeps on disk (two fixed files, read-only) and sends it only to api.github.com. Not needed when you paste a token.',
+  'copilot.note':
+    'Unofficial reading of the GitHub Copilot quota. The reset date can be an estimate (the 1st of the month, UTC). Unlimited quotas are listed as details, not as a percentage.',
 
   'kimi.title': 'Connect to Kimi Code',
   'kimi.lead':

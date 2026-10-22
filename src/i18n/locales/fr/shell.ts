@@ -3,6 +3,8 @@ export const shellMessages = {
   'app.title': 'AI Session Monitor',
   'harness.claude': 'Claude Code',
   'harness.codex': 'Codex',
+  'harness.cursor': 'Cursor',
+  'harness.copilot': 'GitHub Copilot',
   'harness.antigravity': 'Antigravity',
   'harness.opencode': 'OpenCode',
   'harness.kimi': 'Kimi Code',
@@ -112,6 +114,8 @@ export const shellMessages = {
   'action.console.novita': 'Ouvrir les clés Novita',
   'action.console.ollama': 'Ouvrir les clés Ollama Cloud',
   'action.console.minimax': 'Ouvrir les clés MiniMax',
+  'action.console.cursor': 'Ouvrir le tableau de bord Cursor',
+  'action.console.copilot': 'Ouvrir les paramètres GitHub Copilot',
   'action.reinstall': 'Réinstaller',
   'action.failed': 'Impossible de terminer l’action.',
 } as const satisfies Record<string, string>;

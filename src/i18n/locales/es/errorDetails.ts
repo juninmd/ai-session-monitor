@@ -53,6 +53,25 @@ export const errorDetailMessages = {
   'error.unauthorized.reason.no_token.body':
     'El monitor no pudo leer el token de sesión del servidor local del IDE. Reinicia Antigravity e inténtalo de nuevo.',
 
+  'error.timeout.reason.locked.body':
+    'La base de datos local de Cursor está en uso en este momento. Inténtalo de nuevo en un momento.',
+  'error.timeout.reason.timeout.body':
+    'La lectura de la base de datos local de Cursor tardó demasiado. Inténtalo de nuevo en un momento.',
+  'error.endpoint_changed.reason.schema.body':
+    'La base de datos local de Cursor tiene una estructura distinta de la que espera el monitor. Puede que el monitor necesite una actualización.',
+  'error.settings_unreadable.reason.permission.body':
+    'No hay permiso para abrir la base de datos local de Cursor. Revisa los permisos del archivo.',
+  'error.settings_unreadable.reason.not_a_database.body':
+    'El archivo de Cursor encontrado no es una base de datos.',
+  'error.settings_unreadable.reason.other.body':
+    'No se pudo leer la base de datos local de Cursor.',
+  'error.not_signed_in.reason.not_found.body':
+    'No se encontró ningún token de GitHub en la carpeta de la extensión de Copilot. Inicia sesión en Copilot en tu editor o pega un token en los ajustes.',
+  'error.not_signed_in.reason.no_token.body':
+    'Los archivos de la extensión de Copilot no contienen ningún token para github.com. Inicia sesión en Copilot en tu editor o pega un token en los ajustes.',
+  'error.not_signed_in.reason.unreadable.body':
+    'No se pudo leer el archivo de inicio de sesión de la extensión de Copilot. Revisa los permisos de su carpeta.',
+
   'error.redirect':
     'El servidor intentó redirigir la solicitud, y el monitor no sigue redirecciones.',
   'error.retry_after': 'Espera solicitada por la fuente: {wait}.',

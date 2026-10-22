@@ -1,12 +1,13 @@
 //! The Tauri side of `Effects`: events to the webview, the tray icon and its tooltip, toasts and
 //! the Windows startup entry. Plumbing only; every decision lives in `sink`.
 
-use std::sync::Arc;
+use std::sync::{Arc, Mutex, PoisonError};
 
-use app_core::Notification;
+use app_core::local_api::{LocalApi, Provider, Reading};
+use app_core::{AppService, Notification};
 use tauri::image::Image;
 use tauri::tray::TrayIcon;
-use tauri::{AppHandle, Emitter};
+use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_notification::NotificationExt;
 use usage_model::settings::Language;
 use usage_model::{Settings, Snapshot};
@@ -20,17 +21,36 @@ pub struct TauriEffects {
     app: AppHandle,
     /// `None` under a test override, which must never touch the Run key.
     autostart: Option<Arc<Applier>>,
+    local_api: Mutex<ApiSlot>,
+}
+
+/// The loopback API while it runs, and whether the last attempt to start it failed.
+#[derive(Default)]
+struct ApiSlot {
+    running: Option<LocalApi>,
+    failed: bool,
 }
 
 impl TauriEffects {
     pub fn new(app: &AppHandle, autostart: Option<Arc<Applier>>) -> Self {
-        Self { app: app.clone(), autostart }
+        Self { app: app.clone(), autostart, local_api: Mutex::new(ApiSlot::default()) }
     }
 
     /// Looked up per call and never kept: Tauri removes the icon when the last handle drops, so a
     /// handle held until `exit` would leave a ghost icon behind in the notification area.
     fn tray(&self) -> Option<TrayIcon> {
         self.app.tray_by_id(tray::TRAY_ID)
+    }
+
+    /// What a request is answered from. The service is managed after the effects exist, so it is
+    /// looked up per request: before that the API answers 503.
+    fn api_provider(&self) -> Provider {
+        let app = self.app.clone();
+        Arc::new(move || {
+            let service = app.try_state::<Arc<AppService>>()?;
+            let warn_at_pct = service.settings().general.warn_at_pct;
+            Some(Reading { snapshot: service.snapshot(), warn_at_pct })
+        })
     }
 }
 
@@ -99,5 +119,40 @@ impl Effects for TauriEffects {
 
     fn autostart_failed(&self) -> bool {
         self.autostart.as_ref().is_some_and(|applier| applier.failed())
+    }
+
+    fn set_content_protected(&self, protected: bool) {
+        for window in self.app.webview_windows().values() {
+            if let Err(err) = window.set_content_protected(protected) {
+                diag::warn("cannot change the capture protection of a window", &err);
+            }
+        }
+    }
+
+    fn sync_local_api(&self, enabled: bool) {
+        let mut slot = self.local_api.lock().unwrap_or_else(PoisonError::into_inner);
+        if !enabled {
+            // Dropping stops the listener and waits for its accept thread (tens of ms).
+            slot.running = None;
+            slot.failed = false;
+        } else if slot.running.is_none() {
+            match LocalApi::start(self.api_provider()) {
+                Ok(api) => {
+                    slot.running = Some(api);
+                    slot.failed = false;
+                }
+                Err(err) => {
+                    // One line per failure streak: the tick retries and must not flood stderr.
+                    if !slot.failed {
+                        diag::warn("cannot start the local API", &err);
+                    }
+                    slot.failed = true;
+                }
+            }
+        }
+    }
+
+    fn local_api_failed(&self) -> bool {
+        self.local_api.lock().unwrap_or_else(PoisonError::into_inner).failed
     }
 }

@@ -24,6 +24,12 @@ export const errorMessages = {
   'error.unauthorized_ambiguous.zai.title': '无法验证 z.ai 密钥',
   'error.unauthorized_ambiguous.zai.body':
     '服务拒绝了请求。密钥有效时会这样，账户没有 GLM Coding 套餐时也会这样。请在 z.ai 控制台检查密钥和套餐。',
+  'error.unauthorized_ambiguous.cursor.title': '无法验证 Cursor 登录',
+  'error.unauthorized_ambiguous.cursor.body':
+    '服务拒绝了请求。登录过期或会话失效时会这样，账户没有有效套餐时也会这样。请打开 Cursor 刷新登录，并在 Cursor 控制台检查套餐。',
+  'error.unauthorized_ambiguous.copilot.title': '无法验证 GitHub 令牌',
+  'error.unauthorized_ambiguous.copilot.body':
+    'GitHub 拒绝了请求。令牌过期、使用细粒度令牌或应用令牌、账户没有 Copilot 时都会这样。请在 GitHub 设置中检查令牌和 Copilot 订阅。',
   'error.not_found.title': '找不到地址',
   'error.not_found.body': '服务器无法识别提供的路径或 ID。请检查 URL、范围和 ID。',
   'error.server_error.title': '服务器错误',

@@ -27,6 +27,8 @@ export const noticeMessages = {
   'notice.code.opencode_local_estimate':
     'Local values are an estimate at list price, from this PC only. They are not the quota.',
   'notice.code.opencode_db_unreadable': 'Could not read the local OpenCode database: {reason}.',
+  'notice.code.copilot_reset_derived':
+    'The reset date is an estimate: GitHub documents that premium requests reset on the 1st of each month, UTC.',
   'notice.unknown': 'Untranslated notice: {code}',
   'notice.action.reinstall': 'Reinstall',
   'notice.action.settings': 'Enter the key',

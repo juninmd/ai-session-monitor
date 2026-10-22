@@ -135,9 +135,6 @@ export const flyoutMessages = {
   'candidates.amp.credential': '本地 CLI（`amp`）',
   'candidates.amp.offer':
     '`amp usage` 会返回积分余额和已包含的用量。与 Claude 和 Antigravity 已在使用的固定 CLI 模式相同。',
-  'candidates.copilot.credential': '具有读取套餐权限的 PAT',
-  'candidates.copilot.offer':
-    '高级请求、聊天和补全，附带套餐和重置日期；AI 积分计费通过 REST 账单 API 获取。',
   'candidates.kiro.credential': 'CLI 自己的凭据',
   'candidates.kiro.offer': 'GetUsageLimits 返回单一积分池，含已用、上限、百分比和重置时间。',
   'candidates.cline.credential': 'API 密钥',

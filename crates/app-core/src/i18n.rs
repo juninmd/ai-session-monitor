@@ -77,6 +77,8 @@ pub fn harness_name(id: HarnessId) -> &'static str {
     match id {
         HarnessId::Claude => "Claude Code",
         HarnessId::Codex => "Codex",
+        HarnessId::Cursor => "Cursor",
+        HarnessId::Copilot => "GitHub Copilot",
         HarnessId::Antigravity => "Antigravity",
         HarnessId::Opencode => "OpenCode",
         HarnessId::Kimi => "Kimi Code",

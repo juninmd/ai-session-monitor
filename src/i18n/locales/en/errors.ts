@@ -29,6 +29,12 @@ export const errorMessages = {
   'error.unauthorized_ambiguous.zai.title': 'Could not verify the z.ai key',
   'error.unauthorized_ambiguous.zai.body':
     'The service rejected the request. This happens with valid keys and also with accounts without the GLM Coding plan. Check the key and the plan in the z.ai dashboard.',
+  'error.unauthorized_ambiguous.cursor.title': 'Could not verify the Cursor sign-in',
+  'error.unauthorized_ambiguous.cursor.body':
+    'The service rejected the request. This happens with an expired or stale session and also with an account that has no active plan. Open Cursor to renew the sign-in and check the plan in the Cursor dashboard.',
+  'error.unauthorized_ambiguous.copilot.title': 'Could not verify the GitHub token',
+  'error.unauthorized_ambiguous.copilot.body':
+    'GitHub rejected the request. This happens with an expired token, a fine-grained or app token, and an account without Copilot. Check the token and your Copilot subscription in the GitHub settings.',
   'error.not_found.title': 'Address not found',
   'error.not_found.body':
     'The server does not recognize the path or ID provided. Check the URL, the scope and the ID.',

@@ -40,6 +40,9 @@ const REASON_ACTIONS: Readonly<Record<string, ErrorAction>> = {
   'endpoint_changed:id_missing': 'settings',
   'endpoint_changed:id_mismatch': 'settings',
   'install_failed:foreign_status_line': 'retry',
+  // Copilot: no token on disk is fixed by pasting one, which only the settings offer.
+  'not_signed_in:not_found': 'settings',
+  'not_signed_in:no_token': 'settings',
 };
 
 // A status code is three digits; anything else from the wire is ignored instead of printed.
@@ -53,7 +56,13 @@ export interface ErrorText {
 
 // Sources that refuse valid keys at times (or keys from a sibling product): 401/403 never claims
 // the key is certainly wrong.
-const AMBIGUOUS_AUTH: ReadonlySet<HarnessId> = new Set(['opencode', 'kimi', 'zai']);
+const AMBIGUOUS_AUTH: ReadonlySet<HarnessId> = new Set([
+  'opencode',
+  'kimi',
+  'zai',
+  'cursor',
+  'copilot',
+]);
 
 export function isAmbiguousAuth(error: HarnessError, harness?: HarnessId): boolean {
   return (

@@ -19,6 +19,7 @@
 pub mod clock;
 pub mod collectors;
 pub mod i18n;
+pub mod local_api;
 pub mod notify;
 pub mod paths;
 pub mod secrets;

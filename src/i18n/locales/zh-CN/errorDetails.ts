@@ -47,6 +47,22 @@ export const errorDetailMessages = {
   'error.unauthorized.reason.no_token.body':
     '监视器无法读取 IDE 本地服务的会话令牌。请重启 Antigravity 后重试。',
 
+  // Cursor: the local database (state.vscdb) and the Copilot extension's sign-in files.
+  'error.timeout.reason.locked.body': 'Cursor 的本地数据库正被占用，请稍后重试。',
+  'error.timeout.reason.timeout.body': '读取 Cursor 本地数据库耗时过长，请稍后重试。',
+  'error.endpoint_changed.reason.schema.body':
+    'Cursor 本地数据库的结构与监视器预期不同。监视器可能需要更新。',
+  'error.settings_unreadable.reason.permission.body':
+    '没有权限打开 Cursor 的本地数据库。请检查该文件的权限。',
+  'error.settings_unreadable.reason.not_a_database.body': '找到的 Cursor 文件不是数据库。',
+  'error.settings_unreadable.reason.other.body': '无法读取 Cursor 的本地数据库。',
+  'error.not_signed_in.reason.not_found.body':
+    '在 Copilot 扩展的文件夹中找不到 GitHub 令牌。请在编辑器中登录 Copilot，或在设置中粘贴令牌。',
+  'error.not_signed_in.reason.no_token.body':
+    'Copilot 扩展的文件中没有 github.com 的令牌。请在编辑器中登录 Copilot，或在设置中粘贴令牌。',
+  'error.not_signed_in.reason.unreadable.body':
+    '无法读取 Copilot 扩展的登录文件。请检查其文件夹的权限。',
+
   'error.redirect': '服务器尝试重定向请求，而监视器不会跟随重定向。',
   'error.retry_after': '数据源要求等待：{wait}。',
   'error.field_hint': '有问题的字段：{field}。',

@@ -27,6 +27,15 @@ describe('describeError with the params collectors send', () => {
     ['endpoint_changed', 'no_record', 'não traz o registro da chave, do usuário ou do time'],
     ['endpoint_changed', 'id_missing', 'não confirma o ID consultado'],
     ['endpoint_changed', 'id_mismatch', 'é de outro ID'],
+    ['timeout', 'locked', 'está em uso agora'],
+    ['timeout', 'timeout', 'demorou demais'],
+    ['endpoint_changed', 'schema', 'formato diferente do que o monitor espera'],
+    ['settings_unreadable', 'permission', 'Sem permissão para abrir o banco de dados local'],
+    ['settings_unreadable', 'not_a_database', 'não é um banco de dados'],
+    ['settings_unreadable', 'other', 'ler o banco de dados local do Cursor'],
+    ['not_signed_in', 'not_found', 'Nenhum token do GitHub foi encontrado'],
+    ['not_signed_in', 'no_token', 'não têm token para github.com'],
+    ['not_signed_in', 'unreadable', 'arquivo de login da extensão do Copilot'],
   ] as const)('says what %s meant by %s', (code, reason, fragment) => {
     const text = describeError(problem(code, { reason }));
     expect(text.body).toContain(fragment);
@@ -81,6 +90,10 @@ describe('describeError with the params collectors send', () => {
     ['endpoint_changed', 'id_missing', 'settings'],
     ['endpoint_changed', 'id_mismatch', 'settings'],
     ['endpoint_changed', 'something_new', 'retry'],
+    ['not_signed_in', 'not_found', 'settings'],
+    ['not_signed_in', 'no_token', 'settings'],
+    ['not_signed_in', 'unreadable', 'retry'],
+    ['settings_unreadable', 'permission', 'retry'],
     ['unauthorized', 'no_token', 'retry'],
     ['unauthorized', 'rejected', 'settings'],
     ['not_running', 'no_port', 'retry'],
@@ -103,6 +116,19 @@ describe('describeError with the params collectors send', () => {
     expect(text).toEqual(plain);
     expect(JSON.stringify(text)).not.toContain('solar_flare');
   });
+
+  it.each([
+    ['cursor', 'Não foi possível verificar o login do Cursor', 'painel do Cursor'],
+    ['copilot', 'Não foi possível verificar o token do GitHub', 'assinatura do Copilot'],
+  ] as const)(
+    'words a refusal from %s with its own sentence and a way to the console',
+    (id, title, body) => {
+      const text = describeError(problem('unauthorized', { httpStatus: '401' }), id);
+      expect(text.title).toBe(title);
+      expect(text.body).toContain(body);
+      expect(text.action).toBe('console');
+    },
+  );
 
   it('lets the OpenCode ambiguity win over any reason', () => {
     const text = describeError(problem('unauthorized', { reason: 'no_token', ambiguous: 'true' }));

@@ -35,6 +35,8 @@ collector-moonshot = { path = "crates/collector-moonshot" }
 collector-novita = { path = "crates/collector-novita" }
 collector-ollama = { path = "crates/collector-ollama" }
 collector-minimax = { path = "crates/collector-minimax" }
+collector-copilot = { path = "crates/collector-copilot" }
+collector-cursor = { path = "crates/collector-cursor" }
 app-core = { path = "crates/app-core" }
 
 [workspace.lints.rust]

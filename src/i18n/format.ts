@@ -195,6 +195,12 @@ function formatCny(n: number): string {
   ).format(n);
 }
 
+/** Cursor's `unlimited` and Copilot's `*_unlimited` carry the words `true` / `unlimited`: localized here. */
+function isUnlimitedFact(fact: Fact): boolean {
+  const named = fact.id === 'unlimited' || fact.id.endsWith('_unlimited');
+  return named && (fact.text === 'true' || fact.text === 'unlimited');
+}
+
 /** A fact's value: a number with its unit, free text, or a dash when neither is present. */
 export function formatFactValue(fact: Fact): string {
   if (fact.number !== null) {
@@ -219,5 +225,6 @@ export function formatFactValue(fact: Fact): string {
         return `${formatNumber(fact.number)} ${fact.unit}`;
     }
   }
+  if (isUnlimitedFact(fact)) return t('fact.value.unlimited');
   return fact.text ?? DASH;
 }

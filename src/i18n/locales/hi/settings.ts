@@ -19,6 +19,12 @@ export const settingsMessages = {
   'settings.show_used': 'कोटा इस रूप में दिखाएँ',
   'settings.show_available': 'उपलब्ध',
   'settings.show_used_opt': 'उपयोग हुआ',
+  'settings.hide_capture': 'स्क्रीनशॉट और स्क्रीन शेयरिंग से छिपाएँ',
+  'settings.hide_capture_hint':
+    'फ़्लाईआउट स्क्रीनशॉट, रिकॉर्डिंग और स्क्रीन शेयरिंग में दिखाई नहीं देता (Windows और macOS; Linux पर समर्थित नहीं)।',
+  'settings.local_api': 'लोकल API',
+  'settings.local_api_hint':
+    'स्क्रिप्ट और स्टेटस बार के लिए रीडिंग को 127.0.0.1:{port} पर केवल-पढ़ने वाले JSON के रूप में देता है। इस कंप्यूटर का कोई भी प्रोग्राम इसे पढ़ सकता है। डिफ़ॉल्ट रूप से बंद।',
   'settings.language': 'भाषा',
   'settings.language_hint': 'पैनल और सूचनाओं पर लागू होती है।',
   'settings.skin': 'थीम',
@@ -93,4 +99,8 @@ export const settingsMessages = {
     'अनौपचारिक रीडिंग: यह इंस्टॉल किया गया agy केवल /usage पढ़ने के लिए चला सकता है (टोकन खर्च किए बिना और लॉगिन डेटा पढ़े बिना) और/या IDE का लोकल सर्वर पढ़ सकता है, जो केवल 127.0.0.1 से बात करता है।',
   'antigravity.note':
     'रीडिंग इंस्टॉल किए गए agy से आती है (कुछ भी खुला होना ज़रूरी नहीं) या, वह न हो तो, IDE के लोकल सर्वर से: उस स्थिति में Antigravity खुला रखें।',
+
+  'cursor.consent': 'Cursor का साइन-इन टोकन पढ़ने की अनुमति दें',
+  'cursor.consent_hint':
+    'अनौपचारिक रीडिंग: Cursor अपने लोकल डेटाबेस में जो साइन-इन टोकन रखता है उसे पढ़ता है (केवल पढ़ने के मोड में, वह एक ही एंट्री) और केवल cursor.com को भेजता है।',
 } as const;

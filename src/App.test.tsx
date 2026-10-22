@@ -8,6 +8,8 @@ import { renderApp } from './test/helpers';
 const NAMES = [
   'Claude Code',
   'Codex',
+  'Cursor',
+  'GitHub Copilot',
   'Antigravity',
   'OpenCode',
   'Kimi Code',

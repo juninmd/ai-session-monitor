@@ -27,6 +27,8 @@ export const noticeMessages = {
   'notice.code.opencode_local_estimate':
     'स्थानीय मान लिस्ट प्राइस पर अनुमान हैं, और केवल इसी PC के हैं। ये कोटा नहीं हैं।',
   'notice.code.opencode_db_unreadable': 'स्थानीय OpenCode डेटाबेस पढ़ा नहीं जा सका: {reason}।',
+  'notice.code.copilot_reset_derived':
+    'रीसेट की तिथि एक अनुमान है: GitHub के दस्तावेज़ों के अनुसार प्रीमियम अनुरोध हर माह की 1 तारीख़ को, UTC में, रीसेट होते हैं।',
   'notice.unknown': 'अनूदित नहीं की गई सूचना: {code}',
   'notice.action.reinstall': 'दोबारा इंस्टॉल करें',
   'notice.action.settings': 'कुंजी दर्ज करें',

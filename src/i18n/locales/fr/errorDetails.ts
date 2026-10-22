@@ -52,6 +52,24 @@ export const errorDetailMessages = {
   'error.unauthorized.reason.no_token.title': 'Jeton local indisponible',
   'error.unauthorized.reason.no_token.body':
     'Le moniteur n’a pas pu lire le jeton de session du serveur local de l’IDE. Redémarrez Antigravity et réessayez.',
+  'error.timeout.reason.locked.body':
+    'La base de données locale de Cursor est en cours d’utilisation. Réessayez dans un instant.',
+  'error.timeout.reason.timeout.body':
+    'La lecture de la base de données locale de Cursor a pris trop de temps. Réessayez dans un instant.',
+  'error.endpoint_changed.reason.schema.body':
+    'La base de données locale de Cursor n’a pas la structure attendue par le moniteur. Une mise à jour du moniteur peut être nécessaire.',
+  'error.settings_unreadable.reason.permission.body':
+    'Aucune autorisation pour ouvrir la base de données locale de Cursor. Vérifiez les autorisations du fichier.',
+  'error.settings_unreadable.reason.not_a_database.body':
+    'Le fichier Cursor trouvé n’est pas une base de données.',
+  'error.settings_unreadable.reason.other.body':
+    'Impossible de lire la base de données locale de Cursor.',
+  'error.not_signed_in.reason.not_found.body':
+    'Aucun jeton GitHub trouvé dans le dossier de l’extension Copilot. Connectez-vous à Copilot dans votre éditeur ou collez un jeton dans les paramètres.',
+  'error.not_signed_in.reason.no_token.body':
+    'Les fichiers de l’extension Copilot ne contiennent aucun jeton pour github.com. Connectez-vous à Copilot dans votre éditeur ou collez un jeton dans les paramètres.',
+  'error.not_signed_in.reason.unreadable.body':
+    'Impossible de lire le fichier de connexion de l’extension Copilot. Vérifiez les autorisations de son dossier.',
 
   'error.redirect':
     'Le serveur a tenté de rediriger la requête, et le moniteur ne suit pas les redirections.',

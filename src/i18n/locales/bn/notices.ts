@@ -24,6 +24,8 @@ export const noticeMessages = {
   'notice.code.opencode_no_key': 'শুধু লোকাল অনুমান দেখানো হচ্ছে। আসল উইন্ডো দেখতে Go API কী পেস্ট করুন।',
   'notice.code.opencode_local_estimate': 'লোকাল মান লিস্ট প্রাইসে করা অনুমান, শুধু এই পিসি থেকে। এটি কোটা নয়।',
   'notice.code.opencode_db_unreadable': 'লোকাল OpenCode ডেটাবেস পড়া যায়নি: {reason}।',
+  'notice.code.copilot_reset_derived':
+    'রিসেটের তারিখটি অনুমান: GitHub-এর নথি অনুযায়ী প্রিমিয়াম রিকোয়েস্ট প্রতি মাসের 1 তারিখে, UTC-তে রিসেট হয়।',
   'notice.unknown': 'অনূদিত নয় এমন নোটিশ: {code}',
   'notice.action.reinstall': 'আবার ইনস্টল করুন',
   'notice.action.settings': 'কী দিন',

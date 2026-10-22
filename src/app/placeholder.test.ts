@@ -19,6 +19,8 @@ describe('viewsInTabOrder', () => {
     expect(views.map((v) => `${v.id}:${v.state}`)).toEqual([
       'claude:ready',
       'codex:ready',
+      'cursor:loading',
+      'copilot:loading',
       'antigravity:loading',
       'opencode:loading',
       'kimi:loading',

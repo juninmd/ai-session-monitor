@@ -3,7 +3,9 @@ import { useSettingsApi } from '../../app/settingsContext';
 import { t } from '../../i18n';
 import { PathField } from '../forms/PathField';
 import { SettingSwitch } from '../forms/SettingControls';
+import { CopilotKey, CopilotLinks, CopilotLocalSwitch } from '../setup/CopilotParts';
 import { type KeyedHarness, VendorConsoleLink, VendorKey } from '../setup/KeyConnect';
+import { LinkButton } from '../setup/LinkButton';
 import { LitellmForm } from '../setup/LitellmForm';
 import { OpencodeKey, OpencodeLinks, OpencodeLocalSwitch } from '../setup/OpencodeParts';
 import { ClaudeGroup } from './ClaudeGroup';
@@ -49,6 +51,34 @@ function AntigravityGroup() {
           antigravity: { ...current.antigravity, consent },
         })}
       />
+    </>
+  );
+}
+
+function CursorGroup() {
+  const { settings } = useSettingsApi();
+  return (
+    <>
+      <SourceSwitch harness="cursor" />
+      <SettingSwitch
+        id="cursor-consent"
+        label={t('cursor.consent')}
+        hint={t('cursor.consent_hint')}
+        checked={settings.cursor.consent}
+        apply={(current, consent) => ({ ...current, cursor: { ...current.cursor, consent } })}
+      />
+      <LinkButton link="cursor_dashboard" label={t('cursor.dashboard')} harness="cursor" />
+    </>
+  );
+}
+
+function CopilotGroup() {
+  return (
+    <>
+      <SourceSwitch harness="copilot" />
+      <CopilotKey />
+      <CopilotLocalSwitch />
+      <CopilotLinks />
     </>
   );
 }
@@ -131,6 +161,8 @@ function LitellmGroup() {
 export const SOURCE_GROUPS = {
   claude: ClaudeGroup,
   codex: CodexGroup,
+  cursor: CursorGroup,
+  copilot: CopilotGroup,
   antigravity: AntigravityGroup,
   opencode: OpencodeGroup,
   kimi: KimiGroup,

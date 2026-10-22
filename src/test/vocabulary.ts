@@ -40,6 +40,7 @@ export const NOTICE_SAMPLES: Readonly<Record<string, readonly Params[]>> = {
   opencode_no_key: [{}],
   opencode_local_estimate: [{}],
   opencode_db_unreadable: reasons(...DB_REASONS),
+  copilot_reset_derived: [{}],
 };
 
 export const OPENCODE_DB_REASONS: readonly string[] = DB_REASONS;
@@ -51,6 +52,18 @@ export const FACTS: Readonly<Record<HarnessId, readonly (readonly [id: string, u
     codex: [
       ['credits_balance', 'credits'],
       ['reset_credits', 'resets'],
+    ],
+    cursor: [
+      ['unlimited', ''],
+      ['on_demand_spend', 'usd'],
+    ],
+    copilot: [
+      ['premium_requests_unlimited', ''],
+      ['chat_unlimited', ''],
+      ['completions_unlimited', ''],
+      ['premium_requests_overage', 'requests'],
+      ['chat_overage', 'requests'],
+      ['completions_overage', 'requests'],
     ],
     antigravity: [],
     opencode: [
@@ -77,6 +90,26 @@ export const FACTS: Readonly<Record<HarnessId, readonly (readonly [id: string, u
     ],
   };
 
+/** Why Cursor's local store could not be read (store.rs), by the error code each one becomes. */
+export const CURSOR_REASONS: Readonly<Record<string, readonly string[]>> = {
+  timeout: ['locked', 'timeout'],
+  endpoint_changed: ['schema'],
+  settings_unreadable: ['permission', 'not_a_database', 'other'],
+};
+
+/** Why no Copilot token was found (local.rs); always `not_signed_in`. */
+export const COPILOT_REASONS: Readonly<Record<string, readonly string[]>> = {
+  not_signed_in: ['not_found', 'unreadable', 'no_token'],
+};
+
+/** LiteLLM's own endpoint_changed reasons: the ones the walk of its response raises. */
+export const LITELLM_ENDPOINT_REASONS: readonly string[] = [
+  'not_an_object',
+  'no_record',
+  'id_missing',
+  'id_mismatch',
+];
+
 /** The `reason` values of failures, per error code. */
 export const ERROR_REASONS: Readonly<Record<string, readonly string[]>> = {
   install_failed: [
@@ -92,9 +125,12 @@ export const ERROR_REASONS: Readonly<Record<string, readonly string[]>> = {
     'foreign_status_line',
   ],
   tls_error: ['ca_missing', 'ca_too_large', 'ca_unreadable', 'ca_invalid'],
-  endpoint_changed: ['not_an_object', 'no_record', 'id_missing', 'id_mismatch'],
+  endpoint_changed: [...LITELLM_ENDPOINT_REASONS, ...(CURSOR_REASONS.endpoint_changed ?? [])],
   not_running: ['no_port'],
   unauthorized: ['no_token'],
+  timeout: [...(CURSOR_REASONS.timeout ?? [])],
+  settings_unreadable: [...(CURSOR_REASONS.settings_unreadable ?? [])],
+  not_signed_in: [...(COPILOT_REASONS.not_signed_in ?? [])],
 };
 
 /** The settings fields a rejected command can name (`params.field`). */
@@ -119,6 +155,9 @@ export const TITLED_IDS: readonly (readonly [crate: string, literal: string])[] 
   ['codex', '"primary"'],
   ['codex', '"secondary"'],
   ['claude', '"spend_limit"'],
+  ['cursor', '"on_demand"'],
+  ['copilot', '"premium_requests"'],
+  ['copilot', '"completions"'],
 ];
 
 // Catalog keys are namespaced; these families never occur in prose ("settings.json" does).

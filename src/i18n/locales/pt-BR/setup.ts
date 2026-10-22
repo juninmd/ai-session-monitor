@@ -25,6 +25,18 @@ export const setupMessages = {
   'antigravity.connect.detail':
     'Com sua permissão, o monitor pode rodar o agy instalado só para ler /usage (sem gastar tokens nem ler dados de login) e/ou ler a linha de comando do servidor da IDE para pegar o token de sessão local, falando só com 127.0.0.1. Nada é gravado em disco nem enviado à internet.',
   'antigravity.connect.allow': 'Permitir leitura local',
+  'cursor.connect.title': 'Conectar ao Cursor',
+  'cursor.connect.lead':
+    'Com sua permissão, o monitor lê o token de login que o Cursor guarda no banco de dados local e o usa para perguntar ao cursor.com quanto do seu plano já foi usado. Esse caminho não é oficial e pode parar de funcionar quando o Cursor mudar.',
+  'cursor.connect.detail':
+    'Abre o banco de dados local do Cursor (state.vscdb) em modo somente leitura e lê uma única entrada: o token de login. O token é enviado só ao cursor.com, como faz o painel do Cursor, e nunca é salvo nem exibido. Nenhuma outra entrada (conversas, arquivos, e-mail) é lida e nada é gravado. O Cursor não publica API de uso do plano, então compare os números com o painel na primeira vez.',
+  'cursor.connect.allow': 'Permitir leitura',
+  'cursor.signin.title': 'Entre no Cursor',
+  'cursor.signin.body':
+    'O monitor não achou um token de login válido. Abra o Cursor e entre na sua conta (abri-lo também renova um token vencido) e leia de novo.',
+  'cursor.dashboard': 'Abrir o painel do Cursor',
+  'cursor.note':
+    'Leitura não oficial do resumo de uso do Cursor, com o token de login que o Cursor guarda neste PC. Compare com o painel. O uso incluído só aparece em percentual; planos ilimitados não têm janela.',
 
   'shim.title': 'Comando na barra de status',
   'shim.state.not_installed': 'Não instalado',
@@ -68,6 +80,18 @@ export const setupMessages = {
   'opencode.data_dir': 'Pasta de dados do OpenCode',
   'opencode.data_dir_hint': 'Deixe em branco para usar a pasta padrão.',
   'opencode.save_settings': 'Salvar pasta',
+  'copilot.title': 'Conectar ao GitHub Copilot',
+  'copilot.lead':
+    'Cole um token do GitHub, ou deixe o monitor ler o que a extensão do Copilot guarda no disco, para ver as requisições premium usadas neste mês. Esse caminho não é oficial.',
+  'copilot.detail':
+    'Leitura não oficial: usa um endpoint interno do GitHub que os editores do Copilot chamam para mostrar a própria cota. Ele não é documentado e pode mudar sem aviso. Um token colado fica no Gerenciador de Credenciais do Windows. Com sua permissão, o monitor lê, em vez dele, o token do GitHub que a extensão do Copilot guarda no disco (dois arquivos fixos na pasta dela, somente leitura). Qualquer um dos tokens é enviado só a api.github.com. Tokens do GitHub Enterprise não são usados. Compare os números com github.com/settings/copilot na primeira vez.',
+  'copilot.key_label': 'Token do GitHub (opcional)',
+  'copilot.console': 'Abrir as configurações do GitHub Copilot',
+  'copilot.local_label': 'Ler o token da extensão do Copilot (só este PC)',
+  'copilot.local_hint':
+    'Não oficial: lê o token do GitHub que a extensão do Copilot guarda no disco (dois arquivos fixos, somente leitura) e o envia só a api.github.com. Não é preciso se você colar um token.',
+  'copilot.note':
+    'Leitura não oficial da cota do GitHub Copilot. A data de reset pode ser uma estimativa (dia 1º do mês, em UTC). Cotas ilimitadas aparecem como detalhes, não como percentual.',
 
   'kimi.title': 'Conectar ao Kimi Code',
   'kimi.lead':

@@ -18,6 +18,12 @@ export const settingsMessages = {
   'settings.show_used': 'Afficher le quota comme',
   'settings.show_available': 'disponible',
   'settings.show_used_opt': 'utilisé',
+  'settings.hide_capture': 'Masquer des captures d’écran et du partage d’écran',
+  'settings.hide_capture_hint':
+    'Le panneau devient invisible pour les captures d’écran, les enregistrements et le partage d’écran (Windows et macOS ; non pris en charge sous Linux).',
+  'settings.local_api': 'API locale',
+  'settings.local_api_hint':
+    'Expose les lectures en JSON en lecture seule à 127.0.0.1:{port}, pour les scripts et les barres d’état. Tout programme de cet ordinateur peut le lire. Désactivé par défaut.',
   'settings.language': 'Langue',
   'settings.language_hint': 'S’applique au panneau et aux notifications.',
   'settings.skin': 'Thème',
@@ -94,4 +100,7 @@ export const settingsMessages = {
     'Lecture non officielle : peut exécuter l’agy installé uniquement pour lire /usage (sans consommer de jetons ni lire de données de connexion) et/ou lire le serveur local de l’IDE, qui ne communique qu’avec 127.0.0.1.',
   'antigravity.note':
     'La lecture provient de l’agy installé (rien n’a besoin d’être ouvert) ou, à défaut, du serveur local de l’IDE : dans ce cas, gardez Antigravity ouvert.',
+  'cursor.consent': 'Autoriser la lecture du jeton de connexion de Cursor',
+  'cursor.consent_hint':
+    'Lecture non officielle : lit le jeton de connexion que Cursor garde dans sa base de données locale (en lecture seule, cette seule entrée) et ne l’envoie qu’à cursor.com.',
 } as const satisfies Record<string, string>;

@@ -4,6 +4,7 @@ use super::*;
 
 const ALLOWED_HOSTS: &[&str] = &[
     "opencode.ai",
+    "cursor.com",
     "github.com",
     "www.kimi.com",
     "z.ai",

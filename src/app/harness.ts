@@ -37,6 +37,10 @@ export function consoleLink(id: HarnessId): ExternalLink {
       return 'ollama_console';
     case 'minimax':
       return 'minimax_console';
+    case 'cursor':
+      return 'cursor_dashboard';
+    case 'copilot':
+      return 'copilot_settings';
     default:
       return 'opencode_go_console';
   }
