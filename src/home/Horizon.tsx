@@ -1,6 +1,6 @@
 // Horizon: every provider on the same question. Each bar spans from now to that window's reset,
 // so a shortfall is a coloured stretch with a size in time, not a percentage to interpret.
-import { type KeyboardEvent, useMemo } from 'react';
+import { type KeyboardEvent, useId, useMemo } from 'react';
 import { harnessName } from '../app/harness';
 import { nxNameId, nxTabId } from '../app/homeIds';
 import { durationFormat, type ViewContext } from '../app/windowModel';
@@ -80,6 +80,7 @@ function HorizonOption({
           <span className="nx-name" id={nxNameId(id)}>
             {name}
           </span>
+          {row.view.plan && <span className="nx-plan">{row.view.plan}</span>}
           {row.windowName !== null && <span className="nx-h-quota">{row.windowName}</span>}
           <span className="nx-h-figure" data-kind={row.kind}>
             {headFigure(row, ctx)}
@@ -107,6 +108,7 @@ function HorizonOption({
 }
 
 export function Horizon({ views, ctx, selected, onSelect, onOpen, trend, onTrend }: HorizonProps) {
+  const tipId = useId();
   const horizon = useMemo(() => horizonOf(views, ctx), [views, ctx]);
   const onKeyDown = useRovingTabs(
     horizon.rows.map((row) => row.view.id),
@@ -119,29 +121,39 @@ export function Horizon({ views, ctx, selected, onSelect, onOpen, trend, onTrend
   const showTrend = trend && ctx.settings.general.historyEnabled;
   return (
     <div className="nx-horizon">
-      <section className="nx-note">
-        <h3>Chego até a renovação?</h3>
-        <p>
-          Cada barra vai de agora até a renovação da cota que limita o provider. O trecho colorido é
-          o tempo que a cota ainda cobre; o resto é tempo sem cota.
-        </p>
-        <p className="nx-meta">
-          {covers} de {horizon.rows.length} cobrem todo o período
-          {next
-            ? ` · próxima renovação em ${renewalText(next, ctx).replace('renova em ', '')}`
-            : ''}
-        </p>
-        <p className="nx-trend">
-          <label>
-            <input
-              type="checkbox"
-              checked={showTrend}
-              onChange={(event) => onTrend(event.target.checked)}
-            />
-            Mostrar tendência (busca o histórico de cada provider)
-          </label>
-        </p>
-      </section>
+      <div className="nx-h-bar">
+        <span className="nx-info">
+          <button
+            type="button"
+            className="icon-btn"
+            aria-label="Sobre o horizonte"
+            aria-describedby={tipId}
+          >
+            <Icon name="info" />
+          </button>
+          <span className="nx-tip" role="tooltip" id={tipId}>
+            <strong>Chego até a renovação?</strong>
+            <span>
+              Cada barra vai de agora até a renovação da cota que limita o provider. O trecho
+              colorido é o tempo que a cota ainda cobre; o resto é tempo sem cota.
+            </span>
+            <span className="nx-meta">
+              {covers} de {horizon.rows.length} cobrem todo o período
+              {next
+                ? ` · próxima renovação em ${renewalText(next, ctx).replace('renova em ', '')}`
+                : ''}
+            </span>
+          </span>
+        </span>
+        <label className="nx-trend">
+          <input
+            type="checkbox"
+            checked={showTrend}
+            onChange={(event) => onTrend(event.target.checked)}
+          />
+          Mostrar tendência (busca o histórico de cada provider)
+        </label>
+      </div>
       <div className="nx-rows">
         <section className="nx-section">
           <GroupHead title="Por tempo até a renovação" count={horizon.rows.length} />

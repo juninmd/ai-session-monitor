@@ -121,6 +121,7 @@ function Tile({
         <span className="nx-name" id={nxNameId(id)}>
           {name}
         </span>
+        {row.view.plan && <span className="nx-plan">{row.view.plan}</span>}
         {pinned && (
           <span className="nx-tile-pin" role="img" aria-label="Fixado no topo">
             <Icon name="pin" />

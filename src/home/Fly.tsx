@@ -4,6 +4,7 @@
 import type { RefObject } from 'react';
 import type { SettingsSection } from '../app/harness';
 import type { ViewContext } from '../app/windowModel';
+import { Icon, type IconName } from '../components/icons';
 import { Banner } from '../components/panel/Banner';
 import { ActionError } from '../components/panel/ErrorActions';
 import { SettingsView } from '../components/settings/SettingsView';
@@ -25,10 +26,10 @@ import { Triage } from './Triage';
 /** The surfaces the user navigates between. The first run is not one of them: it replaces them. */
 export type Surface = 'triagem' | 'horizonte' | 'canais';
 
-export const SURFACES: readonly { id: Surface; label: string; hint: string }[] = [
-  { id: 'triagem', label: 'Triagem', hint: 'preciso agir?' },
-  { id: 'horizonte', label: 'Horizonte', hint: 'chego até a renovação?' },
-  { id: 'canais', label: 'Canais de cota', hint: 'o que ainda dá para ler' },
+export const SURFACES: readonly { id: Surface; label: string; hint: string; icon: IconName }[] = [
+  { id: 'triagem', label: 'Triagem', hint: 'preciso agir?', icon: 'triage' },
+  { id: 'horizonte', label: 'Horizonte', hint: 'chego até a renovação?', icon: 'horizon' },
+  { id: 'canais', label: 'Canais de cota', hint: 'o que ainda dá para ler', icon: 'channels' },
 ];
 
 export type Screen = { kind: 'surface' } | { kind: 'settings'; section: SettingsSection | null };
@@ -154,11 +155,12 @@ export function Fly(props: FlyProps) {
                 key={item.id}
                 type="button"
                 aria-pressed={surface === item.id}
-                title={`${item.hint} (Alt+${index + 1})`}
+                aria-label={item.label}
+                title={`${item.label}: ${item.hint} (Alt+${index + 1})`}
                 aria-keyshortcuts={`Alt+${index + 1}`}
                 onClick={() => onSurface(item.id)}
               >
-                {item.label}
+                <Icon name={item.icon} />
               </button>
             ))}
           </nav>
