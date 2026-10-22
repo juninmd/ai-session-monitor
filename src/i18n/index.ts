@@ -11,11 +11,7 @@ const PLACEHOLDER = /\{(\w+)\}/g;
 
 /** Looks up a message in the active language (English when it lacks the key) and fills `{name}`. */
 export function t(key: MessageKey, params?: MessageParams): string {
-  const template: string =
-    CATALOGS[getLocale()]?.[key] ??
-    CATALOGS[DEFAULT_LOCALE]?.[key] ??
-    CATALOGS['pt-BR']?.[key] ??
-    '';
+  const template: string = CATALOGS[getLocale()]?.[key] ?? CATALOGS[DEFAULT_LOCALE]?.[key] ?? '';
   return template.replace(PLACEHOLDER, (_match, name: string) => {
     const value = params?.[name];
     return value === undefined ? MISSING : String(value);
@@ -38,5 +34,5 @@ const isDefined = (key: string): boolean =>
   Object.hasOwn(CATALOGS[DEFAULT_LOCALE] ?? {}, key);
 
 export function hasMessage(key: string): key is MessageKey {
-  return Object.hasOwn(CATALOGS['pt-BR'] ?? {}, key);
+  return Object.hasOwn(CATALOGS[DEFAULT_LOCALE] ?? {}, key);
 }

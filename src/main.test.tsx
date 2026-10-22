@@ -25,6 +25,8 @@ async function boot(search = '') {
   document.body.innerHTML = '<div id="root"></div>';
   window.history.replaceState(null, '', `/${search}`);
   vi.resetModules();
+  // A fresh module graph has a fresh i18n module: pin it as the suite does for the first one.
+  (await import('./i18n/locale')).pinLocale('pt-BR');
   await import('./main');
 }
 

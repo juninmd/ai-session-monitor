@@ -8,6 +8,7 @@ import type { ViewContext } from '../app/windowModel';
 import { EstimateMark } from '../components/panel/EstimateMark';
 import { factLabel } from '../components/panel/Facts';
 import { Notices } from '../components/panel/Notices';
+import { t, tn } from '../i18n';
 import { formatFactValue } from '../i18n/format';
 import type { HarnessView } from '../lib/contract';
 
@@ -25,12 +26,8 @@ export function InfoBoard({ view, ctx }: { view: HarnessView; ctx: ViewContext }
   return (
     <details className="nx-more">
       <summary>
-        Informações adicionais
-        {warnings > 0 && (
-          <span className="nx-more-warn">
-            {warnings} {warnings === 1 ? 'aviso' : 'avisos'}
-          </span>
-        )}
+        {t('info.title')}
+        {warnings > 0 && <span className="nx-more-warn">{tn('info.warnings', warnings)}</span>}
       </summary>
       <div className="nx-more-body">
         {rows.length > 0 && (
@@ -49,11 +46,11 @@ export function InfoBoard({ view, ctx }: { view: HarnessView; ctx: ViewContext }
         <Notices notices={view.notices} harness={view.id} placement="top" />
         <Notices notices={view.notices} harness={view.id} placement="bottom" />
         {rows.length === 0 && view.notices.length === 0 && (
-          <p className="hint">Esta fonte não reporta mais nada além das cotas acima.</p>
+          <p className="hint">{t('info.nothing_more')}</p>
         )}
         <div className="actions">
           <button type="button" className="btn" onClick={() => navigation.openSettings(view.id)}>
-            Configurar esta fonte
+            {t('info.configure')}
           </button>
         </div>
       </div>

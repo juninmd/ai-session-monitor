@@ -1,21 +1,34 @@
 // Skins: the colour palettes of the Canto widget. Presentation only, so the choice stays in this
 // webview (localStorage) and never reaches the settings contract or the backend.
-import { t } from '../i18n';
+import { type MessageKey, t } from '../i18n';
 
 export type SkinId = 'sistema' | 'padrao' | 'hueco-mundo' | 'dracula' | 'glass' | 'claro';
 
-export const SKINS: readonly { id: SkinId; label: string }[] = [
-  { id: 'sistema', label: t('skin.system') },
-  { id: 'padrao', label: t('skin.default') },
-  { id: 'hueco-mundo', label: t('skin.hueco_mundo') },
-  { id: 'dracula', label: t('skin.dracula') },
-  { id: 'glass', label: t('skin.glass') },
-  { id: 'claro', label: t('skin.light') },
+export const SKIN_IDS: readonly SkinId[] = [
+  'sistema',
+  'padrao',
+  'hueco-mundo',
+  'dracula',
+  'glass',
+  'claro',
 ];
+
+const LABELS: Readonly<Record<SkinId, MessageKey>> = {
+  sistema: 'skin.system',
+  padrao: 'skin.default',
+  'hueco-mundo': 'skin.hueco_mundo',
+  dracula: 'skin.dracula',
+  glass: 'skin.glass',
+  claro: 'skin.light',
+};
+
+/** Read at call time: the language can change while the app runs. */
+export const skinOptions = (): { id: SkinId; label: string }[] =>
+  SKIN_IDS.map((id) => ({ id, label: t(LABELS[id]) }));
 
 const KEY = 'aism.skin';
 
-const isSkin = (value: unknown): value is SkinId => SKINS.some((skin) => skin.id === value);
+const isSkin = (value: unknown): value is SkinId => SKIN_IDS.some((id) => id === value);
 
 /** Storage can be blocked or empty (private window, cleared data): the system look is the default. */
 export function loadSkin(): SkinId {

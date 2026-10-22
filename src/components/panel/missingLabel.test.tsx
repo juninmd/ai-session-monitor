@@ -17,10 +17,18 @@ const LOST = vi.hoisted(() => [
   'field.pemPath',
 ]);
 
+// Both catalogs lose the labels: English is the fallback, so a key missing only from pt-BR would
+// still print its English text.
 vi.mock('../../i18n/locales/pt-BR', async (importOriginal) => {
   const real = await importOriginal<typeof import('../../i18n/locales/pt-BR')>();
   const kept = Object.entries(real.ptBR).filter(([key]) => !LOST.includes(key));
   return { ...real, ptBR: Object.fromEntries(kept) };
+});
+
+vi.mock('../../i18n/locales/en', async (importOriginal) => {
+  const real = await importOriginal<typeof import('../../i18n/locales/en')>();
+  const kept = Object.entries(real.en).filter(([key]) => !LOST.includes(key));
+  return { ...real, en: Object.fromEntries(kept) };
 });
 
 describe('a catalog that lost labels', () => {

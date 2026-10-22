@@ -50,7 +50,7 @@ describe('command list', () => {
         viewOf('zai', { state: 'disabled' }),
       ]),
     );
-    const jumps = commands.filter((command) => command.group === 'Providers');
+    const jumps = commands.filter((command) => command.group === 'providers');
     expect(jumps.map((command) => command.label)).toEqual(['Claude Code', 'Codex']);
     expect(jumps[1]?.hint).toContain('Esgota');
   });
@@ -94,13 +94,16 @@ describe('command list', () => {
 });
 
 describe('command filtering', () => {
-  const commands = commandsFor(input([reading('codex', 90)]));
+  // Built per test: the labels are written in the locale pinned before each test, not at import.
+  const build = () => commandsFor(input([reading('codex', 90)]));
 
   it('keeps the built-in order for an empty query', () => {
+    const commands = build();
     expect(filterCommands(commands, '   ')).toHaveLength(commands.length);
   });
 
   it('puts a label match before a keyword match and ignores accents and case', () => {
+    const commands = build();
     const first = filterCommands(commands, 'cod')[0];
     expect(first?.label).toBe('Codex');
     const accented = filterCommands(commands, 'configuracoes');
@@ -110,6 +113,7 @@ describe('command filtering', () => {
   });
 
   it('returns nothing when nothing matches', () => {
+    const commands = build();
     expect(filterCommands(commands, 'zzzz')).toEqual([]);
   });
 

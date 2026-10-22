@@ -1,11 +1,12 @@
 use std::sync::atomic::{AtomicBool, AtomicI64, AtomicU32, Ordering};
 
-use usage_model::settings::GeneralSettings;
+use usage_model::settings::{GeneralSettings, Language};
 use usage_model::{HarnessView, UsageWindow, ViewState, WindowKind};
 
 use super::*;
 
 mod autostart;
+mod language;
 
 const NOW: i64 = 1_800_000_000;
 
@@ -18,6 +19,8 @@ struct Recorder {
     /// How many upcoming startup-entry updates fail, like a registry that refuses the write.
     autostart_failures: AtomicU32,
     autostart_failed: AtomicBool,
+    /// Every language the tray menu was relabelled to.
+    languages: Mutex<Vec<Language>>,
 }
 
 impl Recorder {
@@ -53,6 +56,10 @@ impl Effects for Arc<Recorder> {
 
     fn set_tray_tooltip(&self, text: &str) {
         self.log(format!("tooltip:{text}"));
+    }
+
+    fn set_language(&self, language: Language) {
+        self.languages.lock().expect("lock").push(language);
     }
 
     fn toast(&self, notification: &Notification) {
@@ -103,7 +110,12 @@ fn snapshot(views: Vec<HarnessView>) -> Snapshot {
 
 fn settings(tray_source: Option<HarnessId>, autostart: bool) -> Settings {
     Settings {
-        general: GeneralSettings { tray_source, autostart, ..GeneralSettings::default() },
+        general: GeneralSettings {
+            tray_source,
+            autostart,
+            language: Language::PtBr,
+            ..GeneralSettings::default()
+        },
         ..Settings::default()
     }
 }

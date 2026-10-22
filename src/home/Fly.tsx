@@ -26,11 +26,32 @@ import { Triage } from './Triage';
 /** The surfaces the user navigates between. The first run is not one of them: it replaces them. */
 export type Surface = 'triagem' | 'horizonte' | 'canais';
 
-export const SURFACES: readonly { id: Surface; label: string; hint: string; icon: IconName }[] = [
-  { id: 'triagem', label: 'Triagem', hint: 'preciso agir?', icon: 'triage' },
-  { id: 'horizonte', label: 'Horizonte', hint: 'chego até a renovação?', icon: 'horizon' },
-  { id: 'canais', label: 'Canais de cota', hint: 'o que ainda dá para ler', icon: 'channels' },
+/** The tabs in order, with no wording: callers that only need the id (Alt+digit) read this. */
+export const SURFACES: readonly { id: Surface; icon: IconName }[] = [
+  { id: 'triagem', icon: 'triage' },
+  { id: 'horizonte', icon: 'horizon' },
+  { id: 'canais', icon: 'channels' },
 ];
+
+const SURFACE_WORDS = {
+  triagem: 'triage',
+  horizonte: 'horizon',
+  canais: 'channels',
+} as const satisfies Record<Surface, string>;
+
+/** The tabs with their label and hint in the active language; read it at render time. */
+export function surfaceTabs(): readonly {
+  id: Surface;
+  label: string;
+  hint: string;
+  icon: IconName;
+}[] {
+  return SURFACES.map((item) => ({
+    ...item,
+    label: t(`surface.${SURFACE_WORDS[item.id]}.label`),
+    hint: t(`surface.${SURFACE_WORDS[item.id]}.hint`),
+  }));
+}
 
 export type Screen = { kind: 'surface' } | { kind: 'settings'; section: SettingsSection | null };
 
@@ -149,14 +170,14 @@ export function Fly(props: FlyProps) {
       />
       <div className="nx-main">
         {surfaces && (
-          <nav className="nx-surfaces" aria-label="Painéis do monitor">
-            {SURFACES.map((item, index) => (
+          <nav className="nx-surfaces" aria-label={t('surface.nav')}>
+            {surfaceTabs().map((item, index) => (
               <button
                 key={item.id}
                 type="button"
                 aria-pressed={surface === item.id}
                 aria-label={item.label}
-                title={`${item.label}: ${item.hint} (Alt+${index + 1})`}
+                title={t('surface.tab_title', { label: item.label, hint: item.hint, n: index + 1 })}
                 aria-keyshortcuts={`Alt+${index + 1}`}
                 onClick={() => onSurface(item.id)}
               >
@@ -183,7 +204,9 @@ export function Fly(props: FlyProps) {
                 {notice}
               </p>
             )}
-            {!inSettings && !loaded && <output className="hint">Lendo as fontes…</output>}
+            {!inSettings && !loaded && (
+              <output className="hint">{t('surface.loading_sources')}</output>
+            )}
             {inSettings && (
               <SettingsView
                 section={screen.section}

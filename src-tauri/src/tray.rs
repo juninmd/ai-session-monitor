@@ -3,10 +3,13 @@
 use std::sync::Arc;
 
 use app_core::AppService;
+use app_core::i18n::messages;
 use tauri::menu::{Menu, MenuEvent, MenuItem};
 use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Manager, Wry};
+use usage_model::settings::Language;
 
+use crate::diag;
 use crate::flyout::Flyout;
 use crate::icon::{self, Gauge};
 
@@ -16,9 +19,11 @@ mod tests;
 pub const TRAY_ID: &str = "main";
 const APP_NAME: &str = "AI Session Monitor";
 
-/// Menu entries, in the order they appear: id and pt-BR label.
-const MENU: [(&str, &str); 3] =
-    [("open", "Abrir"), ("refresh", "Atualizar agora"), ("quit", "Sair")];
+/// Menu entries, in the order they appear: id and label in `language`.
+fn menu_entries(language: Language) -> [(&'static str, &'static str); 3] {
+    let m = messages(language);
+    [("open", m.tray_open), ("refresh", m.tray_refresh), ("quit", m.tray_quit)]
+}
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Action {
@@ -52,17 +57,35 @@ fn gesture(button: MouseButton, state: MouseButtonState) -> Option<Gesture> {
     }
 }
 
-/// Creates the tray icon with a "no reading yet" ring; the sink replaces it right after startup.
-/// Tauri owns the icon from here on: callers reach it with `tray_by_id(TRAY_ID)`, so no handle of
-/// ours outlives the app's own cleanup (see `TauriEffects::tray`).
-pub fn build(app: &AppHandle, flyout: Arc<Flyout>) -> tauri::Result<()> {
-    let items = MENU
+fn build_menu(app: &AppHandle, language: Language) -> tauri::Result<Menu<Wry>> {
+    let items = menu_entries(language)
         .iter()
         .map(|(id, label)| MenuItem::with_id(app, *id, *label, true, None::<&str>))
         .collect::<tauri::Result<Vec<_>>>()?;
     let entries: Vec<&dyn tauri::menu::IsMenuItem<_>> =
         items.iter().map(|item| item as &dyn tauri::menu::IsMenuItem<_>).collect();
-    let menu = Menu::with_items(app, &entries)?;
+    Menu::with_items(app, &entries)
+}
+
+/// Relabels the menu when the user picks another language. The icon keeps its menu handler.
+pub fn set_language(app: &AppHandle, language: Language) {
+    let Some(tray) = app.tray_by_id(TRAY_ID) else { return };
+    match build_menu(app, language) {
+        Ok(menu) => {
+            if let Err(err) = tray.set_menu(Some(menu)) {
+                diag::warn("cannot update the tray menu", &err);
+            }
+        }
+        Err(err) => diag::warn("cannot build the tray menu", &err),
+    }
+}
+
+/// Creates the tray icon with a "no reading yet" ring; the sink replaces it right after startup.
+/// Tauri owns the icon from here on: callers reach it with `tray_by_id(TRAY_ID)`, so no handle of
+/// ours outlives the app's own cleanup (see `TauriEffects::tray`).
+pub fn build(app: &AppHandle, flyout: Arc<Flyout>) -> tauri::Result<()> {
+    // The service is not up yet: the sink relabels the menu once it knows the language.
+    let menu = build_menu(app, Language::default())?;
 
     let scale = app.primary_monitor().ok().flatten().map_or(1.0, |m| m.scale_factor());
     let size = icon::icon_size(scale);

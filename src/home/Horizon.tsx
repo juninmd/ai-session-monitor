@@ -3,8 +3,9 @@
 import { type KeyboardEvent, useId, useMemo } from 'react';
 import { harnessName } from '../app/harness';
 import { nxNameId, nxTabId } from '../app/homeIds';
-import { durationFormat, type ViewContext } from '../app/windowModel';
+import { durationFormat, leftText, type ViewContext } from '../app/windowModel';
 import { Icon } from '../components/icons';
+import { t } from '../i18n';
 import { formatDuration } from '../i18n/format';
 import type { HarnessId, HarnessView } from '../lib/contract';
 import { GroupHead, Logo, ShareBar, type Tone } from './Bits';
@@ -30,11 +31,13 @@ function headFigure(row: HorizonRow, ctx: ViewContext): string {
   const fmt = durationFormat(ctx.settings);
   switch (row.kind) {
     case 'out':
-      return 'esgotado';
+      return t('horizon.figure.out');
     case 'short':
-      return `${formatDuration(row.darkMin, fmt, row.model?.long ?? false)} sem cota`;
+      return t('horizon.figure.short', {
+        duration: formatDuration(row.darkMin, fmt, row.model?.long ?? false),
+      });
     case 'lasts':
-      return 'chega ao fim';
+      return t('horizon.figure.lasts');
     default:
       return '—';
   }
@@ -99,7 +102,7 @@ function HorizonOption({
           <Spark
             view={row.view}
             window={row.model?.window ?? null}
-            label={`Tendência de ${name}`}
+            label={t('horizon.trend_of', { name })}
           />
         )}
       </button>
@@ -117,6 +120,8 @@ export function Horizon({ views, ctx, selected, onSelect, onOpen, trend, onTrend
   );
   const covers = horizon.rows.filter((row) => row.kind === 'lasts').length;
   const next = horizon.soonest?.model;
+  const nextLeft = next ? leftText(next, ctx) : null;
+  const total = horizon.rows.length;
   // The per-row trend costs one history request per provider, so it also waits for the setting.
   const showTrend = trend && ctx.settings.general.historyEnabled;
   return (
@@ -126,22 +131,18 @@ export function Horizon({ views, ctx, selected, onSelect, onOpen, trend, onTrend
           <button
             type="button"
             className="icon-btn"
-            aria-label="Sobre o horizonte"
+            aria-label={t('horizon.about')}
             aria-describedby={tipId}
           >
             <Icon name="info" />
           </button>
           <span className="nx-tip" role="tooltip" id={tipId}>
-            <strong>Chego até a renovação?</strong>
-            <span>
-              Cada barra vai de agora até a renovação da cota que limita o provider. O trecho
-              colorido é o tempo que a cota ainda cobre; o resto é tempo sem cota.
-            </span>
+            <strong>{t('horizon.tip.title')}</strong>
+            <span>{t('horizon.tip.body')}</span>
             <span className="nx-meta">
-              {covers} de {horizon.rows.length} cobrem todo o período
-              {next
-                ? ` · próxima renovação em ${renewalText(next, ctx).replace('renova em ', '')}`
-                : ''}
+              {nextLeft === null
+                ? t('horizon.tip.covers', { covers, total })
+                : t('horizon.tip.covers_next', { covers, total, left: nextLeft })}
             </span>
           </span>
         </span>
@@ -151,12 +152,12 @@ export function Horizon({ views, ctx, selected, onSelect, onOpen, trend, onTrend
             checked={showTrend}
             onChange={(event) => onTrend(event.target.checked)}
           />
-          Mostrar tendência (busca o histórico de cada provider)
+          {t('horizon.trend_toggle')}
         </label>
       </div>
       <div className="nx-rows">
         <section className="nx-section">
-          <GroupHead title="Por tempo até a renovação" count={horizon.rows.length} />
+          <GroupHead title={t('horizon.by_renewal')} count={total} />
           <ul className="nx-list">
             {horizon.rows.map((row) => (
               <HorizonOption
@@ -172,7 +173,7 @@ export function Horizon({ views, ctx, selected, onSelect, onOpen, trend, onTrend
           </ul>
           {horizon.rows.length === 0 && (
             <p className="hint">
-              <Icon name="clock" /> Nada em leitura ainda.
+              <Icon name="clock" /> {t('horizon.empty')}
             </p>
           )}
         </section>

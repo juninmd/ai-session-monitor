@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import type { UpdateStatus } from '../lib/contract';
 
 /** Deterministic demonstration; never downloads or launches an installer. */
@@ -26,7 +27,7 @@ export class MockUpdater {
       phase: 'available',
       availableVersion: '0.2.0',
       checkedAt: now,
-      notes: 'Prévia demonstrativa de atualização.\nMelhorias de interface e estabilidade.',
+      notes: t('mock.update_notes'),
       failure: null,
     });
   }

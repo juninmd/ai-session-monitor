@@ -1,4 +1,4 @@
-// pt-BR wording for the proposed surfaces. Kept in one place so the same fact is never
+// Wording for the proposed surfaces (from the message catalog). Kept in one place so the same fact is never
 // described two different ways in two lists.
 import { groupName } from '../app/layout';
 import {
@@ -9,6 +9,7 @@ import {
   type WindowModel,
   windowTitle,
 } from '../app/windowModel';
+import { t } from '../i18n';
 import type { HarnessId, UsageWindow } from '../lib/contract';
 
 /**
@@ -35,14 +36,16 @@ export function windowLabel(harness: HarnessId, window: UsageWindow): string {
 
 /** "renova em 3 h 10" / "volta às 18:40" / "sem horário de renovação". */
 export function renewalText(model: WindowModel | null, ctx: ViewContext): string {
-  if (model === null) return 'sem leitura';
+  if (model === null) return t('wording.no_reading');
   if (model.expired) {
     const when = resetMoment(model, ctx);
-    return when === null ? 'reiniciou' : `reiniciou às ${when.text}`;
+    return when === null ? t('wording.restarted') : t('wording.restarted_at', { time: when.text });
   }
   const left = leftText(model, ctx);
-  if (left !== null) return `renova em ${left}`;
+  if (left !== null) return t('wording.renews_in', { left });
   const when = resetMoment(model, ctx);
-  if (when === null) return 'sem horário de renovação';
-  return model.status === 'out' ? `volta ${when.label}` : `renova ${when.label}`;
+  if (when === null) return t('wording.no_renewal');
+  return model.status === 'out'
+    ? t('wording.back', { when: when.label })
+    : t('wording.renews', { when: when.label });
 }

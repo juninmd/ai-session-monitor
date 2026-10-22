@@ -1,2 +1,28 @@
-// English catalog: update.
-export const updateMessages = {} as const;
+export const updateMessages = {
+  'update.title': 'Updates',
+  'update.version': 'Installed version: {version}',
+  'update.auto': 'Check for updates automatically',
+  'update.auto_hint': 'Checks GitHub every 6 hours. You choose when to download and install.',
+  'update.check': 'Check for updates',
+  'update.idle': 'Check whether a new version is available.',
+  'update.checking': 'Checking GitHub for updates…',
+  'update.current': 'You are on the latest version.',
+  'update.available': 'Version {version} available',
+  'update.downloading': 'Downloading and verifying the signature…',
+  'update.ready': 'Update verified and ready to install.',
+  'update.installing': 'Opening the installer. The app will close…',
+  'update.unavailable': 'Updates are not available in this session.',
+  'update.download': 'Download update',
+  'update.install': 'Install and restart',
+  'update.confirm':
+    'Save any changes in your forms before continuing. The app will close and the Windows installer will open.',
+  'update.confirm_button': 'Confirm installation',
+  'update.later': 'Not now',
+  'update.notes': "What's new in this version",
+  'update.manage': 'View update',
+  'update.dev': 'Installing is only available in the production app for Windows x64.',
+  'update.failure_check': 'Could not reach GitHub. Try again.',
+  'update.failure_download': 'The download did not finish. Try downloading again.',
+  'update.failure_signature': 'The file signature could not be verified. Installation was blocked.',
+  'update.failure_install': 'The installer did not open. Download again to retry.',
+} as const;

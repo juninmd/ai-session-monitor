@@ -9,6 +9,7 @@ import { useAsyncAction } from '../app/useAsyncAction';
 import type { ViewContext } from '../app/windowModel';
 import { Icon } from '../components/icons';
 import { VendorKey } from '../components/setup/KeyConnect';
+import { t, tn } from '../i18n';
 import { formatPercent } from '../i18n/format';
 import type { HarnessId, HarnessView } from '../lib/contract';
 import { Logo } from './Bits';
@@ -18,8 +19,8 @@ import {
   type OnboardStep,
   outcomeOf,
   pendingOf,
-  STEP_LABEL,
   STEP_ORDER,
+  stepLabel,
   withConsent,
 } from './onboardingModel';
 
@@ -87,7 +88,7 @@ export function Onboarding({ views, ctx, onOpenSettings, onFinish }: OnboardingP
             }
           >
             <span className="nx-step-n">{index + 1}</span>
-            {STEP_LABEL[name]}
+            {stepLabel(name)}
           </li>
         ))}
       </ol>
@@ -95,12 +96,10 @@ export function Onboarding({ views, ctx, onOpenSettings, onFinish }: OnboardingP
       {step === 'choose' && (
         <section className="nx-section">
           <h3 className="nx-section-head">
-            O que você quer acompanhar?
+            {t('onboarding.choose.title')}
             <span className="nx-count">{chosen.size}</span>
           </h3>
-          <p className="nx-meta nx-note-line">
-            Os itens marcados foram encontrados nesta máquina. Nada é lido antes de você avançar.
-          </p>
+          <p className="nx-meta nx-note-line">{t('onboarding.choose.note')}</p>
           <ul className="nx-pick">
             {list.map((item) => (
               <li key={item.id}>
@@ -113,11 +112,13 @@ export function Onboarding({ views, ctx, onOpenSettings, onFinish }: OnboardingP
                   <Logo id={item.id} size={16} />
                   <span className="nx-name">{item.name}</span>
                   <span className="nx-tag" data-detected={item.detected}>
-                    {item.detected ? 'já responde' : 'sem leitura'}
+                    {item.detected ? t('onboarding.tag.responds') : t('onboarding.tag.silent')}
                   </span>
                   {item.need !== 'nothing' && (
                     <span className="nx-tag">
-                      {item.need === 'key' ? 'precisa de chave' : 'precisa de permissão'}
+                      {item.need === 'key'
+                        ? t('onboarding.tag.needs_key')
+                        : t('onboarding.tag.needs_consent')}
                     </span>
                   )}
                   <Icon name={chosen.has(item.id) ? 'check' : 'plug'} />
@@ -130,16 +131,14 @@ export function Onboarding({ views, ctx, onOpenSettings, onFinish }: OnboardingP
 
       {step === 'connect' && (
         <section className="nx-section">
-          <h3 className="nx-section-head">Credenciais e permissões</h3>
+          <h3 className="nx-section-head">{t('onboarding.connect.title')}</h3>
           {pending.consents.map((id) => (
             <div className="nx-connect" key={id}>
               <p className="nx-chan-head">
                 <Logo id={id} size={16} />
                 <strong>{nameOf(id)}</strong>
               </p>
-              <p className="nx-meta">
-                Esta fonte lê arquivos ou processos deste PC. Nada é lido antes do seu ok.
-              </p>
+              <p className="nx-meta">{t('onboarding.connect.consent_note')}</p>
               <div className="actions">
                 <button
                   type="button"
@@ -147,10 +146,10 @@ export function Onboarding({ views, ctx, onOpenSettings, onFinish }: OnboardingP
                   disabled={consent.pending}
                   onClick={() => void consent.run(id)}
                 >
-                  Permitir leitura
+                  {t('onboarding.connect.allow')}
                 </button>
                 <button type="button" className="btn" onClick={() => onOpenSettings(id)}>
-                  Ver detalhes
+                  {t('onboarding.connect.details')}
                 </button>
               </div>
             </div>
@@ -170,18 +169,18 @@ export function Onboarding({ views, ctx, onOpenSettings, onFinish }: OnboardingP
                 </p>
                 <p className="nx-meta">
                   {id === 'litellm'
-                    ? 'Precisa do endereço do proxy, do escopo e da chave.'
-                    : 'Tem mais de uma forma de conectar: chave ou leitura do banco local.'}
+                    ? t('onboarding.connect.litellm_note')
+                    : t('onboarding.connect.multi_note')}
                 </p>
                 <div className="actions">
                   <button type="button" className="btn" onClick={() => onOpenSettings(id)}>
-                    Configurar
+                    {t('onboarding.connect.configure')}
                   </button>
                 </div>
               </div>
             ))}
           {pending.keys.length + pending.consents.length === 0 && (
-            <p className="hint">Nada a conectar: as fontes escolhidas já têm o que precisam.</p>
+            <p className="hint">{t('onboarding.connect.nothing')}</p>
           )}
         </section>
       )}
@@ -189,7 +188,7 @@ export function Onboarding({ views, ctx, onOpenSettings, onFinish }: OnboardingP
       {step === 'verify' && (
         <section className="nx-section">
           <h3 className="nx-section-head">
-            O que cada fonte respondeu
+            {t('onboarding.verify.title')}
             <span className="nx-count">
               {done}/{verifyList.length}
             </span>
@@ -202,7 +201,7 @@ export function Onboarding({ views, ctx, onOpenSettings, onFinish }: OnboardingP
               onClick={() => void read.run()}
             >
               <Icon name="refresh" />
-              {read.pending ? 'Lendo…' : 'Ler agora'}
+              {read.pending ? t('onboarding.verify.reading') : t('onboarding.verify.read_now')}
             </button>
           </div>
           <ul className="nx-chan-list">
@@ -219,14 +218,15 @@ export function Onboarding({ views, ctx, onOpenSettings, onFinish }: OnboardingP
                   </p>
                   {first !== null && (
                     <p className="nx-meta">
-                      {view?.windows.length === 1 ? 'uma cota' : `${view?.windows.length} cotas`} ·
-                      a primeira em {formatPercent(first.usedPct)} usado
+                      {tn('onboarding.verify.first', view?.windows.length ?? 0, {
+                        pct: formatPercent(first.usedPct),
+                      })}
                     </p>
                   )}
                   {view?.state === 'needs_setup' && keyedOf(id) !== null && (
                     <div className="actions">
                       <button type="button" className="btn" onClick={() => setStep('connect')}>
-                        Voltar e colar a chave
+                        {t('onboarding.verify.back_to_key')}
                       </button>
                     </div>
                   )}
@@ -241,18 +241,15 @@ export function Onboarding({ views, ctx, onOpenSettings, onFinish }: OnboardingP
         <section className="nx-section">
           <h3 className="nx-section-head">
             <Icon name="check" />
-            Monitorando {done} de {verifyList.length}
+            {t('onboarding.done.title', { done, total: verifyList.length })}
           </h3>
-          <p>
-            O painel abre ordenado por urgência: o que está perto de acabar aparece primeiro. O que
-            não respondeu fica em "Sem leitura", sem inventar número.
-          </p>
+          <p>{t('onboarding.done.body')}</p>
           <div className="actions">
             <button type="button" className="btn primary" onClick={onFinish}>
-              Ir para o painel
+              {t('onboarding.done.go')}
             </button>
             <button type="button" className="btn" onClick={() => setStep('verify')}>
-              Ler de novo
+              {t('onboarding.done.again')}
             </button>
           </div>
         </section>
@@ -266,7 +263,7 @@ export function Onboarding({ views, ctx, onOpenSettings, onFinish }: OnboardingP
             onClick={() => setStep(STEP_ORDER[STEP_ORDER.indexOf(step) - 1] ?? 'choose')}
           >
             <Icon name="back" />
-            Voltar
+            {t('onboarding.back')}
           </button>
         )}
         {step === 'choose' && (
@@ -276,17 +273,17 @@ export function Onboarding({ views, ctx, onOpenSettings, onFinish }: OnboardingP
             disabled={apply.pending || chosen.size === 0}
             onClick={() => void apply.run()}
           >
-            Continuar com {chosen.size}
+            {t('onboarding.continue', { count: chosen.size })}
           </button>
         )}
         {step === 'connect' && (
           <button type="button" className="btn primary" onClick={() => setStep('verify')}>
-            Já conectei
+            {t('onboarding.connected')}
           </button>
         )}
         {step === 'verify' && (
           <button type="button" className="btn primary" onClick={() => setStep('done')}>
-            Concluir
+            {t('onboarding.finish')}
           </button>
         )}
       </div>

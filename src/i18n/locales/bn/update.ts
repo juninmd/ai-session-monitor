@@ -1,0 +1,30 @@
+// bn catalog: update.
+export const updateMessages = {
+  'update.title': 'আপডেট',
+  'update.version': 'ইনস্টল করা সংস্করণ: {version}',
+  'update.auto': 'স্বয়ংক্রিয়ভাবে আপডেট খুঁজুন',
+  'update.auto_hint':
+    'প্রতি 6 ঘণ্টা পরপর GitHub-এ দেখা হয়। কখন ডাউনলোড ও ইনস্টল করবেন, সেটা আপনিই ঠিক করেন।',
+  'update.check': 'আপডেট খুঁজুন',
+  'update.idle': 'নতুন সংস্করণ আছে কি না দেখুন।',
+  'update.checking': 'GitHub-এ আপডেট খোঁজা হচ্ছে…',
+  'update.current': 'আপনি সর্বশেষ সংস্করণেই আছেন।',
+  'update.available': 'সংস্করণ {version} পাওয়া যাচ্ছে',
+  'update.downloading': 'ডাউনলোড ও সিগনেচার যাচাই চলছে…',
+  'update.ready': 'আপডেট যাচাই হয়েছে, ইনস্টলের জন্য প্রস্তুত।',
+  'update.installing': 'ইনস্টলার খোলা হচ্ছে। অ্যাপ বন্ধ হয়ে যাবে…',
+  'update.unavailable': 'এই সেশনে আপডেট পাওয়া যাচ্ছে না।',
+  'update.download': 'আপডেট ডাউনলোড করুন',
+  'update.install': 'ইনস্টল করে রিস্টার্ট করুন',
+  'update.confirm':
+    'চালিয়ে যাওয়ার আগে ফর্মের পরিবর্তনগুলো সংরক্ষণ করুন। অ্যাপ বন্ধ হবে এবং Windows ইনস্টলার খুলবে।',
+  'update.confirm_button': 'ইনস্টল নিশ্চিত করুন',
+  'update.later': 'এখন নয়',
+  'update.notes': 'এই সংস্করণে নতুন কী আছে',
+  'update.manage': 'আপডেট দেখুন',
+  'update.dev': 'ইনস্টল শুধু Windows x64-এর প্রোডাকশন অ্যাপে পাওয়া যায়।',
+  'update.failure_check': 'GitHub-এ পৌঁছানো যায়নি। আবার চেষ্টা করুন।',
+  'update.failure_download': 'ডাউনলোড শেষ হয়নি। আবার ডাউনলোড করে দেখুন।',
+  'update.failure_signature': 'ফাইলের সিগনেচার যাচাই করা যায়নি। ইনস্টল আটকে দেওয়া হয়েছে।',
+  'update.failure_install': 'ইনস্টলার খোলেনি। আবার চেষ্টা করতে নতুন করে ডাউনলোড করুন।',
+} as const;

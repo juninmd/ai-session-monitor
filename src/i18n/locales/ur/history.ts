@@ -1,0 +1,38 @@
+// Quota history: the "History" section of a panel and its switch in the settings.
+export const historyMessages = {
+  'history.title': 'ہسٹری',
+  'history.window': 'ونڈو',
+  'history.copy_csv': 'ریڈنگز CSV کے طور پر کاپی کریں',
+  'history.copied': 'ریڈنگز CSV کے طور پر کاپی ہو گئیں۔',
+  'history.copy_failed': 'ریڈنگز کاپی نہیں ہو سکیں۔',
+  'history.loading': 'ہسٹری لوڈ ہو رہی ہے',
+  'history.failed': 'ابھی ہسٹری لوڈ نہیں ہو سکی۔',
+  'history.empty': 'ابھی کوئی ہسٹری نہیں۔ مانیٹر چلنے کے ساتھ ریڈنگز یہاں آتی رہیں گی۔',
+  'history.chart_title': 'ونڈو میں {title} کا استعمال',
+  'history.chart_desc':
+    'افقی: ونڈو کے آغاز سے ری سیٹ تک۔ عمودی: 0 سے 100% تک استعمال۔ موٹی لکیر موجودہ ونڈو ہے اور ہلکی لکیریں پچھلی ونڈوز ہیں۔',
+  'history.axis_start': 'آغاز',
+  'history.axis_end': 'ری سیٹ',
+  'history.label_current': 'موجودہ {pct}',
+  'history.label_past': 'پچھلی',
+  'history.peak_now': 'اس ونڈو میں {when} {pct} کی چوٹی۔',
+  'history.no_current': 'اس ونڈو میں ابھی کوئی ریڈنگ نہیں۔',
+  'history.past_one': 'پچھلی ونڈو: چوٹی {peaks}۔',
+  'history.past_many': 'پچھلی {n} ونڈوز: چوٹیاں {peaks}۔',
+  'history.table_toggle': 'جدول کے طور پر دیکھیں',
+  'history.table_caption': 'ہر ونڈو میں استعمال کی چوٹیاں',
+  'history.col_reset': 'ری سیٹ',
+  'history.col_peak': 'چوٹی',
+  'history.col_readings': 'ریڈنگز',
+  'history.row_current': '{when} (موجودہ)',
+
+  'settings.history': 'استعمال کی ہسٹری',
+  'settings.history_enabled': 'استعمال کی ہسٹری رکھیں',
+  'settings.history_hint':
+    'ہر ونڈو کے صرف فیصد اور اوقات اسی کمپیوٹر پر 35 دن تک محفوظ رہتے ہیں۔ کچھ بھی یہاں سے باہر نہیں جاتا۔ بند کرنے سے ریکارڈنگ رک جاتی ہے؛ مٹانے کے لیے نیچے کا بٹن استعمال کریں۔',
+  'settings.history_clear': 'ہسٹری صاف کریں',
+  'settings.history_clear_confirm': 'کیا محفوظ شدہ تمام ہسٹری مٹا دیں؟ یہ عمل واپس نہیں ہو سکتا۔',
+  'settings.history_clear_yes': 'مٹائیں',
+  'settings.history_clear_no': 'منسوخ کریں',
+  'settings.history_cleared': 'ہسٹری مٹا دی گئی۔',
+} as const satisfies Record<string, string>;

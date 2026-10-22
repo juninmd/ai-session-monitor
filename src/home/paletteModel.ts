@@ -4,19 +4,19 @@ import { harnessName } from '../app/harness';
 import { sharePct, showsUsed } from '../app/quota';
 import { summaryOf } from '../app/tabModel';
 import type { ViewContext } from '../app/windowModel';
+import { t, tn } from '../i18n';
 import { formatPercent } from '../i18n/format';
+import { getLocale } from '../i18n/locale';
 import type { HarnessId, HarnessView } from '../lib/contract';
 import { SCENARIO_NAMES } from '../mock/scenarios';
 import { triageRow } from './triageModel';
 
-export type PaletteGroup = 'Providers' | 'Ações' | 'Configurações' | 'Demonstração';
+/** The group's id; the heading is `paletteGroupLabel(group)`, so the language can change. */
+export type PaletteGroup = 'providers' | 'actions' | 'settings' | 'demo';
 
-export const GROUP_ORDER: readonly PaletteGroup[] = [
-  'Providers',
-  'Ações',
-  'Configurações',
-  'Demonstração',
-];
+export const GROUP_ORDER: readonly PaletteGroup[] = ['providers', 'actions', 'settings', 'demo'];
+
+export const paletteGroupLabel = (group: PaletteGroup): string => t(`palette.group.${group}`);
 
 export interface PaletteCommand {
   id: string;
@@ -56,7 +56,7 @@ function providerCommand(view: HarnessView, input: PaletteInput): PaletteCommand
       : formatPercent(sharePct(summary.availablePct, showsUsed(ctx.settings)));
   return {
     id: `go:${view.id}`,
-    group: 'Providers',
+    group: 'providers',
     label: harnessName(view.id),
     hint: [triageRow(view, ctx).verdict, percent].filter((part) => part !== null).join(' · '),
     keywords: view.plan ?? '',
@@ -85,44 +85,46 @@ export function commandsFor(input: PaletteInput): PaletteCommand[] {
     ...active.map((view) => providerCommand(view, input)),
     {
       id: 'refresh:all',
-      group: 'Ações',
-      label: 'Atualizar todas as fontes',
-      hint: 'releitura imediata',
-      keywords: 'refresh atualizar recarregar',
+      group: 'actions',
+      label: t('palette.refresh.label'),
+      hint: t('palette.refresh.hint'),
+      keywords: t('palette.refresh.keywords'),
       run: () => input.refresh(),
     },
     {
       id: 'copy:status',
-      group: 'Ações',
-      label: 'Copiar resumo do estado',
-      hint: `${active.length} fontes em texto`,
-      keywords: 'clipboard copiar status relatorio',
+      group: 'actions',
+      label: t('palette.copy.label'),
+      hint: tn('palette.copy.hint', active.length),
+      keywords: t('palette.copy.keywords'),
       run: () => input.copySummary(text),
     },
     {
       id: 'settings:general',
-      group: 'Configurações',
-      label: 'Configurações gerais',
-      hint: 'exibição, limites, bandeja',
-      keywords: 'preferencias opcoes',
+      group: 'settings',
+      label: t('palette.general.label'),
+      hint: t('palette.general.hint'),
+      keywords: t('palette.general.keywords'),
       run: () => input.openSettings('general'),
     },
     ...active.map<PaletteCommand>((view) => ({
       id: `settings:${view.id}`,
-      group: 'Configurações',
-      label: `Configurar ${harnessName(view.id)}`,
-      hint: view.stale ? 'leitura antiga' : (view.plan ?? 'fonte e credenciais'),
-      keywords: 'configurar ajustar fonte credencial',
+      group: 'settings',
+      label: t('palette.configure.label', { name: harnessName(view.id) }),
+      hint: view.stale
+        ? t('palette.configure.hint_stale')
+        : (view.plan ?? t('palette.configure.hint_default')),
+      keywords: t('palette.configure.keywords'),
       run: () => input.openSettings(view.id),
     })),
     ...(input.scenario === undefined
       ? []
       : SCENARIO_NAMES.map<PaletteCommand>((name) => ({
           id: `scenario:${name}`,
-          group: 'Demonstração',
-          label: `Cenário: ${name}`,
-          hint: 'dados fictícios',
-          keywords: 'mock demo dados',
+          group: 'demo',
+          label: t('palette.scenario.label', { name }),
+          hint: t('palette.scenario.hint'),
+          keywords: t('palette.scenario.keywords'),
           run: () => input.scenario?.(name),
         }))),
   ];
@@ -151,7 +153,9 @@ export function filterCommands(
     else if (keywords.includes(needle)) scored.push({ command, score: 2 });
   }
   return scored
-    .sort((a, b) => a.score - b.score || a.command.label.localeCompare(b.command.label, 'pt-BR'))
+    .sort(
+      (a, b) => a.score - b.score || a.command.label.localeCompare(b.command.label, getLocale()),
+    )
     .map((entry) => entry.command);
 }
 

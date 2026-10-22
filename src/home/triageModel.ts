@@ -10,6 +10,7 @@ import {
   type ViewContext,
   type WindowModel,
 } from '../app/windowModel';
+import { t, tn } from '../i18n';
 import { formatAge, formatClock, formatDuration } from '../i18n/format';
 import type { HarnessId, HarnessView, UsageWindow } from '../lib/contract';
 import type { Pace, Status } from '../lib/usage';
@@ -86,16 +87,16 @@ export function compareUrgency(a: TriageRow, b: TriageRow): number {
  * be the only signal the card gives, and in forced-colors it would be the only one.
  */
 function statusNote(status: Status | null): string {
-  if (status === 'crit') return 'crítico';
-  if (status === 'warn') return 'no limite';
+  if (status === 'crit') return t('triage.note.crit');
+  if (status === 'warn') return t('triage.note.warn');
   return '';
 }
 
 function brokenVerdict(view: HarnessView, ctx: ViewContext): string {
   if (view.error === null) {
     return view.readAt === null
-      ? 'Sem leitura'
-      : `Leitura antiga · há ${formatAge(ctx.nowSecs - view.readAt)}`;
+      ? t('surface.no_reading')
+      : t('triage.verdict.stale_age', { age: formatAge(ctx.nowSecs - view.readAt) });
   }
   return describeError(view.error, view.id).title;
 }
@@ -108,15 +109,19 @@ function tierVerdict(
   if (isBroken(view)) {
     return {
       verdict: brokenVerdict(view, ctx),
-      short: view.error === null ? 'antigo' : 'falha',
+      short: view.error === null ? t('triage.short.stale') : t('triage.short.failed'),
       runsOutAt: null,
     };
   }
   if (view.state === 'loading') {
-    return { verdict: 'Lendo…', short: 'lendo', runsOutAt: null };
+    return { verdict: t('surface.reading'), short: t('triage.short.loading'), runsOutAt: null };
   }
   if (model === null) {
-    return { verdict: 'Sem leitura', short: 'sem leitura', runsOutAt: null };
+    return {
+      verdict: t('surface.no_reading'),
+      short: t('triage.short.no_reading'),
+      runsOutAt: null,
+    };
   }
   const fmt = durationFormat(ctx.settings);
   switch (model.pace.kind) {
@@ -124,26 +129,41 @@ function tierVerdict(
       const when = model.window.resetsAt;
       const back = when === null ? null : formatClock(when, ctx.nowSecs);
       return {
-        verdict: `Esgotado · volta ${back === null ? 'sem data' : back.label}`,
-        short: back === null ? 'esgotado' : `esgotado · volta ${back.text}`,
+        verdict: t('triage.verdict.out', {
+          when: back === null ? t('triage.when.undated') : back.label,
+        }),
+        short:
+          back === null ? t('triage.short.out') : t('triage.short.out_back', { time: back.text }),
         runsOutAt: ctx.nowSecs,
       };
     }
     case 'risk': {
       const at = model.pace.runwayMin;
+      const duration = formatDuration(model.pace.earlyMin, fmt, model.long);
       return {
-        verdict: `Esgota ${formatClock(Math.round(ctx.nowSecs + at * 60), ctx.nowSecs).label} · ${formatDuration(model.pace.earlyMin, fmt, model.long)} sem cota`,
-        short: `${formatDuration(model.pace.earlyMin, fmt, model.long)} sem cota`,
+        verdict: t('triage.verdict.risk', {
+          at: formatClock(Math.round(ctx.nowSecs + at * 60), ctx.nowSecs).label,
+          duration,
+        }),
+        short: t('triage.short.risk', { duration }),
         runsOutAt: ctx.nowSecs + at * 60,
       };
     }
     case 'fine':
-      return { verdict: 'Dura até renovar', short: statusNote(model.status), runsOutAt: null };
+      return {
+        verdict: t('triage.verdict.fine'),
+        short: statusNote(model.status),
+        runsOutAt: null,
+      };
     case 'early':
-      return { verdict: 'Cedo para prever', short: statusNote(model.status), runsOutAt: null };
+      return {
+        verdict: t('surface.too_early'),
+        short: statusNote(model.status),
+        runsOutAt: null,
+      };
     case 'unknown':
       return {
-        verdict: 'Sem base para prever',
+        verdict: t('surface.no_basis'),
         short: statusNote(model.status),
         runsOutAt: null,
       };
@@ -214,47 +234,43 @@ export interface Headline {
   ids: HarnessId[];
 }
 
-function count(n: number, one: string, many: string): string {
-  return `${n} ${n === 1 ? one : many}`;
-}
-
 /** The two-second answer: does anything run out before it renews? */
 export function headlineOf(triage: TriageBoard): Headline {
   const runsOut = triage.attention.filter((row) => row.tier === 'blocked' || row.tier === 'risk');
   if (runsOut.length > 0) {
     const first = runsOut[0];
-    if (first === undefined) return { tone: 'ok', text: 'Nada esgota antes de renovar', ids: [] };
+    if (first === undefined) return { tone: 'ok', text: t('triage.headline.calm'), ids: [] };
     const rest = runsOut.length - 1;
     return {
       tone: 'attention',
       text:
-        rest === 0
-          ? first.verdict
-          : `${first.verdict} · mais ${count(rest, 'provider', 'providers')}`,
+        rest === 0 ? first.verdict : tn('triage.headline.more', rest, { verdict: first.verdict }),
       ids: runsOut.map((row) => row.view.id),
     };
   }
   if (triage.attention.length > 0) {
     return {
       tone: 'attention',
-      text: `${count(triage.attention.length, 'provider precisa', 'providers precisam')} de atenção`,
+      text: tn('triage.headline.attention', triage.attention.length),
       ids: triage.attention.map((row) => row.view.id),
     };
   }
   const reading = triage.loading.length;
   if (triage.fine.length === 0 && triage.unknown.length === 0 && reading > 0) {
-    return { tone: 'ok', text: `Lendo ${count(reading, 'fonte', 'fontes')}…`, ids: [] };
+    return { tone: 'ok', text: tn('triage.headline.reading', reading), ids: [] };
   }
   const trailing = [
-    triage.unknown.length > 0 ? `${triage.unknown.length} sem leitura` : null,
-    reading > 0 ? `${reading} lendo` : null,
+    triage.unknown.length > 0
+      ? t('triage.headline.unknown_part', { count: triage.unknown.length })
+      : null,
+    reading > 0 ? t('triage.headline.loading_part', { count: reading }) : null,
   ].filter((part): part is string => part !== null);
   return {
     tone: 'ok',
     text:
       trailing.length === 0
-        ? 'Nada esgota antes de renovar'
-        : `Nada esgota antes de renovar · ${trailing.join(' · ')}`,
+        ? t('triage.headline.calm')
+        : t('triage.headline.calm_with', { parts: trailing.join(' · ') }),
     ids: [],
   };
 }

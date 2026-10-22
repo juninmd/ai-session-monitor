@@ -1,0 +1,30 @@
+export const updateMessages = {
+  'update.title': 'Actualizaciones',
+  'update.version': 'Versión instalada: {version}',
+  'update.auto': 'Buscar actualizaciones automáticamente',
+  'update.auto_hint': 'Consulta GitHub cada 6 horas. Tú decides cuándo descargar e instalar.',
+  'update.check': 'Buscar actualizaciones',
+  'update.idle': 'Comprueba si hay una versión nueva disponible.',
+  'update.checking': 'Buscando actualizaciones en GitHub…',
+  'update.current': 'Tienes la última versión.',
+  'update.available': 'Versión {version} disponible',
+  'update.downloading': 'Descargando y verificando la firma…',
+  'update.ready': 'Actualización verificada y lista para instalar.',
+  'update.installing': 'Abriendo el instalador. La aplicación se cerrará…',
+  'update.unavailable': 'Las actualizaciones no están disponibles en esta sesión.',
+  'update.download': 'Descargar actualización',
+  'update.install': 'Instalar y reiniciar',
+  'update.confirm':
+    'Guarda los cambios de tus formularios antes de continuar. La aplicación se cerrará y se abrirá el instalador de Windows.',
+  'update.confirm_button': 'Confirmar instalación',
+  'update.later': 'Ahora no',
+  'update.notes': 'Novedades de esta versión',
+  'update.manage': 'Ver actualización',
+  'update.dev':
+    'La instalación solo está disponible en la aplicación de producción para Windows x64.',
+  'update.failure_check': 'No se pudo conectar con GitHub. Inténtalo de nuevo.',
+  'update.failure_download': 'La descarga no terminó. Intenta descargar de nuevo.',
+  'update.failure_signature':
+    'No se pudo verificar la firma del archivo. La instalación fue bloqueada.',
+  'update.failure_install': 'El instalador no se abrió. Descarga de nuevo para reintentar.',
+} as const;

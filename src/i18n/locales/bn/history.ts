@@ -1,0 +1,38 @@
+// Quota history: the "History" section of a panel and its switch in the settings.
+export const historyMessages = {
+  'history.title': 'ইতিহাস',
+  'history.window': 'উইন্ডো',
+  'history.copy_csv': 'রিডিং CSV হিসেবে কপি করুন',
+  'history.copied': 'রিডিং CSV হিসেবে কপি হয়েছে।',
+  'history.copy_failed': 'রিডিং কপি করা যায়নি।',
+  'history.loading': 'ইতিহাস লোড হচ্ছে',
+  'history.failed': 'এখন ইতিহাস লোড করা যাচ্ছে না।',
+  'history.empty': 'এখনও কোনো ইতিহাস নেই। মনিটর চলার সঙ্গে সঙ্গে রিডিং এখানে জমা হবে।',
+  'history.chart_title': 'উইন্ডো জুড়ে {title}-এর ব্যবহার',
+  'history.chart_desc':
+    'অনুভূমিক: উইন্ডোর শুরু থেকে রিসেট পর্যন্ত। উল্লম্ব: 0 থেকে 100% ব্যবহার। গাঢ় রেখাটি বর্তমান উইন্ডো, আর হালকাগুলো আগের উইন্ডো।',
+  'history.axis_start': 'শুরু',
+  'history.axis_end': 'রিসেট',
+  'history.label_current': 'বর্তমান {pct}',
+  'history.label_past': 'আগের',
+  'history.peak_now': 'এই উইন্ডোতে {when} সর্বোচ্চ {pct}।',
+  'history.no_current': 'এই উইন্ডোতে এখনও কোনো রিডিং নেই।',
+  'history.past_one': 'আগের উইন্ডো: সর্বোচ্চ {peaks}।',
+  'history.past_many': 'আগের {n}টি উইন্ডো: সর্বোচ্চ {peaks}।',
+  'history.table_toggle': 'টেবিল হিসেবে দেখুন',
+  'history.table_caption': 'উইন্ডো অনুযায়ী ব্যবহারের সর্বোচ্চ মান',
+  'history.col_reset': 'রিসেট',
+  'history.col_peak': 'সর্বোচ্চ',
+  'history.col_readings': 'রিডিং',
+  'history.row_current': '{when} (বর্তমান)',
+
+  'settings.history': 'ব্যবহারের ইতিহাস',
+  'settings.history_enabled': 'ব্যবহারের ইতিহাস রাখুন',
+  'settings.history_hint':
+    'প্রতিটি উইন্ডোর শুধু শতকরা হার ও সময় এই কম্পিউটারে 35 দিন সংরক্ষণ করে। কিছু বাইরে যায় না। বন্ধ করলে রেকর্ডিং থামে; মুছতে নিচের বোতাম ব্যবহার করুন।',
+  'settings.history_clear': 'ইতিহাস মুছুন',
+  'settings.history_clear_confirm': 'সংরক্ষিত সব ইতিহাস মুছবেন? এটি ফেরানো যাবে না।',
+  'settings.history_clear_yes': 'মুছুন',
+  'settings.history_clear_no': 'বাতিল',
+  'settings.history_cleared': 'ইতিহাস মুছে ফেলা হয়েছে।',
+} as const satisfies Record<string, string>;

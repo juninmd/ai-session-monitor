@@ -1,3 +1,4 @@
+use usage_model::settings::Language;
 use usage_model::{HarnessView, UsageWindow, WindowKind};
 
 use super::*;
@@ -21,6 +22,12 @@ fn snap(harness: HarnessId, state: ViewState, stale: bool, windows: Vec<UsageWin
     Snapshot { generated_at: NOW, views: vec![view] }
 }
 
+fn portuguese() -> Settings {
+    let mut settings = Settings::default();
+    settings.general.language = Language::PtBr;
+    settings
+}
+
 fn ready(used: f64, resets_at: i64) -> Snapshot {
     snap(
         HarnessId::Claude,
@@ -31,7 +38,7 @@ fn ready(used: f64, resets_at: i64) -> Snapshot {
 }
 
 fn run(state: &mut ThresholdState, prev: &Snapshot, next: &Snapshot) -> Vec<Notification> {
-    state.plan(Some(prev), next, &Settings::default(), NOW)
+    state.plan(Some(prev), next, &portuguese(), NOW)
 }
 
 fn levels(notes: &[Notification]) -> Vec<String> {
@@ -173,7 +180,7 @@ fn each_window_and_harness_has_its_own_state() {
 
 #[test]
 fn custom_thresholds_apply_and_an_empty_list_switches_the_alerts_off() {
-    let mut custom = Settings::default();
+    let mut custom = portuguese();
     custom.general.alert_thresholds = vec![50];
     let mut state = ThresholdState::default();
     let notes = state.plan(Some(&ready(40.0, EPOCH_A)), &ready(55.0, EPOCH_A), &custom, NOW);

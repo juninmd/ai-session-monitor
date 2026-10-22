@@ -1,5 +1,5 @@
-// Notice code -> pt-BR sentence. An unknown code is shown with its code, never dropped.
-import { hasMessage, t } from '../i18n';
+// Notice code -> localized sentence. An unknown code is shown with its code, never dropped.
+import { hasMessage, t, tn } from '../i18n';
 import { formatNumber } from '../i18n/format';
 import type { ErrorCode, Notice } from '../lib/contract';
 import { ERROR_CODES } from '../lib/contract';
@@ -46,9 +46,7 @@ function reasonText(code: string, reason: string): string {
 function countText(value: string): string {
   if (!COUNT.test(value)) return value;
   const n = Number(value);
-  return t(n === 1 ? 'notice.param.dropped.one' : 'notice.param.dropped.other', {
-    n: formatNumber(n),
-  });
+  return tn('notice.param.dropped', n, { n: formatNumber(n) });
 }
 
 /** Params arrive as machine ids; the sentence wants words. */

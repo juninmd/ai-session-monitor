@@ -7,7 +7,8 @@
 // opened the palette (the stage does that on close).
 import { type KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Icon } from '../components/icons';
-import { filterCommands, type PaletteCommand, step } from './paletteModel';
+import { t } from '../i18n';
+import { filterCommands, type PaletteCommand, paletteGroupLabel, step } from './paletteModel';
 
 function optionId(command: PaletteCommand): string {
   return `nx-cmd-${command.id.replace(/[^a-z0-9-]/gi, '-')}`;
@@ -67,10 +68,15 @@ export function CommandPalette({
       <button
         type="button"
         className="nx-scrim-backdrop"
-        aria-label="Fechar o comando rápido"
+        aria-label={t('palette.close_aria')}
         onClick={onClose}
       />
-      <div className="nx-palette" role="dialog" aria-label="Comando rápido" onKeyDown={onKeyDown}>
+      <div
+        className="nx-palette"
+        role="dialog"
+        aria-label={t('palette.dialog_aria')}
+        onKeyDown={onKeyDown}
+      >
         <div className="nx-palette-field">
           <Icon name="sliders" />
           <input
@@ -81,8 +87,8 @@ export function CommandPalette({
             aria-controls="nx-palette-list"
             aria-activedescendant={active === undefined ? undefined : optionId(active)}
             autoComplete="off"
-            aria-label="Buscar comando"
-            placeholder="Ir para provider, atualizar, copiar resumo…"
+            aria-label={t('palette.input_aria')}
+            placeholder={t('palette.placeholder')}
             value={query}
             onChange={(event) => {
               setQuery(event.target.value);
@@ -92,7 +98,7 @@ export function CommandPalette({
           <kbd>Esc</kbd>
         </div>
         <div id="nx-palette-list" ref={listRef} className="nx-palette-list" role="listbox">
-          {results.length === 0 && <p className="nx-palette-empty">Nada encontrado</p>}
+          {results.length === 0 && <p className="nx-palette-empty">{t('palette.empty')}</p>}
           {results.map((command) => (
             <button
               key={command.id}
@@ -111,13 +117,13 @@ export function CommandPalette({
             >
               <span className="nx-cmd-label">{command.label}</span>
               <span className="nx-cmd-hint">{command.hint}</span>
-              <span className="nx-cmd-group">{command.group}</span>
+              <span className="nx-cmd-group">{paletteGroupLabel(command.group)}</span>
             </button>
           ))}
         </div>
         <p className="nx-palette-foot">
           <kbd>↑</kbd>
-          <kbd>↓</kbd> navegar · <kbd>Enter</kbd> executar
+          <kbd>↓</kbd> {t('palette.foot.navigate')} · <kbd>Enter</kbd> {t('palette.foot.run')}
         </p>
       </div>
     </div>

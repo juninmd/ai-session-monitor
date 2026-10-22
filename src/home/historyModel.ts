@@ -8,6 +8,7 @@
 // draws is the line `paceOf` decided.
 import type { Burndown } from '../app/burndown';
 import { durationFormat, type ViewContext, type WindowModel } from '../app/windowModel';
+import { t, tn } from '../i18n';
 import { formatDuration, formatPercent } from '../i18n/format';
 
 export type TrendKind = 'more' | 'less' | 'similar' | 'first';
@@ -33,25 +34,24 @@ export function trendOf(burndown: Burndown): Trend {
   const pastAverage = mean(past);
   const base = { peakNow, pastAverage, pastCount: past.length };
   if (peakNow === null) {
-    return { ...base, kind: 'first', label: 'Sem leitura nesta janela.' };
+    return { ...base, kind: 'first', label: t('history.trend.none') };
   }
   if (pastAverage === null) {
     return {
       ...base,
       kind: 'first',
-      label: `Pico de ${formatPercent(peakNow)} até agora, sem renovação anterior para comparar.`,
+      label: t('history.trend.first', { peak: formatPercent(peakNow) }),
     };
   }
   const delta = peakNow - pastAverage;
   const kind: TrendKind = Math.abs(delta) < 5 ? 'similar' : delta > 0 ? 'more' : 'less';
-  const closed =
-    past.length === 1
-      ? 'a renovação anterior fechou'
-      : `as ${past.length} renovações anteriores fecharam`;
   return {
     ...base,
     kind,
-    label: `Pico de ${formatPercent(peakNow)} até agora · ${closed} em média em ${formatPercent(pastAverage)}.`,
+    label: tn('history.trend.compare', past.length, {
+      peak: formatPercent(peakNow),
+      avg: formatPercent(pastAverage),
+    }),
   };
 }
 

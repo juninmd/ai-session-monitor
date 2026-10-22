@@ -157,7 +157,7 @@ Error params are non-secret and drive the wording: `reason` (per code: `install_
 
 ### Notice codes (initial catalog)
 
-`Notice.code` is free-form; the UI maps known codes to pt-BR text and renders any unknown code
+`Notice.code` is free-form; the UI maps known codes to localized text and renders any unknown code
 with a generic message that includes the code, so a missing translation is visible, not silent.
 
 | Code | Severity | Meaning |
@@ -257,8 +257,13 @@ toast print the used share instead of the available one; every payload keeps `us
 stays on the available share.
 `general.pinned` (default `[]`) lists providers the triage list keeps first, in pin order; presentation only.
 `general.compact` (default `false`) is presentation only: the flyout lists use tighter spacing.
+
+`general.language` (default `"en"`) is the language of the interface and of the desktop text the
+Rust side produces (notifications, tray tooltip and menu). One of `en`, `zh-CN`, `hi`, `es`, `fr`,
+`ar`, `bn`, `pt-BR`, `ru`, `ur`; an unknown value is rejected like any other enum. Presentation
+only: it never changes what is measured.
 `app-core` plans them from snapshot changes and the shell shows them; title and body are
-ready-made pt-BR text and carry no path, key or raw error.
+ready-made localized text and carry no path, key or raw error.
 
 - Window ran out: a fresh, non-expired window of a `ready` view goes from some availability to
   none. The first snapshot after start never notifies.

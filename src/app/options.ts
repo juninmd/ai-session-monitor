@@ -1,6 +1,6 @@
 import type { Option } from '../components/forms/fields';
 import { t } from '../i18n';
-import { formatInterval } from '../i18n/format';
+import { formatInterval, formatList, formatSeconds } from '../i18n/format';
 
 /**
  * Presets clipped to the backend's range (LIMITS), always including both ends and the current
@@ -37,7 +37,7 @@ const THRESHOLD_PRESETS: readonly (readonly number[])[] = [[80, 95], [90]];
 export function thresholdOptions(current: readonly number[]): Option<string>[] {
   const preset = (list: readonly number[]) => ({
     value: thresholdKey(list),
-    label: list.map(percentLabel).join(' e '),
+    label: formatList(list.map(percentLabel)),
   });
   const options: Option<string>[] = [
     { value: 'off', label: t('settings.alert_off') },
@@ -54,5 +54,5 @@ export function thresholdOptions(current: readonly number[]): Option<string>[] {
 }
 
 export const intervalLabel = formatInterval;
-export const secondsLabel = (n: number) => `${n} s`;
+export const secondsLabel = formatSeconds;
 export const percentLabel = (n: number) => `${n}%`;

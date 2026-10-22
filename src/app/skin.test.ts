@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { applySkin, loadSkin, SKINS } from './skin';
+import { applySkin, loadSkin, skinOptions } from './skin';
 
 afterEach(() => {
   window.localStorage.clear();
@@ -8,7 +8,7 @@ afterEach(() => {
 
 describe('skins', () => {
   it('offers the Canto palettes and the system look', () => {
-    expect(SKINS.map((skin) => skin.id)).toEqual([
+    expect(skinOptions().map((skin) => skin.id)).toEqual([
       'sistema',
       'padrao',
       'hueco-mundo',

@@ -15,7 +15,7 @@ export function summarySentences(burndown: Burndown, nowSecs: number): string[] 
         }),
   ];
   if (past.length > 0) {
-    const peaks = past.map((curve) => formatPercent(curve.peakPct)).join(', ');
+    const peaks = past.map((curve) => formatPercent(curve.peakPct)).join(t('list.sep'));
     sentences.push(
       past.length === 1
         ? t('history.past_one', { peaks })

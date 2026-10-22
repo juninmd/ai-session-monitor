@@ -109,7 +109,9 @@ second surface (settings window, onboarding) or more than ~15 components.
 
 ### D10. Language and units
 
-The UI is pt-BR only, through a message catalog so a second language is a data change. Code,
+The UI is localized through message catalogs (one per locale, English as the master and the
+fallback; see AGENTS.md, "Languages"): the ten most spoken languages, English by default. It began
+pt-BR only. Code,
 identifiers, comments and commits are English. Time to reset is the hero number (hours and
 minutes; weeks as hours or days+hours by setting); pace/runway is derived (`available / burn
 rate`) and shown only when the window is old enough to extrapolate.

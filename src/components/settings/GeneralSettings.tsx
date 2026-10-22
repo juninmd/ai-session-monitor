@@ -29,28 +29,28 @@ const patch = (settings: Settings, change: Partial<General>): Settings => ({
   general: { ...settings.general, ...change },
 });
 
-const TIME_OPTIONS: readonly Option<TimeFormat>[] = [
+const timeOptions = (): readonly Option<TimeFormat>[] => [
   { value: 'hm', label: t('settings.time_hm') },
   { value: 'colon', label: t('settings.time_colon') },
   { value: 'decimal', label: t('settings.time_decimal') },
 ];
 
-const WEEK_OPTIONS: readonly Option<WeekFormat>[] = [
+const weekOptions = (): readonly Option<WeekFormat>[] => [
   { value: 'hours', label: t('settings.week_hours') },
   { value: 'days_hours', label: t('settings.week_days_hours') },
 ];
 
-const QUOTA_OPTIONS: readonly Option<'available' | 'used'>[] = [
+const quotaOptions = (): readonly Option<'available' | 'used'>[] => [
   { value: 'available', label: t('settings.show_available') },
   { value: 'used', label: t('settings.show_used_opt') },
 ];
 
-const DENSITY_OPTIONS: readonly Option<'comfortable' | 'compact'>[] = [
+const densityOptions = (): readonly Option<'comfortable' | 'compact'>[] => [
   { value: 'comfortable', label: t('settings.density_comfortable') },
   { value: 'compact', label: t('settings.density_compact') },
 ];
 
-const TRAY_OPTIONS: readonly Option<HarnessId | 'lowest'>[] = [
+const trayOptions = (): readonly Option<HarnessId | 'lowest'>[] => [
   { value: 'lowest', label: t('settings.tray_lowest') },
   ...TAB_ORDER.map((id) => ({ value: id, label: harnessName(id) })),
 ];
@@ -94,7 +94,7 @@ export function GeneralSettings() {
           label={t('settings.tray_source')}
           hint={t('settings.tray_source_hint')}
           value={g.traySource ?? 'lowest'}
-          options={TRAY_OPTIONS}
+          options={trayOptions()}
           apply={(current, source) =>
             patch(current, { traySource: source === 'lowest' ? null : source })
           }
@@ -103,7 +103,7 @@ export function GeneralSettings() {
           id="set-show-used"
           legend={t('settings.show_used')}
           value={g.showUsed ? 'used' : 'available'}
-          options={QUOTA_OPTIONS}
+          options={quotaOptions()}
           apply={(current, mode) => patch(current, { showUsed: mode === 'used' })}
         />
         <SkinSetting />
@@ -111,21 +111,21 @@ export function GeneralSettings() {
           id="set-density"
           legend={t('settings.density')}
           value={g.compact ? 'compact' : 'comfortable'}
-          options={DENSITY_OPTIONS}
+          options={densityOptions()}
           apply={(current, mode) => patch(current, { compact: mode === 'compact' })}
         />
         <SettingSegmented
           id="set-time-format"
           legend={t('settings.time_format')}
           value={g.timeFormat}
-          options={TIME_OPTIONS}
+          options={timeOptions()}
           apply={(current, timeFormat) => patch(current, { timeFormat })}
         />
         <SettingSegmented
           id="set-week-format"
           legend={t('settings.week_format')}
           value={g.weekFormat}
-          options={WEEK_OPTIONS}
+          options={weekOptions()}
           apply={(current, weekFormat) => patch(current, { weekFormat })}
         />
       </section>

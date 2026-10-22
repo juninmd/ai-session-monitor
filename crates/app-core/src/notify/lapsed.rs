@@ -50,7 +50,10 @@ pub(crate) fn lapsed_resets(
     }
     waiting(before)
         .filter(|&(id, window, at)| at <= now_secs && still_out(now, id, &window.id, at))
-        .map(|(id, window, at)| ((id, window.id.clone(), at), text::window_lapsed(id, window)))
+        .map(|(id, window, at)| {
+            let note = text::window_lapsed(settings.general.language, id, window);
+            ((id, window.id.clone(), at), note)
+        })
         .collect()
 }
 

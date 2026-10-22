@@ -186,12 +186,12 @@ function AppBody({ backend }: { backend: Backend }) {
   const copySummary = useCallback((text: string) => {
     const written = navigator.clipboard?.writeText(text);
     if (written === undefined) {
-      setNotice('Não foi possível copiar o resumo.');
+      setNotice(t('copy.failed'));
       return;
     }
     void written.then(
-      () => setNotice('Resumo das fontes copiado para a área de transferência.'),
-      () => setNotice('Não foi possível copiar o resumo.'),
+      () => setNotice(t('copy.done')),
+      () => setNotice(t('copy.failed')),
     );
   }, []);
   const commands = useCommands({
