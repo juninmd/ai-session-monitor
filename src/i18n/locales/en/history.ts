@@ -1,0 +1,38 @@
+// Quota history: the "History" section of a panel and its switch in the settings.
+export const historyMessages = {
+  'history.title': 'History',
+  'history.window': 'Window',
+  'history.copy_csv': 'Copy readings as CSV',
+  'history.copied': 'Readings copied as CSV.',
+  'history.copy_failed': 'Could not copy the readings.',
+  'history.loading': 'Loading history',
+  'history.failed': 'Could not load the history right now.',
+  'history.empty': 'No history yet. Readings appear here as the monitor runs.',
+  'history.chart_title': '{title} usage over the window',
+  'history.chart_desc':
+    'Horizontal: from the start of the window to the reset. Vertical: usage from 0 to 100%. The bold line is the current window and the faint ones are earlier windows.',
+  'history.axis_start': 'start',
+  'history.axis_end': 'reset',
+  'history.label_current': 'current {pct}',
+  'history.label_past': 'earlier',
+  'history.peak_now': 'Peak of {pct} {when} in this window.',
+  'history.no_current': 'No readings in this window yet.',
+  'history.past_one': 'Previous window: peak of {peaks}.',
+  'history.past_many': '{n} previous windows: peaks of {peaks}.',
+  'history.table_toggle': 'View as table',
+  'history.table_caption': 'Usage peaks by window',
+  'history.col_reset': 'Reset',
+  'history.col_peak': 'Peak',
+  'history.col_readings': 'Readings',
+  'history.row_current': '{when} (current)',
+
+  'settings.history': 'Usage history',
+  'settings.history_enabled': 'Keep usage history',
+  'settings.history_hint':
+    'Saves only percentages and times for each window on this computer, for 35 days. Nothing leaves here. Turning it off stops recording; use the button below to erase.',
+  'settings.history_clear': 'Clear history',
+  'settings.history_clear_confirm': 'Erase all saved history? This cannot be undone.',
+  'settings.history_clear_yes': 'Erase',
+  'settings.history_clear_no': 'Cancel',
+  'settings.history_cleared': 'History erased.',
+} as const satisfies Record<string, string>;

@@ -2,7 +2,7 @@
 
 Windows-first system-tray app (Tauri 2 + Vite + React + TypeScript, Rust workspace) that shows how
 much of each AI coding tool's session is still available: Claude Code, Codex, Antigravity,
-OpenCode, Kimi Code, z.ai, OpenRouter, DeepSeek, DeepInfra, Moonshot, Novita, Ollama Cloud, MiniMax and a parametrizable LiteLLM connection. UI language is pt-BR; code, identifiers,
+OpenCode, Kimi Code, z.ai, OpenRouter, DeepSeek, DeepInfra, Moonshot, Novita, Ollama Cloud, MiniMax and a parametrizable LiteLLM connection. The UI speaks the ten most spoken languages (English by default, `general.language`); code, identifiers,
 comments and commits are English. Decisions: `docs/adr/0001-architecture.md`. Wire contract:
 `docs/ipc.md`. Data sources and trust levels: `docs/data-sources.md`.
 
@@ -53,7 +53,7 @@ node scripts/soak.mjs crates tauri,keyring [days]          # same, for crates
 1. Change `crates/usage-model`, regenerate the goldens (command above), commit the JSON diff.
 2. Mirror it in `src/lib/contract/*.ts` (strict Zod: an unknown field fails parsing) and, for status
    rules, in `src/lib/usage.ts`. `contract/status-vectors.json` is hand-written and shared by both.
-3. A new `ErrorCode` also needs `contract/error-codes.json`, a pt-BR message in `src/i18n`, and an
+3. A new `ErrorCode` also needs `contract/error-codes.json`, an English message in `src/i18n/locales/en` (and the other locales, see "Languages"), and an
    action mapping. A new notice code needs a message in the UI catalog (`docs/ipc.md` lists them).
 4. A new IPC command needs `contract/ipc-commands.json`, an `allow-<command>` permission and an
    entry in `capabilities/default.json`; a test fails if these drift.
@@ -75,6 +75,26 @@ node scripts/soak.mjs crates tauri,keyring [days]          # same, for crates
   pnpm denies install scripts (`onlyBuiltDependencies: []`). Do not hand-edit lockfiles.
 - No `unsafe` (workspace-wide `forbid`). `unwrap` is denied outside tests; `expect` and `print!`
   warn. Files stay under 300 lines.
+
+## Languages
+
+- Ten locales: `en` (default and fallback), `zh-CN`, `hi`, `es`, `fr`, `ar`, `bn`, `pt-BR`, `ru`, `ur`;
+  `ar` and `ur` are RTL (`dir` is set on the document, so CSS stays logical-property based).
+  The choice is `settings.general.language` (Rust `Language`, Zod `LanguageSchema`) and is mirrored
+  into `src/i18n/locale.ts`; `t()` falls back to English key by key.
+- A message lives in `src/i18n/locales/<tag>/<partial>.ts`, same partials and keys in every locale
+  (English is the master: its keys are `MessageKey`). One whole sentence per key with `{name}`
+  placeholders, never concatenated fragments; counts go through `tn()` with `key.one|few|many|other`
+  (`key.other` always). No `t()` at module scope: the language changes at runtime (App re-keys the
+  home on a language change). Numerals stay Latin in every language (`-u-nu-latn`).
+- `src/i18n/locales.test.ts` checks every locale against English (keys, placeholders, plural
+  forms). The Vitest setup pins pt-BR (`pinLocale`), so the older tests keep asserting Portuguese;
+  a test of another language calls `releaseLocale()`/`setLocale()`.
+- Rust text (notifications, tray tooltip and menu, startup toasts) is in
+  `crates/app-core/src/i18n/lang_<tag>.rs`, one `Messages` struct per language; a test checks that
+  every language keeps the placeholders of every field. The tray text is relabelled when the
+  language changes. A startup failure happens before settings load, so that toast is English.
+- The theme (skin) is a separate, webview-only choice (`src/styles/skins.css`).
 
 ## Gotchas
 

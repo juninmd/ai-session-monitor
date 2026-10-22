@@ -1,0 +1,209 @@
+// First-run connection surfaces: consent cards, secret fields, OpenCode and LiteLLM forms.
+export const setupMessages = {
+  'consent.skip': 'Не сейчас',
+  'consent.details': 'Что будет прочитано',
+
+  'claude.connect.title': 'Подключение к Claude Code',
+  'claude.connect.lead':
+    'Монитор добавляет небольшую команду в строку состояния Claude Code. Она сохраняет в локальный файл только проценты лимитов (5 часов и неделя). Данные для входа не читаются.',
+  'claude.connect.detail':
+    'Изменяет settings.json Claude Code с резервной копией и объединяет вашу текущую строку состояния со своей. Записывает только лимиты в %LOCALAPPDATA%. Без сети и без токенов. Работает с аккаунтами Pro и Max. Числа появляются после первого ответа в сеансе и обновляются, только пока Claude Code открыт.',
+  'claude.connect.allow': 'Установить команду',
+  'claude.connect.tip':
+    'Совет: Windows прячет новые значки в меню скрытых значков. Перетащите значок монитора на панель задач, чтобы он был всегда на виду.',
+
+  'codex.connect.title': 'Подключение к Codex',
+  'codex.connect.lead':
+    'Монитор запускает установленный здесь сервер приложения codex и узнаёт, сколько осталось от 5-часового окна и недели.',
+  'codex.connect.detail':
+    'Запускает программу codex на вашем компьютере, только для чтения. Данные не покидают этот компьютер, а приложение не трогает файл входа Codex. OpenAI считает сервер приложения экспериментальным, поэтому формат может меняться между версиями.',
+  'codex.connect.allow': 'Разрешить чтение',
+
+  'antigravity.connect.title': 'Подключение к Antigravity',
+  'antigravity.connect.lead':
+    'Квота берётся из установленного agy (CLI) или локального сервера IDE. Этот способ неофициальный и может перестать работать после обновления Antigravity.',
+  'antigravity.connect.detail':
+    'С вашего разрешения монитор может запускать установленный agy только для чтения /usage (без расхода токенов и без чтения данных для входа) и/или читать командную строку сервера IDE, чтобы получить локальный токен сеанса; обращается он только к 127.0.0.1. Ничего не записывается на диск и не отправляется в интернет.',
+  'antigravity.connect.allow': 'Разрешить локальное чтение',
+
+  'shim.title': 'Команда строки состояния',
+  'shim.state.not_installed': 'Не установлена',
+  'shim.state.installed': 'Установлена',
+  'shim.state.installed_chained': 'Установлена, объединена с вашей строкой состояния',
+  'shim.state.foreign': 'Используется другая строка состояния',
+  'shim.state.outdated': 'Устарела: исполняемый файл не найден',
+  'shim.state.unreadable': 'settings.json не читается',
+  'shim.hint.foreign':
+    'После установки ваша текущая строка состояния продолжит работать: монитор объединит её со своей.',
+  'shim.hint.unreadable':
+    'Монитор не трогает файл, который не может прочитать. Исправьте settings.json и проверьте снова.',
+  'shim.path': 'Файл: {path}',
+  'shim.install': 'Установить команду',
+  'shim.reinstall': 'Переустановить команду',
+  'shim.uninstall': 'Удалить команду',
+  'shim.recheck': 'Проверить снова',
+  'shim.loading': 'Проверка Claude Code',
+
+  'secret.saved': 'Ключ сохранён',
+  'secret.not_saved': 'Ключ не сохранён',
+  'secret.placeholder': 'Вставьте ключ',
+  'secret.placeholder_keep': 'Оставьте пустым, чтобы сохранить текущий ключ',
+  'secret.hint':
+    'Хранится в Диспетчере учётных данных Windows и никогда не показывается в интерфейсе.',
+  'secret.save': 'Сохранить ключ',
+  'secret.clear': 'Удалить ключ',
+  'secret.empty': 'Вставьте ключ API.',
+  'secret.saved_ok': 'Ключ сохранён.',
+  'secret.cleared_ok': 'Ключ удалён.',
+
+  'opencode.title': 'Подключение к OpenCode Go',
+  'opencode.lead':
+    'Вставьте ключ API OpenCode Go, чтобы видеть реальные окна (5 часов, неделя и месяц). Без ключа доступна только локальная оценка расхода.',
+  'opencode.key_label': 'Ключ API OpenCode Go',
+  'opencode.console': 'Открыть консоль OpenCode Go',
+  'opencode.billing': 'Открыть биллинг Zen',
+  'opencode.zen_note': 'У баланса Zen (предоплата) нет API: смотрите панель биллинга.',
+  'opencode.local_label': 'Локальная оценка (только этот ПК)',
+  'opencode.local_hint':
+    'Открывает базу данных OpenCode только для чтения и суммирует лишь стоимость и токены по прайс-листу. Это не реальная квота.',
+  'opencode.data_dir': 'Папка данных OpenCode',
+  'opencode.data_dir_hint': 'Оставьте пустым, чтобы использовать папку по умолчанию.',
+  'opencode.save_settings': 'Сохранить папку',
+
+  'kimi.title': 'Подключение к Kimi Code',
+  'kimi.lead':
+    'Вставьте ключ API Kimi Code, чтобы видеть квоту тарифа: 5-часовое окно, неделю и итог за месяц, если тариф их сообщает.',
+  'kimi.detail':
+    'Неофициальное чтение: API использования не документирован и может измениться без предупреждения. Ключ отправляется только на api.kimi.com и хранится в Диспетчере учётных данных Windows. Cookie и данные для входа из других инструментов не используются. Ключ с открытой платформы Moonshot относится к другому продукту и здесь не работает.',
+  'kimi.key_label': 'Ключ API Kimi Code',
+  'kimi.console': 'Открыть консоль Kimi Code',
+  'kimi.note':
+    'Неофициальное чтение API использования Kimi Code. Неделя и месяц отображаются, только если тариф их сообщает.',
+
+  'zai.title': 'Подключение к z.ai',
+  'zai.lead':
+    'Вставьте ключ API тарифа GLM Coding, чтобы видеть 5-часовое окно, неделю и месячную квоту инструментов MCP.',
+  'zai.detail':
+    'Неофициальное чтение: API квот не документирован и может измениться без предупреждения. Ключ отправляется только на api.z.ai и хранится в Диспетчере учётных данных Windows. Cookie и данные для входа из других инструментов не используются. Аккаунты BigModel (open.bigmodel.cn) не читаются.',
+  'zai.key_label': 'Ключ API z.ai',
+  'zai.console': 'Открыть ключи z.ai',
+  'zai.note': 'Неофициальное чтение API квот тарифа GLM Coding на глобальном сервере (api.z.ai).',
+
+  'openrouter.title': 'Подключение к OpenRouter',
+  'openrouter.lead':
+    'Вставьте ключ API OpenRouter, чтобы видеть лимит расходов ключа, расход и, если ключ это позволяет, баланс кредитов.',
+  'openrouter.detail':
+    'Официальное чтение через документированный API OpenRouter. Ключ отправляется только на openrouter.ai и хранится в Диспетчере учётных данных Windows. Для баланса кредитов нужен ключ управления; с обычным ключом видны только лимит ключа и расход.',
+  'openrouter.key_label': 'Ключ API OpenRouter',
+  'openrouter.console': 'Открыть ключи OpenRouter',
+  'openrouter.note':
+    'Официальное чтение API OpenRouter. Без лимита на ключе процента нет, только расход. Баланс виден только с ключом управления.',
+
+  'deepseek.title': 'Подключение к DeepSeek',
+  'deepseek.lead':
+    'Вставьте ключ API DeepSeek, чтобы видеть баланс аккаунта в каждой валюте, где есть средства.',
+  'deepseek.detail':
+    'Официальное чтение через документированный API DeepSeek. Ключ отправляется только на api.deepseek.com и хранится в Диспетчере учётных данных Windows. У баланса нет лимита и времени сброса, поэтому процента нет; юани и доллары никогда не складываются.',
+  'deepseek.key_label': 'Ключ API DeepSeek',
+  'deepseek.console': 'Открыть ключи DeepSeek',
+  'deepseek.note':
+    'Официальное чтение API баланса DeepSeek. Это деньги, а не квота: ни процента, ни сброса нет.',
+
+  'deepinfra.title': 'Подключение к DeepInfra',
+  'deepinfra.lead':
+    'Вставьте ключ API DeepInfra, чтобы видеть баланс, лимит расходов и расходы за этот месяц.',
+  'deepinfra.detail':
+    'Официальное чтение через API биллинга DeepInfra. Ключ отправляется только на api.deepinfra.com и хранится в Диспетчере учётных данных Windows. Без лимита расходов процента нет, только суммы в долларах.',
+  'deepinfra.key_label': 'Ключ API DeepInfra',
+  'deepinfra.console': 'Открыть ключи DeepInfra',
+  'deepinfra.note':
+    'Официальное чтение API биллинга DeepInfra. Значения читаются как доллары; без лимита расходов процента нет.',
+
+  'moonshot.title': 'Подключение к Moonshot',
+  'moonshot.lead':
+    'Вставьте ключ API платформы Moonshot (platform.moonshot.ai), чтобы видеть баланс аккаунта.',
+  'moonshot.detail':
+    'Официальное чтение через документированный API баланса Moonshot. Ключ отправляется только на api.moonshot.ai и хранится в Диспетчере учётных данных Windows. Ключи платформы kimi.com — отдельные, здесь они не работают. Баланс — это деньги: процента и сброса нет.',
+  'moonshot.key_label': 'Ключ API Moonshot',
+  'moonshot.console': 'Открыть ключи Moonshot',
+  'moonshot.note':
+    'Официальное чтение API баланса Moonshot, в долларах. Денежный баланс может стать отрицательным, если есть задолженность.',
+
+  'novita.title': 'Подключение к Novita',
+  'novita.lead':
+    'Вставьте ключ API Novita, чтобы видеть баланс аккаунта, кредитный лимит и ожидающие списания.',
+  'novita.detail':
+    'Официальное чтение через документированный API биллинга Novita. Ключ отправляется только на api.novita.ai и хранится в Диспетчере учётных данных Windows. Баланс — это деньги: процента и сброса нет.',
+  'novita.key_label': 'Ключ API Novita',
+  'novita.console': 'Открыть ключи Novita',
+  'novita.note':
+    'Официальное чтение API баланса Novita, в долларах. Баланс может стать отрицательным, если есть задолженность.',
+
+  'ollama.title': 'Подключение к Ollama Cloud',
+  'ollama.lead':
+    'Вставьте ключ API Ollama Cloud, чтобы видеть включённые в тариф кредиты и купленный баланс.',
+  'ollama.detail':
+    'Официальное чтение через документированный API баланса Ollama Cloud. Создайте ключ на ollama.com/settings/keys: ключ подписки из CLI никогда не читается. Ключ отправляется только на ollama.com и хранится в Диспетчере учётных данных Windows. Формат ответа зависит от тарифа (месячные кредиты или окна сеанса и недели).',
+  'ollama.key_label': 'Ключ API Ollama Cloud',
+  'ollama.console': 'Открыть ключи Ollama Cloud',
+  'ollama.note':
+    'Официальное чтение API баланса Ollama Cloud. Текущие тарифы показывают кредиты в долларах; прежние — проценты сеанса и недели.',
+
+  'minimax.title': 'Подключение к MiniMax',
+  'minimax.lead':
+    'Вставьте ключ MiniMax Token Plan, чтобы видеть квоты по моделям: текущий интервал и неделю.',
+  'minimax.detail':
+    'Неофициальное чтение: у маршрута квоты Token Plan нет опубликованной схемы, и он может измениться без предупреждения. Ключ отправляется только на api.minimax.io (глобальный сервер) и хранится в Диспетчере учётных данных Windows. В первый раз сравните числа с консолью MiniMax.',
+  'minimax.key_label': 'Ключ MiniMax Token Plan',
+  'minimax.console': 'Открыть ключи MiniMax',
+  'minimax.note':
+    'Неофициальное чтение квоты MiniMax Token Plan по моделям. Модель без квоты в тарифе не показывается.',
+
+  'litellm.title': 'Подключение к LiteLLM',
+  'litellm.title_edit': 'Подключение LiteLLM',
+  'litellm.url': 'URL сервера',
+  'litellm.url_placeholder': 'https://litellm.yourcompany.com',
+  'litellm.url_hint': 'Нужен HTTPS. HTTP принимается только для localhost.',
+  'litellm.url_required': 'Укажите URL сервера.',
+  'litellm.url_invalid': 'Укажите полный URL, например https://litellm.yourcompany.com.',
+  'litellm.url_http': 'Используйте https://. HTTP работает только для localhost.',
+  'litellm.url_parts': 'Удалите из URL имя пользователя, пароль, параметры запроса и #.',
+  'litellm.key': 'Ключ API',
+  'litellm.key_required': 'Вставьте ключ API LiteLLM.',
+  'litellm.key_rebind':
+    'Сохранённый ключ действует только для текущего подключения. Раз оно изменилось, вставьте ключ снова.',
+  'litellm.scope': 'Что измерять',
+  'litellm.scope.key': 'Этот ключ',
+  'litellm.scope.user': 'Пользователь',
+  'litellm.scope.team': 'Команда',
+  'litellm.entity.user': 'ID пользователя',
+  'litellm.entity.team': 'ID команды',
+  'litellm.entity_required': 'Укажите ID.',
+  'litellm.advanced': 'Дополнительно',
+  'litellm.auth_header': 'Заголовок аутентификации',
+  'litellm.auth_header_hint':
+    'Меняйте, только если ваш прокси использует для ключа собственный заголовок.',
+  'litellm.auth_header_invalid': 'Допустимы только латинские буквы, цифры и дефисы.',
+  'litellm.poll': 'Обновлять каждые',
+  'litellm.timeout': 'Тайм-аут',
+  'litellm.tls': 'Сертификат TLS',
+  'litellm.tls.system': 'Из Windows',
+  'litellm.tls.custom_ca': 'Свой центр сертификации',
+  'litellm.tls.insecure': 'Не проверять',
+  'litellm.pem': 'Файл центра сертификации (.pem)',
+  'litellm.pem_placeholder': 'C:\\certs\\ca.pem',
+  'litellm.pem_required': 'Укажите путь к файлу .pem.',
+  'litellm.insecure_host': 'Сервер без проверки',
+  'litellm.insecure_host_hint': 'Сертификат не проверяется только для этого сервера.',
+  'litellm.insecure_host_required': 'Укажите сервер.',
+  'litellm.insecure_warning':
+    'Соединение не будет проверяться, и ключ могут перехватить. Используйте только в доверенной сети.',
+  'litellm.insecure_confirm': 'Я понимаю риск и хочу игнорировать сертификат этого сервера.',
+  'litellm.insecure_confirm_required': 'Подтвердите, чтобы продолжить без проверки сертификата.',
+  'litellm.save': 'Сохранить и подключить',
+  'litellm.saving': 'Сохранение…',
+  'litellm.saved': 'Настройки сохранены. Читаем данные сервера…',
+  'litellm.edit': 'Изменить подключение',
+  'litellm.delay_note':
+    'Расход и сброс на сервере могут отставать примерно до 10 мин. Лимит может быть задан для пользователя или команды, а не только для ключа.',
+} as const satisfies Record<string, string>;

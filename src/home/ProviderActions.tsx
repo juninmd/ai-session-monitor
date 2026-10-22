@@ -1,15 +1,27 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useAsyncAction } from '../app/useAsyncAction';
 import type { ViewContext } from '../app/windowModel';
+import { t, tn } from '../i18n';
 import type { HarnessView } from '../lib/contract';
 import { PreviewActionsContext, type ResetOutcome, resetCreditCount } from './actionModel';
 
-const outcomeText: Record<ResetOutcome, string> = {
-  reset: 'Reset simulado. Cotas e saldo atualizados na prévia.',
-  noCredit: 'Nenhum reset disponível. O saldo mudou; atualize a leitura.',
-  nothingToReset: 'Não há cota a renovar na prévia.',
-  unavailable: 'A ação não está disponível nesta leitura.',
-};
+const outcomeText = (outcome: ResetOutcome): string => t(`provider_actions.outcome.${outcome}`);
+
+// The command stays a <code> element inside a sentence whose word order is the language's.
+const COMMAND_MARK = '\u0001';
+
+function LowPriorityHint() {
+  const [before = '', after = ''] = t('provider_actions.low_priority_hint', {
+    command: COMMAND_MARK,
+  }).split(COMMAND_MARK);
+  return (
+    <p>
+      {before}
+      <code>/low-priority</code>
+      {after}
+    </p>
+  );
+}
 
 /** Compact, explicit actions; this component is only mounted inside the fabricated preview. */
 export function ProviderActions({ view, ctx }: { view: HarnessView; ctx: ViewContext }) {
@@ -47,9 +59,7 @@ export function ProviderActions({ view, ctx }: { view: HarnessView; ctx: ViewCon
     <div className="preview-provider-actions">
       {canReset && (
         <div className="preview-action-row">
-          <span>
-            {count} {count === 1 ? 'reset disponível' : 'resets disponíveis'}
-          </span>
+          <span>{tn('provider_actions.resets', count)}</span>
           <button
             ref={trigger}
             className="link-btn"
@@ -61,13 +71,13 @@ export function ProviderActions({ view, ctx }: { view: HarnessView; ctx: ViewCon
               setConfirming(true);
             }}
           >
-            Usar reset
+            {t('provider_actions.use_reset')}
           </button>
         </div>
       )}
       {confirming && canReset && (
-        <fieldset className="preview-reset-confirm" aria-label="Confirmar reset de cota">
-          <p>Usar 1 reset do Codex? O consumo é definitivo. Nesta prévia, a ação é simulada.</p>
+        <fieldset className="preview-reset-confirm" aria-label={t('provider_actions.confirm_aria')}>
+          <p>{t('provider_actions.confirm_body')}</p>
           <div className="preview-action-row">
             <button
               className="btn"
@@ -75,7 +85,7 @@ export function ProviderActions({ view, ctx }: { view: HarnessView; ctx: ViewCon
               disabled={reset.pending}
               onClick={() => void reset.run()}
             >
-              Confirmar reset
+              {t('provider_actions.confirm')}
             </button>
             <button
               className="link-btn"
@@ -83,41 +93,33 @@ export function ProviderActions({ view, ctx }: { view: HarnessView; ctx: ViewCon
               disabled={reset.pending}
               onClick={() => setConfirming(false)}
             >
-              Cancelar
+              {t('provider_actions.cancel')}
             </button>
           </div>
         </fieldset>
       )}
       {result && (
         <p ref={feedback} role="status" tabIndex={-1}>
-          {outcomeText[result]}
+          {outcomeText(result)}
         </p>
       )}
-      {reset.error && <p role="alert">Não foi possível simular o reset. Tente novamente.</p>}
+      {reset.error && <p role="alert">{t('provider_actions.reset_failed')}</p>}
       {canCopy && (
         <>
           <div className="preview-action-row">
-            <span>Oferta de baixa prioridade · prévia</span>
+            <span>{t('provider_actions.low_priority_offer')}</span>
             <button
               className="link-btn"
               type="button"
               disabled={copy.pending}
               onClick={() => void copy.run()}
             >
-              Copiar /low-priority
+              {t('provider_actions.copy_command')}
             </button>
           </div>
-          <p>
-            Use <code>/low-priority</code> na sessão interativa que ofereceu esse modo.
-          </p>
-          {copied && (
-            <p role="status">Comando copiado. O modo ainda precisa ser ativado no Claude Code.</p>
-          )}
-          {copy.error && (
-            <p role="alert">
-              Não foi possível copiar. Selecione o comando acima e copie manualmente.
-            </p>
-          )}
+          <LowPriorityHint />
+          {copied && <p role="status">{t('provider_actions.copied')}</p>}
+          {copy.error && <p role="alert">{t('provider_actions.copy_failed')}</p>}
         </>
       )}
     </div>

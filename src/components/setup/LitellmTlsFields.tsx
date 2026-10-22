@@ -12,7 +12,7 @@ interface TlsFieldsProps {
   update: (patch: Partial<LitellmDraft>) => void;
 }
 
-const OPTIONS: readonly Option<TlsMode['mode']>[] = [
+const tlsOptions = (): readonly Option<TlsMode['mode']>[] => [
   { value: 'system', label: t('litellm.tls.system') },
   { value: 'custom_ca', label: t('litellm.tls.custom_ca') },
   { value: 'insecure', label: t('litellm.tls.insecure') },
@@ -40,7 +40,7 @@ export function LitellmTlsFields({ draft, errors, update }: TlsFieldsProps) {
           name="litellm-tls"
           legend={t('litellm.tls')}
           value={draft.tlsMode}
-          options={OPTIONS}
+          options={tlsOptions()}
           onChange={pick}
         />
       </div>

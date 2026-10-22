@@ -138,6 +138,7 @@ pub struct RigBuilder {
 pub fn steady() -> Settings {
     let mut settings = Settings::default();
     settings.general.adaptive = false;
+    settings.general.language = usage_model::settings::Language::PtBr;
     settings.general.alert_thresholds.clear();
     settings
 }

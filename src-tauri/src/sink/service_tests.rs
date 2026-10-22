@@ -97,7 +97,8 @@ async fn an_unreadable_settings_file_reaches_the_user_as_one_toast_before_any_sn
         panic!("the first thing the user hears is the recovery notice");
     };
     assert_eq!(toast.kind, NotificationKind::SettingsRecovered);
-    assert_eq!(toast.title, "Configurações restauradas");
+    // The file could not be read, so the defaults (and their language, English) are in effect.
+    assert_eq!(toast.title, "Settings restored");
     assert!(toast.body.contains("settings.corrupt-"), "{}", toast.body);
     assert!(
         !toast.body.contains(&*run.dir.path().to_string_lossy()),

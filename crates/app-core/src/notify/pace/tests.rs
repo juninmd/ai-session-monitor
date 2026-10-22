@@ -1,3 +1,4 @@
+use usage_model::settings::Language;
 use usage_model::{HarnessView, UsageWindow, WindowKind};
 
 use super::*;
@@ -29,6 +30,7 @@ fn ready(used: f64, resets_at: i64) -> Snapshot {
 fn on() -> Settings {
     let mut settings = Settings::default();
     settings.general.notify_on_risk = true;
+    settings.general.language = Language::PtBr;
     settings
 }
 

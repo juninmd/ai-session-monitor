@@ -20,24 +20,24 @@ import type { HarnessView } from '../lib/contract';
 import { sheetOf } from './quotas';
 import { windowLabel } from './wording';
 
-const STATUS_WORD: Record<string, string> = {
-  ok: 'tranquilo',
-  warn: 'no limite',
-  crit: 'crítico',
-  out: 'esgotado',
-};
+// The renewal sentence keeps the duration as styled parts, placed where the language puts it.
+const DURATION_MARK = '\u0001';
 
 function AmountLine({ model }: { model: WindowModel }) {
   const amount = model.window.amount;
   if (amount === null) return null;
   const used = formatAmountValue(amount.used, amount.unit);
-  if (amount.limit === null) return <p className="nx-chip-amount">{used} gastos, sem teto</p>;
+  if (amount.limit === null)
+    return <p className="nx-chip-amount">{t('quota.amount.unlimited', { used })}</p>;
   return (
     <p className="nx-chip-amount">
-      {used} de {formatAmountValue(amount.limit, amount.unit)}
+      {t('quota.amount.of', { used, limit: formatAmountValue(amount.limit, amount.unit) })}
       <span className="muted">
         {' '}
-        · {formatAmountValue(Math.max(0, amount.limit - amount.used), amount.unit)} livres
+        ·{' '}
+        {t('quota.amount.free', {
+          free: formatAmountValue(Math.max(0, amount.limit - amount.used), amount.unit),
+        })}
       </span>
     </p>
   );
@@ -47,16 +47,23 @@ function RenewLine({ model, ctx }: { model: WindowModel; ctx: ViewContext }) {
   const when = resetMoment(model, ctx);
   if (model.expired) {
     return (
-      <p className="nx-chip-renew">{when === null ? 'reiniciou' : `reiniciou às ${when.text}`}</p>
+      <p className="nx-chip-renew">
+        {when === null
+          ? t('quota.renew.restarted')
+          : t('quota.renew.restarted_at', { time: when.text })}
+      </p>
     );
   }
   if (model.leftMin === null) {
     return <p className="nx-chip-renew">{t('window.reset_unknown_short')}</p>;
   }
   const parts = durationParts(model.leftMin, durationFormat(ctx.settings), model.long);
+  const [before = '', after = ''] = t('quota.renew.in', { duration: DURATION_MARK }).split(
+    DURATION_MARK,
+  );
   return (
     <p className="nx-chip-renew">
-      renova em{' '}
+      {before}
       {parts.map((part) => (
         <span key={part.u || 'n'}>
           <b>{part.n}</b>
@@ -64,6 +71,7 @@ function RenewLine({ model, ctx }: { model: WindowModel; ctx: ViewContext }) {
           {part.spaced ? ' ' : ''}
         </span>
       ))}
+      {after}
       {when !== null && <span className="muted"> · {when.label}</span>}
     </p>
   );
@@ -96,7 +104,7 @@ function WindowCard({
           {model.cadenceGuessed && <EstimateMark />}
           {label}
         </Heading>
-        {status !== null && <span className="nx-chip-status">{STATUS_WORD[status]}</span>}
+        {status !== null && <span className="nx-chip-status">{t(`quota.status.${status}`)}</span>}
         <span className="nx-chip-pct" data-status={status ?? 'none'}>
           {formatPercent(display.shown)}
         </span>
@@ -117,7 +125,9 @@ function WindowCard({
       {!silent && <AmountLine model={model} />}
       {!silent && <PaceLine model={model} ctx={ctx} className="pace nx-chip-pace" />}
       <span className="vh">
-        {model.leftMin === null ? '' : `${spokenDuration(model.leftMin)} até renovar.`}
+        {model.leftMin === null
+          ? ''
+          : t('quota.spoken_left', { duration: spokenDuration(model.leftMin) })}
       </span>
     </article>
   );

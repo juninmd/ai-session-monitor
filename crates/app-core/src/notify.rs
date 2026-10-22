@@ -36,7 +36,7 @@ pub struct Notification {
     pub kind: NotificationKind,
     pub harness: HarnessId,
     pub window_id: String,
-    /// Ready-to-show pt-BR text.
+    /// Ready-to-show text, in `settings.general.language`.
     pub title: String,
     pub body: String,
 }
@@ -66,10 +66,11 @@ pub fn plan(
             let (Some(was), Some(now)) = (was, available_pct(window)) else { continue };
             match (was > 0.0, now > 0.0) {
                 (true, false) if general.notify_on_out => {
-                    planned.push(text::window_out(view.id, window, now_secs));
+                    planned.push(text::window_out(general.language, view.id, window, now_secs));
                 }
                 (false, true) if general.notify_on_reset => {
                     planned.push(text::window_reset(
+                        general.language,
                         view.id,
                         window,
                         now,

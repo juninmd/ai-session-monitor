@@ -1,0 +1,38 @@
+// Quota history: the "History" section of a panel and its switch in the settings.
+export const historyMessages = {
+  'history.title': 'السجل',
+  'history.window': 'النافذة',
+  'history.copy_csv': 'نسخ القراءات بصيغة CSV',
+  'history.copied': 'تم نسخ القراءات بصيغة CSV.',
+  'history.copy_failed': 'تعذّر نسخ القراءات.',
+  'history.loading': 'جارٍ تحميل السجل',
+  'history.failed': 'تعذّر تحميل السجل الآن.',
+  'history.empty': 'لا يوجد سجل بعد. تظهر القراءات هنا أثناء عمل المراقب.',
+  'history.chart_title': 'استخدام {title} خلال النافذة',
+  'history.chart_desc':
+    'المحور الأفقي: من بداية النافذة إلى إعادة الضبط. المحور الرأسي: الاستخدام من 0 إلى 100%. الخط العريض هو النافذة الحالية والخطوط الباهتة هي النوافذ السابقة.',
+  'history.axis_start': 'البداية',
+  'history.axis_end': 'إعادة الضبط',
+  'history.label_current': 'الحالية {pct}',
+  'history.label_past': 'سابقة',
+  'history.peak_now': 'ذروة {pct} {when} في هذه النافذة.',
+  'history.no_current': 'لا توجد قراءات في هذه النافذة بعد.',
+  'history.past_one': 'النافذة السابقة: الذروة {peaks}.',
+  'history.past_many': '{n} نوافذ سابقة: الذروات {peaks}.',
+  'history.table_toggle': 'عرض كجدول',
+  'history.table_caption': 'ذروات الاستخدام لكل نافذة',
+  'history.col_reset': 'إعادة الضبط',
+  'history.col_peak': 'الذروة',
+  'history.col_readings': 'القراءات',
+  'history.row_current': '{when} (الحالية)',
+
+  'settings.history': 'سجل الاستخدام',
+  'settings.history_enabled': 'الاحتفاظ بسجل الاستخدام',
+  'settings.history_hint':
+    'يحفظ النسب المئوية وأوقات كل نافذة فقط على هذا الكمبيوتر لمدة 35 يومًا. لا يغادر شيء جهازك. إيقافه يوقف التسجيل؛ استخدم الزر أدناه للمسح.',
+  'settings.history_clear': 'مسح السجل',
+  'settings.history_clear_confirm': 'هل تريد مسح كل السجل المحفوظ؟ لا يمكن التراجع عن ذلك.',
+  'settings.history_clear_yes': 'مسح',
+  'settings.history_clear_no': 'إلغاء',
+  'settings.history_cleared': 'تم مسح السجل.',
+} as const satisfies Record<string, string>;

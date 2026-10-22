@@ -1,0 +1,38 @@
+// Quota history: the "History" section of a panel and its switch in the settings.
+export const historyMessages = {
+  'history.title': 'История',
+  'history.window': 'Окно',
+  'history.copy_csv': 'Копировать данные в CSV',
+  'history.copied': 'Данные скопированы в CSV.',
+  'history.copy_failed': 'Не удалось скопировать данные.',
+  'history.loading': 'Загрузка истории',
+  'history.failed': 'Сейчас не удаётся загрузить историю.',
+  'history.empty': 'Истории пока нет. Данные появятся здесь по мере работы монитора.',
+  'history.chart_title': '{title}: расход за окно',
+  'history.chart_desc':
+    'По горизонтали: от начала окна до сброса. По вертикали: расход от 0 до 100%. Жирная линия: текущее окно, бледные: прошлые окна.',
+  'history.axis_start': 'начало',
+  'history.axis_end': 'сброс',
+  'history.label_current': 'сейчас {pct}',
+  'history.label_past': 'ранее',
+  'history.peak_now': 'В этом окне пик {pct} {when}.',
+  'history.no_current': 'В этом окне пока нет данных.',
+  'history.past_one': 'Предыдущее окно: пик {peaks}.',
+  'history.past_many': 'Предыдущих окон: {n}, пики: {peaks}.',
+  'history.table_toggle': 'Показать таблицей',
+  'history.table_caption': 'Пики расхода по окнам',
+  'history.col_reset': 'Сброс',
+  'history.col_peak': 'Пик',
+  'history.col_readings': 'Замеры',
+  'history.row_current': '{when} (текущее)',
+
+  'settings.history': 'История расхода',
+  'settings.history_enabled': 'Хранить историю расхода',
+  'settings.history_hint':
+    'На этом компьютере хранятся только проценты и время по каждому окну, 35 дней. Ничего не передаётся наружу. Если выключить, запись прекратится; для удаления используйте кнопку ниже.',
+  'settings.history_clear': 'Очистить историю',
+  'settings.history_clear_confirm': 'Удалить всю сохранённую историю? Это действие необратимо.',
+  'settings.history_clear_yes': 'Удалить',
+  'settings.history_clear_no': 'Отмена',
+  'settings.history_cleared': 'История удалена.',
+} as const satisfies Record<string, string>;

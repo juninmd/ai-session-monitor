@@ -48,7 +48,14 @@ impl ThresholdState {
                 if told.is_none_or(|t| level > t) {
                     self.fired.insert(key, level);
                     if known {
-                        planned.push(text::threshold(view.id, window, level, used, now_secs));
+                        planned.push(text::threshold(
+                            settings.general.language,
+                            view.id,
+                            window,
+                            level,
+                            used,
+                            now_secs,
+                        ));
                     }
                 }
             }

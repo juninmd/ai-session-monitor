@@ -10,6 +10,7 @@ import {
   type ViewContext,
   type WindowModel,
 } from '../app/windowModel';
+import { t } from '../i18n';
 import { formatDuration, formatPercent } from '../i18n/format';
 import type { HarnessView, UsageWindow } from '../lib/contract';
 
@@ -43,14 +44,14 @@ export function compactQuota(view: HarnessView, window: UsageWindow, ctx: ViewCo
     name,
     shown,
     reading: model.expired
-      ? 'Expirou'
+      ? t('quota.reading.expired')
       : view.stale
-        ? 'Antigo'
+        ? t('quota.reading.stale')
         : shown === null
           ? '—'
           : formatPercent(shown),
     status: shown === null ? undefined : (model.status ?? undefined),
-    spoken: view.stale ? `${name}: leitura desatualizada.` : gaugeLabel(model, name),
+    spoken: view.stale ? t('quota.spoken_stale', { name }) : gaugeLabel(model, name),
     renewal: model.expired || view.stale ? '—' : (leftText(model, ctx) ?? '—'),
     model,
   };
@@ -71,11 +72,17 @@ export function compactForecast(view: HarnessView, model: WindowModel, ctx: View
   if (line === null) return null;
   const label =
     model.status === 'out'
-      ? 'Esgotado'
+      ? t('quota.forecast.out')
       : model.pace.kind === 'risk'
-        ? `Esgota em ${formatDuration(model.pace.runwayMin, durationFormat(ctx.settings), model.long)}`
+        ? t('quota.forecast.risk', {
+            duration: formatDuration(
+              model.pace.runwayMin,
+              durationFormat(ctx.settings),
+              model.long,
+            ),
+          })
         : model.pace.kind === 'fine'
-          ? 'Dura até renovar'
-          : 'Sem base para prever';
+          ? t('quota.forecast.fine')
+          : t('quota.forecast.unknown');
   return { ...line, label };
 }

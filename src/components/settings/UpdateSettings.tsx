@@ -5,6 +5,7 @@ import { useSettingsApi } from '../../app/settingsContext';
 import { useAsyncAction } from '../../app/useAsyncAction';
 import { type UpdateApi, UpdateContext, useUpdateState } from '../../app/useUpdateState';
 import { t } from '../../i18n';
+import { formatMegabytes } from '../../i18n/format';
 import { SettingSwitch } from '../forms/SettingControls';
 import { ActionError } from '../panel/ErrorActions';
 
@@ -72,12 +73,7 @@ function UpdateBody({ api }: { api: UpdateApi }) {
               ? { value: status.downloadedBytes, max: status.totalBytes }
               : {})}
           />
-          <span>
-            {(status.downloadedBytes / 1_048_576).toLocaleString('pt-BR', {
-              maximumFractionDigits: 1,
-            })}{' '}
-            MB
-          </span>
+          <span>{formatMegabytes(status.downloadedBytes)}</span>
         </div>
       )}
       {status?.notes && (

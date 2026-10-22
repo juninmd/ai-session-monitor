@@ -5,7 +5,9 @@
 use std::sync::{Arc, Mutex, MutexGuard, PoisonError};
 use std::time::{SystemTime, UNIX_EPOCH};
 
+use app_core::i18n::messages;
 use app_core::{EventSink, Notification, NotificationKind};
+use usage_model::settings::Language;
 use usage_model::status::Status;
 use usage_model::{HarnessId, Settings, Snapshot};
 
@@ -28,6 +30,8 @@ pub trait Effects: Send + Sync + 'static {
     fn icon_size(&self) -> u32;
     fn set_tray_icon(&self, size: u32, gauge: Gauge);
     fn set_tray_tooltip(&self, text: &str);
+    /// The language changed: the tray menu labels follow. The tooltip is re-rendered by the sink.
+    fn set_language(&self, _language: Language) {}
     fn toast(&self, notification: &Notification);
     /// Must not block: the caller may be the scheduler.
     fn sync_autostart(&self, enabled: bool, origin: Origin);
@@ -58,6 +62,7 @@ struct Latest {
 struct Applied {
     icon: Option<(u32, Option<u8>, Option<Status>)>,
     tooltip: Option<String>,
+    language: Option<Language>,
     autostart: AutostartSync,
 }
 
@@ -91,14 +96,15 @@ impl AutostartSync {
 
 /// The toast for a failed startup-entry update. app-core has no kind for a failure of the shell
 /// itself, and the toast shows only the title and the body.
-fn autostart_failure(wanted: bool) -> Notification {
-    let verb = if wanted { "ligar" } else { "desligar" };
+fn autostart_failure(language: Language, wanted: bool) -> Notification {
+    let m = messages(language);
+    let body = if wanted { m.autostart_on_failed } else { m.autostart_off_failed };
     Notification {
         kind: NotificationKind::SettingsRecovered,
         harness: HarnessId::Claude,
         window_id: String::new(),
         title: "AI Session Monitor".to_owned(),
-        body: format!("Não foi possível {verb} 'Iniciar com o Windows'."),
+        body: body.to_owned(),
     }
 }
 
@@ -139,15 +145,20 @@ impl<E: Effects> ShellSink<E> {
     fn adopt(&self, settings: &Settings, origin: Origin) {
         lock(&self.latest).settings = settings.clone();
         let wanted = settings.general.autostart;
-        let changed = {
+        let language = settings.general.language;
+        let (changed, language_changed) = {
             let mut applied = lock(&self.applied);
+            let language_changed = applied.language.replace(language) != Some(language);
             let changed = applied.autostart.sent.map(|(value, _)| value) != Some(wanted);
             if changed {
                 let sent = Some((wanted, origin));
                 applied.autostart = AutostartSync { sent, ..AutostartSync::default() };
             }
-            changed
+            (changed, language_changed)
         };
+        if language_changed {
+            self.effects.set_language(language);
+        }
         if changed {
             self.effects.sync_autostart(wanted, origin);
         }
@@ -160,7 +171,8 @@ impl<E: Effects> ShellSink<E> {
         let failed = self.effects.autostart_failed();
         let Some(resync) = lock(&self.applied).autostart.on_tick(failed) else { return };
         if resync.tell {
-            self.effects.toast(&autostart_failure(resync.wanted));
+            let language = lock(&self.latest).settings.general.language;
+            self.effects.toast(&autostart_failure(language, resync.wanted));
         }
         if resync.again {
             self.effects.sync_autostart(resync.wanted, resync.origin);

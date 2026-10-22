@@ -8,6 +8,7 @@ use tauri::image::Image;
 use tauri::tray::TrayIcon;
 use tauri::{AppHandle, Emitter};
 use tauri_plugin_notification::NotificationExt;
+use usage_model::settings::Language;
 use usage_model::{Settings, Snapshot};
 
 use crate::autostart::{Applier, Origin};
@@ -66,6 +67,10 @@ impl Effects for TauriEffects {
         if let Err(err) = tray.set_tooltip(Some(text)) {
             diag::warn("cannot update the tray tooltip", &err);
         }
+    }
+
+    fn set_language(&self, language: Language) {
+        tray::set_language(&self.app, language);
     }
 
     fn toast(&self, notification: &Notification) {

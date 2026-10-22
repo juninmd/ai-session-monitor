@@ -1,7 +1,8 @@
-//! Tray tooltip text in pt-BR, worded and formatted like the flyout. Windows cuts a tooltip at 127
+//! Tray tooltip text, in the user's language, worded and formatted like the flyout. Windows cuts a tooltip at 127
 //! UTF-16 units, so the text is the first of a few shrinking candidates that fits.
 
-use usage_model::settings::{GeneralSettings, TimeFormat, WeekFormat};
+use app_core::i18n::{self, Messages, fill, messages};
+use usage_model::settings::{GeneralSettings, Language, TimeFormat, WeekFormat};
 use usage_model::status::Status;
 use usage_model::{HarnessId, WindowKind};
 
@@ -16,32 +17,17 @@ const MIN_PER_DAY: u32 = 1440;
 const MIN_PER_WEEK: u32 = 10_080;
 
 pub fn harness_name(id: HarnessId) -> &'static str {
-    match id {
-        HarnessId::Claude => "Claude Code",
-        HarnessId::Codex => "Codex",
-        HarnessId::Antigravity => "Antigravity",
-        HarnessId::Opencode => "OpenCode",
-        HarnessId::Kimi => "Kimi Code",
-        HarnessId::Zai => "z.ai",
-        HarnessId::Openrouter => "OpenRouter",
-        HarnessId::Deepseek => "DeepSeek",
-        HarnessId::Deepinfra => "DeepInfra",
-        HarnessId::Moonshot => "Moonshot",
-        HarnessId::Novita => "Novita",
-        HarnessId::Ollama => "Ollama Cloud",
-        HarnessId::Minimax => "MiniMax",
-        HarnessId::Litellm => "LiteLLM",
-    }
+    i18n::harness_name(id)
 }
 
-fn window_name(kind: WindowKind) -> &'static str {
+fn window_name(m: &Messages, kind: WindowKind) -> &'static str {
     match kind {
-        WindowKind::FiveHour => "5 horas",
-        WindowKind::Weekly => "Semana",
-        WindowKind::Monthly => "Mês",
-        WindowKind::Daily => "Dia",
-        WindowKind::Budget => "Orçamento",
-        WindowKind::Other => "Janela",
+        WindowKind::FiveHour => m.tip_window_five_hour,
+        WindowKind::Weekly => m.tip_window_weekly,
+        WindowKind::Monthly => m.tip_window_monthly,
+        WindowKind::Daily => m.tip_window_daily,
+        WindowKind::Budget => m.tip_window_budget,
+        WindowKind::Other => m.tip_window_other,
     }
 }
 
@@ -55,11 +41,20 @@ fn format_percent(pct: f64) -> String {
 
 /// Same rules as `durationParts` in `src/i18n/format.ts`. `long` marks multi-day windows, which
 /// read as days and hours when asked to, and always beyond one week.
-pub fn format_duration(minutes: f64, time: TimeFormat, week: WeekFormat, long: bool) -> String {
+pub fn format_duration(
+    minutes: f64,
+    time: TimeFormat,
+    week: WeekFormat,
+    long: bool,
+    language: Language,
+) -> String {
+    let m = messages(language);
     let total = if minutes.is_finite() { minutes.max(0.0).round() as u32 } else { 0 };
     let days = total / MIN_PER_DAY;
     if long && days > 0 && (week == WeekFormat::DaysHours || total > MIN_PER_WEEK) {
-        return format!("{days}d {}h", total % MIN_PER_DAY / 60);
+        let values =
+            [("days", days.to_string()), ("hours", (total % MIN_PER_DAY / 60).to_string())];
+        return fill(m.duration_days_hours, &borrowed(&values));
     }
     let (hours, mins) = (total / 60, total % 60);
     match time {
@@ -67,11 +62,20 @@ pub fn format_duration(minutes: f64, time: TimeFormat, week: WeekFormat, long: b
         TimeFormat::Decimal => {
             // `{:.1}` rounds the exact tie x.25 to even (0,2); the flyout's toFixed rounds it up.
             let tie = if total % 60 == 15 { 1.0 } else { 0.0 };
-            format!("{:.1} h", (f64::from(total) + tie) / 60.0).replace('.', ",")
+            let value =
+                format!("{:.1}", (f64::from(total) + tie) / 60.0).replace('.', m.decimal_separator);
+            fill(m.duration_decimal_hours, &[("value", &value)])
         }
-        TimeFormat::Hm if hours == 0 => format!("{mins} min"),
-        TimeFormat::Hm => format!("{hours}h {mins:02}m"),
+        TimeFormat::Hm if hours == 0 => fill(m.duration_minutes, &[("min", &mins.to_string())]),
+        TimeFormat::Hm => {
+            let values = [("hours", hours.to_string()), ("min", format!("{mins:02}"))];
+            fill(m.duration_hours_minutes, &borrowed(&values))
+        }
     }
+}
+
+fn borrowed<'a>(values: &'a [(&'static str, String)]) -> Vec<(&'static str, &'a str)> {
+    values.iter().map(|(key, value)| (*key, value.as_str())).collect()
 }
 
 /// First candidate within the limit; if none fits, the first one cut short with an ellipsis.
@@ -90,38 +94,48 @@ fn fit(candidates: &[String]) -> String {
     cut
 }
 
-/// `followed` is the harness the user pinned the tray to, shown when it has no reading.
+/// `followed` is the harness the user pinned the tray to, shown when it has no reading. The words
+/// follow `general.language`.
 pub fn text(
     reading: Option<&TrayReading>,
     followed: Option<HarnessId>,
     general: &GeneralSettings,
     now_secs: i64,
 ) -> String {
+    let m = messages(general.language);
     let Some(reading) = reading else {
-        return format!("{}: sem dados", followed.map_or(APP_NAME, harness_name));
+        let name = followed.map_or(APP_NAME, harness_name);
+        return fill(m.tip_no_data, &[("name", name)]);
     };
     let name = harness_name(reading.harness);
-    let head = format!("{name} · {}", window_name(reading.kind));
+    let head = fill(m.tip_head, &[("harness", name), ("window", window_name(m, reading.kind))]);
     let long = reading.window_minutes.map_or(
         matches!(reading.kind, WindowKind::Weekly | WindowKind::Monthly | WindowKind::Budget),
         |m| m > MIN_PER_DAY,
     );
     let left = reading.resets_at.map(|at| (at - now_secs).max(0) as f64 / 60.0);
-    let dur = left.map(|m| format_duration(m, general.time_format, general.week_format, long));
+    let dur = left.map(|mins| {
+        format_duration(mins, general.time_format, general.week_format, long, general.language)
+    });
     let out = reading.status == Status::Out;
     // Used is the complement of the available share the tray reading carries.
-    let (shown, word) = if general.show_used {
-        (100.0 - reading.available_pct, "usado")
+    let (shown, template) = if general.show_used {
+        (100.0 - reading.available_pct, m.tip_used)
     } else {
-        (reading.available_pct, "disponível")
+        (reading.available_pct, m.tip_available)
     };
     let pct = format_percent(shown);
-    let state = if out { "esgotado".to_owned() } else { format!("{pct} {word}") };
-    let when = |verb: &str| dur.as_ref().map(|d| format!(" · {verb} em {d}")).unwrap_or_default();
-    let verb = if out { "volta" } else { "reseta" };
+    let state = if out { m.tip_out.to_owned() } else { fill(template, &[("pct", &pct)]) };
+    let when = dur.as_deref().map(|duration| {
+        fill(if out { m.tip_back_in } else { m.tip_resets_in }, &[("duration", duration)])
+    });
+    let line = |head: &str, state: &str| match &when {
+        Some(when) => fill(m.tip_line_when, &[("head", head), ("state", state), ("when", when)]),
+        None => fill(m.tip_line, &[("head", head), ("state", state)]),
+    };
     fit(&[
-        format!("{head}: {state}{}", when(verb)),
-        format!("{name}: {state}{}", when(verb)),
-        format!("{name}: {pct}"),
+        line(&head, &state),
+        line(name, &state),
+        fill(m.tip_line, &[("head", name), ("state", &pct)]),
     ])
 }

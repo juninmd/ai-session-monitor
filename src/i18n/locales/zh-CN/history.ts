@@ -1,0 +1,38 @@
+// Quota history: the "History" section of a panel and its switch in the settings.
+export const historyMessages = {
+  'history.title': '历史',
+  'history.window': '窗口',
+  'history.copy_csv': '将读数复制为 CSV',
+  'history.copied': '读数已复制为 CSV。',
+  'history.copy_failed': '无法复制读数。',
+  'history.loading': '正在加载历史',
+  'history.failed': '暂时无法加载历史。',
+  'history.empty': '暂无历史。监视器运行时，读数会显示在这里。',
+  'history.chart_title': '{title}在窗口内的用量',
+  'history.chart_desc':
+    '横轴：从窗口开始到重置。纵轴：用量，0 到 100%。粗线是当前窗口，淡线是之前的窗口。',
+  'history.axis_start': '开始',
+  'history.axis_end': '重置',
+  'history.label_current': '当前 {pct}',
+  'history.label_past': '之前',
+  'history.peak_now': '本窗口在{when}达到峰值 {pct}。',
+  'history.no_current': '本窗口暂无读数。',
+  'history.past_one': '上一个窗口：峰值 {peaks}。',
+  'history.past_many': '之前 {n} 个窗口：峰值 {peaks}。',
+  'history.table_toggle': '以表格查看',
+  'history.table_caption': '各窗口的用量峰值',
+  'history.col_reset': '重置',
+  'history.col_peak': '峰值',
+  'history.col_readings': '读数',
+  'history.row_current': '{when}（当前）',
+
+  'settings.history': '用量历史',
+  'settings.history_enabled': '保留用量历史',
+  'settings.history_hint':
+    '仅在这台电脑上保存每个窗口的百分比和时间，保留 35 天，不会上传。关闭后将停止记录；如需清除，请使用下方按钮。',
+  'settings.history_clear': '清除历史',
+  'settings.history_clear_confirm': '要清除所有已保存的历史吗？此操作无法撤销。',
+  'settings.history_clear_yes': '清除',
+  'settings.history_clear_no': '取消',
+  'settings.history_cleared': '历史已清除。',
+} as const satisfies Record<string, string>;

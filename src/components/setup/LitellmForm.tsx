@@ -38,10 +38,11 @@ import { LitellmTlsFields } from './LitellmTlsFields';
 
 const ADVANCED: readonly DraftField[] = ['authHeader', 'pemPath', 'host', 'confirm'];
 
-const SCOPE_OPTIONS: readonly Option<LitellmScope>[] = LITELLM_SCOPES.map((value) => ({
-  value,
-  label: t(`litellm.scope.${value}`),
-}));
+const scopeOptions = (): readonly Option<LitellmScope>[] =>
+  LITELLM_SCOPES.map((value) => ({
+    value,
+    label: t(`litellm.scope.${value}`),
+  }));
 
 /**
  * What decides who receives the key: server, header and certificate trust, with the spelling
@@ -202,7 +203,7 @@ export function LitellmForm({ showTitle = true, onSaved }: LitellmFormProps) {
             name="litellm-scope"
             legend={t('litellm.scope')}
             value={draft.scope}
-            options={SCOPE_OPTIONS}
+            options={scopeOptions()}
             onChange={(scope) => update({ scope })}
           />
         </div>

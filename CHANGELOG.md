@@ -6,6 +6,14 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Added
 
+- Ten interface languages, English by default: English, 简体中文, हिन्दी, Español, Français, العربية,
+  বাংলা, Português (Brasil), Русский and اردو (right-to-left for Arabic and Urdu). Pick one under
+  Settings → General → Language; the desktop notifications, tray tooltip and tray menu follow it
+  (`general.language`).
+- Themes from the Canto widget (Default, Hueco Mundo, Dracula, Glass, Light, or follow the system),
+  Settings → General → Theme. Glass surfaces on the flyout, the harness plan next to each name, a
+  discreet rail of icons for the surfaces and an info tooltip on the Horizon surface. The
+  "runs out at…" line in the triage is quieter.
 - System-tray flyout (Tauri 2, Windows 11 first) with one tab per harness: Claude Code, Codex,
   Antigravity, OpenCode, Kimi Code, z.ai and LiteLLM. Each tab shows the available share of every usage window, the
   time until it resets, a pace estimate, the data age and an official / unofficial source badge.

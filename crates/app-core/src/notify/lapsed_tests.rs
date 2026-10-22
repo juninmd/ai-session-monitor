@@ -1,3 +1,4 @@
+use usage_model::settings::Language;
 use usage_model::{HarnessView, UsageWindow, WindowKind};
 
 use super::lapsed::{ResetKey, key_of, lapsed_resets, next_lapse, still_waiting};
@@ -10,6 +11,7 @@ const AFTER: i64 = RESET + 5;
 fn settings(notify_on_reset: bool) -> Settings {
     let mut settings = Settings::default();
     settings.general.notify_on_reset = notify_on_reset;
+    settings.general.language = Language::PtBr;
     settings
 }
 

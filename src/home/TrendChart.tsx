@@ -57,7 +57,7 @@ export function TrendChart({
       <desc id={`${id}-d`}>
         {projection === null
           ? t('history.chart_desc')
-          : `${t('history.chart_desc')} A projeção segue o ritmo atual até acabar em ${projectionLabel(projection.minutes, model, ctx)}.`}
+          : `${t('history.chart_desc')} ${t('history.trend.projection_desc', { duration: projectionLabel(projection.minutes, model, ctx) })}`}
       </desc>
       <defs>
         <linearGradient id={`${id}-fill`} x1="0" y1="0" x2="0" y2="1">

@@ -3,8 +3,9 @@
 // reach it with the credential it already accepts. Findings verified against vendor docs and the
 // mirrors docs/data-sources.md. Nothing here needs an OAuth token, a cookie or a dashboard.
 
-import { BLOCKED } from './channels-blocked';
-import { ALREADY, NOW } from './channels-read';
+import { t } from '../i18n';
+import { blockedChannels } from './channels-blocked';
+import { alreadyChannels, nowChannels } from './channels-read';
 
 export type Reach =
   /** Already read today. */
@@ -16,6 +17,8 @@ export type Reach =
 
 export type Shape = 'window' | 'fact';
 
+export type Confidence = 'high' | 'medium' | 'low';
+
 export interface Channel {
   id: string;
   harness: string;
@@ -24,7 +27,7 @@ export interface Channel {
   shape: Shape;
   /** The command or endpoint and the fields that carry it. */
   how: string;
-  confidence: 'Alta' | 'Média' | 'Baixa';
+  confidence: Confidence;
   reach: Reach;
   source: string;
   /** Anything a real implementation must settle first (opt-in, badge, docs entry). */
@@ -33,18 +36,18 @@ export interface Channel {
 
 export const REACH_ORDER: readonly Reach[] = ['now', 'already', 'forbidden'];
 
-export const REACH_LABEL: Record<Reach, string> = {
-  already: 'Já lemos',
-  now: 'Dá para ler agora',
-  forbidden: 'Existe, mas fora das regras',
-};
+export function reachLabel(reach: Reach): string {
+  return t(`channels.reach.${reach}`);
+}
 
-export const REACH_NOTE: Record<Reach, string> = {
-  already: 'Em produção hoje.',
-  now: 'Mesma credencial e mesma regra: passaria por SafeClient e viraria janela ou fato. Cada canal não oficial ainda precisa de entrada em docs/data-sources.md e do selo "não oficial" na interface.',
-  forbidden:
-    'Precisa de token OAuth, cookie, sessão de navegador ou chave-mestra. O app não faz nada disso.',
-};
+export function reachNote(reach: Reach): string {
+  return t(`channels.reach_note.${reach}`);
+}
+
+/** "alta" / "high": the level word alone, for a sentence that already says "confidence". */
+export function confidenceLevel(level: Confidence): string {
+  return t(`channels.level.${level}`);
+}
 
 export const REACH_ICON: Record<Reach, 'check' | 'plug' | 'ban'> = {
   already: 'check',
@@ -53,4 +56,6 @@ export const REACH_ICON: Record<Reach, 'check' | 'plug' | 'ban'> = {
 };
 
 /** The catalogue, in the order the surface prints it: actionable first, blocked last. */
-export const CHANNELS: readonly Channel[] = [...NOW, ...ALREADY, ...BLOCKED];
+export function channels(): readonly Channel[] {
+  return [...nowChannels(), ...alreadyChannels(), ...blockedChannels()];
+}

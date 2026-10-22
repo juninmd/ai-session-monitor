@@ -4,9 +4,11 @@
 use std::fmt::Display;
 use std::time::Duration;
 
+use app_core::i18n::{fill, messages};
 use tauri::AppHandle;
 use tauri_plugin_notification::NotificationExt;
 use usage_model::ErrorCode;
+use usage_model::settings::Language;
 
 use crate::diag;
 
@@ -17,7 +19,6 @@ mod tests;
 pub const EXIT_CODE: i32 = 1;
 /// The notification plugin posts the toast from a background task; exiting at once could lose it.
 const TOAST_GRACE: Duration = Duration::from_secs(2);
-const TITLE: &str = "AI Session Monitor não iniciou";
 
 /// The step that stopped startup. The underlying error can hold paths and OS text, so only the
 /// step reaches the toast; the details go to stderr.
@@ -52,21 +53,20 @@ impl Reason {
         }
     }
 
-    /// The toast, in pt-BR. Built from the reason alone, so nothing the OS reported can leak in.
-    pub fn notice(self) -> Notice {
+    /// The toast, in `language`. Built from the reason alone, so nothing the OS reported can leak in.
+    pub fn notice(self, language: Language) -> Notice {
+        let m = messages(language);
         let what = match self {
-            Self::Paths => "Não foi possível localizar as pastas do seu perfil",
-            Self::DataDir => "Não foi possível criar a pasta de dados do aplicativo",
-            Self::Window => "A janela do painel não foi criada",
-            Self::Tray => "Não foi possível criar o ícone na bandeja",
-            Self::Service(ErrorCode::SettingsUnreadable) => {
-                "O arquivo de configurações está ilegível e não pôde ser movido para recomeçar"
-            }
-            Self::Service(_) => "O serviço de monitoramento não pôde ser iniciado",
+            Self::Paths => m.startup_paths,
+            Self::DataDir => m.startup_data_dir,
+            Self::Window => m.startup_window,
+            Self::Tray => m.startup_tray,
+            Self::Service(ErrorCode::SettingsUnreadable) => m.startup_settings_unreadable,
+            Self::Service(_) => m.startup_service,
         };
         Notice {
-            title: TITLE,
-            body: format!("{what} (código: {}). O aplicativo vai fechar.", self.code()),
+            title: m.startup_title,
+            body: fill(m.startup_body, &[("what", what), ("code", &self.code())]),
         }
     }
 
@@ -87,7 +87,8 @@ fn wire_name(code: ErrorCode) -> String {
 /// Tells the user, then ends the process with `EXIT_CODE`. Returning an error from the setup hook
 /// instead would make Tauri panic, which nobody sees without a console.
 pub fn abort(app: &AppHandle, reason: Reason) {
-    let notice = reason.notice();
+    // The settings are not loaded when startup fails, so the language is the default one.
+    let notice = reason.notice(Language::default());
     if let Err(err) = app.notification().builder().title(notice.title).body(&notice.body).show() {
         diag::warn("cannot show the startup failure", &err);
     }

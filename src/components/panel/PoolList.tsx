@@ -23,7 +23,12 @@ function Row({ row, ctx, scope, withTime }: { row: PoolRow } & Omit<RowsProps, '
         {model.cadenceGuessed && <EstimateMark />}
         {name}
       </span>
-      <Gauge model={model} ctx={ctx} size="sm" title={scope ? `${scope}, ${name}` : name} />
+      <Gauge
+        model={model}
+        ctx={ctx}
+        size="sm"
+        title={scope ? t('pool.scoped_title', { scope, name }) : name}
+      />
       <span className="li-pct">{pct}</span>
       {withTime && <span className="li-time">{time ?? ''}</span>}
     </li>

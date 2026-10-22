@@ -89,3 +89,14 @@ fn a_healthy_update_is_never_retried_or_reported() {
     assert_eq!(syncs(&rig), ["autostart:true:Startup"]);
     assert!(told(&rig).is_empty());
 }
+
+#[test]
+fn the_failure_toast_is_in_the_chosen_language() {
+    let rig = rig();
+    rig.rec.autostart_failures.store(1, Ordering::SeqCst);
+    let mut english = settings(None, true);
+    english.general.language = Language::En;
+    rig.sink.prime(&english);
+    rig.sink.tick();
+    assert_eq!(told(&rig), ["Could not turn on 'Start with Windows'."]);
+}

@@ -40,7 +40,12 @@ impl PaceState {
                 let key = (view.id, window.id.clone(), window.resets_at);
                 let known = before.is_some_and(|b| b.windows.iter().any(|w| w.id == window.id));
                 if self.told.insert(key) && known {
-                    planned.push(text::pace_risk(view.id, window, early_min));
+                    planned.push(text::pace_risk(
+                        settings.general.language,
+                        view.id,
+                        window,
+                        early_min,
+                    ));
                 }
             }
         }

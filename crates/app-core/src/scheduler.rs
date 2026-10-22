@@ -99,7 +99,10 @@ impl Scheduler {
 
     fn announce_recovery(&self) {
         if let Some(file_name) = self.shared.pending_recovery() {
-            self.shared.sink.notify(&notify::settings_recovered(&file_name));
+            self.shared.sink.notify(&notify::settings_recovered(
+                self.shared.settings().general.language,
+                &file_name,
+            ));
             self.shared.announced_recovery();
         }
     }

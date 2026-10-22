@@ -1,6 +1,10 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
-import { afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, vi } from 'vitest';
+import { pinLocale } from '../i18n/locale';
+
+// The suite reads Portuguese: the stored language is English, and the assertions predate it.
+beforeEach(() => pinLocale('pt-BR'));
 
 // Vitest globals are off, so Testing Library cannot register its own cleanup.
 afterEach(cleanup);

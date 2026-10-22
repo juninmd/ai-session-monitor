@@ -24,8 +24,30 @@ fn five_hour(pct: f64, resets_in_min: Option<i64>, status: Status) -> TrayReadin
     reading(HarnessId::Claude, WindowKind::FiveHour, Some(300), resets_in_min, pct, status)
 }
 
+const LANGUAGES: [Language; 10] = [
+    Language::En,
+    Language::ZhCn,
+    Language::Hi,
+    Language::Es,
+    Language::Fr,
+    Language::Ar,
+    Language::Bn,
+    Language::PtBr,
+    Language::Ru,
+    Language::Ur,
+];
+
+fn english(time_format: TimeFormat, week_format: WeekFormat) -> GeneralSettings {
+    GeneralSettings { language: Language::En, ..general(time_format, week_format) }
+}
+
 fn general(time_format: TimeFormat, week_format: WeekFormat) -> GeneralSettings {
-    GeneralSettings { time_format, week_format, ..GeneralSettings::default() }
+    GeneralSettings {
+        time_format,
+        week_format,
+        language: Language::PtBr,
+        ..GeneralSettings::default()
+    }
 }
 
 fn default_text(reading: &TrayReading) -> String {
@@ -40,7 +62,8 @@ fn names_the_harness_window_percentage_and_time_to_reset() {
 
 #[test]
 fn show_used_flips_the_wording_and_the_number() {
-    let on = GeneralSettings { show_used: true, ..GeneralSettings::default() };
+    let on =
+        GeneralSettings { show_used: true, language: Language::PtBr, ..GeneralSettings::default() };
     let r = five_hour(72.4, Some(113), Status::Ok);
     assert_eq!(
         text(Some(&r), None, &on, NOW),
@@ -113,13 +136,16 @@ fn every_combination_fits_the_windows_limit() {
     ];
     let times = [TimeFormat::Hm, TimeFormat::Colon, TimeFormat::Decimal];
     let weeks = [WeekFormat::Hours, WeekFormat::DaysHours];
-    for harness in HarnessId::ALL {
-        for kind in kinds {
-            for status in [Status::Ok, Status::Out] {
-                for (time, week) in times.into_iter().flat_map(|t| weeks.map(|w| (t, w))) {
-                    let r = reading(harness, kind, None, Some(10_000_000), 99.6, status);
-                    let got = text(Some(&r), None, &general(time, week), NOW);
-                    assert!(utf16_len(&got) <= MAX_UTF16, "{got} ({})", utf16_len(&got));
+    for language in LANGUAGES {
+        for harness in HarnessId::ALL {
+            for kind in kinds {
+                for status in [Status::Ok, Status::Out] {
+                    for (time, week) in times.into_iter().flat_map(|t| weeks.map(|w| (t, w))) {
+                        let r = reading(harness, kind, None, Some(10_000_000), 99.6, status);
+                        let general = GeneralSettings { language, ..general(time, week) };
+                        let got = text(Some(&r), None, &general, NOW);
+                        assert!(utf16_len(&got) <= MAX_UTF16, "{got} ({})", utf16_len(&got));
+                    }
                 }
             }
         }
@@ -186,7 +212,11 @@ fn durations_follow_the_flyout_formatting() {
         (f64::NAN, Hm, Hours, false, "0 min"),
     ];
     for (minutes, time, week, long, expected) in cases {
-        assert_eq!(format_duration(minutes, time, week, long), expected, "{minutes} {time:?}");
+        assert_eq!(
+            format_duration(minutes, time, week, long, Language::PtBr),
+            expected,
+            "{minutes} {time:?}"
+        );
     }
 }
 
@@ -205,4 +235,36 @@ fn the_percentage_rounds_like_the_flyout() {
     for (pct, expected) in cases {
         assert_eq!(format_percent(pct), expected, "{pct}");
     }
+}
+
+#[test]
+fn english_reads_naturally() {
+    let hm = english(TimeFormat::Hm, WeekFormat::Hours);
+    let r = five_hour(72.4, Some(113), Status::Ok);
+    assert_eq!(
+        text(Some(&r), None, &hm, NOW),
+        "Claude Code · 5 hours: 72% available · resets in 1h 53m"
+    );
+    let used = GeneralSettings { show_used: true, ..hm.clone() };
+    assert_eq!(
+        text(Some(&r), None, &used, NOW),
+        "Claude Code · 5 hours: 28% used · resets in 1h 53m"
+    );
+    let out = five_hour(0.0, Some(113), Status::Out);
+    assert_eq!(text(Some(&out), None, &hm, NOW), "Claude Code · 5 hours: out · back in 1h 53m");
+    let week =
+        reading(HarnessId::Codex, WindowKind::Weekly, Some(10_080), Some(6432), 40.0, Status::Ok);
+    assert_eq!(
+        text(Some(&week), None, &hm, NOW),
+        "Codex · Week: 40% available · resets in 107h 12m"
+    );
+    assert_eq!(text(None, None, &hm, NOW), "AI Session Monitor: no data");
+    assert_eq!(text(None, Some(HarnessId::Codex), &hm, NOW), "Codex: no data");
+}
+
+#[test]
+fn the_decimal_separator_follows_the_language() {
+    use TimeFormat::Decimal;
+    assert_eq!(format_duration(113.0, Decimal, WeekFormat::Hours, false, Language::En), "1.9 h");
+    assert_eq!(format_duration(113.0, Decimal, WeekFormat::Hours, false, Language::PtBr), "1,9 h");
 }

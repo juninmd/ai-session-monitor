@@ -1,11 +1,17 @@
-// pt-BR formatters shared by every component. Pure functions: callers pass the clock in.
-import type { AmountUnit, Fact, TimeFormat, WeekFormat } from '../lib/contract';
+// Locale-aware formatters shared by every component. Pure functions: callers pass the clock in.
+// Every formatter follows getLocale() at call time (the language can change while the app runs),
+// always with Latin digits, and reads its unit words from the catalog (`duration.*`, `amount.*`).
 
-const LOCALE = 'pt-BR';
+import type { AmountUnit, Fact, TimeFormat, WeekFormat } from '../lib/contract';
+import { t, tn } from '.';
+import { formatDateTime } from './formatTime';
+import { cached, decimalSeparator } from './intl';
+import { getLocale } from './locale';
+
+export { type ClockMoment, formatClock, formatDateTime } from './formatTime';
+
 const MIN_PER_DAY = 1440;
 const MIN_PER_WEEK = 10080;
-const DAY_MS = 86_400_000;
-const WEEK_DAYS = 7;
 const DASH = '—';
 
 export interface DurationFormat {
@@ -37,20 +43,22 @@ export function durationParts(minutes: number, fmt: DurationFormat, long = false
   if (useDays) {
     const hours = Math.floor((total % MIN_PER_DAY) / 60);
     return [
-      { n: String(days), u: 'd', spaced: false },
-      { n: String(hours), u: 'h', spaced: false },
+      { n: String(days), u: t('duration.d'), spaced: false },
+      { n: String(hours), u: t('duration.h'), spaced: false },
     ];
   }
   const h = Math.floor(total / 60);
   const m = total % 60;
   if (fmt.timeFormat === 'colon') return [{ n: `${h}:${pad2(m)}`, u: '', spaced: false }];
   if (fmt.timeFormat === 'decimal') {
-    return [{ n: (total / 60).toFixed(1).replace('.', ','), u: 'h', spaced: true }];
+    // toFixed (not Intl) so ties round exactly as the Rust tooltip does; only the separator is local.
+    const n = (total / 60).toFixed(1).replace('.', decimalSeparator());
+    return [{ n, u: t('duration.h'), spaced: true }];
   }
-  if (h === 0) return [{ n: String(m), u: 'min', spaced: true }];
+  if (h === 0) return [{ n: String(m), u: t('duration.min'), spaced: true }];
   return [
-    { n: String(h), u: 'h', spaced: false },
-    { n: pad2(m), u: 'm', spaced: false },
+    { n: String(h), u: t('duration.h'), spaced: false },
+    { n: pad2(m), u: t('duration.m'), spaced: false },
   ];
 }
 
@@ -60,12 +68,21 @@ export function formatDuration(minutes: number, fmt: DurationFormat, long = fals
     .join(' ');
 }
 
-const unitFormats = {
-  day: new Intl.NumberFormat(LOCALE, { style: 'unit', unit: 'day', unitDisplay: 'long' }),
-  hour: new Intl.NumberFormat(LOCALE, { style: 'unit', unit: 'hour', unitDisplay: 'long' }),
-  minute: new Intl.NumberFormat(LOCALE, { style: 'unit', unit: 'minute', unitDisplay: 'long' }),
-};
-const listFormat = new Intl.ListFormat(LOCALE, { style: 'long', type: 'conjunction' });
+type Unit = 'day' | 'hour' | 'minute';
+
+const unitFormat = (unit: Unit) =>
+  cached(
+    `unit-${unit}`,
+    (tag) => new Intl.NumberFormat(tag, { style: 'unit', unit, unitDisplay: 'long' }),
+  );
+
+/** Items joined the way the language does it: "80% e 95%", "80% and 95%". */
+export function formatList(items: readonly string[]): string {
+  return cached(
+    'list',
+    (tag) => new Intl.ListFormat(tag, { style: 'long', type: 'conjunction' }),
+  ).format(items);
+}
 
 /** Long-form duration for screen readers: "1 hora e 53 minutos". */
 export function spokenDuration(minutes: number): string {
@@ -74,10 +91,10 @@ export function spokenDuration(minutes: number): string {
   const h = Math.floor((total % MIN_PER_DAY) / 60);
   const m = total % 60;
   const parts: string[] = [];
-  if (d > 0) parts.push(unitFormats.day.format(d));
-  if (h > 0) parts.push(unitFormats.hour.format(h));
-  if (m > 0 || parts.length === 0) parts.push(unitFormats.minute.format(m));
-  return listFormat.format(parts);
+  if (d > 0) parts.push(unitFormat('day').format(d));
+  if (h > 0) parts.push(unitFormat('hour').format(h));
+  if (m > 0 || parts.length === 0) parts.push(unitFormat('minute').format(m));
+  return formatList(parts);
 }
 
 /** Available percentage for display. Unknown is a dash, never "0%". */
@@ -87,108 +104,74 @@ export function formatPercent(pct: number | null): string {
   return `${Math.round(pct)}%`;
 }
 
-export interface ClockMoment {
-  /** Compact form for tables ("14:35", "sex 14:35"). */
-  text: string;
-  /** Reads after a verb: "reseta às 14:35", "reseta sex 14:35". */
-  label: string;
-}
-
-const formatterCache = new Map<string, Intl.DateTimeFormat>();
-
-function dateFormatter(kind: string, tz: string | undefined, o: Intl.DateTimeFormatOptions) {
-  const key = `${kind}|${tz ?? ''}`;
-  let cached = formatterCache.get(key);
-  if (!cached) {
-    cached = new Intl.DateTimeFormat(kind === 'ymd' ? 'en-CA' : LOCALE, { ...o, timeZone: tz });
-    formatterCache.set(key, cached);
-  }
-  return cached;
-}
-
-function dayNumber(at: Date, tz: string | undefined): number {
-  const iso = dateFormatter('ymd', tz, {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(at);
-  const [y, m, d] = iso.split('-').map(Number);
-  return Date.UTC(y ?? 1970, (m ?? 1) - 1, d ?? 1) / DAY_MS;
-}
-
-/** Wall-clock moment of an epoch-seconds instant relative to `nowSecs`, in the local zone. */
-export function formatClock(epochSecs: number, nowSecs: number, timeZone?: string): ClockMoment {
-  const at = new Date(epochSecs * 1000);
-  const time = dateFormatter('time', timeZone, {
-    hour: '2-digit',
-    minute: '2-digit',
-    hourCycle: 'h23',
-  }).format(at);
-  const offset = dayNumber(at, timeZone) - dayNumber(new Date(nowSecs * 1000), timeZone);
-  if (offset === 0) return { text: time, label: `às ${time}` };
-  if (offset > 0 && offset < WEEK_DAYS) {
-    const weekday = dateFormatter('weekday', timeZone, { weekday: 'short' })
-      .format(at)
-      .replace('.', '');
-    return { text: `${weekday} ${time}`, label: `${weekday} ${time}` };
-  }
-  const date = dateFormatter('date', timeZone, { day: '2-digit', month: '2-digit' }).format(at);
-  return { text: `${date} ${time}`, label: `em ${date} às ${time}` };
-}
-
-/** "15/01/2027 08:00" in the viewer's zone. Built from parts: the locale's own separator varies. */
-export function formatDateTime(epochSecs: number, timeZone?: string): string {
-  const at = new Date(epochSecs * 1000);
-  if (Number.isNaN(at.getTime())) return DASH;
-  const parts = dateFormatter('datetime', timeZone, {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    hourCycle: 'h23',
-  }).formatToParts(at);
-  const of = (type: Intl.DateTimeFormatPartTypes) =>
-    parts.find((p) => p.type === type)?.value ?? '';
-  return `${of('day')}/${of('month')}/${of('year')} ${of('hour')}:${of('minute')}`;
-}
-
 /** "4 s", "4 min", "3 h", "2 d": how old a reading is. */
 export function formatAge(secs: number): string {
   const s = Number.isFinite(secs) ? Math.max(0, Math.floor(secs)) : 0;
-  if (s < 60) return `${s} s`;
-  if (s < 3600) return `${Math.floor(s / 60)} min`;
-  if (s < 86_400) return `${Math.floor(s / 3600)} h`;
-  return `${Math.floor(s / 86_400)} d`;
+  if (s < 60) return withUnit(s, 'duration.s');
+  if (s < 3600) return withUnit(Math.floor(s / 60), 'duration.min');
+  if (s < 86_400) return withUnit(Math.floor(s / 3600), 'duration.h');
+  return withUnit(Math.floor(s / 86_400), 'duration.d');
 }
+
+const withUnit = (n: number, unit: 'duration.s' | 'duration.min' | 'duration.h' | 'duration.d') =>
+  `${n} ${t(unit)}`;
 
 /** A polling interval in seconds: "30 s", "5 min", "1 h", "90 min". */
 export function formatInterval(secs: number): string {
-  if (secs < 60 || secs % 60 !== 0) return `${secs} s`;
-  if (secs % 3600 === 0) return `${secs / 3600} h`;
-  return `${secs / 60} min`;
+  if (secs < 60 || secs % 60 !== 0) return withUnit(secs, 'duration.s');
+  if (secs % 3600 === 0) return withUnit(secs / 3600, 'duration.h');
+  return withUnit(secs / 60, 'duration.min');
 }
 
-const numberFormat = new Intl.NumberFormat(LOCALE, { maximumFractionDigits: 2 });
-const compactFormat = new Intl.NumberFormat(LOCALE, {
-  notation: 'compact',
-  compactDisplay: 'short',
-  maximumFractionDigits: 1,
-});
+/** A second count with its unit ("30 s"): the polling and timeout labels. */
+export const formatSeconds = (secs: number): string => withUnit(secs, 'duration.s');
+
+const numberFormat = () =>
+  cached('number', (tag) => new Intl.NumberFormat(tag, { maximumFractionDigits: 2 }));
+const compactFormat = () =>
+  cached(
+    'compact',
+    (tag) =>
+      new Intl.NumberFormat(tag, {
+        notation: 'compact',
+        compactDisplay: 'short',
+        maximumFractionDigits: 1,
+      }),
+  );
 
 export function formatNumber(n: number): string {
-  return numberFormat.format(n);
+  return numberFormat().format(n);
+}
+
+/** Download progress: "3,5 MB". */
+export function formatMegabytes(bytes: number): string {
+  const mb = cached('megabytes', (tag) => new Intl.NumberFormat(tag, { maximumFractionDigits: 1 }));
+  return `${mb.format(bytes / 1_048_576)} MB`;
 }
 
 /** Small amounts keep four decimals so a 0.0037 cost does not read as zero. */
 export function formatUsd(n: number): string {
   const abs = Math.abs(n);
-  return new Intl.NumberFormat(LOCALE, {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: abs > 0 && abs < 0.01 ? 4 : 2,
-  }).format(n);
+  const digits = abs > 0 && abs < 0.01 ? 4 : 2;
+  return cached(
+    `usd-${digits}`,
+    (tag) =>
+      new Intl.NumberFormat(tag, {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: digits,
+      }),
+  ).format(n);
+}
+
+/**
+ * Plural by the language's own rules. Portuguese reads 0 and 1.5 as "one" in CLDR, but this UI has
+ * always said "0 créditos": only exactly 1 is singular there.
+ */
+function counted(base: string, n: number, value: string): string {
+  const count = getLocale() === 'pt-BR' && n !== 1 ? 2 : n;
+  return tn(base, count, { value });
 }
 
 export function formatAmountValue(value: number, unit: AmountUnit): string {
@@ -196,17 +179,20 @@ export function formatAmountValue(value: number, unit: AmountUnit): string {
     case 'usd':
       return formatUsd(value);
     case 'credits':
-      return `${formatNumber(value)} ${value === 1 ? 'crédito' : 'créditos'}`;
+      return counted('amount.credits', value, formatNumber(value));
     case 'requests':
-      return `${formatNumber(value)} ${value === 1 ? 'requisição' : 'requisições'}`;
+      return counted('amount.requests', value, formatNumber(value));
     case 'tokens':
-      return `${compactFormat.format(value)} tokens`;
+      return t('amount.tokens', { value: compactFormat().format(value) });
   }
 }
 
 /** Yuan, as DeepSeek reports it; kept apart from dollars, never converted. */
 function formatCny(n: number): string {
-  return new Intl.NumberFormat(LOCALE, { style: 'currency', currency: 'CNY' }).format(n);
+  return cached(
+    'cny',
+    (tag) => new Intl.NumberFormat(tag, { style: 'currency', currency: 'CNY' }),
+  ).format(n);
 }
 
 /** A fact's value: a number with its unit, free text, or a dash when neither is present. */
@@ -218,15 +204,15 @@ export function formatFactValue(fact: Fact): string {
       case 'cny':
         return formatCny(fact.number);
       case 'tokens':
-        return `${compactFormat.format(fact.number)} tokens`;
+        return t('amount.tokens', { value: compactFormat().format(fact.number) });
       case 'requests':
-        return `${formatNumber(fact.number)} req.`;
+        return t('amount.req_short', { value: formatNumber(fact.number) });
       case 'credits':
         return formatAmountValue(fact.number, 'credits');
       case 'epoch_s':
         return formatDateTime(fact.number);
       case 'resets':
-        return `${formatNumber(fact.number)} ${fact.number === 1 ? 'disponível' : 'disponíveis'}`;
+        return counted('amount.resets', fact.number, formatNumber(fact.number));
       case null:
         return formatNumber(fact.number);
       default:

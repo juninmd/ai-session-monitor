@@ -13,10 +13,17 @@ fn only_the_left_button_drives_the_flyout() {
 
 #[test]
 fn every_menu_entry_has_an_action_and_a_portuguese_label() {
-    let actions: Vec<Option<Action>> = MENU.iter().map(|(id, _)| action(id)).collect();
+    let menu = menu_entries(Language::PtBr);
+    let actions: Vec<Option<Action>> = menu.iter().map(|(id, _)| action(id)).collect();
     assert_eq!(actions, [Some(Action::Open), Some(Action::Refresh), Some(Action::Quit)]);
-    let labels: Vec<&str> = MENU.iter().map(|(_, label)| *label).collect();
+    let labels: Vec<&str> = menu.iter().map(|(_, label)| *label).collect();
     assert_eq!(labels, ["Abrir", "Atualizar agora", "Sair"]);
+}
+
+#[test]
+fn english_is_the_default_menu_language() {
+    let labels: Vec<&str> = menu_entries(Language::default()).iter().map(|(_, l)| *l).collect();
+    assert_eq!(labels, ["Open", "Refresh now", "Quit"]);
 }
 
 #[test]

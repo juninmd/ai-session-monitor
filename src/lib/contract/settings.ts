@@ -9,6 +9,21 @@ export type TimeFormat = z.infer<typeof TimeFormatSchema>;
 export const WeekFormatSchema = z.enum(['hours', 'days_hours']);
 export type WeekFormat = z.infer<typeof WeekFormatSchema>;
 
+// BCP 47 tags, the same strings the Rust enum serializes to. English is the default.
+export const LanguageSchema = z.enum([
+  'en',
+  'zh-CN',
+  'hi',
+  'es',
+  'fr',
+  'ar',
+  'bn',
+  'pt-BR',
+  'ru',
+  'ur',
+]);
+export type Language = z.infer<typeof LanguageSchema>;
+
 export const GeneralSettingsSchema = z.strictObject({
   intervalSecs: z.number().int(),
   autostart: z.boolean(),
@@ -27,6 +42,7 @@ export const GeneralSettingsSchema = z.strictObject({
   showUsed: z.boolean(),
   compact: z.boolean(),
   firstRunDone: z.boolean(),
+  language: LanguageSchema,
 });
 export type GeneralSettings = z.infer<typeof GeneralSettingsSchema>;
 
@@ -157,6 +173,7 @@ export const defaultSettings: Settings = {
     showUsed: false,
     compact: false,
     firstRunDone: false,
+    language: 'en',
   },
   claude: { enabled: true, shimConsent: false, oauthUsage: false, configDir: null },
   codex: { enabled: true, consent: false, binaryPath: null },

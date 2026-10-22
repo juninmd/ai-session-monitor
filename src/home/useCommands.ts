@@ -2,6 +2,7 @@
 // the settings entries and — in the browser dev loop only — the fabricated scenarios.
 import { useMemo } from 'react';
 import type { ViewContext } from '../app/windowModel';
+import { useLocale } from '../i18n/locale';
 import { isTauriRuntime } from '../lib/backend';
 import type { HarnessId, HarnessView } from '../lib/contract';
 import { commandsFor, type PaletteCommand } from './paletteModel';
@@ -18,6 +19,9 @@ export interface CommandSources {
 export function useCommands(input: CommandSources): PaletteCommand[] {
   const { views, ctx, select, refresh, openSettings, copySummary } = input;
   const browser = isTauriRuntime() === false;
+  // The labels are built in the active language, so a language change has to rebuild them.
+  const locale = useLocale();
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `locale` only re-runs the labels.
   return useMemo(
     () =>
       commandsFor({
@@ -38,6 +42,6 @@ export function useCommands(input: CommandSources): PaletteCommand[] {
             }
           : {}),
       }),
-    [views, ctx, select, refresh, openSettings, copySummary, browser],
+    [views, ctx, select, refresh, openSettings, copySummary, browser, locale],
   );
 }

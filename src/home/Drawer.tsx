@@ -7,6 +7,7 @@ import { useSettingsApi } from '../app/settingsContext';
 import { useAsyncAction } from '../app/useAsyncAction';
 import type { ViewContext } from '../app/windowModel';
 import { Icon } from '../components/icons';
+import { t } from '../i18n';
 import type { HarnessView } from '../lib/contract';
 import { DrawerShell } from './DrawerShell';
 import { Panel } from './Panel';
@@ -38,14 +39,14 @@ export function DetailDrawer({
       titleId={nxTitleId(view.id)}
       title={name}
       closeId={NX_DRAWER_CLOSE_ID}
-      closeLabel="Fechar os detalhes"
+      closeLabel={t('drawer.close')}
       onClose={onClose}
       actions={
         <>
           <button
             type="button"
             className="icon-btn"
-            aria-label={`Atualizar ${name}`}
+            aria-label={t('drawer.refresh', { name })}
             onClick={onRefresh}
           >
             <Icon name="refresh" />
@@ -53,8 +54,8 @@ export function DetailDrawer({
           <button
             type="button"
             className="icon-btn"
-            aria-label={`Fixar ${name} no topo`}
-            title={pinned ? `Desafixar ${name}` : `Fixar ${name} no topo`}
+            aria-label={t('drawer.pin', { name })}
+            title={pinned ? t('drawer.unpin', { name }) : t('drawer.pin', { name })}
             aria-pressed={pinned}
             disabled={togglePin.pending}
             onClick={() => void togglePin.run()}
@@ -64,7 +65,7 @@ export function DetailDrawer({
           <button
             type="button"
             className="icon-btn"
-            aria-label={`Configurar ${name}`}
+            aria-label={t('drawer.settings', { name })}
             onClick={() => navigation.openSettings(view.id)}
           >
             <Icon name="sliders" />

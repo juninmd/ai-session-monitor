@@ -9,6 +9,7 @@ import { showsUsed } from '../app/quota';
 import { summaryOf, tabChip } from '../app/tabModel';
 import type { ViewContext } from '../app/windowModel';
 import { Icon } from '../components/icons';
+import { t, tn } from '../i18n';
 import { formatAmountValue, formatPercent } from '../i18n/format';
 import type { HarnessId, HarnessView, UsageWindow } from '../lib/contract';
 import { GroupHead, Logo, ShareBar, type Tone } from './Bits';
@@ -40,7 +41,9 @@ function Amount({ window }: { window: UsageWindow }) {
   const used = formatAmountValue(amount.used, amount.unit);
   return (
     <span className="nx-q-amount">
-      {amount.limit === null ? used : `${used} de ${formatAmountValue(amount.limit, amount.unit)}`}
+      {amount.limit === null
+        ? used
+        : t('triage.amount_of', { used, limit: formatAmountValue(amount.limit, amount.unit) })}
     </span>
   );
 }
@@ -49,7 +52,9 @@ function QuotaRows({ row, ctx }: { row: TriageRow; ctx: ViewContext }) {
   const quotas = gridQuotas(row.view, ctx);
   if (quotas.windows.length === 0) {
     const chip = tabChip(row.view, summaryOf(row.view, ctx), ctx);
-    return <span className="nx-meta">{chip.kind === 'text' ? chip.text : 'Carregando'}</span>;
+    return (
+      <span className="nx-meta">{chip.kind === 'text' ? chip.text : t('triage.loading')}</span>
+    );
   }
   const limiting = row.model?.window.id;
   return (
@@ -123,7 +128,7 @@ function Tile({
         </span>
         {row.view.plan && <span className="nx-plan">{row.view.plan}</span>}
         {pinned && (
-          <span className="nx-tile-pin" role="img" aria-label="Fixado no topo">
+          <span className="nx-tile-pin" role="img" aria-label={t('triage.pinned')}>
             <Icon name="pin" />
           </span>
         )}
@@ -145,9 +150,7 @@ function Tile({
       )}
       <QuotaRows row={row} ctx={ctx} />
       {quotas.extra > 0 && (
-        <span className="nx-tile-more">
-          +{quotas.extra} {quotas.extra === 1 ? 'cota' : 'cotas'} nos detalhes
-        </span>
+        <span className="nx-tile-more">{tn('triage.more_quotas', quotas.extra)}</span>
       )}
       <span className="vh">{row.verdict}</span>
     </button>
@@ -167,14 +170,11 @@ export function Triage({ views, ctx, selected, onSelect, onOpen, onConfigure }: 
   if (triage.rows.length === 0) {
     return (
       <section className="nx-note">
-        <h3>Nenhuma fonte monitorada</h3>
-        <p className="nx-meta">
-          Nada foi lido ainda. Escolha o que acompanhar e o painel passa a abrir ordenado por
-          urgência, com a previsão de cada cota no próprio cartão.
-        </p>
+        <h3>{t('triage.empty.title')}</h3>
+        <p className="nx-meta">{t('triage.empty.body')}</p>
         <div className="actions">
           <button type="button" className="btn primary" onClick={onConfigure}>
-            Escolher fontes
+            {t('triage.empty.action')}
           </button>
         </div>
       </section>
@@ -189,14 +189,13 @@ export function Triage({ views, ctx, selected, onSelect, onOpen, onConfigure }: 
           <p className="nx-headline-text">
             {headline.text}
             <span className="nx-headline-sub">
-              {triage.rows.length} {triage.rows.length === 1 ? 'provider' : 'providers'} ·{' '}
-              {shown ? 'cota utilizada' : 'cota disponível'}
+              {tn(shown ? 'triage.sub_used' : 'triage.sub_left', triage.rows.length)}
             </span>
             {headline.ids.length > 0 && (
               <span className="nx-headline-jump">
                 {headline.ids.map((id) => (
                   <button key={id} type="button" className="link-btn" onClick={() => onOpen(id)}>
-                    Ver {harnessName(id)}
+                    {t('triage.see', { name: harnessName(id) })}
                   </button>
                 ))}
               </span>
@@ -205,7 +204,7 @@ export function Triage({ views, ctx, selected, onSelect, onOpen, onConfigure }: 
         </div>
       </section>
       <section className="nx-section">
-        <GroupHead title="Por urgência" count={triage.rows.length} />
+        <GroupHead title={t('triage.by_urgency')} count={triage.rows.length} />
         <div className="nx-tiles">
           {triage.rows.map((row) => (
             <Tile

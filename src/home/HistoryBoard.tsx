@@ -32,8 +32,8 @@ export function HistoryBoard({ view, ctx }: { view: HarnessView; ctx: ViewContex
   if (active === undefined) {
     return (
       <section className="nx-board">
-        <h3 className="nx-board-head">Histórico</h3>
-        <p className="hint">Nenhuma cota desta fonte guarda uma leitura com hora de renovação.</p>
+        <h3 className="nx-board-head">{t('history.title')}</h3>
+        <p className="hint">{t('history.board.no_readable')}</p>
       </section>
     );
   }
@@ -61,7 +61,7 @@ export function HistoryBoard({ view, ctx }: { view: HarnessView; ctx: ViewContex
   return (
     <section className="nx-board">
       <h3 className="nx-board-head">
-        Histórico
+        {t('history.title')}
         {burndown !== null && <span className="nx-count">{burndown.past.length + 1}</span>}
         {fresh && burndown !== null && (
           <button
@@ -98,11 +98,9 @@ export function HistoryBoard({ view, ctx }: { view: HarnessView; ctx: ViewContex
           ))}
         </fieldset>
       )}
-      {state.status === 'failed' && <p className="hint">Não foi possível ler o histórico.</p>}
-      {!fresh && state.status !== 'failed' && <p className="hint">Carregando as leituras…</p>}
-      {fresh && burndown === null && (
-        <p className="hint">Ainda não há leituras guardadas para esta cota.</p>
-      )}
+      {state.status === 'failed' && <p className="hint">{t('history.board.failed')}</p>}
+      {!fresh && state.status !== 'failed' && <p className="hint">{t('history.board.loading')}</p>}
+      {fresh && burndown === null && <p className="hint">{t('history.board.empty')}</p>}
       {fresh && burndown !== null && trend !== null && (
         <>
           <p className="nx-trend-line" data-kind={trend.kind}>

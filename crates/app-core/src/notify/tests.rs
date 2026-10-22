@@ -1,3 +1,4 @@
+use usage_model::settings::Language;
 use usage_model::{HarnessView, UsageWindow, WindowKind};
 
 use super::*;
@@ -10,6 +11,7 @@ fn settings(notify_on_out: bool, notify_on_reset: bool) -> Settings {
     let mut settings = Settings::default();
     settings.general.notify_on_out = notify_on_out;
     settings.general.notify_on_reset = notify_on_reset;
+    settings.general.language = Language::PtBr;
     settings
 }
 
@@ -276,7 +278,7 @@ fn planning_is_pure() {
 
 #[test]
 fn the_recovery_notice_names_the_copy_and_needs_no_window() {
-    let note = settings_recovered("settings.corrupt-1800000000.json");
+    let note = settings_recovered(Language::PtBr, "settings.corrupt-1800000000.json");
     assert_eq!(note.kind, NotificationKind::SettingsRecovered);
     assert!(note.window_id.is_empty());
     assert_eq!(note.title, "Configurações restauradas");
