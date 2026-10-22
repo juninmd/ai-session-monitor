@@ -1,0 +1,126 @@
+/* Skins: the palettes of the Canto widget, mapped onto this app's tokens. "Sistema" is no skin at
+   all (no data-skin attribute): tokens.css follows the Windows light/dark preference. Each skin only
+   states Canto's own tokens (--sk-*); the two rules below derive every surface from them, so a skin
+   never has to know which components exist. Amber and red stay status colours in every skin. */
+
+:root[data-skin] {
+  /* The dark derivation: cards lift from the panel towards white, edges come from Canto's edge. */
+  color-scheme: dark;
+  --page: var(--sk-ink);
+  --solid: var(--sk-panel);
+  --surface: color-mix(in srgb, var(--sk-panel) 90%, transparent);
+  --raise: color-mix(in srgb, var(--sk-panel) 92%, white);
+  --raise-2: color-mix(in srgb, var(--sk-panel) 86%, white);
+  --raise-3: color-mix(in srgb, var(--sk-panel) 80%, white);
+  --ink: var(--sk-fg);
+  --ink-2: var(--sk-muted);
+  --ink-3: var(--sk-faint);
+  --line: color-mix(in srgb, var(--sk-edge) 70%, transparent);
+  --line-2: color-mix(in srgb, var(--sk-line) 60%, transparent);
+  --control-line: var(--sk-line);
+  --accent: var(--sk-accent-text);
+  --btn-bg: var(--sk-accent);
+  --btn-ink: var(--sk-on-accent);
+  --warn: var(--sk-warn);
+  --warn-fill: var(--sk-warn);
+  --crit: var(--sk-danger);
+}
+
+/* The light skin lifts the other way: white cards on a pale page, darker steps for hover. */
+:root[data-skin="claro"] {
+  color-scheme: light;
+  --solid: var(--sk-ink);
+  --surface: color-mix(in srgb, var(--sk-ink) 90%, transparent);
+  --raise: var(--sk-panel);
+  --raise-2: var(--sk-edge);
+  --raise-3: color-mix(in srgb, var(--sk-edge) 85%, black);
+  --line: color-mix(in srgb, var(--sk-edge) 90%, transparent);
+  --line-2: color-mix(in srgb, var(--sk-line) 45%, transparent);
+  --glass-hi: rgb(255 255 255 / 0.55);
+  --glass-edge: rgb(255 255 255 / 0.7);
+  --shadow: 0 18px 48px rgb(16 24 40 / 0.28), 0 2px 8px rgb(16 24 40 / 0.16);
+}
+
+:root[data-skin="padrao"] {
+  --sk-ink: #0b0f16;
+  --sk-panel: #111826;
+  --sk-edge: #1f2a3c;
+  --sk-accent: #4ade80;
+  --sk-accent-text: #4ade80;
+  --sk-on-accent: #071206;
+  --sk-fg: #e2e8f0;
+  --sk-muted: #94a3b8;
+  --sk-faint: #8491a7;
+  --sk-line: #586781;
+  --sk-danger: #fb7185;
+  --sk-warn: #fbbf24;
+}
+
+/* Hueco Mundo: white sand under the moon, a dead sky and the red of the Espada. */
+:root[data-skin="hueco-mundo"] {
+  --sk-ink: #050506;
+  --sk-panel: #0e0e11;
+  --sk-edge: #2c2c33;
+  --sk-accent: #e11d48;
+  /* The brand red on small text sat at 4.1:1 on the panel; this one reaches 5.8:1. */
+  --sk-accent-text: #f6506d;
+  --sk-on-accent: #ffffff;
+  --sk-fg: #ede9e0;
+  --sk-muted: #a8a29e;
+  --sk-faint: #948e86;
+  --sk-line: #62626b;
+  --sk-danger: #f87171;
+  --sk-warn: #fbbf24;
+}
+
+/* Dracula: the official palette from draculatheme.com. */
+:root[data-skin="dracula"] {
+  --sk-ink: #21222c;
+  --sk-panel: #282a36;
+  --sk-edge: #44475a;
+  --sk-accent: #bd93f9;
+  --sk-accent-text: #bd93f9;
+  --sk-on-accent: #21222c;
+  --sk-fg: #f8f8f2;
+  --sk-muted: #b6b8c8;
+  --sk-faint: #9ba6cf;
+  --sk-line: #737898;
+  --sk-danger: #ff5555;
+  --sk-warn: #f1fa8c;
+}
+
+:root[data-skin="claro"] {
+  --sk-ink: #f1f5f9;
+  --sk-panel: #ffffff;
+  --sk-edge: #e2e8f0;
+  --sk-accent: #15803d;
+  --sk-accent-text: #15803d;
+  --sk-on-accent: #ffffff;
+  --sk-fg: #0f172a;
+  --sk-muted: #475569;
+  --sk-faint: #556173;
+  --sk-line: #7b8595;
+  --sk-danger: #be123c;
+  --sk-warn: #b45309;
+}
+
+/* Glass: more translucency, a stronger blur and a brighter top edge. */
+:root[data-skin="glass"] {
+  --sk-ink: #0c1017;
+  --sk-panel: #161b26;
+  --sk-edge: #273142;
+  --sk-accent: #0a84ff;
+  --sk-accent-text: #409cff;
+  --sk-on-accent: #001026;
+  --sk-fg: #f5f5f7;
+  --sk-muted: #a1abbc;
+  --sk-faint: #8894a8;
+  --sk-line: #586987;
+  --sk-danger: #ff453a;
+  --sk-warn: #ffd60a;
+  --glass-frame: 55%;
+  --glass-card: 48%;
+  --glass-blur: 40px;
+  --glass-hi: rgb(255 255 255 / 0.12);
+  --glass-edge: rgb(255 255 255 / 0.22);
+}

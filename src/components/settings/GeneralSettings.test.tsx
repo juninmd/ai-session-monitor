@@ -1,5 +1,5 @@
 import { screen, within } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { BackendError } from '../../lib/backend';
 import { LIMITS } from '../../lib/contract';
 import { problem } from '../../mock/fixtures';
@@ -129,12 +129,24 @@ describe('segmented choices', () => {
 });
 
 describe('the theme', () => {
-  it('follows Windows, with no row and no control that would pretend otherwise', () => {
+  afterEach(() => {
+    window.localStorage.clear();
+    delete document.documentElement.dataset.skin;
+  });
+
+  it('follows Windows until a skin is picked, and says nothing that is not a control', () => {
     renderPanel(<GeneralSettings />);
-    // The old "Tema · Segue o Windows." line carried no control, so it is gone.
     expect(screen.queryByText('Segue o Windows.')).toBeNull();
-    expect(screen.queryByRole('radio', { name: /claro|escuro/i })).toBeNull();
-    expect(screen.queryByLabelText('Tema')).toBeNull();
+    expect(screen.getByLabelText('Tema')).toHaveValue('sistema');
+    expect(document.documentElement.dataset.skin).toBeUndefined();
+  });
+
+  it('applies the picked skin at once and keeps it out of the backend settings', async () => {
+    const { user, backend } = renderPanel(<GeneralSettings />);
+    await user.selectOptions(screen.getByLabelText('Tema'), 'dracula');
+    expect(document.documentElement.dataset.skin).toBe('dracula');
+    expect(window.localStorage.getItem('aism.skin')).toBe('dracula');
+    expect(Object.keys(await stored(backend))).not.toContain('skin');
   });
 });
 

@@ -12,18 +12,14 @@
    slightly tighter body than the plain flyout. */
 .nx-fly {
   /* Glass: the frame and every card on it are translucent layers over the OS backdrop (Mica), with
-     a blur and a hairline highlight. Alphas stay high enough to keep text at AA contrast. */
-  --raise: light-dark(rgb(255 255 255 / 0.62), rgb(52 57 66 / 0.55));
-  --raise-2: light-dark(rgb(236 238 242 / 0.7), rgb(70 76 86 / 0.55));
-  --glass-edge: light-dark(rgb(255 255 255 / 0.7), rgb(255 255 255 / 0.14));
+     a blur and a hairline highlight. The alphas live in tokens.css (a skin may change them) and
+     stay high enough to keep text at AA contrast. */
+  --raise: color-mix(in srgb, var(--raise-0) var(--glass-card), transparent);
+  --raise-2: color-mix(in srgb, var(--raise-2-0) calc(var(--glass-card) + 10%), transparent);
   background:
-    linear-gradient(
-      160deg,
-      light-dark(rgb(255 255 255 / 0.55), rgb(255 255 255 / 0.07)),
-      transparent 55%
-    ),
-    light-dark(rgb(246 247 249 / 0.68), rgb(28 31 36 / 0.66));
-  backdrop-filter: blur(32px) saturate(1.6);
+    linear-gradient(160deg, var(--glass-hi), transparent 55%),
+    color-mix(in srgb, var(--solid) var(--glass-frame), transparent);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.6);
   box-shadow: inset 0 1px 0 var(--glass-edge);
 }
 
@@ -36,8 +32,8 @@
 
 @media (prefers-reduced-transparency: reduce) {
   .nx-fly {
-    --raise: light-dark(#ffffff, #2b2f35);
-    --raise-2: light-dark(#eceef2, #343940);
+    --raise: var(--raise-0);
+    --raise-2: var(--raise-2-0);
     background: var(--solid);
     backdrop-filter: none;
   }

@@ -21,6 +21,7 @@ import {
 } from '../../lib/contract';
 import type { Option } from '../forms/fields';
 import { SettingSegmented, SettingSelect, SettingSwitch } from '../forms/SettingControls';
+import { SkinSetting } from './SkinSetting';
 
 const patch = (settings: Settings, change: Partial<General>): Settings => ({
   ...settings,
@@ -103,6 +104,7 @@ export function GeneralSettings() {
           options={QUOTA_OPTIONS}
           apply={(current, mode) => patch(current, { showUsed: mode === 'used' })}
         />
+        <SkinSetting />
         <SettingSegmented
           id="set-density"
           legend={t('settings.density')}
