@@ -79,7 +79,8 @@ describe('moving between surfaces', () => {
     const body = document.querySelector('.fly-body') as HTMLElement;
     body.scrollTop = 160;
     await user.click(nav('Horizonte'));
-    expect(screen.getByRole('heading', { name: 'Chego até a renovação?' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Sobre o horizonte' })).toBeVisible();
+    expect(screen.getByRole('tooltip')).toHaveTextContent('Chego até a renovação?');
     expect(document.querySelector('button[data-tier]')).toBeNull();
     expect(body.scrollTop).toBe(0);
     await user.click(nav('Canais de cota'));

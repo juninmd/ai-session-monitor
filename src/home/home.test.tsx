@@ -241,7 +241,8 @@ describe('horizon surface', () => {
     const { user } = mount();
     await rows('data-tier');
     await user.click(screen.getByRole('button', { name: /^Horizonte/ }));
-    expect(screen.getByRole('heading', { name: 'Chego até a renovação?' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Sobre o horizonte' })).toBeVisible();
+    expect(screen.getByRole('tooltip')).toHaveTextContent('Chego até a renovação?');
     const list = await rows('data-kind');
     expect(list.length).toBeGreaterThan(3);
     expect(screen.getAllByText(/sem cota/i).length).toBeGreaterThan(0);

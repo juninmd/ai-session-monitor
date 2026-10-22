@@ -93,6 +93,21 @@ const PATHS = {
       <path d="m7.3 8.7 5.2-5.2M10.5 5.5 12 7" />
     </>
   ),
+  triage: (
+    <>
+      <rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1" />
+      <rect x="9" y="2.5" width="4.5" height="4.5" rx="1" />
+      <rect x="2.5" y="9" width="4.5" height="4.5" rx="1" />
+      <rect x="9" y="9" width="4.5" height="4.5" rx="1" />
+    </>
+  ),
+  horizon: <path d="M2.5 4.5h6M2.5 8h10M2.5 11.5h4.5M13.5 3v10" />,
+  channels: (
+    <>
+      <circle cx="8" cy="8" r="1.3" />
+      <path d="M5.2 5.2a4 4 0 0 0 0 5.6M10.8 5.2a4 4 0 0 1 0 5.6M3.2 3.2a7 7 0 0 0 0 9.6M12.8 3.2a7 7 0 0 1 0 9.6" />
+    </>
+  ),
 } satisfies Record<string, ReactNode>;
 
 export type IconName = keyof typeof PATHS;
