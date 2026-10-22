@@ -26,6 +26,10 @@ fn a_trickling_client_cannot_extend_the_deadline() {
     let api = LocalApi::start_with(0, provider(), limits).expect("start");
     let began = Instant::now();
     let mut stream = connect(&api);
+    // The answer is read while the client is still trickling: once the server closes on unread
+    // input the stack may reset the connection, and Windows then drops what was not yet read.
+    let mut reading = stream.try_clone().expect("clone");
+    let reader = std::thread::spawn(move || read_reply(&mut reading));
     // One byte every 100 ms never completes a head; each read alone would beat a per-read timeout.
     for byte in b"GET /v1/health HTTP/1.1\r\nHost: x".iter() {
         if stream.write_all(&[*byte]).is_err() {
@@ -36,7 +40,7 @@ fn a_trickling_client_cannot_extend_the_deadline() {
             break;
         }
     }
-    let reply = read_reply(&mut stream).expect("a 408");
+    let reply = reader.join().expect("reader").expect("a 408");
     assert_eq!(reply.status, 408);
     assert!(began.elapsed() < Duration::from_secs(3), "{:?}", began.elapsed());
 }
