@@ -72,6 +72,16 @@ export const channelsMessages = {
   'channels.litellm_budget.title': '密钥、用户或团队的预算',
   'channels.litellm_budget.how':
     'GET /key|user|team/info：spend、max_budget、budget_duration、budget_reset_at、按模型的预算，以及固定的 rpm/tpm 限制。',
+  'channels.cursor_usage_summary.title': '包含用量和按需支出',
+  'channels.cursor_usage_summary.how':
+    'GET cursor.com/api/usage-summary，使用由 Cursor 保存在本地数据库（state.vscdb，一条记录，只读）中的登录令牌构造的会话 Cookie：totalPercentUsed、billingCycleEnd 和 individualUsage.onDemand。',
+  'channels.cursor_usage_summary.caveat':
+    '非官方，且从未实际验证：该路由来自社区笔记，请与控制台对照。需要授权同意和“非官方”标记。',
+  'channels.copilot_internal_user.title': '高级请求、聊天和代码补全',
+  'channels.copilot_internal_user.how':
+    'GET api.github.com/copilot_internal/user → quota_snapshots（percent_remaining、entitlement、remaining、unlimited、overage_count）、copilot_plan 和 quota_reset_date。令牌是粘贴的令牌，或 Copilot 扩展保存在 apps.json 或 hosts.json 中的令牌。',
+  'channels.copilot_internal_user.caveat':
+    '非官方，且从未实际验证：该路由是 GitHub 的内部接口。响应中没有可用日期时，重置时间按推算得出（下个月 1 日，UTC），并标记为估算。',
   'channels.openrouter_activity.title': '按模型的每日支出',
   'channels.openrouter_activity.how':
     'GET /api/v1/activity。有公开文档，但需要管理密钥：推理密钥会得到 403（与 /credits 的情况相同）。',
@@ -90,7 +100,7 @@ export const channelsMessages = {
   'channels.kimi_console.title': '控制台中的速率详情',
   'channels.kimi_console.how':
     '平台控制台提供按模型的限额，但仅限于浏览器会话。没有新主机，没有 Cookie，也不抓取网页，因此不纳入。',
-  'channels.cursor_dashboard.title': '包含的额度池和按需支出',
+  'channels.cursor_dashboard.title': '额度授予和额度池详情',
   'channels.cursor_dashboard.how':
-    'cursor.com/api/usage-summary 和 Connect-RPC 的 GetClientVisibleCreditGrants。它们需要浏览器请求头，并可能在边缘返回 403。',
+    'Connect-RPC 的 GetClientVisibleCreditGrants 和控制台页面。它们需要浏览器请求头，并可能在边缘返回 403。usage-summary 路由已经通过 Cursor 保存的令牌读取。',
 } as const satisfies Record<string, string>;

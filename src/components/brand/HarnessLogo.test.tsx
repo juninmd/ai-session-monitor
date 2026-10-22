@@ -15,6 +15,8 @@ import zaiFile from './original/zai.mono.svg?raw';
 import antigravityFile from './vendor/antigravity.svg?raw';
 import claudeFile from './vendor/claude.svg?raw';
 import codexFile from './vendor/codex.svg?raw';
+import copilotFile from './vendor/copilot.mono.svg?raw';
+import cursorFile from './vendor/cursor.mono.svg?raw';
 import litellmFile from './vendor/litellm.mono.svg?raw';
 import opencodeFile from './vendor/opencode.mono.svg?raw';
 
@@ -22,6 +24,8 @@ import opencodeFile from './vendor/opencode.mono.svg?raw';
 const VENDORED: Record<HarnessId, string> = {
   claude: claudeFile,
   codex: codexFile,
+  cursor: cursorFile,
+  copilot: copilotFile,
   antigravity: antigravityFile,
   opencode: opencodeFile,
   kimi: kimiFile,
@@ -39,6 +43,8 @@ const VENDORED: Record<HarnessId, string> = {
 const TONE: Record<HarnessId, 'color' | 'mono'> = {
   claude: 'color',
   codex: 'color',
+  cursor: 'mono',
+  copilot: 'mono',
   antigravity: 'color',
   opencode: 'mono',
   kimi: 'mono',
@@ -57,6 +63,8 @@ const TONE: Record<HarnessId, 'color' | 'mono'> = {
 const DEFINED_IDS: Record<HarnessId, number> = {
   claude: 0,
   codex: 1,
+  cursor: 0,
+  copilot: 0,
   antigravity: 12,
   opencode: 0,
   kimi: 0,

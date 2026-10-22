@@ -53,6 +53,23 @@ export const errorDetailMessages = {
   'error.unauthorized.reason.no_token.body':
     'مانیٹر IDE کے مقامی سرور کا سیشن ٹوکن نہیں پڑھ سکا۔ Antigravity دوبارہ شروع کریں اور پھر کوشش کریں۔',
 
+  'error.timeout.reason.locked.body':
+    'Cursor کا مقامی ڈیٹا بیس ابھی استعمال میں ہے۔ تھوڑی دیر بعد دوبارہ کوشش کریں۔',
+  'error.timeout.reason.timeout.body':
+    'Cursor کا مقامی ڈیٹا بیس پڑھنے میں بہت دیر لگی۔ تھوڑی دیر بعد دوبارہ کوشش کریں۔',
+  'error.endpoint_changed.reason.schema.body':
+    'Cursor کے مقامی ڈیٹا بیس کا فارمیٹ مانیٹر کی توقع سے مختلف ہے۔ ممکن ہے مانیٹر کو اپڈیٹ کی ضرورت ہو۔',
+  'error.settings_unreadable.reason.permission.body':
+    'Cursor کا مقامی ڈیٹا بیس کھولنے کی اجازت نہیں۔ فائل کی اجازتیں چیک کریں۔',
+  'error.settings_unreadable.reason.not_a_database.body':
+    'Cursor کی ملنے والی فائل ڈیٹا بیس نہیں ہے۔',
+  'error.settings_unreadable.reason.other.body': 'Cursor کا مقامی ڈیٹا بیس نہیں پڑھا جا سکا۔',
+  'error.not_signed_in.reason.not_found.body':
+    'Copilot ایکسٹینشن کے فولڈر میں GitHub ٹوکن نہیں ملا۔ اپنے ایڈیٹر میں Copilot میں سائن اِن کریں، یا سیٹنگز میں ٹوکن پیسٹ کریں۔',
+  'error.not_signed_in.reason.no_token.body':
+    'Copilot ایکسٹینشن کی فائلوں میں github.com کا کوئی ٹوکن نہیں ہے۔ اپنے ایڈیٹر میں Copilot میں سائن اِن کریں، یا سیٹنگز میں ٹوکن پیسٹ کریں۔',
+  'error.not_signed_in.reason.unreadable.body':
+    'Copilot ایکسٹینشن کی سائن اِن فائل نہیں پڑھی جا سکی۔ اس کے فولڈر کی اجازتیں چیک کریں۔',
   'error.redirect':
     'سرور نے درخواست ری ڈائریکٹ کرنے کی کوشش کی، اور مانیٹر ری ڈائریکٹ کی پیروی نہیں کرتا۔',
   'error.retry_after': 'سورس کی طرف سے مانگا گیا انتظار: {wait}۔',

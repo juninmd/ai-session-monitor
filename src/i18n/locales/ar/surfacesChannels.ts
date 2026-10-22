@@ -92,7 +92,17 @@ export const channelsMessages = {
   'channels.kimi_console.title': 'تفاصيل المعدّل في وحدة التحكم',
   'channels.kimi_console.how':
     'تعرض وحدة تحكم المنصة حدودًا لكل نموذج، لكن لكل جلسة متصفح فقط. لا مضيف جديد ولا ملف تعريف ارتباط ولا استخراج من الصفحات — فتبقى خارج النطاق.',
-  'channels.cursor_dashboard.title': 'المجموعات المضمّنة والإنفاق عند الطلب',
+  'channels.cursor_usage_summary.title': 'الاستخدام المضمّن والإنفاق عند الطلب',
+  'channels.cursor_usage_summary.how':
+    'GET cursor.com/api/usage-summary بملف تعريف ارتباط الجلسة المبني من رمز تسجيل الدخول الذي يحتفظ به Cursor في قاعدة بياناته المحلية (state.vscdb، إدخال واحد، للقراءة فقط): totalPercentUsed وbillingCycleEnd وindividualUsage.onDemand.',
+  'channels.cursor_usage_summary.caveat':
+    'غير رسمي ولم يُشاهد مباشرةً: المسار مأخوذ من ملاحظات المجتمع، لذا قارنه باللوحة. يحتاج إلى الموافقة وإلى شارة «غير رسمي».',
+  'channels.copilot_internal_user.title': 'الطلبات المميزة والمحادثة والإكمال',
+  'channels.copilot_internal_user.how':
+    'GET api.github.com/copilot_internal/user ← quota_snapshots (percent_remaining وentitlement وremaining وunlimited وoverage_count) وcopilot_plan وquota_reset_date. الرمز إما ملصوق أو الذي تحتفظ به إضافة Copilot في apps.json أو hosts.json.',
+  'channels.copilot_internal_user.caveat':
+    'غير رسمي ولم يُشاهد مباشرةً: المسار داخلي في GitHub. وبدون تاريخ صالح في الاستجابة، يُشتق موعد إعادة الضبط (اليوم الأول من الشهر التالي، UTC) ويُوسم كتقدير.',
+  'channels.cursor_dashboard.title': 'منح الرصيد وتفاصيل المجمّع',
   'channels.cursor_dashboard.how':
-    'cursor.com/api/usage-summary وConnect-RPC GetClientVisibleCreditGrants. تحتاجان إلى ترويسات المتصفح وقد تُرجعان 403 عند الحافة.',
+    'Connect-RPC GetClientVisibleCreditGrants وصفحات اللوحة. تحتاجان إلى ترويسات المتصفح وقد تُرجعان 403 عند الحافة. يُقرأ مسار usage-summary بالفعل بالرمز الذي يحتفظ به Cursor.',
 } as const satisfies Record<string, string>;

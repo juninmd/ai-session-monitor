@@ -14,7 +14,13 @@ const N: usize = HarnessId::ALL.len();
 
 /// The three local sources read twice, every remote one (300 s and slower) once.
 fn local_twice() -> Vec<usize> {
-    (0..N).map(|i| if i < 3 { 2 } else { 1 }).collect()
+    HarnessId::ALL
+        .iter()
+        .map(|id| match id {
+            HarnessId::Claude | HarnessId::Codex | HarnessId::Antigravity => 2,
+            _ => 1,
+        })
+        .collect()
 }
 
 fn reads(rig: &crate::rig::Rig) -> Vec<usize> {

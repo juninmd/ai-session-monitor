@@ -26,6 +26,19 @@ export const setupMessages = {
     '经你许可，监视器可以运行已安装的 agy，仅用于读取 /usage（不消耗 Token，也不读取登录数据），并且/或者读取 IDE 服务的命令行以获取本地会话令牌，仅与 127.0.0.1 通信。不会写入磁盘，也不会发送到互联网。',
   'antigravity.connect.allow': '允许本地读取',
 
+  'cursor.connect.title': '连接 Cursor',
+  'cursor.connect.lead':
+    '经你许可，监视器会读取 Cursor 保存在本地数据库中的登录令牌，并用它向 cursor.com 查询你的套餐已用多少。这是非官方途径，Cursor 更新后可能失效。',
+  'cursor.connect.detail':
+    '以只读方式打开 Cursor 的本地数据库（state.vscdb），仅读取一条记录：登录令牌。令牌只会像 Cursor 控制台那样发送到 cursor.com，不会被保存或显示。不会读取其他任何记录（聊天、文件、电子邮件），也不会写入任何内容。Cursor 没有公开套餐用量的 API，因此首次使用时请将数字与控制台对照。',
+  'cursor.connect.allow': '允许读取',
+  'cursor.signin.title': '登录 Cursor',
+  'cursor.signin.body':
+    '监视器找不到有效的登录令牌。请打开 Cursor 并登录（打开它也会刷新已过期的令牌），然后重新读取。',
+  'cursor.dashboard': '打开 Cursor 控制台',
+  'cursor.note':
+    '非官方读取 Cursor 用量摘要，使用 Cursor 保存在这台电脑上的登录令牌。请与控制台对照。套餐包含的用量只以百分比显示；无限量套餐没有窗口。',
+
   'shim.title': '状态栏命令',
   'shim.state.not_installed': '未安装',
   'shim.state.installed': '已安装',
@@ -142,6 +155,19 @@ export const setupMessages = {
   'minimax.key_label': 'MiniMax Token Plan 密钥',
   'minimax.console': '打开 MiniMax 密钥页',
   'minimax.note': '非官方读取 MiniMax Token Plan 额度，按模型显示。套餐中没有额度的模型不会显示。',
+
+  'copilot.title': '连接 GitHub Copilot',
+  'copilot.lead':
+    '粘贴 GitHub 令牌，或让监视器读取 Copilot 扩展保存在磁盘上的令牌，即可查看本月已用的高级请求。这是非官方途径。',
+  'copilot.detail':
+    '非官方读取：使用 Copilot 编辑器为显示自身额度而调用的 GitHub 内部接口。该接口没有公开文档，可能随时变更，恕不另行通知。粘贴的令牌保存在 Windows 凭据管理器中。经你许可，监视器也可以改为读取 Copilot 扩展保存在磁盘上的 GitHub 令牌（其自身文件夹中的两个固定文件，只读）。两种令牌都只会发送到 api.github.com。不使用 GitHub Enterprise 令牌。首次使用时，请将数字与 github.com/settings/copilot 对照。',
+  'copilot.key_label': 'GitHub 令牌（可选）',
+  'copilot.console': '打开 GitHub Copilot 设置',
+  'copilot.local_label': '读取 Copilot 扩展令牌（仅限这台电脑）',
+  'copilot.local_hint':
+    '非官方：读取 Copilot 扩展保存在磁盘上的 GitHub 令牌（两个固定文件，只读），并且只发送到 api.github.com。粘贴令牌时无需开启。',
+  'copilot.note':
+    '非官方读取 GitHub Copilot 额度。重置日期可能是估算值（每月 1 日，UTC）。无限量的额度作为详情列出，不显示百分比。',
 
   'litellm.title': '连接 LiteLLM',
   'litellm.title_edit': 'LiteLLM 连接',

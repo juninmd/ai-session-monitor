@@ -26,6 +26,12 @@ export const errorMessages = {
   'error.unauthorized_ambiguous.zai.title': 'z.ai কী যাচাই করা যায়নি',
   'error.unauthorized_ambiguous.zai.body':
     'সার্ভিস রিকোয়েস্টটি গ্রহণ করেনি। সঠিক কী থাকলেও এমন হয়, আবার GLM Coding প্ল্যান ছাড়া অ্যাকাউন্টেও হয়। z.ai ড্যাশবোর্ডে কী ও প্ল্যান দেখে নিন।',
+  'error.unauthorized_ambiguous.cursor.title': 'Cursor লগইন যাচাই করা যায়নি',
+  'error.unauthorized_ambiguous.cursor.body':
+    'সার্ভিস রিকোয়েস্টটি গ্রহণ করেনি। লগইনের মেয়াদ শেষ বা পুরোনো হলে এমন হয়, আবার সক্রিয় প্ল্যান ছাড়া অ্যাকাউন্টেও হয়। Cursor খুলে লগইন নতুন করুন এবং Cursor ড্যাশবোর্ডে প্ল্যান দেখে নিন।',
+  'error.unauthorized_ambiguous.copilot.title': 'GitHub টোকেন যাচাই করা যায়নি',
+  'error.unauthorized_ambiguous.copilot.body':
+    'GitHub রিকোয়েস্টটি গ্রহণ করেনি। টোকেনের মেয়াদ শেষ হলে, ফাইন-গ্রেইনড বা অ্যাপ টোকেন হলে এবং Copilot ছাড়া অ্যাকাউন্টে এমন হয়। GitHub সেটিংসে টোকেন ও আপনার Copilot সাবস্ক্রিপশন দেখে নিন।',
   'error.not_found.title': 'ঠিকানা পাওয়া যায়নি',
   'error.not_found.body': 'সার্ভার দেওয়া পাথ বা আইডি চিনতে পারছে না। URL, স্কোপ ও আইডি দেখে নিন।',
   'error.server_error.title': 'সার্ভারের ত্রুটি',

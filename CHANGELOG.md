@@ -6,6 +6,11 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Added
 
+- Cursor and GitHub Copilot (both unofficial, opt-in): Cursor reads the sign-in token from its local
+  database and shows the included usage and on-demand spend; Copilot shows the monthly premium
+  requests with a pasted token or the one the extension keeps on disk.
+- Optional local API (`127.0.0.1:6737`, read-only JSON, off by default) and a setting that hides the
+  flyout from screenshots and screen sharing.
 - Ten interface languages, English by default: English, 简体中文, हिन्दी, Español, Français, العربية,
   বাংলা, Português (Brasil), Русский and اردو (right-to-left for Arabic and Urdu). Pick one under
   Settings → General → Language; the desktop notifications, tray tooltip and tray menu follow it

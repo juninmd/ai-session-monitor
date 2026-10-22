@@ -7,6 +7,10 @@ export function withEnabled(settings: Settings, id: HarnessId, enabled: boolean)
       return { ...settings, claude: { ...settings.claude, enabled } };
     case 'codex':
       return { ...settings, codex: { ...settings.codex, enabled } };
+    case 'cursor':
+      return { ...settings, cursor: { ...settings.cursor, enabled } };
+    case 'copilot':
+      return { ...settings, copilot: { ...settings.copilot, enabled } };
     case 'antigravity':
       return { ...settings, antigravity: { ...settings.antigravity, enabled } };
     case 'opencode':

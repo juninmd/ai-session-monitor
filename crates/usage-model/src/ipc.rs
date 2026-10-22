@@ -10,6 +10,7 @@ use serde::{Deserialize, Serialize};
 pub enum SecretKind {
     Litellm,
     Opencode,
+    Copilot,
     Kimi,
     Zai,
     Openrouter,
@@ -22,9 +23,10 @@ pub enum SecretKind {
 }
 
 impl SecretKind {
-    pub const ALL: [Self; 11] = [
+    pub const ALL: [Self; 12] = [
         Self::Litellm,
         Self::Opencode,
+        Self::Copilot,
         Self::Kimi,
         Self::Zai,
         Self::Openrouter,
@@ -41,6 +43,7 @@ impl SecretKind {
         match self {
             Self::Litellm => "litellm",
             Self::Opencode => "opencode",
+            Self::Copilot => "copilot",
             Self::Kimi => "kimi",
             Self::Zai => "zai",
             Self::Openrouter => "openrouter",
@@ -59,6 +62,7 @@ impl SecretKind {
 pub struct SecretStatus {
     pub litellm: bool,
     pub opencode: bool,
+    pub copilot: bool,
     pub kimi: bool,
     pub zai: bool,
     pub openrouter: bool,
@@ -77,6 +81,8 @@ pub struct SecretStatus {
 pub enum ExternalLink {
     OpencodeGoConsole,
     OpencodeBilling,
+    CursorDashboard,
+    CopilotSettings,
     KimiConsole,
     ZaiConsole,
     OpenrouterConsole,
@@ -90,9 +96,11 @@ pub enum ExternalLink {
 }
 
 impl ExternalLink {
-    pub const ALL: [Self; 12] = [
+    pub const ALL: [Self; 14] = [
         Self::OpencodeGoConsole,
         Self::OpencodeBilling,
+        Self::CursorDashboard,
+        Self::CopilotSettings,
         Self::KimiConsole,
         Self::ZaiConsole,
         Self::OpenrouterConsole,

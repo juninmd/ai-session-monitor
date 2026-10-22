@@ -119,3 +119,41 @@ export function AntigravityConnect() {
     />
   );
 }
+
+/** Cursor: the consent comes first; once given, what is missing is a signed-in Cursor on this PC. */
+export function CursorConnect() {
+  const backend = useBackend();
+  const { settings, save } = useSettingsApi();
+  const read = useAsyncAction(() => backend.refresh('cursor'));
+  if (settings.cursor.consent) {
+    return (
+      <InfoCard icon="key" logo="cursor" title={t('cursor.signin.title')}>
+        <p>{t('cursor.signin.body')}</p>
+        <div className="actions">
+          <button
+            type="button"
+            className="btn"
+            disabled={read.pending}
+            onClick={() => void read.run()}
+          >
+            {t('no_data.retry')}
+          </button>
+        </div>
+        {read.error && <ActionError error={read.error} harness="cursor" />}
+      </InfoCard>
+    );
+  }
+  return (
+    <ConsentCard
+      harness="cursor"
+      title={t('cursor.connect.title')}
+      lead={t('cursor.connect.lead')}
+      detail={t('cursor.connect.detail')}
+      allowLabel={t('cursor.connect.allow')}
+      onAllow={async () => {
+        await save((s) => ({ ...s, cursor: { ...s.cursor, consent: true } }));
+        await backend.refresh('cursor');
+      }}
+    />
+  );
+}

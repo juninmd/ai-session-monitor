@@ -37,6 +37,16 @@ pub trait Effects: Send + Sync + 'static {
     fn sync_autostart(&self, enabled: bool, origin: Origin);
     /// Whether the last startup-entry update failed.
     fn autostart_failed(&self) -> bool;
+    /// `general.hide_from_capture`: excludes every app window from screenshots, recordings and
+    /// screen sharing (or, with `false`, lifts that). Idempotent.
+    fn set_content_protected(&self, _protected: bool) {}
+    /// `general.local_api`: starts or stops the read-only loopback API. Idempotent; a start that
+    /// fails (port taken) leaves the app running and `local_api_failed` true. Must not block long.
+    fn sync_local_api(&self, _enabled: bool) {}
+    /// Whether the API is wanted but is not listening, so the next tick may try again.
+    fn local_api_failed(&self) -> bool {
+        false
+    }
 }
 
 /// Epoch seconds "now", injected so the tray countdown is testable.
@@ -64,6 +74,8 @@ struct Applied {
     tooltip: Option<String>,
     language: Option<Language>,
     autostart: AutostartSync,
+    capture: Option<bool>,
+    local_api: Option<bool>,
 }
 
 /// The startup-entry update last handed to the OS and how its failures were handled.
@@ -139,6 +151,7 @@ impl<E: Effects> ShellSink<E> {
     /// always re-applies, which also repairs a tray left stale by two updates that raced.
     pub fn tick(&self) {
         self.retry_autostart();
+        self.retry_local_api();
         self.render(true);
     }
 
@@ -146,15 +159,18 @@ impl<E: Effects> ShellSink<E> {
         lock(&self.latest).settings = settings.clone();
         let wanted = settings.general.autostart;
         let language = settings.general.language;
-        let (changed, language_changed) = {
+        let (capture, local_api) = (settings.general.hide_from_capture, settings.general.local_api);
+        let (changed, language_changed, capture_changed, local_api_changed) = {
             let mut applied = lock(&self.applied);
+            let capture_changed = applied.capture.replace(capture) != Some(capture);
+            let local_api_changed = applied.local_api.replace(local_api) != Some(local_api);
             let language_changed = applied.language.replace(language) != Some(language);
             let changed = applied.autostart.sent.map(|(value, _)| value) != Some(wanted);
             if changed {
                 let sent = Some((wanted, origin));
                 applied.autostart = AutostartSync { sent, ..AutostartSync::default() };
             }
-            (changed, language_changed)
+            (changed, language_changed, capture_changed, local_api_changed)
         };
         if language_changed {
             self.effects.set_language(language);
@@ -162,7 +178,21 @@ impl<E: Effects> ShellSink<E> {
         if changed {
             self.effects.sync_autostart(wanted, origin);
         }
+        if capture_changed {
+            self.effects.set_content_protected(capture);
+        }
+        if local_api_changed {
+            self.effects.sync_local_api(local_api);
+        }
         self.render(false);
+    }
+
+    /// A port that was taken when the API was switched on may be free later.
+    fn retry_local_api(&self) {
+        let wanted = lock(&self.latest).settings.general.local_api;
+        if wanted && self.effects.local_api_failed() {
+            self.effects.sync_local_api(true);
+        }
     }
 
     /// A failed update is told to the user once and tried again on the next ticks, a few times,

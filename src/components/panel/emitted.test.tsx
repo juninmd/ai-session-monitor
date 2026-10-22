@@ -6,6 +6,8 @@ import {
   antigravityEmitted,
   claudeEmitted,
   codexEmitted,
+  copilotEmitted,
+  cursorEmitted,
   litellmEmitted,
   opencodeEmitted,
 } from '../../mock/emitted';
@@ -71,6 +73,34 @@ const CASES: Case[] = [
       '184 mil tokens',
       'Não foi possível ler o banco local do OpenCode: o banco está em uso por outro programa.',
       'A janela de 5 horas está em 0%',
+    ],
+  },
+  {
+    id: 'cursor',
+    make: cursorEmitted,
+    shows: [
+      'Ultra',
+      'Uso incluído',
+      'Ilimitado',
+      'Gasto sob demanda',
+      'US$ 17,30',
+      'Leitura não oficial · resumo de uso do Cursor',
+    ],
+  },
+  {
+    id: 'copilot',
+    make: copilotEmitted,
+    shows: [
+      'Individual Pro',
+      'Requisições premium',
+      'Chat',
+      'Completions de código',
+      'Ilimitado',
+      'Requisições premium acima da cota',
+      '12 req.',
+      'Token da extensão',
+      'A data de reset é uma estimativa',
+      'Leitura não oficial · rota de cota do GitHub Copilot',
     ],
   },
   {

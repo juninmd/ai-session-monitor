@@ -107,6 +107,18 @@ describe('titles', () => {
   it('uses the Claude wording only for Claude', () => {
     expect(windowTitle('claude', win())).toBe('Sessão de 5 horas');
     expect(windowTitle('codex', win())).toBe('Janela de 5 horas');
+    expect(windowTitle('cursor', win({ id: 'monthly', kind: 'monthly' }))).toBe('Uso incluído');
+    expect(windowTitle('cursor', win({ id: 'on_demand', kind: 'budget' }))).toBe(
+      'Gasto sob demanda',
+    );
+    // Copilot's quotas are all monthly: the id names them.
+    expect(windowTitle('copilot', win({ id: 'premium_requests', kind: 'monthly' }))).toBe(
+      'Requisições premium',
+    );
+    expect(windowTitle('copilot', win({ id: 'chat', kind: 'monthly' }))).toBe('Chat');
+    expect(windowTitle('copilot', win({ id: 'completions', kind: 'monthly' }))).toBe(
+      'Completions de código',
+    );
     expect(windowTitle('claude', win({ kind: 'weekly' }))).toBe('Semana, todos os modelos');
     expect(windowTitle('opencode', win({ kind: 'weekly' }))).toBe('Semana');
   });

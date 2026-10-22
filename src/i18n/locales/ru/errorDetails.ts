@@ -67,4 +67,22 @@ export const errorDetailMessages = {
   'field.dataDir': 'папка данных OpenCode',
   'field.shimConsent': 'согласие на установку команды',
   'field.limit': 'число прошлых окон',
+  'error.timeout.reason.locked.body':
+    'Локальная база данных Cursor сейчас занята. Повторите попытку через минуту.',
+  'error.timeout.reason.timeout.body':
+    'Чтение локальной базы данных Cursor заняло слишком много времени. Повторите попытку через минуту.',
+  'error.endpoint_changed.reason.schema.body':
+    'Структура локальной базы данных Cursor отличается от ожидаемой монитором. Возможно, нужно обновить монитор.',
+  'error.settings_unreadable.reason.permission.body':
+    'Нет прав на открытие локальной базы данных Cursor. Проверьте права доступа к файлу.',
+  'error.settings_unreadable.reason.not_a_database.body':
+    'Найденный файл Cursor не является базой данных.',
+  'error.settings_unreadable.reason.other.body':
+    'Не удалось прочитать локальную базу данных Cursor.',
+  'error.not_signed_in.reason.not_found.body':
+    'В папке расширения Copilot не найден токен GitHub. Войдите в Copilot в редакторе или вставьте токен в настройках.',
+  'error.not_signed_in.reason.no_token.body':
+    'В файлах расширения Copilot нет токена для github.com. Войдите в Copilot в редакторе или вставьте токен в настройках.',
+  'error.not_signed_in.reason.unreadable.body':
+    'Не удалось прочитать файл входа расширения Copilot. Проверьте права доступа к его папке.',
 } as const satisfies Record<string, string>;

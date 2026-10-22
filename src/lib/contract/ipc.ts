@@ -5,6 +5,7 @@ import { z } from 'zod';
 export const SecretKindSchema = z.enum([
   'litellm',
   'opencode',
+  'copilot',
   'kimi',
   'zai',
   'openrouter',
@@ -20,6 +21,7 @@ export type SecretKind = z.infer<typeof SecretKindSchema>;
 export const SecretStatusSchema = z.strictObject({
   litellm: z.boolean(),
   opencode: z.boolean(),
+  copilot: z.boolean(),
   kimi: z.boolean(),
   zai: z.boolean(),
   openrouter: z.boolean(),
@@ -36,6 +38,8 @@ export type SecretStatus = z.infer<typeof SecretStatusSchema>;
 export const ExternalLinkSchema = z.enum([
   'opencode_go_console',
   'opencode_billing',
+  'cursor_dashboard',
+  'copilot_settings',
   'kimi_console',
   'zai_console',
   'openrouter_console',

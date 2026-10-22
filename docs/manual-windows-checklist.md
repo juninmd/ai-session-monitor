@@ -236,6 +236,20 @@ switch keeps secrets in memory (`AISM_MEMORY_SECRETS`) and never reaches the Cre
       card and the "não oficial" badge. With a Token Plan key, each model shows an interval and a
       weekly row; compare **both percentages with the console** the first time. If they are
       inverted (used shown as left), the `*_usage_count` meaning is wrong: fix `parse.rs`. A pay-as-you-go key reads "chave ou login recusado".
+- [ ] Cursor tab (UNOFFICIAL, never exercised against a live account): without consent the setup
+      card and the "não oficial" badge, and nothing under `%APPDATA%\Cursor` is opened. After consent
+      with Cursor signed in, the included usage matches cursor.com/dashboard (check that the figure
+      is a 0..100 percentage, not a fraction) and the on-demand spend matches (cents). Signed out:
+      "needs setup", not an error. The token appears nowhere (settings, snapshot, devtools).
+- [ ] GitHub Copilot tab (UNOFFICIAL endpoint, never exercised against a live account): a token
+      pasted in the key field wins over the local file; with only the local-file consent the token
+      is read from `%LOCALAPPDATA%\github-copilot\apps.json`. "Premium requests" matches
+      github.com/settings/copilot; the reset reads "estimated" when the response carries no date.
+- [ ] Settings → "Hide from screenshots and screen sharing": the flyout is blank or absent in a
+      Snipping Tool capture and in a Teams/Meet window share; turning it off restores it at once.
+- [ ] Settings → "Local API": off, `curl http://127.0.0.1:6737/v1/limits` is refused; on, it
+      returns the readings with no secret in it; with a foreign `Host:` or any `Origin:` header it
+      answers 403; a second app holding port 6737 shows no crash and the toggle retries.
 - [ ] The key appears nowhere else: not in `settings.json`, not in the webview devtools console,
       not in stderr.
 - [ ] A value the Credential Manager cannot hold (about 1,280 characters: it stores UTF-16 in a

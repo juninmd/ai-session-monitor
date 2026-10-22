@@ -13,6 +13,8 @@ fn emitted() -> Vec<(&'static str, &'static [&'static str])> {
     vec![
         ("collector-claude", collector_claude::NOTICE_CODES),
         ("collector-codex", collector_codex::NOTICE_CODES),
+        ("collector-cursor", collector_cursor::NOTICE_CODES),
+        ("collector-copilot", collector_copilot::NOTICE_CODES),
         ("collector-antigravity", collector_antigravity::NOTICE_CODES),
         ("collector-litellm", collector_litellm::NOTICE_CODES),
         ("collector-opencode", collector_opencode::NOTICE_CODES),

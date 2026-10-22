@@ -27,6 +27,8 @@ export const noticeMessages = {
   'notice.code.opencode_local_estimate':
     'مقامی اعداد لسٹ پرائس پر مبنی اندازہ ہیں اور صرف اسی PC کے ہیں۔ یہ کوٹا نہیں ہیں۔',
   'notice.code.opencode_db_unreadable': 'مقامی OpenCode ڈیٹا بیس نہیں پڑھا جا سکا: {reason}۔',
+  'notice.code.copilot_reset_derived':
+    'ری سیٹ کی تاریخ اندازہ ہے: GitHub کے مطابق پریمیم درخواستیں ہر مہینے کی 1 تاریخ کو، UTC میں، ری سیٹ ہوتی ہیں۔',
   'notice.unknown': 'غیر ترجمہ شدہ نوٹس: {code}',
   'notice.action.reinstall': 'دوبارہ انسٹال کریں',
   'notice.action.settings': 'key درج کریں',

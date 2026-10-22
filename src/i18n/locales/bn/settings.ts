@@ -18,6 +18,12 @@ export const settingsMessages = {
   'settings.show_used': 'কোটা দেখান',
   'settings.show_available': 'বাকি',
   'settings.show_used_opt': 'ব্যবহৃত',
+  'settings.hide_capture': 'স্ক্রিনশট ও স্ক্রিন শেয়ারিং থেকে লুকান',
+  'settings.hide_capture_hint':
+    'প্যানেলটি স্ক্রিনশট, রেকর্ডিং ও স্ক্রিন শেয়ারিংয়ে দেখা যাবে না (Windows ও macOS; Linux-এ সমর্থিত নয়)।',
+  'settings.local_api': 'লোকাল API',
+  'settings.local_api_hint':
+    'স্ক্রিপ্ট ও স্ট্যাটাস বারের জন্য রিডিংগুলো 127.0.0.1:{port}-এ শুধু-পড়ার JSON হিসেবে দেয়। এই কম্পিউটারের যেকোনো প্রোগ্রাম এটি পড়তে পারে। ডিফল্টে বন্ধ।',
   'settings.language': 'ভাষা',
   'settings.language_hint': 'প্যানেল ও নোটিফিকেশনে প্রযোজ্য।',
   'settings.skin': 'থিম',
@@ -92,4 +98,7 @@ export const settingsMessages = {
     'অনানুষ্ঠানিক রিডিং: ইনস্টল করা agy চালিয়ে শুধু /usage পড়তে পারে (টোকেন খরচ বা লগইন তথ্য না পড়ে) এবং/অথবা IDE-র লোকাল সার্ভার পড়তে পারে, যা শুধু 127.0.0.1-এর সঙ্গে যোগাযোগ করে।',
   'antigravity.note':
     'রিডিং আসে ইনস্টল করা agy থেকে (কিছু খোলা রাখতে হয় না) অথবা তা না থাকলে IDE-র লোকাল সার্ভার থেকে: সেক্ষেত্রে Antigravity খোলা রাখুন।',
+  'cursor.consent': 'Cursor-এর লগইন টোকেন পড়ার অনুমতি দিন',
+  'cursor.consent_hint':
+    'অনানুষ্ঠানিক রিডিং: Cursor তার লোকাল ডেটাবেসে যে লগইন টোকেন রাখে সেটি পড়ে (শুধু-পড়ার মোডে, ওই একটি এন্ট্রি) এবং শুধু cursor.com-এ পাঠায়।',
 } as const satisfies Record<string, string>;

@@ -193,8 +193,9 @@ console detail, OpenRouter `/activity` (management key), LiteLLM `/global/spend`
 Cursor's dashboard calls.
 
 Candidate new sources with an official channel and a credential that would fit: Amp (`amp usage`),
-GitHub Copilot (a plan-scoped PAT), Kiro CLI, Cline, Windsurf/Devin (service key, Enterprise),
-Command Code.
+Kiro CLI, Cline, Windsurf/Devin (service key, Enterprise), Command Code. (GitHub Copilot used to be
+listed here; it is now a read, unofficial source, as is Cursor, whose `usage-summary` route moved
+from "out of reach" to "already read" with the token Cursor keeps on this PC.)
 
 ### Configurações
 

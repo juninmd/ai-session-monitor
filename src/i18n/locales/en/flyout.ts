@@ -147,9 +147,6 @@ export const flyoutMessages = {
   'candidates.amp.credential': 'Local CLI (`amp`)',
   'candidates.amp.offer':
     '`amp usage` returns the credit balance and included usage. Same fixed-CLI pattern already used by Claude and Antigravity.',
-  'candidates.copilot.credential': 'PAT with plan-read scope',
-  'candidates.copilot.offer':
-    'Premium requests, chat and completions, with plan and reset date; AI credit billing through the REST billing API.',
   'candidates.kiro.credential': "The CLI's own credential",
   'candidates.kiro.offer':
     'GetUsageLimits returns a single credit pool with used, limit, percentage and reset.',

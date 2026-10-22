@@ -18,6 +18,8 @@ pub const fn url_for(link: ExternalLink) -> &'static str {
         ExternalLink::OpencodeGoConsole | ExternalLink::OpencodeBilling => {
             "https://opencode.ai/auth"
         }
+        ExternalLink::CursorDashboard => "https://cursor.com/dashboard",
+        ExternalLink::CopilotSettings => "https://github.com/settings/copilot",
         ExternalLink::KimiConsole => "https://www.kimi.com/code/console",
         ExternalLink::ZaiConsole => "https://z.ai/manage-apikey/apikey-list",
         ExternalLink::OpenrouterConsole => "https://openrouter.ai/settings/keys",

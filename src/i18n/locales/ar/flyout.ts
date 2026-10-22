@@ -164,9 +164,6 @@ export const flyoutMessages = {
   'candidates.amp.credential': 'CLI محلي (`amp`)',
   'candidates.amp.offer':
     'يُرجع `amp usage` رصيد الائتمان والاستخدام المضمّن. النمط نفسه المعتمد على CLI ثابت والمستخدم بالفعل مع Claude وAntigravity.',
-  'candidates.copilot.credential': 'PAT بصلاحية قراءة الباقة',
-  'candidates.copilot.offer':
-    'الطلبات المميزة والمحادثة والإكمال، مع الباقة وتاريخ إعادة الضبط؛ وفوترة رصيد الذكاء الاصطناعي عبر واجهة REST للفوترة.',
   'candidates.kiro.credential': 'بيانات اعتماد CLI نفسه',
   'candidates.kiro.offer':
     'يُرجع GetUsageLimits مجموعة رصيد واحدة فيها المستخدم والحد والنسبة المئوية وإعادة الضبط.',

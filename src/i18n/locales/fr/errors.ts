@@ -30,6 +30,12 @@ export const errorMessages = {
   'error.unauthorized_ambiguous.zai.title': 'Impossible de vérifier la clé z.ai',
   'error.unauthorized_ambiguous.zai.body':
     'Le service a refusé la requête. Cela arrive avec des clés valides, mais aussi avec des comptes sans le forfait GLM Coding. Vérifiez la clé et le forfait dans le tableau de bord z.ai.',
+  'error.unauthorized_ambiguous.cursor.title': 'Impossible de vérifier la connexion à Cursor',
+  'error.unauthorized_ambiguous.cursor.body':
+    'Le service a refusé la requête. Cela arrive avec une session expirée ou périmée, mais aussi avec un compte sans forfait actif. Ouvrez Cursor pour renouveler la connexion et vérifiez le forfait dans le tableau de bord Cursor.',
+  'error.unauthorized_ambiguous.copilot.title': 'Impossible de vérifier le jeton GitHub',
+  'error.unauthorized_ambiguous.copilot.body':
+    'GitHub a refusé la requête. Cela arrive avec un jeton expiré, un jeton à granularité fine ou d’application, et avec un compte sans Copilot. Vérifiez le jeton et votre abonnement Copilot dans les paramètres GitHub.',
   'error.not_found.title': 'Adresse introuvable',
   'error.not_found.body':
     'Le serveur ne reconnaît pas le chemin ou l’identifiant fourni. Vérifiez l’URL, la portée et l’identifiant.',

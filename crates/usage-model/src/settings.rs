@@ -18,6 +18,8 @@ pub const MAX_INTERVAL_SECS: u32 = 3600;
 pub const MIN_LITELLM_POLL_SECS: u32 = 60;
 pub const MAX_ALERT_THRESHOLDS: usize = 4;
 pub const DEFAULT_ALERT_THRESHOLDS: [u8; 2] = [80, 95];
+/// The loopback port of the optional local API. Fixed on purpose: consumers must find it.
+pub const LOCAL_API_PORT: u16 = 6737;
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
@@ -26,6 +28,8 @@ pub struct Settings {
     pub general: GeneralSettings,
     pub claude: ClaudeSettings,
     pub codex: CodexSettings,
+    pub cursor: CursorSettings,
+    pub copilot: CopilotSettings,
     pub antigravity: AntigravitySettings,
     pub opencode: OpencodeSettings,
     pub kimi: KimiSettings,
@@ -47,6 +51,8 @@ impl Default for Settings {
             general: GeneralSettings::default(),
             claude: ClaudeSettings::default(),
             codex: CodexSettings::default(),
+            cursor: CursorSettings::default(),
+            copilot: CopilotSettings::default(),
             antigravity: AntigravitySettings::default(),
             opencode: OpencodeSettings::default(),
             kimi: KimiSettings::default(),
@@ -80,6 +86,8 @@ impl Settings {
         match id {
             HarnessId::Claude => self.claude.enabled,
             HarnessId::Codex => self.codex.enabled,
+            HarnessId::Cursor => self.cursor.enabled,
+            HarnessId::Copilot => self.copilot.enabled,
             HarnessId::Antigravity => self.antigravity.enabled,
             HarnessId::Opencode => self.opencode.enabled,
             HarnessId::Kimi => self.kimi.enabled,
@@ -185,6 +193,12 @@ pub struct GeneralSettings {
     /// The flyout opens by itself once, on the very first launch.
     pub first_run_done: bool,
     pub language: Language,
+    /// Serve the current readings as read-only JSON on loopback (`LOCAL_API_PORT`). Off until the
+    /// user opts in: it is the only place the app listens on a port.
+    pub local_api: bool,
+    /// Keep the flyout out of screenshots, screen recordings and screen sharing (Windows
+    /// `WDA_EXCLUDEFROMCAPTURE`). Presentation only.
+    pub hide_from_capture: bool,
 }
 
 impl Default for GeneralSettings {
@@ -208,6 +222,8 @@ impl Default for GeneralSettings {
             compact: false,
             first_run_done: false,
             language: Language::En,
+            local_api: false,
+            hide_from_capture: false,
         }
     }
 }
@@ -243,6 +259,37 @@ pub struct CodexSettings {
 impl Default for CodexSettings {
     fn default() -> Self {
         Self { enabled: true, consent: false, binary_path: None }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct CursorSettings {
+    pub enabled: bool,
+    /// The user agreed to read the sign-in token Cursor keeps in its local `state.vscdb` and to
+    /// send it to cursor.com (unofficial).
+    pub consent: bool,
+}
+
+impl Default for CursorSettings {
+    fn default() -> Self {
+        Self { enabled: true, consent: false }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct CopilotSettings {
+    pub enabled: bool,
+    /// The user agreed to read the GitHub token the Copilot extension keeps in its local
+    /// `apps.json`/`hosts.json` and to send it to api.github.com (unofficial endpoint). A token
+    /// pasted by the user (`SecretKind::Copilot`) needs no flag: saving it is the consent.
+    pub local_consent: bool,
+}
+
+impl Default for CopilotSettings {
+    fn default() -> Self {
+        Self { enabled: true, local_consent: false }
     }
 }
 

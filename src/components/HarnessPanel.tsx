@@ -5,18 +5,28 @@ import { ErrorView } from './panel/ErrorView';
 import { Notices } from './panel/Notices';
 import { ReadyView } from './panel/ReadyView';
 import { DisabledCard, NoDataCard, PanelSkeleton } from './panel/StateCards';
-import { AntigravityConnect, ClaudeConnect, CodexConnect } from './setup/ConnectCards';
+import {
+  AntigravityConnect,
+  ClaudeConnect,
+  CodexConnect,
+  CursorConnect,
+} from './setup/ConnectCards';
+import { CopilotConnect } from './setup/CopilotConnect';
 import { KeyConnect } from './setup/KeyConnect';
 import { LitellmForm } from './setup/LitellmForm';
 import { OpencodeConnect } from './setup/OpencodeConnect';
 
-/** Consent-gated sources ask first; LiteLLM, OpenCode, Kimi and z.ai need a key before anything is read. */
+/** Consent-gated sources ask first; LiteLLM, OpenCode, Copilot, Kimi and z.ai need a key before anything is read. */
 function SetupSurface({ harness }: { harness: HarnessId }) {
   switch (harness) {
     case 'claude':
       return <ClaudeConnect />;
     case 'codex':
       return <CodexConnect />;
+    case 'cursor':
+      return <CursorConnect />;
+    case 'copilot':
+      return <CopilotConnect />;
     case 'antigravity':
       return <AntigravityConnect />;
     case 'opencode':

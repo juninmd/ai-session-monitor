@@ -37,6 +37,19 @@ fn codex<'a>(s: &'a Settings, _: &'a dyn SecretStore, ctx: &'a Ctx) -> CollectFu
     Box::pin(collector_codex::collect(&s.codex, ctx))
 }
 
+fn cursor<'a>(s: &'a Settings, _: &'a dyn SecretStore, ctx: &'a Ctx) -> CollectFuture<'a> {
+    Box::pin(collector_cursor::collect(&s.cursor, ctx))
+}
+
+fn copilot<'a>(s: &'a Settings, secrets: &'a dyn SecretStore, ctx: &'a Ctx) -> CollectFuture<'a> {
+    Box::pin(async move {
+        match secrets.get(SecretKind::Copilot) {
+            Ok(token) => collector_copilot::collect(&s.copilot, token.as_ref(), ctx).await,
+            Err(err) => HarnessView::error(HarnessId::Copilot, err),
+        }
+    })
+}
+
 fn antigravity<'a>(s: &'a Settings, _: &'a dyn SecretStore, ctx: &'a Ctx) -> CollectFuture<'a> {
     Box::pin(collector_antigravity::collect(&s.antigravity, ctx))
 }
@@ -223,6 +236,8 @@ pub fn adapters(claude_dir: Option<String>) -> Adapters {
         collectors: vec![
             claude,
             wired(HarnessId::Codex, codex),
+            wired(HarnessId::Cursor, cursor),
+            wired(HarnessId::Copilot, copilot),
             wired(HarnessId::Antigravity, antigravity),
             wired(HarnessId::Opencode, opencode),
             wired(HarnessId::Kimi, kimi),

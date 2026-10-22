@@ -58,7 +58,7 @@ describe('scenario content', () => {
     const states = await Promise.all(HARNESS_IDS.map((id) => stateOf(backend, id)));
     expect(states).toEqual(
       HARNESS_IDS.map((id) =>
-        ['claude', 'codex', 'antigravity'].includes(id) ? 'needs_consent' : 'needs_setup',
+        ['claude', 'codex', 'cursor', 'antigravity'].includes(id) ? 'needs_consent' : 'needs_setup',
       ),
     );
     expect((await backend.getSettings()).general.firstRunDone).toBe(false);

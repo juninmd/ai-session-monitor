@@ -18,6 +18,7 @@ import {
   litellmView,
   opencodeView,
 } from './builders';
+import { copilotView, cursorView } from './editors';
 import { asStale, type Env, failed, type Mood, notice, problem, viewOf } from './fixtures';
 import { deepseekView, kimiView, openrouterView, zaiView } from './keyed';
 
@@ -44,6 +45,8 @@ type Makers = Record<HarnessId, Maker>;
 const everyone = (mood: Mood): Makers => ({
   claude: (env) => BUILDERS.claude(env, mood),
   codex: (env) => BUILDERS.codex(env, mood),
+  cursor: (env) => BUILDERS.cursor(env, mood),
+  copilot: (env) => BUILDERS.copilot(env, mood),
   antigravity: (env) => BUILDERS.antigravity(env, mood),
   opencode: (env) => BUILDERS.opencode(env, mood),
   kimi: (env) => BUILDERS.kimi(env, mood),
@@ -69,6 +72,8 @@ function withExpiredWeek(view: HarnessView, env: Env): HarnessView {
 const loading: Makers = {
   claude: () => viewOf('claude', { state: 'loading' }),
   codex: () => viewOf('codex', { state: 'loading' }),
+  cursor: () => viewOf('cursor', { state: 'loading' }),
+  copilot: () => viewOf('copilot', { state: 'loading' }),
   antigravity: () => viewOf('antigravity', { state: 'loading' }),
   opencode: () => viewOf('opencode', { state: 'loading' }),
   kimi: () => viewOf('kimi', { state: 'loading' }),
@@ -91,6 +96,8 @@ export const DATA: Record<ScenarioName, Makers> = {
   demo: {
     claude: (env) => claudeView(env, 'ok'),
     codex: (env) => codexView(env, 'warn'),
+    cursor: (env) => cursorView(env, 'ok'),
+    copilot: (env) => copilotView(env, 'ok', true),
     antigravity: (env) => antigravityView(env, 'ok', true, true),
     opencode: (env) => opencodeView(env, 'ok'),
     kimi: (env) => kimiView(env, 'ok'),
@@ -107,6 +114,8 @@ export const DATA: Record<ScenarioName, Makers> = {
   stale: {
     claude: (env) => asStale(claudeView(env, 'ok'), env, 23, problem('network', {}, true)),
     codex: (env) => asStale(withExpiredWeek(codexView(env, 'ok'), env), env, 12),
+    cursor: (env) => asStale(cursorView(env, 'ok'), env, 25, problem('network', {}, true)),
+    copilot: (env) => asStale(copilotView(env, 'ok'), env, 30),
     antigravity: (env) =>
       asStale(antigravityView(env, 'warn'), env, 40, problem('not_running', {}, true)),
     opencode: (env) => asStale(opencodeView(env, 'ok'), env, 35),
@@ -132,6 +141,9 @@ export const DATA: Record<ScenarioName, Makers> = {
   errors: {
     claude: () => failed('claude', problem('install_failed', { reason: 'write_failed' })),
     codex: () => failed('codex', problem('binary_not_found')),
+    cursor: () =>
+      failed('cursor', problem('unauthorized', { httpStatus: '401', ambiguous: 'true' })),
+    copilot: () => failed('copilot', problem('not_signed_in', { reason: 'not_found' })),
     antigravity: () => failed('antigravity', problem('not_running', {}, true)),
     opencode: () =>
       failed('opencode', problem('unauthorized', { httpStatus: '401', ambiguous: 'true' })),
@@ -167,6 +179,7 @@ export function startFor(scenario: ScenarioName): Start {
       secrets: {
         litellm: false,
         opencode: false,
+        copilot: false,
         kimi: false,
         zai: false,
         openrouter: false,
@@ -187,6 +200,8 @@ export function startFor(scenario: ScenarioName): Start {
     claude: { ...base.claude, shimConsent: true },
     codex: { ...base.codex, consent: true },
     antigravity: { ...base.antigravity, consent: true },
+    cursor: { ...base.cursor, consent: true },
+    copilot: { ...base.copilot, localConsent: true },
     opencode: { ...base.opencode, localConsent: true },
     litellm: { ...base.litellm, baseUrl: 'https://gateway.exemplo.dev' },
   };
@@ -195,6 +210,7 @@ export function startFor(scenario: ScenarioName): Start {
     secrets: {
       litellm: true,
       opencode: true,
+      copilot: true,
       kimi: true,
       zai: true,
       openrouter: true,
@@ -228,6 +244,12 @@ function gate(id: HarnessId, env: Env, firstSessionSeen: boolean): HarnessView |
       return null;
     case 'codex':
       return settings.codex.consent ? null : viewOf(id, { state: 'needs_consent' });
+    case 'cursor':
+      return settings.cursor.consent ? null : viewOf(id, { state: 'needs_consent' });
+    case 'copilot':
+      return secrets.copilot || settings.copilot.localConsent
+        ? null
+        : viewOf(id, { state: 'needs_setup' });
     case 'antigravity':
       return settings.antigravity.consent ? null : viewOf(id, { state: 'needs_consent' });
     case 'opencode':

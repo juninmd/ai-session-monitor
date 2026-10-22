@@ -23,6 +23,8 @@ export const noticeMessages = {
   'notice.code.opencode_no_key': '仅显示本地估算。粘贴 Go API 密钥即可查看真实窗口。',
   'notice.code.opencode_local_estimate': '本地数值按标价估算，仅来自这台电脑，并不是实际额度。',
   'notice.code.opencode_db_unreadable': '无法读取本地 OpenCode 数据库：{reason}。',
+  'notice.code.copilot_reset_derived':
+    '重置日期为估算值：GitHub 文档说明高级请求在每月 1 日（UTC）重置。',
   'notice.unknown': '未翻译的通知：{code}',
   'notice.action.reinstall': '重新安装',
   'notice.action.settings': '输入密钥',

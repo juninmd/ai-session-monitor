@@ -27,6 +27,8 @@ export const noticeMessages = {
   'notice.code.opencode_local_estimate':
     'Os valores locais são uma estimativa a preço de tabela, só deste PC. Não são a cota.',
   'notice.code.opencode_db_unreadable': 'Não foi possível ler o banco local do OpenCode: {reason}.',
+  'notice.code.copilot_reset_derived':
+    'A data de reset é uma estimativa: o GitHub documenta que as requisições premium zeram no dia 1º de cada mês, em UTC.',
   'notice.unknown': 'Aviso sem tradução: {code}',
   'notice.action.reinstall': 'Reinstalar',
   'notice.action.settings': 'Informar a chave',

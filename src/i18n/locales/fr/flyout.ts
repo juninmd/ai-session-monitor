@@ -157,9 +157,6 @@ export const flyoutMessages = {
   'candidates.amp.credential': 'CLI locale (`amp`)',
   'candidates.amp.offer':
     '`amp usage` renvoie le solde de crédits et l’utilisation incluse. Même schéma de CLI fixe que celui déjà utilisé par Claude et Antigravity.',
-  'candidates.copilot.credential': 'PAT avec la portée de lecture du forfait',
-  'candidates.copilot.offer':
-    'Requêtes premium, chat et complétions, avec forfait et date de réinitialisation ; facturation des crédits d’IA via l’API REST de facturation.',
   'candidates.kiro.credential': 'L’identifiant propre à la CLI',
   'candidates.kiro.offer':
     'GetUsageLimits renvoie un seul pool de crédits avec utilisé, limite, pourcentage et réinitialisation.',

@@ -15,6 +15,7 @@ import {
   type GeneralSettings as General,
   type HarnessId,
   LIMITS,
+  LOCAL_API_PORT,
   type Settings,
   type TimeFormat,
   type WeekFormat,
@@ -88,6 +89,20 @@ export function GeneralSettings() {
           label={t('settings.autostart')}
           checked={g.autostart}
           apply={(current, autostart) => patch(current, { autostart })}
+        />
+        <SettingSwitch
+          id="set-hide-capture"
+          label={t('settings.hide_capture')}
+          hint={t('settings.hide_capture_hint')}
+          checked={g.hideFromCapture}
+          apply={(current, hideFromCapture) => patch(current, { hideFromCapture })}
+        />
+        <SettingSwitch
+          id="set-local-api"
+          label={t('settings.local_api')}
+          hint={t('settings.local_api_hint', { port: LOCAL_API_PORT })}
+          checked={g.localApi}
+          apply={(current, localApi) => patch(current, { localApi })}
         />
         <SettingSelect
           id="set-tray"

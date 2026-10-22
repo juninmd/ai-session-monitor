@@ -25,6 +25,18 @@ export const setupMessages = {
   'antigravity.connect.detail':
     'Avec votre autorisation, le moniteur peut exécuter l’agy installé uniquement pour lire /usage (sans consommer de jetons ni lire de données de connexion) et/ou lire la ligne de commande du serveur de l’IDE pour obtenir le jeton de session local, en ne communiquant qu’avec 127.0.0.1. Rien n’est écrit sur le disque ni envoyé sur Internet.',
   'antigravity.connect.allow': 'Autoriser la lecture locale',
+  'cursor.connect.title': 'Se connecter à Cursor',
+  'cursor.connect.lead':
+    'Avec votre autorisation, le moniteur lit le jeton de connexion que Cursor garde dans sa base de données locale et s’en sert pour demander à cursor.com quelle part de votre forfait est utilisée. Cette voie est non officielle et peut cesser de fonctionner quand Cursor change.',
+  'cursor.connect.detail':
+    'Ouvre la base de données locale de Cursor (state.vscdb) en lecture seule et lit une seule entrée : le jeton de connexion. Le jeton n’est envoyé qu’à cursor.com, comme le fait le tableau de bord Cursor, et n’est ni enregistré ni affiché. Aucune autre entrée (discussions, fichiers, e-mail) n’est lue et rien n’est écrit. Cursor ne publie aucune API pour l’utilisation du forfait : comparez donc les chiffres avec le tableau de bord la première fois.',
+  'cursor.connect.allow': 'Autoriser la lecture',
+  'cursor.signin.title': 'Se connecter à Cursor',
+  'cursor.signin.body':
+    'Le moniteur n’a trouvé aucun jeton de connexion valide. Ouvrez Cursor et connectez-vous (l’ouvrir renouvelle aussi un jeton expiré), puis relancez la lecture.',
+  'cursor.dashboard': 'Ouvrir le tableau de bord Cursor',
+  'cursor.note':
+    'Lecture non officielle du résumé d’utilisation de Cursor, avec le jeton de connexion que Cursor garde sur ce PC. Comparez-la avec le tableau de bord. L’utilisation incluse n’apparaît qu’en pourcentage ; les forfaits illimités n’ont pas de fenêtre.',
 
   'shim.title': 'Commande de ligne d’état',
   'shim.state.not_installed': 'Non installée',
@@ -70,6 +82,18 @@ export const setupMessages = {
   'opencode.data_dir': 'Dossier de données d’OpenCode',
   'opencode.data_dir_hint': 'Laissez vide pour utiliser le dossier par défaut.',
   'opencode.save_settings': 'Enregistrer le dossier',
+  'copilot.title': 'Se connecter à GitHub Copilot',
+  'copilot.lead':
+    'Collez un jeton GitHub, ou laissez le moniteur lire celui que l’extension Copilot garde sur le disque, pour voir les requêtes premium utilisées ce mois-ci. Cette voie est non officielle.',
+  'copilot.detail':
+    'Lecture non officielle : elle utilise un point d’accès interne de GitHub que les éditeurs Copilot appellent pour afficher leur propre quota. Il n’est pas documenté et peut changer sans préavis. Un jeton collé reste dans le Gestionnaire d’identifiants Windows. Avec votre autorisation, le moniteur lit à la place le jeton GitHub que l’extension Copilot garde sur le disque (deux fichiers fixes de son propre dossier, en lecture seule). Dans les deux cas, le jeton n’est envoyé qu’à api.github.com. Les jetons GitHub Enterprise ne sont pas utilisés. Comparez les chiffres avec github.com/settings/copilot la première fois.',
+  'copilot.key_label': 'Jeton GitHub (facultatif)',
+  'copilot.console': 'Ouvrir les paramètres GitHub Copilot',
+  'copilot.local_label': 'Lire le jeton de l’extension Copilot (ce PC uniquement)',
+  'copilot.local_hint':
+    'Non officiel : lit le jeton GitHub que l’extension Copilot garde sur le disque (deux fichiers fixes, en lecture seule) et ne l’envoie qu’à api.github.com. Inutile si vous collez un jeton.',
+  'copilot.note':
+    'Lecture non officielle du quota GitHub Copilot. La date de réinitialisation peut être une estimation (le 1er du mois, UTC). Les quotas illimités apparaissent dans les détails, pas en pourcentage.',
 
   'kimi.title': 'Se connecter à Kimi Code',
   'kimi.lead':

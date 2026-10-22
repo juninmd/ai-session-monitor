@@ -18,6 +18,12 @@ export const settingsMessages = {
   'settings.show_used': '额度显示为',
   'settings.show_available': '剩余',
   'settings.show_used_opt': '已用',
+  'settings.hide_capture': '对截图和屏幕共享隐藏',
+  'settings.hide_capture_hint':
+    '浮窗将在截图、录屏和屏幕共享中不可见（Windows 和 macOS；Linux 不支持）。',
+  'settings.local_api': '本地 API',
+  'settings.local_api_hint':
+    '在 127.0.0.1:{port} 以只读 JSON 提供读数，供脚本和状态栏使用。这台电脑上的任何程序都能读取。默认关闭。',
   'settings.language': '语言',
   'settings.language_hint': '适用于面板和通知。',
   'settings.skin': '主题',
@@ -91,4 +97,8 @@ export const settingsMessages = {
     '非官方读取：可能运行已安装的 agy，仅用于读取 /usage（不消耗 Token，也不读取登录数据），并且/或者读取 IDE 的本地服务，该服务只与 127.0.0.1 通信。',
   'antigravity.note':
     '读数来自已安装的 agy（无需打开任何程序）；没有 agy 时则来自 IDE 的本地服务，此时请保持 Antigravity 打开。',
+
+  'cursor.consent': '允许读取 Cursor 登录令牌',
+  'cursor.consent_hint':
+    '非官方读取：读取 Cursor 保存在本地数据库中的登录令牌（只读，仅这一条记录），并且只发送到 cursor.com。',
 } as const satisfies Record<string, string>;

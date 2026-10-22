@@ -53,6 +53,25 @@ export const errorDetailMessages = {
   'error.unauthorized.reason.no_token.body':
     'O monitor não conseguiu ler o token de sessão do servidor local da IDE. Reinicie o Antigravity e tente de novo.',
 
+  'error.timeout.reason.locked.body':
+    'O banco de dados local do Cursor está em uso agora. Tente de novo em instantes.',
+  'error.timeout.reason.timeout.body':
+    'A leitura do banco de dados local do Cursor demorou demais. Tente de novo em instantes.',
+  'error.endpoint_changed.reason.schema.body':
+    'O banco de dados local do Cursor tem um formato diferente do que o monitor espera. O monitor pode precisar de uma atualização.',
+  'error.settings_unreadable.reason.permission.body':
+    'Sem permissão para abrir o banco de dados local do Cursor. Confira as permissões do arquivo.',
+  'error.settings_unreadable.reason.not_a_database.body':
+    'O arquivo do Cursor encontrado não é um banco de dados.',
+  'error.settings_unreadable.reason.other.body':
+    'Não foi possível ler o banco de dados local do Cursor.',
+  'error.not_signed_in.reason.not_found.body':
+    'Nenhum token do GitHub foi encontrado na pasta da extensão do Copilot. Entre no Copilot no seu editor ou cole um token nas configurações.',
+  'error.not_signed_in.reason.no_token.body':
+    'Os arquivos da extensão do Copilot não têm token para github.com. Entre no Copilot no seu editor ou cole um token nas configurações.',
+  'error.not_signed_in.reason.unreadable.body':
+    'Não foi possível ler o arquivo de login da extensão do Copilot. Confira as permissões da pasta dele.',
+
   'error.redirect':
     'O servidor tentou redirecionar a consulta, e o monitor não segue redirecionamentos.',
   'error.retry_after': 'Tempo pedido pela fonte: {wait}.',

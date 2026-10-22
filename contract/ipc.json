@@ -2,6 +2,8 @@
   "externalLinks": [
     "opencode_go_console",
     "opencode_billing",
+    "cursor_dashboard",
+    "copilot_settings",
     "kimi_console",
     "zai_console",
     "openrouter_console",
@@ -44,6 +46,7 @@
   "secretKinds": [
     "litellm",
     "opencode",
+    "copilot",
     "kimi",
     "zai",
     "openrouter",
@@ -55,6 +58,7 @@
     "minimax"
   ],
   "secretStatus": {
+    "copilot": true,
     "deepinfra": true,
     "deepseek": false,
     "kimi": true,

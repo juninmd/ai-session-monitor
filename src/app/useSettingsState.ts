@@ -33,6 +33,7 @@ export interface SettingsApi {
 const NO_SECRETS: SecretStatus = {
   litellm: false,
   opencode: false,
+  copilot: false,
   kimi: false,
   zai: false,
   openrouter: false,

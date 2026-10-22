@@ -75,6 +75,16 @@ export const channelsMessages = {
   'channels.litellm_budget.title': 'Budget de la clé, de l’utilisateur ou de l’équipe',
   'channels.litellm_budget.how':
     'GET /key|user|team/info : spend, max_budget, budget_duration, budget_reset_at, budgets par modèle et limites rpm/tpm statiques.',
+  'channels.cursor_usage_summary.title': 'Utilisation incluse et dépenses à la demande',
+  'channels.cursor_usage_summary.how':
+    'GET cursor.com/api/usage-summary avec le cookie de session construit à partir du jeton de connexion que Cursor garde dans sa base de données locale (state.vscdb, une seule entrée, en lecture seule) : totalPercentUsed, billingCycleEnd et individualUsage.onDemand.',
+  'channels.cursor_usage_summary.caveat':
+    'Non officiel et jamais vu en conditions réelles : la route vient de notes de la communauté, comparez-la donc avec le tableau de bord. Elle exige le consentement et le badge « non officielle ».',
+  'channels.copilot_internal_user.title': 'Requêtes premium, chat et complétions',
+  'channels.copilot_internal_user.how':
+    'GET api.github.com/copilot_internal/user → quota_snapshots (percent_remaining, entitlement, remaining, unlimited, overage_count), copilot_plan et quota_reset_date. Le jeton est un jeton collé ou celui que l’extension Copilot garde dans apps.json ou hosts.json.',
+  'channels.copilot_internal_user.caveat':
+    'Non officiel et jamais vu en conditions réelles : la route est interne à GitHub. Sans date exploitable dans la réponse, la réinitialisation est déduite (le 1er du mois suivant, UTC) et signalée comme une estimation.',
   'channels.openrouter_activity.title': 'Dépenses quotidiennes par modèle',
   'channels.openrouter_activity.how':
     'GET /api/v1/activity. Documenté, mais nécessite une clé de gestion : la clé d’inférence reçoit un 403 (même situation que /credits).',
@@ -93,7 +103,7 @@ export const channelsMessages = {
   'channels.kimi_console.title': 'Détail des limites dans la console',
   'channels.kimi_console.how':
     'La console de la plateforme expose des limites par modèle, mais uniquement par session de navigateur. Pas de nouvel hôte, pas de cookie, pas de scraping : cela reste exclu.',
-  'channels.cursor_dashboard.title': 'Réserves incluses et dépenses à la demande',
+  'channels.cursor_dashboard.title': 'Attributions de crédits et détail des réserves',
   'channels.cursor_dashboard.how':
-    'cursor.com/api/usage-summary et le GetClientVisibleCreditGrants en Connect-RPC. Ils nécessitent des en-têtes de navigateur et peuvent renvoyer un 403 en périphérie.',
+    'Le GetClientVisibleCreditGrants en Connect-RPC et les pages du tableau de bord. Ils nécessitent des en-têtes de navigateur et peuvent renvoyer un 403 en périphérie. La route usage-summary est déjà lue avec le jeton que Cursor garde.',
 } as const satisfies Record<string, string>;

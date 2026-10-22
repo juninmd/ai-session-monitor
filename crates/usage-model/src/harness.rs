@@ -6,6 +6,8 @@ use serde::{Deserialize, Serialize};
 pub enum HarnessId {
     Claude,
     Codex,
+    Cursor,
+    Copilot,
     Antigravity,
     Opencode,
     Kimi,
@@ -21,9 +23,11 @@ pub enum HarnessId {
 }
 
 impl HarnessId {
-    pub const ALL: [Self; 14] = [
+    pub const ALL: [Self; 16] = [
         Self::Claude,
         Self::Codex,
+        Self::Cursor,
+        Self::Copilot,
         Self::Antigravity,
         Self::Opencode,
         Self::Kimi,
@@ -42,6 +46,8 @@ impl HarnessId {
         match self {
             Self::Claude => "claude",
             Self::Codex => "codex",
+            Self::Cursor => "cursor",
+            Self::Copilot => "copilot",
             Self::Antigravity => "antigravity",
             Self::Opencode => "opencode",
             Self::Kimi => "kimi",

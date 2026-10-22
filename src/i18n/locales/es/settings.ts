@@ -18,6 +18,12 @@ export const settingsMessages = {
   'settings.show_used': 'Mostrar la cuota como',
   'settings.show_available': 'disponible',
   'settings.show_used_opt': 'usada',
+  'settings.hide_capture': 'Ocultar en capturas y al compartir pantalla',
+  'settings.hide_capture_hint':
+    'El panel se vuelve invisible para las capturas de pantalla, las grabaciones y al compartir pantalla (Windows y macOS; no es compatible con Linux).',
+  'settings.local_api': 'API local',
+  'settings.local_api_hint':
+    'Ofrece las lecturas como JSON de solo lectura en 127.0.0.1:{port} para scripts y barras de estado. Cualquier programa de este equipo puede leerlas. Desactivada por defecto.',
   'settings.language': 'Idioma',
   'settings.language_hint': 'Se aplica al panel y a las notificaciones.',
   'settings.skin': 'Tema',
@@ -94,4 +100,8 @@ export const settingsMessages = {
     'Lectura no oficial: puede ejecutar el agy instalado solo para leer /usage (sin gastar tokens ni leer datos de inicio de sesión) y/o leer el servidor local del IDE, que solo se comunica con 127.0.0.1.',
   'antigravity.note':
     'La lectura proviene del agy instalado (no es necesario tener nada abierto) o, sin él, del servidor local del IDE: en ese caso mantén Antigravity abierto.',
+
+  'cursor.consent': 'Permitir la lectura del token de inicio de sesión de Cursor',
+  'cursor.consent_hint':
+    'Lectura no oficial: lee el token de inicio de sesión que Cursor guarda en su base de datos local (solo lectura, esa única entrada) y lo envía solo a cursor.com.',
 } as const satisfies Record<string, string>;

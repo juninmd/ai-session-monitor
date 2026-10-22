@@ -51,6 +51,23 @@ export const errorDetailMessages = {
   'error.unauthorized.reason.no_token.body':
     'मॉनिटर IDE के लोकल सर्वर का सत्र टोकन नहीं पढ़ सका। Antigravity रीस्टार्ट करें और फिर कोशिश करें।',
 
+  'error.timeout.reason.locked.body':
+    'Cursor का लोकल डेटाबेस अभी उपयोग में है। थोड़ी देर बाद फिर कोशिश करें।',
+  'error.timeout.reason.timeout.body':
+    'Cursor का लोकल डेटाबेस पढ़ने में बहुत देर लगी। थोड़ी देर बाद फिर कोशिश करें।',
+  'error.endpoint_changed.reason.schema.body':
+    'Cursor के लोकल डेटाबेस का फ़ॉर्मैट वह नहीं है जो मॉनिटर अपेक्षित करता है। मॉनिटर को अपडेट की ज़रूरत हो सकती है।',
+  'error.settings_unreadable.reason.permission.body':
+    'Cursor का लोकल डेटाबेस खोलने की अनुमति नहीं है। फ़ाइल की अनुमतियाँ जाँचें।',
+  'error.settings_unreadable.reason.not_a_database.body': 'मिली हुई Cursor फ़ाइल डेटाबेस नहीं है।',
+  'error.settings_unreadable.reason.other.body': 'Cursor का लोकल डेटाबेस पढ़ा नहीं जा सका।',
+  'error.not_signed_in.reason.not_found.body':
+    'Copilot एक्सटेंशन के फ़ोल्डर में कोई GitHub टोकन नहीं मिला। अपने एडिटर में Copilot में साइन इन करें, या सेटिंग में टोकन चिपकाएँ।',
+  'error.not_signed_in.reason.no_token.body':
+    'Copilot एक्सटेंशन की फ़ाइलों में github.com के लिए कोई टोकन नहीं है। अपने एडिटर में Copilot में साइन इन करें, या सेटिंग में टोकन चिपकाएँ।',
+  'error.not_signed_in.reason.unreadable.body':
+    'Copilot एक्सटेंशन की साइन-इन फ़ाइल पढ़ी नहीं जा सकी। उसके फ़ोल्डर की अनुमतियाँ जाँचें।',
+
   'error.redirect':
     'सर्वर ने अनुरोध को रीडायरेक्ट करने की कोशिश की, और मॉनिटर रीडायरेक्ट का पालन नहीं करता।',
   'error.retry_after': 'स्रोत ने रुकने को कहा है: {wait}।',

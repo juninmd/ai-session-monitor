@@ -9,6 +9,7 @@ import { notice, problem } from '../mock/fixtures';
 import {
   COLLECTORS,
   emitters,
+  factIdsOf,
   isTestFile,
   PATTERN,
   productionCode,
@@ -16,9 +17,12 @@ import {
   scan,
 } from '../test/rustSources';
 import {
+  COPILOT_REASONS,
+  CURSOR_REASONS,
   ERROR_REASONS,
   FACTS,
   FIELDS,
+  LITELLM_ENDPOINT_REASONS,
   leaks,
   NOTICE_SAMPLES,
   OPENCODE_DB_REASONS,
@@ -90,9 +94,7 @@ describe('facts', () => {
   });
 
   it.each(Object.entries(FACTS))('%s sends exactly the ids in the inventory', (harness, facts) => {
-    expect(scan(rustOf(`collector-${harness}`), PATTERN.fact)).toEqual(
-      facts.map(([id]) => id).sort(),
-    );
+    expect(factIdsOf(`collector-${harness}`)).toEqual(facts.map(([id]) => id).sort());
   });
 });
 
@@ -122,7 +124,24 @@ describe('error reasons', () => {
 
   it('endpoint_changed are exactly the ones the LiteLLM walk raises', () => {
     expect(scan(rustOf('collector-litellm'), PATTERN.endpointReason)).toEqual(
-      reasonsOf('endpoint_changed'),
+      [...LITELLM_ENDPOINT_REASONS].sort(),
+    );
+  });
+
+  it('of the Cursor store are exactly the ones it can name, under the code each becomes', () => {
+    const listed = Object.values(CURSOR_REASONS).flat().sort();
+    expect(scan(rustOf('collector-cursor'), PATTERN.reasonVariant)).toEqual(listed);
+    for (const [code, list] of Object.entries(CURSOR_REASONS)) {
+      expect(
+        list.every((reason) => reasonsOf(code).includes(reason)),
+        code,
+      ).toBe(true);
+    }
+  });
+
+  it('of the Copilot token reader are exactly the ones it can name', () => {
+    expect(scan(rustOf('collector-copilot'), PATTERN.reasonVariant)).toEqual(
+      Object.values(COPILOT_REASONS).flat().sort(),
     );
   });
 

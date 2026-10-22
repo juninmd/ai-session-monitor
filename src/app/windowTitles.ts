@@ -1,6 +1,6 @@
 // Titles for windows whose id says more than their kind. The ids are the ones each collector
 // crate emits; a window nobody has a rule for falls back to the kind-based titles.
-import { t } from '../i18n';
+import { hasMessage, t } from '../i18n';
 import { spokenDuration } from '../i18n/format';
 import type { HarnessId, UsageWindow } from '../lib/contract';
 
@@ -31,6 +31,12 @@ function codexTitle(window: UsageWindow): string | null {
   return null;
 }
 
+/** Cursor and Copilot name windows by id: Copilot's quotas are all monthly, so the kind says nothing. */
+function namedById(harness: HarnessId, window: UsageWindow): string | null {
+  const key = `window.${harness}.${window.id}`;
+  return hasMessage(key) ? t(key) : null;
+}
+
 /** A title that beats the source's own label, or null to use the generic rules. */
 export function specialTitle(harness: HarnessId, window: UsageWindow): string | null {
   switch (harness) {
@@ -38,6 +44,9 @@ export function specialTitle(harness: HarnessId, window: UsageWindow): string | 
       return litellmTitle(window);
     case 'codex':
       return codexTitle(window);
+    case 'cursor':
+    case 'copilot':
+      return namedById(harness, window);
     default:
       return null;
   }

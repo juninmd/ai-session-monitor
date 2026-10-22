@@ -26,6 +26,8 @@ dependencies = [
  "collector-antigravity",
  "collector-claude",
  "collector-codex",
+ "collector-copilot",
+ "collector-cursor",
  "collector-deepinfra",
  "collector-deepseek",
  "collector-kimi",
@@ -671,6 +673,29 @@ dependencies = [
 name = "collector-codex"
 version = "0.2.0"
 dependencies = [
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "usage-model",
+ "usage-support",
+]
+
+[[package]]
+name = "collector-copilot"
+version = "0.2.0"
+dependencies = [
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "usage-model",
+ "usage-support",
+]
+
+[[package]]
+name = "collector-cursor"
+version = "0.2.0"
+dependencies = [
+ "rusqlite",
  "serde_json",
  "tempfile",
  "tokio",

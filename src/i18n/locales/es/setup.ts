@@ -26,6 +26,19 @@ export const setupMessages = {
     'Con tu permiso, el monitor puede ejecutar el agy instalado solo para leer /usage (sin gastar tokens ni leer datos de inicio de sesión) y/o leer la línea de comandos del servidor del IDE para obtener el token de sesión local, comunicándose únicamente con 127.0.0.1. No se escribe nada en el disco ni se envía nada a internet.',
   'antigravity.connect.allow': 'Permitir lectura local',
 
+  'cursor.connect.title': 'Conectar con Cursor',
+  'cursor.connect.lead':
+    'Con tu permiso, el monitor lee el token de inicio de sesión que Cursor guarda en su base de datos local y lo usa para preguntar a cursor.com cuánto de tu plan se ha usado. Esta vía no es oficial y puede dejar de funcionar cuando Cursor cambie.',
+  'cursor.connect.detail':
+    'Abre la base de datos local de Cursor (state.vscdb) en modo de solo lectura y lee una única entrada: el token de inicio de sesión. El token se envía solo a cursor.com, igual que hace el panel de Cursor, y nunca se guarda ni se muestra. No se lee ninguna otra entrada (chats, archivos, correo) y no se escribe nada. Cursor no publica ninguna API del uso del plan, así que compara las cifras con el panel la primera vez.',
+  'cursor.connect.allow': 'Permitir lectura',
+  'cursor.signin.title': 'Inicia sesión en Cursor',
+  'cursor.signin.body':
+    'El monitor no encontró ningún token de inicio de sesión válido. Abre Cursor e inicia sesión (al abrirlo también se renueva un token caducado) y vuelve a leer.',
+  'cursor.dashboard': 'Abrir el panel de Cursor',
+  'cursor.note':
+    'Lectura no oficial del resumen de uso de Cursor, con el token de inicio de sesión que Cursor guarda en este PC. Compárala con el panel. El uso incluido solo se muestra como porcentaje; los planes ilimitados no tienen ventana.',
+
   'shim.title': 'Comando de la línea de estado',
   'shim.state.not_installed': 'No instalado',
   'shim.state.installed': 'Instalado',
@@ -69,6 +82,19 @@ export const setupMessages = {
   'opencode.data_dir': 'Carpeta de datos de OpenCode',
   'opencode.data_dir_hint': 'Déjalo en blanco para usar la carpeta predeterminada.',
   'opencode.save_settings': 'Guardar carpeta',
+
+  'copilot.title': 'Conectar con GitHub Copilot',
+  'copilot.lead':
+    'Pega un token de GitHub, o deja que el monitor lea el que la extensión de Copilot guarda en el disco, para ver las solicitudes premium usadas este mes. Esta vía no es oficial.',
+  'copilot.detail':
+    'Lectura no oficial: usa un endpoint interno de GitHub que los editores de Copilot llaman para mostrar su propia cuota. No está documentado y puede cambiar sin previo aviso. Un token pegado se guarda en el Administrador de credenciales de Windows. Con tu permiso, el monitor lee en cambio el token de GitHub que la extensión de Copilot guarda en el disco (dos archivos fijos de su propia carpeta, en solo lectura). Cualquiera de los dos tokens se envía solo a api.github.com. Los tokens de GitHub Enterprise no se usan. Compara las cifras con github.com/settings/copilot la primera vez.',
+  'copilot.key_label': 'Token de GitHub (opcional)',
+  'copilot.console': 'Abrir los ajustes de GitHub Copilot',
+  'copilot.local_label': 'Leer el token de la extensión de Copilot (solo este PC)',
+  'copilot.local_hint':
+    'No oficial: lee el token de GitHub que la extensión de Copilot guarda en el disco (dos archivos fijos, solo lectura) y lo envía solo a api.github.com. No hace falta si pegas un token.',
+  'copilot.note':
+    'Lectura no oficial de la cuota de GitHub Copilot. La fecha de restablecimiento puede ser una estimación (el día 1 del mes, UTC). Las cuotas ilimitadas aparecen como detalles, no como porcentaje.',
 
   'kimi.title': 'Conectar con Kimi Code',
   'kimi.lead':

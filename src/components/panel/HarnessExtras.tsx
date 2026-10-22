@@ -4,6 +4,7 @@ import { useNavigation } from '../../app/navigation';
 import { t } from '../../i18n';
 import type { HarnessId } from '../../lib/contract';
 import { Icon } from '../icons';
+import { LinkButton } from '../setup/LinkButton';
 import { LitellmForm } from '../setup/LitellmForm';
 import { OpencodeLinks } from '../setup/OpencodeParts';
 import { Note } from './Banner';
@@ -53,6 +54,20 @@ function LitellmEditor() {
 /** What closes a ready view for each source. */
 export function HarnessFooter({ harness }: { harness: HarnessId }) {
   switch (harness) {
+    case 'cursor':
+      return (
+        <>
+          <Note>{t('cursor.note')}</Note>
+          <LinkButton link="cursor_dashboard" label={t('cursor.dashboard')} harness="cursor" />
+        </>
+      );
+    case 'copilot':
+      return (
+        <>
+          <Note>{t('copilot.note')}</Note>
+          <LinkButton link="copilot_settings" label={t('copilot.console')} harness="copilot" />
+        </>
+      );
     case 'antigravity':
       return <Note>{t('antigravity.note')}</Note>;
     case 'opencode':

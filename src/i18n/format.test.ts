@@ -186,6 +186,25 @@ describe('numbers and amounts', () => {
   });
 });
 
+describe('the unlimited facts of Cursor and Copilot', () => {
+  it.each([
+    ['unlimited', 'true'],
+    ['chat_unlimited', 'unlimited'],
+    ['premium_requests_unlimited', 'unlimited'],
+  ])('read %s (%s) as a word, not as the wire text', (id, text) => {
+    expect(formatFactValue({ id, number: null, text, unit: null })).toBe('Ilimitado');
+  });
+
+  it('keeps any other text, and a number, as it is', () => {
+    expect(formatFactValue({ id: 'plan_note', number: null, text: 'true', unit: null })).toBe(
+      'true',
+    );
+    expect(formatFactValue({ id: 'chat_overage', number: 3, text: null, unit: 'requests' })).toBe(
+      '3 req.',
+    );
+  });
+});
+
 describe('formatDateTime', () => {
   const moment = Date.UTC(2027, 0, 15, 8, 0, 0) / 1000;
 

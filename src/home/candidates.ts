@@ -17,7 +17,7 @@ export interface Candidate {
 // the list follows the active language.
 function candidate(
   id: string,
-  key: 'amp' | 'copilot' | 'kiro' | 'cline' | 'windsurf' | 'command_code',
+  key: 'amp' | 'kiro' | 'cline' | 'windsurf' | 'command_code',
   name: string,
   confidence: Confidence,
 ): Candidate {
@@ -36,7 +36,6 @@ function candidate(
 
 export const CANDIDATES: readonly Candidate[] = [
   candidate('amp', 'amp', 'Amp (Sourcegraph)', 'high'),
-  candidate('copilot', 'copilot', 'GitHub Copilot', 'medium'),
   candidate('kiro', 'kiro', 'Kiro CLI', 'medium'),
   candidate('cline', 'cline', 'Cline', 'medium'),
   candidate('windsurf', 'windsurf', 'Windsurf / Devin', 'high'),

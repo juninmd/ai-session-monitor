@@ -52,6 +52,7 @@ async fn a_failing_secret_store_becomes_that_tabs_error_for_the_keyed_harnesses(
         let keyed = matches!(
             id,
             HarnessId::Opencode
+                | HarnessId::Copilot
                 | HarnessId::Kimi
                 | HarnessId::Zai
                 | HarnessId::Openrouter

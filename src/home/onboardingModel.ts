@@ -88,6 +88,8 @@ export function withConsent(settings: Settings, id: HarnessId): Settings {
       return { ...settings, codex: { ...settings.codex, consent: true } };
     case 'antigravity':
       return { ...settings, antigravity: { ...settings.antigravity, consent: true } };
+    case 'cursor':
+      return { ...settings, cursor: { ...settings.cursor, consent: true } };
     default:
       return settings;
   }

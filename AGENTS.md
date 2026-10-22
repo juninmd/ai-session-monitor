@@ -1,7 +1,7 @@
 # AGENTS.md
 
 Windows-first system-tray app (Tauri 2 + Vite + React + TypeScript, Rust workspace) that shows how
-much of each AI coding tool's session is still available: Claude Code, Codex, Antigravity,
+much of each AI coding tool's session is still available: Claude Code, Codex, Cursor, GitHub Copilot, Antigravity,
 OpenCode, Kimi Code, z.ai, OpenRouter, DeepSeek, DeepInfra, Moonshot, Novita, Ollama Cloud, MiniMax and a parametrizable LiteLLM connection. The UI speaks the ten most spoken languages (English by default, `general.language`); code, identifiers,
 comments and commits are English. Decisions: `docs/adr/0001-architecture.md`. Wire contract:
 `docs/ipc.md`. Data sources and trust levels: `docs/data-sources.md`.
@@ -12,7 +12,7 @@ comments and commits are English. Decisions: `docs/adr/0001-architecture.md`. Wi
 |---|---|---|
 | `crates/usage-model` | Vocabulary: views, windows, settings, IPC payloads, pace/status rules | serde only |
 | `crates/usage-support` | Hardened HTTP client, atomic file writes, bounded process runner, redaction, RFC 3339 | usage-model |
-| `crates/collector-{claude,codex,antigravity,litellm,opencode,kimi,zai,openrouter,deepseek,deepinfra,moonshot,novita,ollama,minimax}` | One source each: `collect(...) -> HarnessView` | usage-model, usage-support |
+| `crates/collector-{claude,codex,cursor,copilot,antigravity,litellm,opencode,kimi,zai,openrouter,deepseek,deepinfra,moonshot,novita,ollama,minimax}` | One source each: `collect(...) -> HarnessView` | usage-model, usage-support |
 | `crates/statusline-shim` | Tiny binary Claude Code runs as its `statusLine`; std + serde_json only | none |
 | `crates/app-core` | Window-free core: settings store, hub, scheduler, notification plan, `AppService` | usage-model, usage-support (no collectors) |
 | `src-tauri` | Composition root: tray, flyout window, keyring, wiring, commands | app-core, collectors |
@@ -69,7 +69,7 @@ node scripts/soak.mjs crates tauri,keyring [days]          # same, for crates
   `AISM_SHOW_ON_START=1` so smoke runs never touch your profile (compiled out of release builds).
 - Never log, serialize or place a secret in an error param, notice, fact or `meta`. Tests that
   touch secrets assert absence in the serialized output.
-- Unofficial sources (Antigravity, OpenCode, Kimi Code, z.ai, Claude OAuth) stay opt-in and badged. Do not add
+- Unofficial sources (Cursor, GitHub Copilot, Antigravity, OpenCode, Kimi Code, z.ai, Claude OAuth) stay opt-in and badged. Do not add
   another unofficial source without an entry in `docs/data-sources.md`.
 - Dependencies: direct crates and npm packages must be at least 1 day old (soak script);
   pnpm denies install scripts (`onlyBuiltDependencies: []`). Do not hand-edit lockfiles.
@@ -94,6 +94,9 @@ node scripts/soak.mjs crates tauri,keyring [days]          # same, for crates
   `crates/app-core/src/i18n/lang_<tag>.rs`, one `Messages` struct per language; a test checks that
   every language keeps the placeholders of every field. The tray text is relabelled when the
   language changes. A startup failure happens before settings load, so that toast is English.
+- The optional local API (`general.localApi`, `127.0.0.1:6737`, read-only JSON, off by default) is the
+  only place the app listens on a port: loopback only, `Host` check, no `Origin`, no CORS. Capture
+  protection (`general.hideFromCapture`) is `set_content_protected` on every window.
 - The theme (skin) is a separate, webview-only choice (`src/styles/skins.css`).
 
 ## Gotchas

@@ -85,10 +85,12 @@ describe('permissions the wizard writes', () => {
     expect(withConsent(settings, 'claude').claude.shimConsent).toBe(true);
     expect(withConsent(settings, 'codex').codex.consent).toBe(true);
     expect(withConsent(settings, 'antigravity').antigravity.consent).toBe(true);
+    expect(withConsent(settings, 'cursor').cursor.consent).toBe(true);
   });
 
   it('leaves the settings alone for a source that needs a key, not a permission', () => {
     expect(withConsent(settings, 'kimi')).toBe(settings);
+    expect(withConsent(settings, 'copilot')).toBe(settings);
     expect(withConsent(settings, 'litellm')).toBe(settings);
   });
 

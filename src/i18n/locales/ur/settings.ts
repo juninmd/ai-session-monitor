@@ -18,6 +18,12 @@ export const settingsMessages = {
   'settings.show_used': 'کوٹا دکھائیں بطور',
   'settings.show_available': 'دستیاب',
   'settings.show_used_opt': 'استعمال شدہ',
+  'settings.hide_capture': 'اسکرین شاٹس اور اسکرین شیئرنگ سے چھپائیں',
+  'settings.hide_capture_hint':
+    'پینل اسکرین شاٹس، ریکارڈنگز اور اسکرین شیئرنگ میں نظر نہیں آتا (Windows اور macOS پر؛ Linux پر معاون نہیں)۔',
+  'settings.local_api': 'مقامی API',
+  'settings.local_api_hint':
+    'ریڈنگز کو اسکرپٹس اور اسٹیٹس بارز کے لیے 127.0.0.1:{port} پر صرف پڑھنے والے JSON کے طور پر پیش کرتا ہے۔ اس کمپیوٹر کا کوئی بھی پروگرام اسے پڑھ سکتا ہے۔ ڈیفالٹ میں بند۔',
   'settings.language': 'زبان',
   'settings.language_hint': 'پینل اور نوٹیفکیشنز پر لاگو ہوتی ہے۔',
   'settings.skin': 'تھیم',
@@ -92,4 +98,7 @@ export const settingsMessages = {
     'غیر سرکاری ریڈنگ: یہ انسٹال شدہ agy صرف /usage پڑھنے کے لیے چلا سکتی ہے (ٹوکنز خرچ کیے بغیر اور لاگ اِن ڈیٹا پڑھے بغیر) اور/یا IDE کا مقامی سرور پڑھ سکتی ہے، جو صرف 127.0.0.1 سے بات کرتا ہے۔',
   'antigravity.note':
     'ریڈنگ انسٹال شدہ agy سے آتی ہے (کچھ کھلا ہونا ضروری نہیں) یا، وہ نہ ہو تو، IDE کے مقامی سرور سے: اس صورت میں Antigravity کھلا رکھیں۔',
+  'cursor.consent': 'Cursor کا سائن اِن ٹوکن پڑھنے کی اجازت دیں',
+  'cursor.consent_hint':
+    'غیر سرکاری ریڈنگ: Cursor اپنے مقامی ڈیٹا بیس میں جو سائن اِن ٹوکن رکھتا ہے اسے پڑھتا ہے (صرف پڑھنے کے موڈ میں، وہی ایک اندراج) اور صرف cursor.com کو بھیجتا ہے۔',
 } as const satisfies Record<string, string>;

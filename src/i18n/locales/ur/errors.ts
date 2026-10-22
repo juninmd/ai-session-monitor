@@ -27,6 +27,12 @@ export const errorMessages = {
   'error.unauthorized_ambiguous.zai.title': 'z.ai key کی تصدیق نہیں ہو سکی',
   'error.unauthorized_ambiguous.zai.body':
     'سروس نے درخواست مسترد کر دی۔ ایسا درست key کے ساتھ بھی ہوتا ہے اور GLM Coding پلان کے بغیر اکاؤنٹس پر بھی۔ z.ai ڈیش بورڈ میں key اور پلان چیک کریں۔',
+  'error.unauthorized_ambiguous.cursor.title': 'Cursor کے سائن اِن کی تصدیق نہیں ہو سکی',
+  'error.unauthorized_ambiguous.cursor.body':
+    'سروس نے درخواست مسترد کر دی۔ ایسا ختم شدہ یا پرانے سیشن کے ساتھ بھی ہوتا ہے اور ایسے اکاؤنٹ کے ساتھ بھی جس کا کوئی فعال پلان نہ ہو۔ سائن اِن کی تجدید کے لیے Cursor کھولیں اور Cursor ڈیش بورڈ میں پلان چیک کریں۔',
+  'error.unauthorized_ambiguous.copilot.title': 'GitHub ٹوکن کی تصدیق نہیں ہو سکی',
+  'error.unauthorized_ambiguous.copilot.body':
+    'GitHub نے درخواست مسترد کر دی۔ ایسا ختم شدہ ٹوکن، fine-grained یا ایپ ٹوکن، اور Copilot کے بغیر اکاؤنٹ کے ساتھ ہوتا ہے۔ GitHub سیٹنگز میں ٹوکن اور اپنی Copilot سبسکرپشن چیک کریں۔',
   'error.not_found.title': 'پتہ نہیں ملا',
   'error.not_found.body': 'سرور دیے گئے پاتھ یا ID کو نہیں پہچانتا۔ URL، اسکوپ اور ID چیک کریں۔',
   'error.server_error.title': 'سرور کی خرابی',

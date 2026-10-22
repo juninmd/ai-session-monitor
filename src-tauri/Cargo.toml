@@ -31,6 +31,8 @@ app-core.workspace = true
 tempfile.workspace = true
 collector-claude = { workspace = true, optional = true }
 collector-codex = { workspace = true, optional = true }
+collector-cursor = { workspace = true, optional = true }
+collector-copilot = { workspace = true, optional = true }
 collector-antigravity = { workspace = true, optional = true }
 collector-litellm = { workspace = true, optional = true }
 collector-opencode = { workspace = true, optional = true }
@@ -56,6 +58,8 @@ default = ["collectors"]
 collectors = [
     "dep:collector-claude",
     "dep:collector-codex",
+    "dep:collector-cursor",
+    "dep:collector-copilot",
     "dep:collector-antigravity",
     "dep:collector-litellm",
     "dep:collector-opencode",

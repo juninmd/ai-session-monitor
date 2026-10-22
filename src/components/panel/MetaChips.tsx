@@ -29,11 +29,21 @@ function isNamed([key, value]: [string, string], scope: string | undefined): boo
       return value === scope || hasMessage(`meta.level.${value}`);
     case 'local_estimate':
       return value === 'true';
+    case 'token_source':
+      return tokenSourceLabel(value) !== null;
+    case 'reset_derived':
+      return value === 'true';
     case 'extra_source':
       return PER_MODEL_SOURCES.includes(value);
     default:
       return false;
   }
+}
+
+/** Copilot says where its token came from (`pasted` or `local`); any other value is listed raw. */
+function tokenSourceLabel(value: string | undefined): string | null {
+  const key = `meta.token_source.${value}`;
+  return hasMessage(key) ? t(key) : null;
 }
 
 /** Where the budget came from, only when it is not the level the user configured. */
@@ -50,6 +60,7 @@ export function MetaChips({ view, ctx }: { view: HarnessView; ctx: ViewContext }
     .filter((part): part is string => part !== null)
     .join(': ');
   const level = levelChip(meta.level, meta.scope);
+  const tokenSource = tokenSourceLabel(meta.token_source);
   const extras = Object.entries(meta)
     .filter((entry) => !isNamed(entry, meta.scope))
     .slice(0, MAX_EXTRA_META);
@@ -72,6 +83,7 @@ export function MetaChips({ view, ctx }: { view: HarnessView; ctx: ViewContext }
       {meta.local_estimate === 'true' && (
         <span className="chip plain">{t('meta.local_estimate')}</span>
       )}
+      {tokenSource !== null && <span className="chip plain">{tokenSource}</span>}
       {extras.map(([key, value]) => (
         <span className="chip plain" key={key}>{`${key}: ${value}`}</span>
       ))}

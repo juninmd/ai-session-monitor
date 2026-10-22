@@ -51,6 +51,23 @@ export const errorDetailMessages = {
   'error.unauthorized.reason.no_token.body':
     'মনিটর IDE-র লোকাল সার্ভারের সেশন টোকেন পড়তে পারেনি। Antigravity রিস্টার্ট করে আবার চেষ্টা করুন।',
 
+  // Cursor and GitHub Copilot: local database and extension sign-in files.
+  'error.timeout.reason.locked.body': 'Cursor-এর লোকাল ডেটাবেস এখন ব্যবহৃত হচ্ছে। একটু পরে আবার চেষ্টা করুন।',
+  'error.timeout.reason.timeout.body':
+    'Cursor-এর লোকাল ডেটাবেস পড়তে অনেক সময় লেগেছে। একটু পরে আবার চেষ্টা করুন।',
+  'error.endpoint_changed.reason.schema.body':
+    'Cursor-এর লোকাল ডেটাবেসের গঠন মনিটরের প্রত্যাশার চেয়ে আলাদা। মনিটর আপডেট করতে হতে পারে।',
+  'error.settings_unreadable.reason.permission.body':
+    'Cursor-এর লোকাল ডেটাবেস খোলার অনুমতি নেই। ফাইলটির অনুমতি দেখে নিন।',
+  'error.settings_unreadable.reason.not_a_database.body': 'পাওয়া Cursor ফাইলটি ডেটাবেস নয়।',
+  'error.settings_unreadable.reason.other.body': 'Cursor-এর লোকাল ডেটাবেস পড়া যায়নি।',
+  'error.not_signed_in.reason.not_found.body':
+    'Copilot এক্সটেনশনের ফোল্ডারে কোনো GitHub টোকেন পাওয়া যায়নি। এডিটরে Copilot-এ লগইন করুন, অথবা সেটিংসে একটি টোকেন পেস্ট করুন।',
+  'error.not_signed_in.reason.no_token.body':
+    'Copilot এক্সটেনশনের ফাইলে github.com-এর কোনো টোকেন নেই। এডিটরে Copilot-এ লগইন করুন, অথবা সেটিংসে একটি টোকেন পেস্ট করুন।',
+  'error.not_signed_in.reason.unreadable.body':
+    'Copilot এক্সটেনশনের লগইন ফাইল পড়া যায়নি। তার ফোল্ডারের অনুমতি দেখে নিন।',
+
   'error.redirect': 'সার্ভার রিকোয়েস্টটি রিডাইরেক্ট করার চেষ্টা করেছে, আর মনিটর রিডাইরেক্ট অনুসরণ করে না।',
   'error.retry_after': 'সোর্সের চাওয়া অপেক্ষা: {wait}।',
   'error.field_hint': 'সমস্যাযুক্ত ঘর: {field}।',

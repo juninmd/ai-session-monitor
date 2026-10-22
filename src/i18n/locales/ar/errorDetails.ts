@@ -52,6 +52,26 @@ export const errorDetailMessages = {
   'error.unauthorized.reason.no_token.body':
     'تعذّر على المراقب قراءة رمز الجلسة الخاص بالخادم المحلي للبيئة. أعد تشغيل Antigravity وحاول مرة أخرى.',
 
+  // Cursor: its local state.vscdb database.
+  'error.timeout.reason.locked.body':
+    'قاعدة بيانات Cursor المحلية قيد الاستخدام الآن. حاول مرة أخرى بعد قليل.',
+  'error.timeout.reason.timeout.body':
+    'استغرقت قراءة قاعدة بيانات Cursor المحلية وقتًا طويلًا. حاول مرة أخرى بعد قليل.',
+  'error.endpoint_changed.reason.schema.body':
+    'تنسيق قاعدة بيانات Cursor المحلية مختلف عما يتوقعه المراقب. قد يحتاج المراقب إلى تحديث.',
+  'error.settings_unreadable.reason.permission.body':
+    'لا توجد صلاحية لفتح قاعدة بيانات Cursor المحلية. تحقق من أذونات الملف.',
+  'error.settings_unreadable.reason.not_a_database.body': 'ملف Cursor الذي وُجد ليس قاعدة بيانات.',
+  'error.settings_unreadable.reason.other.body': 'تعذّرت قراءة قاعدة بيانات Cursor المحلية.',
+
+  // GitHub Copilot: the token the extension keeps on disk.
+  'error.not_signed_in.reason.not_found.body':
+    'لم يُعثر على رمز GitHub في مجلد إضافة Copilot. سجّل الدخول إلى Copilot في محررك، أو الصق رمزًا في الإعدادات.',
+  'error.not_signed_in.reason.no_token.body':
+    'لا تحتوي ملفات إضافة Copilot على رمز لـ github.com. سجّل الدخول إلى Copilot في محررك، أو الصق رمزًا في الإعدادات.',
+  'error.not_signed_in.reason.unreadable.body':
+    'تعذّرت قراءة ملف تسجيل الدخول الخاص بإضافة Copilot. تحقق من أذونات مجلدها.',
+
   'error.redirect': 'حاول الخادم إعادة توجيه الطلب، والمراقب لا يتبع عمليات إعادة التوجيه.',
   'error.retry_after': 'مدة الانتظار التي طلبها المصدر: {wait}.',
   'error.field_hint': 'الحقل الذي به مشكلة: {field}.',

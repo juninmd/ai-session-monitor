@@ -75,6 +75,16 @@ export const channelsMessages = {
   'channels.litellm_budget.title': 'Budget of the key, user or team',
   'channels.litellm_budget.how':
     'GET /key|user|team/info: spend, max_budget, budget_duration, budget_reset_at, per-model budgets and static rpm/tpm limits.',
+  'channels.cursor_usage_summary.title': 'Included usage and on-demand spend',
+  'channels.cursor_usage_summary.how':
+    'GET cursor.com/api/usage-summary with the session cookie built from the sign-in token Cursor keeps in its local database (state.vscdb, one entry, read-only): totalPercentUsed, billingCycleEnd and individualUsage.onDemand.',
+  'channels.cursor_usage_summary.caveat':
+    'Unofficial and never seen live: the route comes from community notes, so compare it with the dashboard. It needs the consent and the “unofficial” badge.',
+  'channels.copilot_internal_user.title': 'Premium requests, chat and completions',
+  'channels.copilot_internal_user.how':
+    'GET api.github.com/copilot_internal/user → quota_snapshots (percent_remaining, entitlement, remaining, unlimited, overage_count), copilot_plan and quota_reset_date. The token is a pasted one or the one the Copilot extension keeps in apps.json or hosts.json.',
+  'channels.copilot_internal_user.caveat':
+    'Unofficial and never seen live: the route is internal to GitHub. Without a usable date in the response, the reset is derived (the 1st of the next month, UTC) and flagged as an estimate.',
   'channels.openrouter_activity.title': 'Daily spend by model',
   'channels.openrouter_activity.how':
     'GET /api/v1/activity. Documented, but needs a management key: the inference key gets a 403 (same situation as /credits).',
@@ -93,7 +103,7 @@ export const channelsMessages = {
   'channels.kimi_console.title': 'Rate detail in the console',
   'channels.kimi_console.how':
     'The platform console exposes per-model limits, but only per browser session. No new host, no cookie, no scraping — it stays out.',
-  'channels.cursor_dashboard.title': 'Included pools and on-demand spend',
+  'channels.cursor_dashboard.title': 'Credit grants and pool detail',
   'channels.cursor_dashboard.how':
-    'cursor.com/api/usage-summary and the Connect-RPC GetClientVisibleCreditGrants. They need browser headers and may return 403 at the edge.',
+    'The Connect-RPC GetClientVisibleCreditGrants and the dashboard pages. They need browser headers and may return 403 at the edge. The usage-summary route is already read with the token Cursor keeps.',
 } as const satisfies Record<string, string>;

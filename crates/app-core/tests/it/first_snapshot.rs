@@ -24,6 +24,8 @@ async fn the_first_snapshot_has_enabled_harnesses_loading_and_the_disabled_one_o
         [
             (HarnessId::Claude, ViewState::Loading),
             (HarnessId::Codex, ViewState::Loading),
+            (HarnessId::Cursor, ViewState::Loading),
+            (HarnessId::Copilot, ViewState::Loading),
             (HarnessId::Antigravity, ViewState::Loading),
             (HarnessId::Opencode, ViewState::Loading),
             (HarnessId::Kimi, ViewState::Loading),

@@ -18,6 +18,12 @@ export const settingsMessages = {
   'settings.show_used': 'عرض الحصة بصيغة',
   'settings.show_available': 'المتاح',
   'settings.show_used_opt': 'المستخدم',
+  'settings.hide_capture': 'إخفاء من لقطات الشاشة ومشاركة الشاشة',
+  'settings.hide_capture_hint':
+    'تصبح اللوحة غير مرئية في لقطات الشاشة والتسجيلات ومشاركة الشاشة (Windows وmacOS؛ وغير مدعومة على Linux).',
+  'settings.local_api': 'واجهة API محلية',
+  'settings.local_api_hint':
+    'تقدّم القراءات بصيغة JSON للقراءة فقط على 127.0.0.1:{port} للسكربتات وأشرطة الحالة. يمكن لأي برنامج على هذا الكمبيوتر قراءتها. متوقفة افتراضيًا.',
   'settings.language': 'اللغة',
   'settings.language_hint': 'تنطبق على اللوحة وعلى الإشعارات.',
   'settings.skin': 'المظهر',
@@ -92,4 +98,8 @@ export const settingsMessages = {
     'قراءة غير رسمية: قد تشغّل agy المثبّت فقط لقراءة /usage (دون استهلاك رموز أو قراءة بيانات تسجيل الدخول) و/أو تقرأ الخادم المحلي للبيئة، الذي لا يتواصل إلا مع 127.0.0.1.',
   'antigravity.note':
     'تأتي القراءة من agy المثبّت (دون الحاجة إلى فتح شيء) أو، في غيابه، من الخادم المحلي للبيئة: في هذه الحالة أبقِ Antigravity مفتوحًا.',
+
+  'cursor.consent': 'السماح بقراءة رمز تسجيل الدخول إلى Cursor',
+  'cursor.consent_hint':
+    'قراءة غير رسمية: تقرأ رمز تسجيل الدخول الذي يحتفظ به Cursor في قاعدة بياناته المحلية (للقراءة فقط، هذا الإدخال وحده) وتُرسله إلى cursor.com فقط.',
 } as const satisfies Record<string, string>;

@@ -32,7 +32,7 @@ describe('the settings menu', () => {
     expect(screen.getByText('1 min · adaptativo · avisa em 25%')).toBeVisible();
     expect(screen.getByText('Ligado · 35 dias')).toBeVisible();
     expect(screen.getByText(/^Automáticas/)).toBeVisible();
-    expect(screen.getByText('14 fontes · 3 não oficiais')).toBeVisible();
+    expect(screen.getByText('16 fontes · 5 não oficiais')).toBeVisible();
   });
 
   it('says the history is off instead of how long it keeps it', async () => {

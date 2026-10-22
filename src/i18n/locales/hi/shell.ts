@@ -4,6 +4,8 @@ export const shellMessages = {
   'app.title': 'AI Session Monitor',
   'harness.claude': 'Claude Code',
   'harness.codex': 'Codex',
+  'harness.cursor': 'Cursor',
+  'harness.copilot': 'GitHub Copilot',
   'harness.antigravity': 'Antigravity',
   'harness.opencode': 'OpenCode',
   'harness.kimi': 'Kimi Code',
@@ -110,6 +112,8 @@ export const shellMessages = {
   'action.console.novita': 'Novita कुंजियाँ खोलें',
   'action.console.ollama': 'Ollama Cloud कुंजियाँ खोलें',
   'action.console.minimax': 'MiniMax कुंजियाँ खोलें',
+  'action.console.cursor': 'Cursor डैशबोर्ड खोलें',
+  'action.console.copilot': 'GitHub Copilot सेटिंग खोलें',
   'action.reinstall': 'दोबारा इंस्टॉल करें',
   'action.failed': 'कार्रवाई पूरी नहीं हो सकी।',
 } as const;

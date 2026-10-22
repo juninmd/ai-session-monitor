@@ -21,6 +21,7 @@ describe('secrets', () => {
     expect(status).toEqual({
       litellm: false,
       opencode: true,
+      copilot: false,
       kimi: false,
       zai: false,
       openrouter: false,
@@ -34,6 +35,14 @@ describe('secrets', () => {
     expect(
       JSON.stringify([status, await backend.secretStatus(), await backend.getSnapshot()]),
     ).not.toContain('fab-key-1');
+  });
+
+  it('keeps the Copilot token apart from the other keys', async () => {
+    const backend = make({ scenario: 'fresh' });
+    const status = await backend.setSecret('copilot', 'fab-token-1');
+    expect(status.copilot).toBe(true);
+    expect(Object.entries(status).filter(([, saved]) => saved)).toEqual([['copilot', true]]);
+    expect(JSON.stringify(await backend.getSnapshot())).not.toContain('fab-token-1');
   });
 
   it.each(['', '   ', '\n\t'])('refuse a blank value %j and keep the flag', async (value) => {
@@ -52,6 +61,7 @@ describe('secrets', () => {
     expect(await backend.clearSecret('opencode')).toEqual({
       litellm: true,
       opencode: false,
+      copilot: true,
       kimi: true,
       zai: true,
       openrouter: true,

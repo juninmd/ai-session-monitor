@@ -75,6 +75,16 @@ export const channelsMessages = {
   'channels.litellm_budget.title': 'key، یوزر یا ٹیم کا بجٹ',
   'channels.litellm_budget.how':
     'GET /key|user|team/info: spend, max_budget, budget_duration, budget_reset_at، ہر ماڈل کے بجٹ اور مستقل rpm/tpm حدود۔',
+  'channels.cursor_usage_summary.title': 'شامل استعمال اور آن ڈیمانڈ خرچ',
+  'channels.cursor_usage_summary.how':
+    'GET cursor.com/api/usage-summary، اس سیشن کوکی کے ساتھ جو Cursor کے اپنے مقامی ڈیٹا بیس (state.vscdb، ایک اندراج، صرف پڑھنے کے لیے) کے سائن اِن ٹوکن سے بنتی ہے: totalPercentUsed، billingCycleEnd اور individualUsage.onDemand۔',
+  'channels.cursor_usage_summary.caveat':
+    'غیر سرکاری اور کبھی لائیو نہیں دیکھا گیا: یہ راستہ کمیونٹی نوٹس سے آیا ہے، اس لیے ڈیش بورڈ سے موازنہ کریں۔ اس کے لیے اجازت اور “غیر سرکاری” بیج ضروری ہے۔',
+  'channels.copilot_internal_user.title': 'پریمیم درخواستیں، چیٹ اور کمپلیشنز',
+  'channels.copilot_internal_user.how':
+    'GET api.github.com/copilot_internal/user → quota_snapshots (percent_remaining، entitlement، remaining، unlimited، overage_count)، copilot_plan اور quota_reset_date۔ ٹوکن یا تو پیسٹ کیا گیا ہوتا ہے یا وہ جو Copilot ایکسٹینشن apps.json یا hosts.json میں رکھتی ہے۔',
+  'channels.copilot_internal_user.caveat':
+    'غیر سرکاری اور کبھی لائیو نہیں دیکھا گیا: یہ راستہ GitHub کا اندرونی ہے۔ جواب میں قابل استعمال تاریخ نہ ہو تو ری سیٹ اخذ کیا جاتا ہے (اگلے مہینے کی 1 تاریخ، UTC) اور اندازے کے طور پر نشان زد ہوتا ہے۔',
   'channels.openrouter_activity.title': 'ماڈل کے حساب سے روزانہ خرچ',
   'channels.openrouter_activity.how':
     'GET /api/v1/activity۔ دستاویزی ہے، مگر management key چاہیے: inference key کو 403 ملتا ہے (/credits جیسی صورتحال)۔',
@@ -93,7 +103,7 @@ export const channelsMessages = {
   'channels.kimi_console.title': 'کنسول میں شرح کی تفصیل',
   'channels.kimi_console.how':
     'پلیٹ فارم کنسول ہر ماڈل کی حدود ظاہر کرتا ہے، لیکن صرف ہر براؤزر سیشن کے لیے۔ نیا host نہیں، کوکی نہیں، اسکریپنگ نہیں — یہ باہر رہتا ہے۔',
-  'channels.cursor_dashboard.title': 'شامل پولز اور آن ڈیمانڈ خرچ',
+  'channels.cursor_dashboard.title': 'کریڈٹ گرانٹس اور پول کی تفصیل',
   'channels.cursor_dashboard.how':
-    'cursor.com/api/usage-summary اور Connect-RPC GetClientVisibleCreditGrants۔ انہیں براؤزر ہیڈرز چاہیے اور edge پر 403 آ سکتا ہے۔',
+    'Connect-RPC GetClientVisibleCreditGrants اور ڈیش بورڈ کے صفحات۔ انہیں براؤزر ہیڈرز چاہیے اور edge پر 403 آ سکتا ہے۔ usage-summary کا راستہ پہلے ہی اس ٹوکن سے پڑھا جاتا ہے جو Cursor رکھتا ہے۔',
 } as const satisfies Record<string, string>;

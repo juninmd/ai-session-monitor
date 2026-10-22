@@ -43,6 +43,8 @@ export const GeneralSettingsSchema = z.strictObject({
   compact: z.boolean(),
   firstRunDone: z.boolean(),
   language: LanguageSchema,
+  localApi: z.boolean(),
+  hideFromCapture: z.boolean(),
 });
 export type GeneralSettings = z.infer<typeof GeneralSettingsSchema>;
 
@@ -66,6 +68,18 @@ export const AntigravitySettingsSchema = z.strictObject({
   consent: z.boolean(),
 });
 export type AntigravitySettings = z.infer<typeof AntigravitySettingsSchema>;
+
+export const CursorSettingsSchema = z.strictObject({
+  enabled: z.boolean(),
+  consent: z.boolean(),
+});
+export type CursorSettings = z.infer<typeof CursorSettingsSchema>;
+
+export const CopilotSettingsSchema = z.strictObject({
+  enabled: z.boolean(),
+  localConsent: z.boolean(),
+});
+export type CopilotSettings = z.infer<typeof CopilotSettingsSchema>;
 
 export const OpencodeSettingsSchema = z.strictObject({
   enabled: z.boolean(),
@@ -130,6 +144,8 @@ export const SettingsSchema = z.strictObject({
   claude: ClaudeSettingsSchema,
   codex: CodexSettingsSchema,
   antigravity: AntigravitySettingsSchema,
+  cursor: CursorSettingsSchema,
+  copilot: CopilotSettingsSchema,
   opencode: OpencodeSettingsSchema,
   kimi: KimiSettingsSchema,
   zai: ZaiSettingsSchema,
@@ -143,6 +159,9 @@ export const SettingsSchema = z.strictObject({
   litellm: LitellmSettingsSchema,
 });
 export type Settings = z.infer<typeof SettingsSchema>;
+
+// The loopback port of the optional local API (usage_model::settings::LOCAL_API_PORT).
+export const LOCAL_API_PORT = 6737;
 
 // Ranges the backend clamps to (Settings::normalize); the forms use them for their inputs.
 export const LIMITS = {
@@ -174,10 +193,14 @@ export const defaultSettings: Settings = {
     compact: false,
     firstRunDone: false,
     language: 'en',
+    localApi: false,
+    hideFromCapture: false,
   },
   claude: { enabled: true, shimConsent: false, oauthUsage: false, configDir: null },
   codex: { enabled: true, consent: false, binaryPath: null },
   antigravity: { enabled: true, consent: false },
+  cursor: { enabled: true, consent: false },
+  copilot: { enabled: true, localConsent: false },
   opencode: { enabled: true, localConsent: false, dataDir: null },
   kimi: { enabled: true },
   zai: { enabled: true },

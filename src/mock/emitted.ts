@@ -1,7 +1,7 @@
 // Views shaped the way each collector crate really emits them: window ids, labels and groups,
 // fact ids and units, meta and notice params. They carry the edge cases the friendly builders in
 // builders.ts leave out. Fabricated numbers and names; nothing here comes from an account.
-import type { Amount, HarnessView, UsageWindow } from '../lib/contract';
+import type { Amount, Fact, HarnessView, UsageWindow } from '../lib/contract';
 import { type Env, fact, notice, viewOf, type WindowSpec, windowOf } from './fixtures';
 
 const DAY = 86_400;
@@ -16,6 +16,7 @@ function built(
 }
 
 const usd = (used: number, limit: number): Amount => ({ used, limit, unit: 'usd' });
+const textFact = (id: string, text: string): Fact => ({ id, number: null, text, unit: null });
 
 /** Statusline windows, the gateway spend cap, and the OAuth per-model extras. */
 export function claudeEmitted(env: Env): HarnessView {
@@ -203,5 +204,43 @@ export function litellmEmitted(env: Env): HarnessView {
       notice('litellm_windows_truncated', 'info', { dropped: '3' }),
     ],
     meta: { host: 'gateway.exemplo.dev', scope: 'key', level: 'team', alias: 'dev-pessoal' },
+  });
+}
+
+/** An unlimited plan: a fact instead of the included window, and on-demand spend with no cap. */
+export function cursorEmitted(env: Env): HarnessView {
+  return viewOf('cursor', {
+    source: { id: 'usage_summary', official: false },
+    plan: 'Ultra',
+    readAt: env.now - 120,
+    facts: [textFact('unlimited', 'true'), fact('on_demand_spend', 17.3, 'usd')],
+  });
+}
+
+/**
+ * A finite premium quota with its overage, a free-tier chat window, an unlimited completions quota
+ * as a fact, and a reset the collector had to derive (no date in the response).
+ */
+export function copilotEmitted(env: Env): HarnessView {
+  const monthly = { kind: 'monthly', windowMinutes: null, resetsInMin: 9 * 1440 } as const;
+  return viewOf('copilot', {
+    source: { id: 'copilot_internal_user', official: false },
+    plan: 'Individual Pro',
+    readAt: env.now - 150,
+    windows: [
+      built(env, {
+        id: 'premium_requests',
+        usedPct: 100,
+        amount: { used: 312, limit: 300, unit: 'requests' },
+        ...monthly,
+      }),
+      built(env, { id: 'chat', usedPct: 40, ...monthly }),
+    ],
+    facts: [
+      textFact('completions_unlimited', 'unlimited'),
+      fact('premium_requests_overage', 12, 'requests'),
+    ],
+    notices: [notice('copilot_reset_derived', 'info')],
+    meta: { token_source: 'local', reset_derived: 'true' },
   });
 }

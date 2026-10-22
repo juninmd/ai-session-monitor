@@ -14,6 +14,8 @@ export const shellMessages = {
   'harness.novita': 'Novita',
   'harness.ollama': 'Ollama Cloud',
   'harness.minimax': 'MiniMax',
+  'harness.cursor': 'Cursor',
+  'harness.copilot': 'GitHub Copilot',
   'harness.litellm': 'LiteLLM',
 
   'header.refresh': 'Обновить сейчас',
@@ -112,6 +114,8 @@ export const shellMessages = {
   'action.console.novita': 'Открыть ключи Novita',
   'action.console.ollama': 'Открыть ключи Ollama Cloud',
   'action.console.minimax': 'Открыть ключи MiniMax',
+  'action.console.cursor': 'Открыть панель Cursor',
+  'action.console.copilot': 'Открыть настройки GitHub Copilot',
   'action.reinstall': 'Установить заново',
   'action.failed': 'Не удалось выполнить действие.',
 } as const satisfies Record<string, string>;

@@ -152,12 +152,34 @@ pub fn sample_views() -> Vec<HarnessView> {
     litellm.meta.insert("host".into(), "gateway.example.dev".into());
     litellm.meta.insert("scope".into(), "key".into());
 
+    let mut cursor = ready(HarnessId::Cursor, "usage_summary", false);
+    cursor.plan = Some("Pro".into());
+    let mut cycle = window(WindowKind::Monthly, "monthly", Some(43_200), 36.0, 20_000);
+    cycle.amount = None;
+    let mut on_demand = window(WindowKind::Budget, "on_demand", None, 10.0, 20_000);
+    on_demand.amount = Some(Amount { used: 5.0, limit: Some(50.0), unit: AmountUnit::Usd });
+    cursor.windows = vec![cycle, on_demand];
+
+    let mut copilot = ready(HarnessId::Copilot, "copilot_internal_user", false);
+    copilot.plan = Some("Individual Pro".into());
+    let mut premium = window(WindowKind::Monthly, "premium_requests", None, 64.0, 18_000);
+    premium.amount = Some(Amount { used: 192.0, limit: Some(300.0), unit: AmountUnit::Requests });
+    copilot.windows = vec![premium];
+    copilot.facts = vec![Fact {
+        id: "chat_unlimited".into(),
+        number: None,
+        text: Some("unlimited".into()),
+        unit: None,
+    }];
+
     let mut unknown_pct = ready(HarnessId::Codex, "app_server", true);
     unknown_pct.windows = vec![UsageWindow::new("five_hour", WindowKind::FiveHour)];
 
     vec![
         claude,
         HarnessView::needs_consent(HarnessId::Codex),
+        cursor,
+        copilot,
         antigravity,
         opencode,
         kimi,
