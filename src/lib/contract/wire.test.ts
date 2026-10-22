@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import settingsRs from '../../../crates/usage-model/src/settings.rs?raw';
 import updateRs from '../../../crates/usage-model/src/update.rs?raw';
 import viewRs from '../../../crates/usage-model/src/view.rs?raw';
-import { LITELLM_SCOPES, TimeFormatSchema, WeekFormatSchema } from './settings';
+import { LanguageSchema, LITELLM_SCOPES, TimeFormatSchema, WeekFormatSchema } from './settings';
 import { UPDATE_FAILURES, UPDATE_PHASES } from './update';
 import { AMOUNT_UNITS, ERROR_CODES, SEVERITIES, WINDOW_KINDS } from './view';
 
@@ -44,6 +44,14 @@ describe('wire enums', () => {
     ['LitellmScope', settingsRs, LITELLM_SCOPES],
   ] as const)('%s lists exactly the wire names of the Rust enum', (name, source, mirror) => {
     expect([...mirror].sort()).toEqual(wireNames(source, name).sort());
+  });
+});
+
+describe('Language', () => {
+  it('lists exactly the tags the Rust enum renames its variants to', () => {
+    const body = settingsRs.split('pub enum Language')[1]?.split('\n}')[0] ?? '';
+    const tags = [...body.matchAll(/#\[serde\(rename = "([^"]+)"\)\]/g)].map((m) => m[1]);
+    expect([...LanguageSchema.options].sort()).toEqual(tags.sort());
   });
 });
 

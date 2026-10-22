@@ -8,6 +8,7 @@ import { harnessName, TAB_ORDER } from './app/harness';
 import { sharePct, showsUsed } from './app/quota';
 import { useAsyncAction } from './app/useAsyncAction';
 import { useFlyoutHeight } from './app/useFlyoutHeight';
+import { useLocaleSync } from './app/useLocaleSync';
 import { useNowSecs } from './app/useNowSecs';
 import { useSettingsState } from './app/useSettingsState';
 import { useSnapshotState } from './app/useSnapshotState';
@@ -36,6 +37,7 @@ function AppBody({ backend }: { backend: Backend }) {
   const snapshotState = useSnapshotState(backend);
   const settingsApi = useSettingsState(backend);
   const updateApi = useUpdateState(backend);
+  const locale = useLocaleSync(settingsApi.settings.general.language, settingsApi.loaded);
   const { nowSecs, sync } = useNowSecs();
   const [surface, setSurface] = useState<Surface>('triagem');
   const [preferred, setPreferred] = useState<HarnessId>(TAB_ORDER[0] ?? 'claude');
@@ -227,6 +229,7 @@ function AppBody({ backend }: { backend: Backend }) {
   const shellFailure = refresh.error ?? quit.error ?? hide.error;
   return (
     <Home
+      key={locale}
       backend={backend}
       settings={settingsApi}
       update={updateApi}

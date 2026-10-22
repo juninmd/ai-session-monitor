@@ -21,6 +21,7 @@ import {
 } from '../../lib/contract';
 import type { Option } from '../forms/fields';
 import { SettingSegmented, SettingSelect, SettingSwitch } from '../forms/SettingControls';
+import { LanguageSetting } from './LanguageSetting';
 import { SkinSetting } from './SkinSetting';
 
 const patch = (settings: Settings, change: Partial<General>): Settings => ({
@@ -62,6 +63,7 @@ export function GeneralSettings() {
     <>
       <section className="sg" aria-labelledby="sg-general">
         <h3 id="sg-general">{t('settings.general')}</h3>
+        <LanguageSetting />
         <SettingSelect
           id="set-interval"
           label={t('settings.interval')}

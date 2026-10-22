@@ -124,6 +124,32 @@ pub enum WeekFormat {
     DaysHours,
 }
 
+/// The language of the interface and of the desktop toasts. English until the user picks another.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub enum Language {
+    #[default]
+    #[serde(rename = "en")]
+    En,
+    #[serde(rename = "zh-CN")]
+    ZhCn,
+    #[serde(rename = "hi")]
+    Hi,
+    #[serde(rename = "es")]
+    Es,
+    #[serde(rename = "fr")]
+    Fr,
+    #[serde(rename = "ar")]
+    Ar,
+    #[serde(rename = "bn")]
+    Bn,
+    #[serde(rename = "pt-BR")]
+    PtBr,
+    #[serde(rename = "ru")]
+    Ru,
+    #[serde(rename = "ur")]
+    Ur,
+}
+
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct GeneralSettings {
@@ -158,6 +184,7 @@ pub struct GeneralSettings {
     pub compact: bool,
     /// The flyout opens by itself once, on the very first launch.
     pub first_run_done: bool,
+    pub language: Language,
 }
 
 impl Default for GeneralSettings {
@@ -180,6 +207,7 @@ impl Default for GeneralSettings {
             show_used: false,
             compact: false,
             first_run_done: false,
+            language: Language::En,
         }
     }
 }

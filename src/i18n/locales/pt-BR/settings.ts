@@ -18,6 +18,8 @@ export const settingsMessages = {
   'settings.show_used': 'Mostrar cota como',
   'settings.show_available': 'disponível',
   'settings.show_used_opt': 'usado',
+  'settings.language': 'Idioma',
+  'settings.language_hint': 'Vale para o painel e para as notificações.',
   'settings.skin': 'Tema',
   'settings.skin_hint': 'Só muda as cores deste painel; fica guardado neste computador.',
   'skin.system': 'Seguir o sistema',

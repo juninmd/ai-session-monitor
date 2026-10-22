@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { App } from './App';
 import { applySkin, loadSkin } from './app/skin';
 import { ErrorBoundary } from './components/shell/ErrorBoundary';
+import { applyDocumentLocale, getLocale, recalledLocale, setLocale } from './i18n/locale';
 import { type Backend, createTauriBackend, isTauriRuntime } from './lib/backend';
 import './styles/index.css';
 
@@ -24,6 +25,8 @@ async function start(): Promise<void> {
   // The browser host draws a page and a shadow around the flyout; the Tauri window does not.
   document.documentElement.dataset.host = isTauriRuntime() ? 'tauri' : 'browser';
   applySkin(loadSkin());
+  setLocale(recalledLocale() ?? getLocale());
+  applyDocumentLocale(getLocale());
   const backend = await selectBackend();
   createRoot(container).render(
     <StrictMode>

@@ -9,7 +9,7 @@ import {
   WINDOW_KINDS,
 } from '../lib/contract';
 import { hasMessage, t } from './index';
-import { partials, ptBR } from './pt-BR';
+import { partials, ptBR } from './locales/pt-BR';
 
 /** Rows of the "Notice codes" table in docs/ipc.md: the contract the catalog must cover. */
 function documentedNoticeCodes(): string[] {

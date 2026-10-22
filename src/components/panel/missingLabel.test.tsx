@@ -17,8 +17,8 @@ const LOST = vi.hoisted(() => [
   'field.pemPath',
 ]);
 
-vi.mock('../../i18n/pt-BR', async (importOriginal) => {
-  const real = await importOriginal<typeof import('../../i18n/pt-BR')>();
+vi.mock('../../i18n/locales/pt-BR', async (importOriginal) => {
+  const real = await importOriginal<typeof import('../../i18n/locales/pt-BR')>();
   const kept = Object.entries(real.ptBR).filter(([key]) => !LOST.includes(key));
   return { ...real, ptBR: Object.fromEntries(kept) };
 });

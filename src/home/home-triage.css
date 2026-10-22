@@ -4,27 +4,26 @@
   gap: 0.6rem;
 }
 
-/* One quiet line instead of a card: the alarm is the sentence itself, not the box around it. */
+/* A whisper, not a banner: no box and no fill. The alarm is a hairline on the inline-start edge
+   and a small glyph; the sentence stays in the muted ink so the cards below carry the weight. */
 .nx-headline {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.4rem;
-  padding: 0.35rem 0.55rem;
-  border: 1px solid color-mix(in oklab, var(--accent) 32%, var(--line));
-  border-radius: var(--r-card);
-  background: color-mix(in oklab, var(--accent) 7%, var(--raise));
+  padding: 0.1rem 0.1rem 0.1rem 0.55rem;
+  border-inline-start: 2px solid color-mix(in oklab, var(--accent) 45%, transparent);
 }
 
 .nx-headline[data-tone="attention"] {
-  border-color: color-mix(in oklab, var(--crit) 45%, var(--line));
-  background: color-mix(in oklab, var(--crit) 8%, var(--raise));
+  border-inline-start-color: color-mix(in oklab, var(--crit) 60%, transparent);
 }
 
 .nx-headline > .ico {
   flex: none;
-  inline-size: 14px;
-  block-size: 14px;
-  color: var(--accent);
+  inline-size: 12px;
+  block-size: 12px;
+  margin-block-start: 0.18rem;
+  color: var(--ink-3);
 }
 
 .nx-headline[data-tone="attention"] > .ico {
@@ -37,8 +36,9 @@
 }
 
 .nx-headline-text {
-  font-size: var(--fs-sm);
-  font-weight: 600;
+  color: var(--ink-2);
+  font-size: var(--fs-xs);
+  font-weight: 400;
   text-wrap: pretty;
 }
 
@@ -58,7 +58,10 @@
 }
 
 .nx-headline-jump .link-btn {
-  color: var(--crit);
+  color: var(--ink-2);
+  font-size: var(--fs-xs);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 /* ---------- the tile grid ---------- */
