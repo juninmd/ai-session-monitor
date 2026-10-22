@@ -105,6 +105,7 @@ fn ipc_payload_shapes_are_pinned() {
             "secretStatus": SecretStatus {
                 litellm: true,
                 opencode: false,
+                copilot: true,
                 kimi: true,
                 zai: false,
                 openrouter: true,

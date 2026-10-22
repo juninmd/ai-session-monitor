@@ -5,6 +5,8 @@ import { z } from 'zod';
 export const HARNESS_IDS = [
   'claude',
   'codex',
+  'cursor',
+  'copilot',
   'antigravity',
   'opencode',
   'kimi',

@@ -15,6 +15,14 @@
       "consent": false,
       "enabled": true
     },
+    "copilot": {
+      "enabled": true,
+      "localConsent": false
+    },
+    "cursor": {
+      "consent": false,
+      "enabled": true
+    },
     "deepinfra": {
       "enabled": true
     },
@@ -31,9 +39,11 @@
       "autostart": false,
       "compact": false,
       "firstRunDone": false,
+      "hideFromCapture": false,
       "historyEnabled": true,
       "intervalSecs": 60,
       "language": "en",
+      "localApi": false,
       "notifyOnOut": false,
       "notifyOnReset": false,
       "notifyOnRisk": false,
@@ -104,6 +114,14 @@
       "consent": false,
       "enabled": true
     },
+    "copilot": {
+      "enabled": true,
+      "localConsent": false
+    },
+    "cursor": {
+      "consent": false,
+      "enabled": true
+    },
     "deepinfra": {
       "enabled": true
     },
@@ -120,9 +138,11 @@
       "autostart": false,
       "compact": false,
       "firstRunDone": false,
+      "hideFromCapture": false,
       "historyEnabled": true,
       "intervalSecs": 60,
       "language": "en",
+      "localApi": false,
       "notifyOnOut": false,
       "notifyOnReset": false,
       "notifyOnRisk": false,
@@ -189,6 +209,14 @@
       "consent": false,
       "enabled": true
     },
+    "copilot": {
+      "enabled": true,
+      "localConsent": false
+    },
+    "cursor": {
+      "consent": false,
+      "enabled": true
+    },
     "deepinfra": {
       "enabled": true
     },
@@ -205,9 +233,11 @@
       "autostart": false,
       "compact": false,
       "firstRunDone": false,
+      "hideFromCapture": false,
       "historyEnabled": true,
       "intervalSecs": 60,
       "language": "en",
+      "localApi": false,
       "notifyOnOut": false,
       "notifyOnReset": false,
       "notifyOnRisk": false,
