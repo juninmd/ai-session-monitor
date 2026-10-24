@@ -22,6 +22,7 @@ export const shellMessages = {
   'header.refresh': 'अभी रीफ़्रेश करें',
   'header.retry': 'फिर कोशिश करें ({count} विफल)',
   'header.settings': 'सेटिंग',
+  'header.theme': 'थीम: {name} (बदलने के लिए क्लिक करें)',
   'header.quit': 'बंद करें',
   'header.tray': 'सबसे कम उपलब्ध: {pct}',
   'header.tray_used': 'सबसे अधिक उपयोग: {pct}',

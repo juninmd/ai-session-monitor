@@ -23,7 +23,6 @@ import {
 import type { Option } from '../forms/fields';
 import { SettingSegmented, SettingSelect, SettingSwitch } from '../forms/SettingControls';
 import { LanguageSetting } from './LanguageSetting';
-import { SkinSetting } from './SkinSetting';
 
 const patch = (settings: Settings, change: Partial<General>): Settings => ({
   ...settings,
@@ -121,7 +120,6 @@ export function GeneralSettings() {
           options={quotaOptions()}
           apply={(current, mode) => patch(current, { showUsed: mode === 'used' })}
         />
-        <SkinSetting />
         <SettingSegmented
           id="set-density"
           legend={t('settings.density')}
