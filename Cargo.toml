@@ -40,6 +40,10 @@ collector-cursor = { path = "crates/collector-cursor" }
 app-core = { path = "crates/app-core" }
 
 [workspace.lints.rust]
+
+[patch.crates-io]
+tokio = { version = "1.54.0" }
+glib = { version = "0.20.0" }
 unsafe_code = "forbid"
 unused_must_use = "deny"
 
