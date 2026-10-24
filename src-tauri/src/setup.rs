@@ -68,7 +68,11 @@ pub fn on_page_load(webview: &Webview, payload: &PageLoadPayload<'_>) {
     if webview.label() != flyout::LABEL || !matches!(payload.event(), PageLoadEvent::Finished) {
         return;
     }
+    flyout::mark_page_ready();
     let app = webview.app_handle();
+    if let Some(flyout) = app.try_state::<Arc<Flyout>>() {
+        flyout.page_loaded();
+    }
     let armed =
         app.try_state::<OpenOnLoad>().is_some_and(|gate| gate.0.swap(false, Ordering::SeqCst));
     if !armed {
