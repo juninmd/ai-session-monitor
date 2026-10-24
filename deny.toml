@@ -6,7 +6,7 @@
 targets = ["x86_64-pc-windows-msvc"]
 
 [advisories]
-ignore = ["RUSTSEC-2024-0429", "GHSA-mrhx-c7xc-m3w5", "GHSA-xjj6-f33q-929c"]
+ignore = []
 
 [licenses]
 # Permissive licenses only, plus MPL-2.0 (file-level copyleft, pulled by Tauri's HTML tooling and
