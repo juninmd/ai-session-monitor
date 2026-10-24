@@ -6,10 +6,7 @@
 targets = ["x86_64-pc-windows-msvc"]
 
 [advisories]
-ignore = [
-    "RUSTSEC-2026-0386", # tokio: AsyncFd safety, bump to 1.54
-    "GHSA-wrw7-89jp-8q8g", # glib: VariantStrIter unsoundness, transitive
-]
+ignore = []
 
 [licenses]
 # Permissive licenses only, plus MPL-2.0 (file-level copyleft, pulled by Tauri's HTML tooling and
