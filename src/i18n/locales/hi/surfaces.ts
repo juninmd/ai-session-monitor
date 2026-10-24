@@ -47,8 +47,6 @@ export const surfacesMessages = {
   'triage.loading': 'लोड हो रहा है',
   'triage.amount_of': '{limit} में से {used}',
   'triage.pinned': 'सबसे ऊपर पिन किया गया',
-  'triage.more_quotas.one': '+{count} कोटा विवरण में',
-  'triage.more_quotas.other': '+{count} कोटा विवरण में',
   'triage.empty.title': 'कोई स्रोत मॉनिटर नहीं हो रहा',
   'triage.empty.body':
     'अभी कुछ नहीं पढ़ा गया है। चुनें कि क्या फ़ॉलो करना है; पैनल तात्कालिकता के क्रम में खुलेगा और हर कोटा का पूर्वानुमान उसके कार्ड पर ही दिखेगा।',

@@ -46,8 +46,6 @@ export const surfacesMessages = {
   'triage.loading': 'Carregando',
   'triage.amount_of': '{used} de {limit}',
   'triage.pinned': 'Fixado no topo',
-  'triage.more_quotas.one': '+{count} cota nos detalhes',
-  'triage.more_quotas.other': '+{count} cotas nos detalhes',
   'triage.empty.title': 'Nenhuma fonte monitorada',
   'triage.empty.body':
     'Nada foi lido ainda. Escolha o que acompanhar e o painel passa a abrir ordenado por urgência, com a previsão de cada cota no próprio cartão.',
