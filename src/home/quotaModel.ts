@@ -14,6 +14,8 @@ import { t } from '../i18n';
 import { formatDuration, formatPercent } from '../i18n/format';
 import type { HarnessView, UsageWindow } from '../lib/contract';
 
+const MAX_TILE_QUOTAS = 5;
+
 /** Bound grid density without combining independent quotas or hiding the limiting window. */
 export function gridQuotas(view: HarnessView, ctx: ViewContext) {
   const limiting = summaryOf(view, ctx);
@@ -25,7 +27,7 @@ export function gridQuotas(view: HarnessView, ctx: ViewContext) {
   const group =
     limitingWindow?.group ?? (groups.has(null) ? null : (view.windows[0]?.group ?? null));
   const candidates = groups.get(group) ?? [];
-  const chosen = candidates.slice(0, 3);
+  const chosen = candidates.slice(0, MAX_TILE_QUOTAS);
   if (limitingWindow && !chosen.includes(limitingWindow) && candidates.includes(limitingWindow)) {
     chosen[chosen.length - 1] = limitingWindow;
   }

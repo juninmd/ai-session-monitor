@@ -26,7 +26,7 @@ pub const LABEL: &str = "flyout";
 const WIDTH_LOGICAL: f64 = 432.0;
 const MARGIN_LOGICAL: f64 = 8.0;
 /// The height in tauri.conf.json, kept until the UI reports its content height.
-const INITIAL_HEIGHT_LOGICAL: f64 = 600.0;
+const INITIAL_HEIGHT_LOGICAL: f64 = 720.0;
 /// Resizes tried before giving up on the requested size; the second one lands in practice.
 const SIZE_ATTEMPTS: usize = 3;
 
