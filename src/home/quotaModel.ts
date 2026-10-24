@@ -1,5 +1,4 @@
 import { groupName } from '../app/layout';
-import { summaryOf } from '../app/tabModel';
 import {
   durationFormat,
   gaugeLabel,
@@ -14,28 +13,16 @@ import { t } from '../i18n';
 import { formatDuration, formatPercent } from '../i18n/format';
 import type { HarnessView, UsageWindow } from '../lib/contract';
 
-const MAX_TILE_QUOTAS = 5;
-
-/** Bound grid density without combining independent quotas or hiding the limiting window. */
-export function gridQuotas(view: HarnessView, ctx: ViewContext) {
-  const limiting = summaryOf(view, ctx);
+/** Every quota window of the view, grouped in first-seen order, so a card needs no click for detail. */
+export function gridQuotas(view: HarnessView) {
   const groups = new Map<string | null, UsageWindow[]>();
   for (const window of view.windows) {
     groups.set(window.group, [...(groups.get(window.group) ?? []), window]);
   }
-  const limitingWindow = view.windows.find((window) => window.id === limiting?.windowId);
-  const group =
-    limitingWindow?.group ?? (groups.has(null) ? null : (view.windows[0]?.group ?? null));
-  const candidates = groups.get(group) ?? [];
-  const chosen = candidates.slice(0, MAX_TILE_QUOTAS);
-  if (limitingWindow && !chosen.includes(limitingWindow) && candidates.includes(limitingWindow)) {
-    chosen[chosen.length - 1] = limitingWindow;
-  }
-  return {
-    windows: candidates.filter((window) => chosen.includes(window)),
+  return [...groups].map(([group, windows]) => ({
     group: group === null ? null : groupName(group),
-    extra: view.windows.length - chosen.length,
-  };
+    windows,
+  }));
 }
 
 export function compactQuota(view: HarnessView, window: UsageWindow, ctx: ViewContext) {

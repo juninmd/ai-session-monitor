@@ -46,8 +46,6 @@ export const surfacesMessages = {
   'triage.loading': 'لوڈ ہو رہا ہے',
   'triage.amount_of': '{limit} میں سے {used}',
   'triage.pinned': 'اوپر پن کیا ہوا',
-  'triage.more_quotas.one': 'تفصیل میں +{count} کوٹا',
-  'triage.more_quotas.other': 'تفصیل میں +{count} کوٹے',
   'triage.empty.title': 'کوئی سورس زیر نگرانی نہیں',
   'triage.empty.body':
     'ابھی تک کچھ نہیں پڑھا گیا۔ منتخب کریں کہ کیا دیکھنا ہے، پینل فوری ضرورت کی ترتیب سے کھلے گا اور ہر کوٹا کی پیشگوئی اس کے کارڈ پر ہی نظر آئے گی۔',
