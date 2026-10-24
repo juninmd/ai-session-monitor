@@ -26,8 +26,6 @@ export const settingsMessages = {
     'تقدّم القراءات بصيغة JSON للقراءة فقط على 127.0.0.1:{port} للسكربتات وأشرطة الحالة. يمكن لأي برنامج على هذا الكمبيوتر قراءتها. متوقفة افتراضيًا.',
   'settings.language': 'اللغة',
   'settings.language_hint': 'تنطبق على اللوحة وعلى الإشعارات.',
-  'settings.skin': 'المظهر',
-  'settings.skin_hint': 'يغيّر ألوان هذه اللوحة فقط؛ ويُحفظ على هذا الكمبيوتر.',
   'skin.system': 'اتباع النظام',
   'skin.default': 'افتراضي',
   'skin.hueco_mundo': 'Hueco Mundo',

@@ -21,6 +21,7 @@ export const shellMessages = {
   'header.refresh': 'এখনই রিফ্রেশ করুন',
   'header.retry': 'আবার চেষ্টা ({count}টি ব্যর্থ)',
   'header.settings': 'সেটিংস',
+  'header.theme': 'থিম: {name} (বদলাতে ক্লিক করুন)',
   'header.quit': 'বন্ধ করুন',
   'header.tray': 'সবচেয়ে কম বাকি: {pct}',
   'header.tray_used': 'সবচেয়ে বেশি ব্যবহৃত: {pct}',

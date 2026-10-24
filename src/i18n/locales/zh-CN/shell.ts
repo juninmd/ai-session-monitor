@@ -21,6 +21,7 @@ export const shellMessages = {
   'header.refresh': '立即刷新',
   'header.retry': '重试（{count} 个失败）',
   'header.settings': '设置',
+  'header.theme': '主题：{name}（点击切换）',
   'header.quit': '退出',
   'header.tray': '最低剩余：{pct}',
   'header.tray_used': '最高已用：{pct}',

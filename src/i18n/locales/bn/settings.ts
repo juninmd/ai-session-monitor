@@ -26,8 +26,6 @@ export const settingsMessages = {
     'স্ক্রিপ্ট ও স্ট্যাটাস বারের জন্য রিডিংগুলো 127.0.0.1:{port}-এ শুধু-পড়ার JSON হিসেবে দেয়। এই কম্পিউটারের যেকোনো প্রোগ্রাম এটি পড়তে পারে। ডিফল্টে বন্ধ।',
   'settings.language': 'ভাষা',
   'settings.language_hint': 'প্যানেল ও নোটিফিকেশনে প্রযোজ্য।',
-  'settings.skin': 'থিম',
-  'settings.skin_hint': 'শুধু এই প্যানেলের রং বদলায়; এই কম্পিউটারে সংরক্ষিত থাকে।',
   'skin.system': 'সিস্টেম অনুসরণ করুন',
   'skin.default': 'ডিফল্ট',
   'skin.hueco_mundo': 'Hueco Mundo',

@@ -26,8 +26,6 @@ export const settingsMessages = {
     '在 127.0.0.1:{port} 以只读 JSON 提供读数，供脚本和状态栏使用。这台电脑上的任何程序都能读取。默认关闭。',
   'settings.language': '语言',
   'settings.language_hint': '适用于面板和通知。',
-  'settings.skin': '主题',
-  'settings.skin_hint': '仅更改此面板的颜色，保存在这台电脑上。',
   'skin.system': '跟随系统',
   'skin.default': '默认',
   'skin.hueco_mundo': 'Hueco Mundo',
