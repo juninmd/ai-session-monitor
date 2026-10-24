@@ -2,7 +2,7 @@
 // in one grid of two per row, ordered by urgency rather than by registration. The wider card is
 // spent on detail — each provider's own quota windows with their reading and renewal — while the
 // alarm stays in the headline and the card itself only states the facts.
-import { type KeyboardEvent, useMemo } from 'react';
+import { Fragment, type KeyboardEvent, useMemo } from 'react';
 import { harnessName } from '../app/harness';
 import { nxNameId, nxTabId } from '../app/homeIds';
 import { showsUsed } from '../app/quota';
@@ -49,8 +49,8 @@ function Amount({ window }: { window: UsageWindow }) {
 }
 
 function QuotaRows({ row, ctx }: { row: TriageRow; ctx: ViewContext }) {
-  const quotas = gridQuotas(row.view, ctx);
-  if (quotas.windows.length === 0) {
+  const groups = gridQuotas(row.view);
+  if (groups.length === 0) {
     const chip = tabChip(row.view, summaryOf(row.view, ctx), ctx);
     return (
       <span className="nx-meta">{chip.kind === 'text' ? chip.text : t('triage.loading')}</span>
@@ -59,33 +59,37 @@ function QuotaRows({ row, ctx }: { row: TriageRow; ctx: ViewContext }) {
   const limiting = row.model?.window.id;
   return (
     <>
-      {quotas.group !== null && (
-        <span className="nx-tile-group" title={quotas.group}>
-          {quotas.group}
-        </span>
-      )}
-      {quotas.windows.map((window) => {
-        const quota = compactQuota(row.view, window, ctx);
-        return (
-          <span
-            className="nx-q"
-            key={window.id}
-            data-limiting={window.id === limiting || undefined}
-          >
-            <span className="nx-q-text">
-              <span className="nx-q-name" title={quotaName(window)}>
-                {quota.name}
-              </span>
-              <span className="nx-q-renew">{quota.renewal}</span>
-              <span className="nx-q-pct" data-status={quota.status}>
-                {quota.reading}
-              </span>
+      {groups.map(({ group, windows }) => (
+        <Fragment key={group ?? ''}>
+          {group !== null && (
+            <span className="nx-tile-group" title={group}>
+              {group}
             </span>
-            <ShareBar pct={quota.shown} tone={quota.status ?? 'none'} label={quota.spoken} />
-            {!row.view.stale && !quota.model.expired && <Amount window={window} />}
-          </span>
-        );
-      })}
+          )}
+          {windows.map((window) => {
+            const quota = compactQuota(row.view, window, ctx);
+            return (
+              <span
+                className="nx-q"
+                key={window.id}
+                data-limiting={window.id === limiting || undefined}
+              >
+                <span className="nx-q-text">
+                  <span className="nx-q-name" title={quotaName(window)}>
+                    {quota.name}
+                  </span>
+                  <span className="nx-q-renew">{quota.renewal}</span>
+                  <span className="nx-q-pct" data-status={quota.status}>
+                    {quota.reading}
+                  </span>
+                </span>
+                <ShareBar pct={quota.shown} tone={quota.status ?? 'none'} label={quota.spoken} />
+                {!row.view.stale && !quota.model.expired && <Amount window={window} />}
+              </span>
+            );
+          })}
+        </Fragment>
+      ))}
     </>
   );
 }
@@ -107,7 +111,6 @@ function Tile({
   const pinned = ctx.settings.general.pinned.includes(id);
   const { pct, tone } = readingOf(row);
   const name = harnessName(id);
-  const quotas = gridQuotas(row.view, ctx);
   const over = row.model?.over ?? null;
   return (
     <button
@@ -149,9 +152,6 @@ function Tile({
         </span>
       )}
       <QuotaRows row={row} ctx={ctx} />
-      {quotas.extra > 0 && (
-        <span className="nx-tile-more">{tn('triage.more_quotas', quotas.extra)}</span>
-      )}
       <span className="vh">{row.verdict}</span>
     </button>
   );

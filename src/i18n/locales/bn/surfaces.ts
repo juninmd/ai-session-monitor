@@ -46,8 +46,6 @@ export const surfacesMessages = {
   'triage.loading': 'লোড হচ্ছে',
   'triage.amount_of': '{limit}-এর মধ্যে {used}',
   'triage.pinned': 'উপরে পিন করা',
-  'triage.more_quotas.one': 'বিস্তারিতে আরও +{count}টি কোটা',
-  'triage.more_quotas.other': 'বিস্তারিতে আরও +{count}টি কোটা',
   'triage.empty.title': 'কোনো সোর্স মনিটর করা হচ্ছে না',
   'triage.empty.body':
     'এখনও কিছু পড়া হয়নি। কী কী অনুসরণ করবেন বেছে নিন; প্যানেল জরুরি অবস্থা অনুযায়ী সাজানো অবস্থায় খুলবে, আর প্রতিটি কোটার পূর্বাভাস কার্ডেই থাকবে।',
