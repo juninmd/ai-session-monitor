@@ -3,11 +3,9 @@
 
 use std::error::Error;
 use std::sync::Arc;
-use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
 
 use app_core::{AppPaths, AppService, MemorySecretStore, SecretStore};
-use tauri::webview::{PageLoadEvent, PageLoadPayload, Webview};
 use tauri::{App, AppHandle, Manager};
 use tokio::time::{MissedTickBehavior, interval};
 use usage_model::HarnessError;
@@ -25,9 +23,6 @@ const APP_NAME: &str = "AI Session Monitor";
 /// The tray is re-rendered this often: countdowns move and windows expire between snapshots.
 const TICK: Duration = Duration::from_secs(30);
 
-/// Armed at startup when the flyout has to open by itself once its page has loaded.
-struct OpenOnLoad(AtomicBool);
-
 /// A failure here ends the app through `startup::abort`; the cause is already on stderr.
 pub fn run(app: &mut App, overrides: &Overrides) -> Result<(), Reason> {
     let handle = app.handle().clone();
@@ -44,45 +39,29 @@ pub fn run(app: &mut App, overrides: &Overrides) -> Result<(), Reason> {
         .map_err(|err| Reason::Service(err.code).because(&"the service refused to start"))?;
     let settings = service.settings();
 
-    // The webview is built here, once the service exists: the page calls commands as soon as it
-    // loads, so it must not find an app whose state is still missing. It is parked hidden where the
-    // next opening will put it and stays that way until the UI reports its height (see `Flyout`).
+    // Manage the service and updater before building the webview: WebviewWindowBuilder::build()
+    // pumps the Win32 message loop, so the page's initial IPC commands can arrive before setup
+    // returns and must find every managed state already in place.
+    app.manage(Arc::clone(&service));
+    crate::update::attach(&handle, Arc::clone(&service), update_dir, !overrides.is_active());
+
     let window = flyout::create(&handle).map_err(|err| Reason::Window.because(&err))?;
     let flyout = Arc::new(Flyout::new(&handle, window));
     flyout.attach();
     app.manage(Arc::clone(&flyout));
-    // Armed before the page can finish loading: a first-run opening must not be missed.
-    let open_first = !settings.general.first_run_done || overrides.show_on_start;
-    app.manage(OpenOnLoad(AtomicBool::new(open_first)));
-    flyout.settle_hidden();
+    flyout.place_hidden();
     tray::build(&handle, Arc::clone(&flyout)).map_err(|err| Reason::Tray.because(&err))?;
     sink.prime(&settings);
 
-    app.manage(Arc::clone(&service));
-    crate::update::attach(&handle, Arc::clone(&service), update_dir, !overrides.is_active());
+    if !update::installing() && (!settings.general.first_run_done || overrides.show_on_start) {
+        tray::open_flyout(&handle, &flyout);
+        record_first_run(&handle);
+    }
 
     supervise_polling(Arc::clone(&service));
     refresh_shim_copy(service);
     spawn_ticker(sink);
     Ok(())
-}
-
-/// Page-load hook: the one-shot first-run opening waits for the page, and the window shows itself
-/// only once the UI reports its height (`Flyout::set_height`), so an empty webview is never seen.
-pub fn on_page_load(webview: &Webview, payload: &PageLoadPayload<'_>) {
-    if webview.label() != flyout::LABEL || !matches!(payload.event(), PageLoadEvent::Finished) {
-        return;
-    }
-    let app = webview.app_handle();
-    let armed =
-        app.try_state::<OpenOnLoad>().is_some_and(|gate| gate.0.swap(false, Ordering::SeqCst));
-    if !armed {
-        return;
-    }
-    if let Some(flyout) = app.try_state::<Arc<Flyout>>() {
-        tray::open_flyout(app, &flyout);
-    }
-    record_first_run(app);
 }
 
 /// Called on a second launch: show the running instance instead of starting another.

@@ -4,24 +4,29 @@
   box-sizing: border-box;
 }
 
+html,
+body,
+#root {
+  block-size: 100%;
+  margin: 0;
+  background: transparent;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
 }
 
 body {
-  margin: 0;
-  background: transparent;
   color: var(--ink);
   font-family: var(--font);
   font-size: var(--fs-base);
   line-height: 1.4;
 }
 
-/* Transparent, page and window both: the flyout paints its own glass, and an unpainted webview
-   shows what is behind the window instead of a white panel while the page loads. */
-html,
-body {
-  background: transparent;
+html[data-host="tauri"],
+html[data-host="tauri"] body,
+html[data-host="tauri"] #root {
+  overflow: hidden;
 }
 
 /* In a browser the flyout sits on a plain page so it can be reviewed on its own. */
