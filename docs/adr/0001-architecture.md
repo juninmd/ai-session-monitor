@@ -72,9 +72,15 @@ and never touches a file it cannot parse.
 
 ### D7. Flyout window
 
-A hidden, undecorated, transparent, always-on-top, skip-taskbar window with Mica, positioned from
-the tray icon rectangle against the monitor work area in physical pixels (the positioner plugin
-ignores the work area), hidden on blur with a short re-open guard. Single-instance plugin first.
+A hidden, undecorated, transparent, always-on-top, skip-taskbar window, positioned from the tray
+icon rectangle against the monitor work area in physical pixels (the positioner plugin ignores the
+work area), hidden on blur with a short re-open guard. Single-instance plugin first. The
+`tauri.conf.json` entry carries `create: false`: the shell builds the window once the service
+exists (a window opened from the config would run the page's first commands before anything is
+managed), parks it at the notification corner and shows it only when the UI reports its content
+height, so no empty or wrongly placed frame is ever presented. The window has no OS backdrop (no
+Mica) and no background of its own, so the frame between "shown" and "first presented frame" is
+see-through instead of white; the glass alphas keep text readable over whatever is behind it.
 The `unstable` Tauri feature stays off (it breaks blur, tauri#13633). Window behaviour can only
 be validated on a real Windows 11 session; `docs/manual-windows-checklist.md` lists what to check.
 

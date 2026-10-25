@@ -1,17 +1,18 @@
-//! The flyout window: placement against the tray icon, show and hide, blur and close handling.
-//! The window is created once from tauri.conf.json and never destroyed; it is only hidden and
-//! shown again. Locks here are never held across a window call, because those calls can wait on
-//! the main thread, which may in turn be waiting for the same lock.
+//! The flyout window: creation, placement against the tray icon, show and hide, blur and close
+//! handling. The window is created once and never destroyed; it is only hidden and shown again.
+//! Its `tauri.conf.json` entry carries `create: false`, so the shell decides when the webview is
+//! built (after the service exists, so the page's first commands find it) and parks it hidden where
+//! the next opening will put it. It is shown only once the UI reports its content height: before
+//! that there is no painted frame to show, and an empty panel would appear at the OS's position and
+//! at whatever size the config guessed. Locks here are never held across a window call, because
+//! those calls can wait on the main thread, which may in turn be waiting for the same lock.
 
 use std::error::Error;
-use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex, MutexGuard, PoisonError};
 use std::time::Instant;
 
 use tauri::window::Monitor;
-use tauri::{
-    AppHandle, Emitter, Manager, PhysicalPosition, PhysicalSize, WebviewWindow, WindowEvent,
-};
+use tauri::{AppHandle, Emitter, PhysicalPosition, PhysicalSize, WebviewWindow, WindowEvent};
 
 use crate::gate::{ClickAction, Gate};
 use crate::position::{
@@ -31,16 +32,21 @@ const INITIAL_HEIGHT_LOGICAL: f64 = 720.0;
 /// Resizes tried before giving up on the requested size; the second one lands in practice.
 const SIZE_ATTEMPTS: usize = 3;
 
-/// Set once the page finished loading; before that the window would show an empty webview. A
-/// static because the page can finish loading before the flyout is registered with the app.
-static PAGE_READY: AtomicBool = AtomicBool::new(false);
-
-/// The page finished loading.
-pub fn mark_page_ready() {
-    PAGE_READY.store(true, Ordering::SeqCst);
-}
-
 type Failure = Box<dyn Error + Send + Sync>;
+
+/// Builds the window from its entry in tauri.conf.json, which has `create: false`. The caller runs
+/// this once the service exists (the tray icon is built right after): the page calls commands as
+/// soon as it loads, so it must not find an app with nothing managed yet.
+pub fn create(app: &AppHandle) -> tauri::Result<WebviewWindow> {
+    let config = app
+        .config()
+        .app
+        .windows
+        .iter()
+        .find(|window| window.label == LABEL)
+        .ok_or(tauri::Error::WindowNotFound)?;
+    tauri::WebviewWindowBuilder::from_config(app, config)?.build()
+}
 
 /// Where the flyout was last opened, so a resize can keep the anchored edge in place.
 #[derive(Clone, Copy)]
@@ -54,7 +60,10 @@ struct State {
     placement: Option<Placement>,
     /// The UI's last requested content height; clamped again on every placement.
     height: f64,
-    /// An opening asked for before the page was ready, with the tray rectangle it came with.
+    /// Set by the UI's first height report. Before it the webview has neither laid out nor painted,
+    /// so showing the window would only show an empty panel.
+    painted: bool,
+    /// An opening asked for before that report, with the tray rectangle it came with.
     deferred: Option<Option<tauri::Rect>>,
 }
 
@@ -91,15 +100,15 @@ fn monitor_rects(monitor: &Monitor) -> (Rect, Rect) {
 }
 
 impl Flyout {
-    pub fn new(app: &AppHandle) -> tauri::Result<Self> {
-        let window = app.get_webview_window(LABEL).ok_or(tauri::Error::WindowNotFound)?;
+    pub fn new(app: &AppHandle, window: WebviewWindow) -> Self {
         let state = State {
             gate: Gate::default(),
             placement: None,
             height: INITIAL_HEIGHT_LOGICAL,
+            painted: false,
             deferred: None,
         };
-        Ok(Self { app: app.clone(), window, state: Mutex::new(state) })
+        Self { app: app.clone(), window, state: Mutex::new(state) }
     }
 
     /// Hides on blur and turns a close request into a hide.
@@ -119,20 +128,10 @@ impl Flyout {
         self.window.is_visible().unwrap_or(false)
     }
 
-    /// The page finished loading: from now on the window may be shown, and an opening that was
-    /// asked for earlier happens now.
-    pub fn page_loaded(&self) {
-        mark_page_ready();
-        let deferred = lock(&self.state).deferred.take();
-        if let Some(tray) = deferred {
-            self.show(tray.as_ref());
-        }
-    }
-
     pub fn show(&self, tray: Option<&tauri::Rect>) {
         {
             let mut state = lock(&self.state);
-            if !PAGE_READY.load(Ordering::SeqCst) {
+            if !state.painted {
                 state.deferred = Some(tray.cloned());
                 return;
             }
@@ -142,12 +141,18 @@ impl Flyout {
         }
     }
 
-    /// Startup: the window stays hidden and frameless whatever the OS did with it at creation.
+    /// Startup: the window stays hidden and frameless whatever the OS did with it at creation, and
+    /// it is moved to where the next opening will put it. Parking it here means no frame the shell
+    /// does not own can ever surface at the position the OS picked for a new window.
     pub fn settle_hidden(&self) {
+        self.hide();
+        let height = lock(&self.state).height;
+        if let Err(err) = self.locate(None).and_then(|at| self.apply(at, height, true)) {
+            diag::warn("cannot park the hidden flyout", &err);
+        }
         if let Err(err) = self.window.set_decorations(false) {
             diag::warn("cannot remove the flyout frame", &err);
         }
-        self.hide();
     }
 
     pub fn hide(&self) {
@@ -173,14 +178,25 @@ impl Flyout {
         }
     }
 
-    /// The content height the UI wants, in logical pixels. Applied now when the flyout is open,
-    /// otherwise at the next opening.
+    /// The content height the UI wants, in logical pixels. The first report is also the cue that
+    /// the page has laid out and painted: an opening that was waiting for that happens now, at the
+    /// height just reported, so the panel never appears at the config's guess or as an empty frame.
+    /// Later reports resize the panel while it is open.
     pub fn set_height(&self, requested: f64) {
-        let placement = {
+        let (placement, pending) = {
             let mut state = lock(&self.state);
             state.height = requested;
-            state.placement
+            let first = !state.painted;
+            state.painted = true;
+            let pending = if first { state.deferred.take() } else { None };
+            (state.placement, pending)
         };
+        if let Some(tray) = pending {
+            if let Err(err) = self.try_show(tray.as_ref()) {
+                diag::warn("cannot open the flyout", &err);
+            }
+            return;
+        }
         if self.is_visible()
             && let Some(placement) = placement
             && let Err(err) = self.apply(placement, requested, false)

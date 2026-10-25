@@ -95,11 +95,15 @@ of the per-source steps did not change with the interface.
 
 ## First run and single instance
 
-- [ ] Fresh profile: the flyout opens by itself once, after the page is painted (no empty panel
-      flash). `settings.json` then has `firstRunDone: true` and the next launch does not open it.
+- [ ] Fresh profile: the flyout opens by itself once, after the page is painted. Before that first
+      frame nothing is visible at all (transparent window, no OS backdrop), never a white or empty
+      panel, and never the position the OS picked for a new window. `settings.json` then has
+      `firstRunDone: true` and the next launch does not open it.
 - [ ] That first opening lands exactly where a click-opened one does (same position and height,
       bottom edge 8 px above the taskbar). The very first resize of a never-shown window used to
       come out 30 px too tall and spill over the taskbar.
+- [ ] If the page cannot load (a debug build with the Vite server down), no window opens at all:
+      the shell waits for the UI's height report, so an error page is never presented as the flyout.
 - [ ] Start the app a second time (Start menu or exe): no second tray icon, the running instance
       opens its flyout, the new process exits within about a second.
 
@@ -308,8 +312,8 @@ enforces it; repeat it after a Tauri upgrade.
 - [ ] A failed settings save is announced as an alert by a screen reader (Narrator).
 - [ ] A stale tab stays legible (numbers and labels) in both the light and dark themes.
 
-- [ ] Windows 11: Mica backdrop, rounded corners, shadow. Windows 10: no Mica; the panel is still
-      legible with nothing of the desktop showing through the text.
+- [ ] Rounded corners and shadow on Windows 11; the panel (frame and cards, no OS backdrop) is
+      legible in both themes with nothing of the desktop showing through the text.
 - [ ] Dark and light system themes both render correctly.
 - [ ] No title bar, no taskbar button. Note whether the flyout appears in Alt+Tab.
 - [ ] Row order and focus rings work with the keyboard; Escape closes the palette, then the open

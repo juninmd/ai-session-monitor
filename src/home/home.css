@@ -11,9 +11,9 @@
 /* The frame carries the promoted home's chrome: a rule under the header, the surface switch and a
    slightly tighter body than the plain flyout. */
 .nx-fly {
-  /* Glass: the frame and every card on it are translucent layers over the OS backdrop (Mica), with
-     a blur and a hairline highlight. The alphas live in tokens.css (a skin may change them) and
-     stay high enough to keep text at AA contrast. */
+  /* Glass: the frame and every card on it are translucent layers over whatever is behind the
+     flyout, with a blur and a hairline highlight. The alphas live in tokens.css (a skin may change
+     them) and stay high enough to keep text at AA contrast over any backdrop. */
   --raise: color-mix(in srgb, var(--raise-0) var(--glass-card), transparent);
   --raise-2: color-mix(in srgb, var(--raise-2-0) calc(var(--glass-card) + 10%), transparent);
   background:
