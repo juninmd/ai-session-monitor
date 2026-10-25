@@ -83,6 +83,8 @@ export const flyoutMessages = {
   'palette.empty': 'Aucun résultat',
   'palette.foot.navigate': 'naviguer',
   'palette.foot.run': 'exécuter',
+  'palette.key.esc': 'Échap',
+  'palette.key.enter': 'Entrée',
 
   // Provider actions (preview only)
   'provider_actions.outcome.reset':

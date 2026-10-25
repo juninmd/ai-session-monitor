@@ -74,6 +74,8 @@ export const flyoutMessages = {
   'palette.empty': '没有找到结果',
   'palette.foot.navigate': '选择',
   'palette.foot.run': '执行',
+  'palette.key.esc': 'Esc',
+  'palette.key.enter': 'Enter',
 
   // Provider actions (preview only)
   'provider_actions.outcome.reset': '已模拟重置。预览中的额度和余额已更新。',

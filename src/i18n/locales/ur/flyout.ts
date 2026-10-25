@@ -77,6 +77,8 @@ export const flyoutMessages = {
   'palette.empty': 'کچھ نہیں ملا',
   'palette.foot.navigate': 'نیویگیٹ',
   'palette.foot.run': 'چلائیں',
+  'palette.key.esc': 'Esc',
+  'palette.key.enter': 'Enter',
 
   // Provider actions (preview only)
   'provider_actions.outcome.reset': 'ری سیٹ کی نقل ہوئی۔ پیش منظر میں کوٹے اور بیلنس اپڈیٹ ہو گئے۔',
