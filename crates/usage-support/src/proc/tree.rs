@@ -109,8 +109,15 @@ async fn kill_tree(pid: u32) {
 
 #[cfg(windows)]
 fn kill_tree_blocking(pid: u32) {
-    let Ok(mut killer) = taskkill(pid).spawn() else { return };
-    let give_up = std::time::Instant::now() + KILL_TIMEOUT;
+    // Spawned here, while the pid is still reserved; only the wait can move off the caller.
+    // Drop runs on an async worker, which must not sit in a sleep loop for up to KILL_TIMEOUT.
+    let Ok(killer) = taskkill(pid).spawn() else { return };
+    std::thread::spawn(move || reap_within(killer, KILL_TIMEOUT));
+}
+
+#[cfg(windows)]
+fn reap_within(mut killer: std::process::Child, limit: Duration) {
+    let give_up = std::time::Instant::now() + limit;
     while matches!(killer.try_wait(), Ok(None)) {
         if std::time::Instant::now() >= give_up {
             let _ = killer.kill();
