@@ -48,6 +48,7 @@ pub async fn install(
         restore_polling(service);
         return Err(failed());
     }
+    super::INSTALLING.store(true, std::sync::atomic::Ordering::SeqCst);
     let started = tauri::async_runtime::spawn_blocking(move || {
         let (dir, path) = staged;
         let child = Command::new(path)
@@ -67,6 +68,7 @@ pub async fn install(
     .map_err(|_| failed())
     .and_then(|result| result);
     if started.is_err() {
+        super::INSTALLING.store(false, std::sync::atomic::Ordering::SeqCst);
         restore_polling(service);
         return Err(failed());
     }

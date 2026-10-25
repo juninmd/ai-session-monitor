@@ -142,6 +142,14 @@ impl Flyout {
         }
     }
 
+    /// Startup: the window stays hidden and frameless whatever the OS did with it at creation.
+    pub fn settle_hidden(&self) {
+        if let Err(err) = self.window.set_decorations(false) {
+            diag::warn("cannot remove the flyout frame", &err);
+        }
+        self.hide();
+    }
+
     pub fn hide(&self) {
         if let Err(err) = self.window.hide() {
             diag::warn("cannot hide the flyout", &err);
