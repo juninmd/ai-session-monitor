@@ -40,7 +40,12 @@ export function SettingsMenu({ onOpen }: { onOpen: (pane: SettingsPane) => void 
       </ul>
       <Note icon="lock">{t('settings.secrets_note')}</Note>
       <div className="actions">
-        <button type="button" className="btn" onClick={() => void help.run()}>
+        <button
+          type="button"
+          className="btn"
+          disabled={help.pending}
+          onClick={() => void help.run()}
+        >
           {t('settings.help')}
           <Icon name="external" />
         </button>

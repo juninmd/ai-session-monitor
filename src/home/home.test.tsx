@@ -229,6 +229,17 @@ describe('triage surface', () => {
     expect(screen.queryByRole('button', { name: /^Triagem/ })).toBeNull();
   });
 
+  it('says why the first-run choice was not saved and stays on the choice', async () => {
+    const { backend, user } = mount('fresh');
+    await screen.findByRole('heading', { name: /O que você quer acompanhar\?/ });
+    vi.spyOn(backend, 'saveSettings').mockRejectedValueOnce(
+      new BackendError({ code: 'internal', retryable: false, params: {} }),
+    );
+    await user.click(screen.getByRole('button', { name: /^Continuar com/ }));
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /O que você quer acompanhar\?/ })).toBeVisible();
+  });
+
   it('renders the setup surface for a provider that cannot be read yet', async () => {
     const { user } = mount('errors');
     await openDetail(user, 'Codex');

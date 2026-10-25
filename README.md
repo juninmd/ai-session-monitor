@@ -33,7 +33,7 @@ Nunca mais seja pego de surpresa pelo fim da janela de 5 horas do Claude, pela c
 - 🛡️ **Privacidade Total e Zero Confiança:** Suas chaves ficam guardadas no **Windows Credential Manager**. O app é estritamente **read-only**, não grava em servidores remotos e o webview não tem acesso à internet externa.
 - 📊 **Histórico Local de 35 Dias:** Visualize tendências de consumo diretamente pelo app. Os dados ficam salvos apenas na sua máquina em `history.json` e podem ser desativados a qualquer momento.
 - 🎛️ **Navegação entre Provedores:** Busque uma ferramenta e veja o estado de todas no quadro “Todas as ferramentas”. Ative ou desative fontes nas Configurações.
-- 🔄 **Releases Assinadas:** O pipeline do GitHub gera instaladores com **Minisign** e verifica o manifesto, os bytes baixados e as assinaturas antes da publicação. A integração da consulta e instalação no aplicativo está em desenvolvimento.
+- 🔄 **Releases Assinadas:** O pipeline do GitHub gera instaladores com **Minisign** e verifica o manifesto, os bytes baixados e as assinaturas antes da publicação. O aplicativo consulta e instala atualizações assinadas; a prova da primeira publicação com esse fluxo ainda está pendente.
 - 🔔 **Alertas Inteligentes:** Notificações discretas na bandeja do Windows quando uma sessão atingir níveis de alerta ou esgotamento.
 - 🌍 **10 Idiomas de Interface:** Inglês (padrão), `zh-CN`, `hi`, `es`, `fr`, `ar`, `bn`, `pt-BR`, `ru` e `ur`, com suporte a escrita da direita para a esquerda; o tema visual é uma escolha separada.
 - 🔌 **API Local Opcional:** `GET /v1/limits` em `127.0.0.1:6737`, somente leitura, desligada por padrão, para scripts e barras de status.

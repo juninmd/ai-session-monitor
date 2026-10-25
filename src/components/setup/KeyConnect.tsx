@@ -40,7 +40,12 @@ export function VendorConsoleLink({ harness }: { harness: KeyedHarness }) {
   return (
     <>
       <div className="actions">
-        <button type="button" className="btn" onClick={() => void open.run()}>
+        <button
+          type="button"
+          className="btn"
+          disabled={open.pending}
+          onClick={() => void open.run()}
+        >
           {t(`${harness}.console`)}
           <Icon name="external" />
         </button>

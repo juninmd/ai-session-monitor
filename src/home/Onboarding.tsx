@@ -8,6 +8,7 @@ import { withEnabled } from '../app/settingsPatch';
 import { useAsyncAction } from '../app/useAsyncAction';
 import type { ViewContext } from '../app/windowModel';
 import { Icon } from '../components/icons';
+import { ActionError } from '../components/panel/ErrorActions';
 import { VendorKey } from '../components/setup/KeyConnect';
 import { t, tn } from '../i18n';
 import { formatPercent } from '../i18n/format';
@@ -255,6 +256,8 @@ export function Onboarding({ views, ctx, onOpenSettings, onFinish }: OnboardingP
         </section>
       )}
 
+      {apply.error && <ActionError error={apply.error} />}
+      {consent.error && <ActionError error={consent.error} />}
       <div className="nx-wizard-actions">
         {step !== 'choose' && step !== 'done' && (
           <button
