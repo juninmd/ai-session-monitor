@@ -13,17 +13,27 @@ use crate::views::BASE;
 /// Wall clock that moves with tokio's virtual time.
 pub struct VirtualClock {
     origin: Instant,
+    offset_secs: i32,
 }
 
 impl VirtualClock {
     pub fn new() -> Self {
-        Self { origin: Instant::now() }
+        Self { origin: Instant::now(), offset_secs: 0 }
+    }
+
+    /// The same clock read on a local zone `offset_secs` ahead of UTC.
+    pub fn on_zone(offset_secs: i32) -> Self {
+        Self { origin: Instant::now(), offset_secs }
     }
 }
 
 impl Clock for VirtualClock {
     fn now_secs(&self) -> i64 {
         BASE + i64::try_from(self.origin.elapsed().as_secs()).unwrap_or(0)
+    }
+
+    fn utc_offset_secs(&self) -> i32 {
+        self.offset_secs
     }
 }
 

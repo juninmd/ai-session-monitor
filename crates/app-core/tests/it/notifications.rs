@@ -87,3 +87,22 @@ async fn quiet_hours_hold_the_toasts_inside_the_window_and_not_after_it() {
     let kinds: Vec<_> = rig.sink.notices().iter().map(|n| n.kind).collect();
     assert_eq!(kinds, [NotificationKind::WindowReset]);
 }
+
+#[tokio::test(start_paused = true)]
+async fn quiet_hours_read_the_local_clock_not_utc() {
+    // BASE is 08:00 UTC, which is 10:00 on a zone two hours ahead. The 08:00-08:03 window is then
+    // not quiet at all, so the out at 120 s is delivered.
+    let rig = notifying(&[60.0, 100.0, 100.0, 20.0, 20.0])
+        .settings(|s| {
+            s.general.quiet_hours_on = true;
+            s.general.quiet_from = 8 * 60;
+            s.general.quiet_to = 8 * 60 + 3;
+        })
+        .clock(std::sync::Arc::new(crate::doubles::VirtualClock::on_zone(2 * 3600)))
+        .start()
+        .await;
+
+    rig.at(seconds(130)).await;
+    let kinds: Vec<_> = rig.sink.notices().iter().map(|n| n.kind).collect();
+    assert_eq!(kinds, [NotificationKind::WindowOut]);
+}

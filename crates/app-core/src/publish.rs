@@ -42,7 +42,7 @@ impl Publisher {
         // Judged against the snapshot the user saw, before the emit below replaces it.
         let lapsed = self.collect_lapsed(shared, &views, now_secs);
         self.emit_changes(shared, views, now_secs);
-        announce(shared, now_secs, &lapsed);
+        announce(shared, lapsed.iter().map(|(at, note)| (*at, note)));
         if let Some(shown) = &self.published {
             self.told.retain(|key| notify::still_waiting(shown, key));
         }
@@ -54,10 +54,16 @@ impl Publisher {
         shared: &Shared,
         views: &[HarnessView],
         now_secs: i64,
-    ) -> Vec<Notification> {
+    ) -> Vec<(i64, Notification)> {
         let Some(shown) = &self.published else { return Vec::new() };
         let due = notify::lapsed_resets(shown, views, &shared.settings(), now_secs);
-        due.into_iter().filter_map(|(key, note)| self.told.insert(key).then_some(note)).collect()
+        // The reset's own moment decides quiet hours, not the moment the clock noticed it.
+        due.into_iter()
+            .filter_map(|(key, note)| {
+                let at = key.2;
+                self.told.insert(key).then_some((at, note))
+            })
+            .collect()
     }
 
     fn emit_changes(&mut self, shared: &Shared, views: Vec<HarnessView>, now_secs: i64) {
@@ -87,20 +93,19 @@ impl Publisher {
         self.last_emit = Some(now);
         self.flush_at = None;
         shared.sink.snapshot_changed(&snapshot);
-        announce(shared, now_secs, &notes);
+        announce(shared, notes.iter().map(|note| (now_secs, note)));
     }
 }
 
 /// Hands the toasts to the shell, unless the user's quiet hours are on at `now_secs`. A held toast
 /// is dropped, not queued: the snapshot still updates, and the window's markers are already spent.
-fn announce(shared: &Shared, now_secs: i64, notes: &[Notification]) {
-    let quiet =
-        notify::is_quiet(&shared.settings().general, now_secs, shared.clock.utc_offset_secs());
-    if quiet {
-        return;
-    }
-    for note in notes {
-        shared.sink.notify(note);
+fn announce<'a>(shared: &Shared, notes: impl IntoIterator<Item = (i64, &'a Notification)>) {
+    let settings = shared.settings();
+    let offset = shared.clock.utc_offset_secs();
+    for (at, note) in notes {
+        if !notify::is_quiet(&settings.general, at, offset) {
+            shared.sink.notify(note);
+        }
     }
 }
 
