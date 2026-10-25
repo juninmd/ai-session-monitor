@@ -35,7 +35,7 @@ function LitellmEditor() {
           type="button"
           className="btn"
           aria-expanded={editing}
-          aria-controls="litellm-edit"
+          aria-controls={editing ? 'litellm-edit' : undefined}
           onClick={() => setEditing((current) => !current)}
         >
           <Icon name="sliders" />
