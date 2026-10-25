@@ -215,7 +215,7 @@ export function Fly(props: FlyProps) {
               />
             )}
             {!inSettings && failure !== null && (
-              <section className="card notice" data-status="crit">
+              <section className="card notice" data-status="crit" role="alert">
                 <h2>{t('load.title')}</h2>
                 <p>{failure}</p>
                 <div className="actions">
