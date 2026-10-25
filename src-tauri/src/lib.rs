@@ -71,7 +71,6 @@ pub fn run() {
             commands::download_update,
             commands::install_update,
         ])
-        .on_page_load(setup::on_page_load)
         .setup(move |app| {
             // Returning the error would make Tauri panic, which nobody sees without a console.
             if let Err(reason) = setup::run(app, &overrides) {

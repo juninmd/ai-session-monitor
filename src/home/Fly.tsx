@@ -73,6 +73,8 @@ export interface FlyProps {
   nowSecs: number;
   /** The stored settings are in: before that no surface can say what it is monitoring. */
   loaded: boolean;
+  /** Both settings and the initial snapshot settled, so the frame can release its initial height. */
+  settled?: boolean;
   /** Nothing configured yet: the wizard takes the place of every surface. */
   firstRun: boolean;
   /** The first snapshot never arrived; the body shows this instead of a surface. */
@@ -122,6 +124,7 @@ export function Fly(props: FlyProps) {
     readAt,
     nowSecs,
     loaded,
+    settled,
     firstRun,
     failure,
     shellFailure,
@@ -155,6 +158,7 @@ export function Fly(props: FlyProps) {
     <div
       ref={rootRef}
       className="flyout nx-fly"
+      data-loaded={(settled ?? loaded) || undefined}
       data-surface={surface}
       data-detail={detailOpen || undefined}
       data-density={ctx.settings.general.compact ? 'compact' : undefined}

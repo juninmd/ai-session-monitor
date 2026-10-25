@@ -72,8 +72,11 @@ function AppBody({ backend }: { backend: Backend }) {
     runDone,
   });
   const { views, active, selected, view, tray, firstRun, failure, live } = home;
+  const heightReady =
+    (settingsApi.loaded || settingsApi.loadError !== null) &&
+    (snapshotState.snapshot !== null || snapshotState.error !== null);
 
-  useFlyoutHeight(backend, rootRef, scrollRef);
+  useFlyoutHeight(backend, rootRef, scrollRef, undefined, heightReady);
 
   // A new surface or panel starts at the top.
   const toTop = useCallback(() => {
@@ -256,6 +259,7 @@ function AppBody({ backend }: { backend: Backend }) {
         readAt: home.readAt,
         nowSecs,
         loaded: settingsApi.loaded,
+        settled: heightReady,
         firstRun,
         failure,
         shellFailure,

@@ -72,22 +72,20 @@ An external settings event updates clean fields but preserves local edits.
 
 ## Window protocol
 
-- The shell builds the window itself (the `tauri.conf.json` entry carries `create: false`), once
-  the service exists: the page calls commands as soon as it loads, so it never finds an app with
-  nothing managed yet. It is parked hidden at the notification corner, so no frame the shell did
-  not place can appear at the position the OS picked for a new window.
-- It is shown only once the webview reports its content height: before that the webview has nothing
-  painted to present and the window would open as an empty panel at the config's guess (and then
-  shrink in steps as the UI measured itself). The first `set_flyout_height` is therefore the "the
-  page is ready" signal; a page that fails to load never opens a window.
-- The window has no OS backdrop (no Mica) and no opaque background of its own: the frame and the
-  cards are the only paint, so the gap between showing the window and the first presented frame is
-  see-through instead of white.
+- The shell builds the window itself (the `tauri.conf.json` entry carries `create: false`,
+  `decorations: false`, `transparent: true`, `shadow: false`), once the service and updater are
+  managed: `WebviewWindowBuilder::build()` pumps the Win32 message loop, so the page's initial IPC
+  commands find every managed state already in place. The window is parked at the notification
+  corner (`place_hidden`) and opened immediately on first run (or `AISM_SHOW_ON_START=1`) so
+  WebView2's GPU compositor presents directly onto the transparent surface.
+- The window has no OS backdrop (no Mica) and no Win32 non-client shadow frame (`shadow: false`).
+  `<meta name="color-scheme">` and inline `<style>` are omitted from `index.html`, and `html`,
+  `body` and `#root` stay transparent.
 - The shell hides the flyout on blur (with a ~250 ms re-open guard so the tray click that
   re-opens it does not immediately close it) and on `Esc` pressed in the webview (`hide_flyout`).
-- The webview owns its height: after each render it measures its content and calls
-  `set_flyout_height`. Width is fixed at 432 px (27 rem). When the content is taller than the work
-  area the panel body scrolls; the header and the surface switch stay.
+- The webview owns its height: once initial settings and snapshot settle, it measures its content
+  and calls `set_flyout_height`. Width is fixed at 432 px (27 rem). When the content is taller than
+  the work area the panel body scrolls; the header and the surface switch stay.
 - First launch only (`general.firstRunDone = false`): the shell opens the flyout once and then
   sets the flag through `save_settings`.
 

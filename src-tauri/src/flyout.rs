@@ -1,11 +1,10 @@
 //! The flyout window: creation, placement against the tray icon, show and hide, blur and close
 //! handling. The window is created once and never destroyed; it is only hidden and shown again.
-//! Its `tauri.conf.json` entry carries `create: false`, so the shell decides when the webview is
-//! built (after the service exists, so the page's first commands find it) and parks it hidden where
-//! the next opening will put it. It is shown only once the UI reports its content height: before
-//! that there is no painted frame to show, and an empty panel would appear at the OS's position and
-//! at whatever size the config guessed. Locks here are never held across a window call, because
-//! those calls can wait on the main thread, which may in turn be waiting for the same lock.
+//! Its `tauri.conf.json` entry carries `create: false`, `decorations: false`, `transparent: true`
+//! and `shadow: false`, so the shell builds the webview after every managed state exists, places
+//! it at the notification corner with zero non-client frame and opens it directly onto the
+//! transparent surface. Locks here are never held across a window call, because those calls can
+//! wait on the main thread, which may in turn be waiting for the same lock.
 
 use std::error::Error;
 use std::sync::{Arc, Mutex, MutexGuard, PoisonError};
@@ -60,11 +59,6 @@ struct State {
     placement: Option<Placement>,
     /// The UI's last requested content height; clamped again on every placement.
     height: f64,
-    /// Set by the UI's first height report. Before it the webview has neither laid out nor painted,
-    /// so showing the window would only show an empty panel.
-    painted: bool,
-    /// An opening asked for before that report, with the tray rectangle it came with.
-    deferred: Option<Option<tauri::Rect>>,
 }
 
 pub struct Flyout {
@@ -101,13 +95,8 @@ fn monitor_rects(monitor: &Monitor) -> (Rect, Rect) {
 
 impl Flyout {
     pub fn new(app: &AppHandle, window: WebviewWindow) -> Self {
-        let state = State {
-            gate: Gate::default(),
-            placement: None,
-            height: INITIAL_HEIGHT_LOGICAL,
-            painted: false,
-            deferred: None,
-        };
+        let state =
+            State { gate: Gate::default(), placement: None, height: INITIAL_HEIGHT_LOGICAL };
         Self { app: app.clone(), window, state: Mutex::new(state) }
     }
 
@@ -129,29 +118,20 @@ impl Flyout {
     }
 
     pub fn show(&self, tray: Option<&tauri::Rect>) {
-        {
-            let mut state = lock(&self.state);
-            if !state.painted {
-                state.deferred = Some(tray.cloned());
-                return;
-            }
-        }
         if let Err(err) = self.try_show(tray) {
             diag::warn("cannot open the flyout", &err);
         }
     }
 
-    /// Startup: the window stays hidden and frameless whatever the OS did with it at creation, and
-    /// it is moved to where the next opening will put it. Parking it here means no frame the shell
-    /// does not own can ever surface at the position the OS picked for a new window.
-    pub fn settle_hidden(&self) {
-        self.hide();
+    /// Startup: places the hidden window at the notification corner so the first opening starts
+    /// from the target monitor and position instead of where the OS created it.
+    pub fn place_hidden(&self) {
         let height = lock(&self.state).height;
-        if let Err(err) = self.locate(None).and_then(|at| self.apply(at, height, true)) {
-            diag::warn("cannot park the hidden flyout", &err);
-        }
-        if let Err(err) = self.window.set_decorations(false) {
-            diag::warn("cannot remove the flyout frame", &err);
+        if let Ok(at) = self.locate(None) {
+            lock(&self.state).placement = Some(at);
+            if let Err(err) = self.apply(at, height, true) {
+                diag::warn("cannot park the hidden flyout", &err);
+            }
         }
     }
 
@@ -178,28 +158,29 @@ impl Flyout {
         }
     }
 
-    /// The content height the UI wants, in logical pixels. The first report is also the cue that
-    /// the page has laid out and painted: an opening that was waiting for that happens now, at the
-    /// height just reported, so the panel never appears at the config's guess or as an empty frame.
-    /// Later reports resize the panel while it is open.
-    pub fn set_height(&self, requested: f64) {
-        let (placement, pending) = {
-            let mut state = lock(&self.state);
-            state.height = requested;
-            let first = !state.painted;
-            state.painted = true;
-            let pending = if first { state.deferred.take() } else { None };
-            (state.placement, pending)
-        };
-        if let Some(tray) = pending {
-            if let Err(err) = self.try_show(tray.as_ref()) {
-                diag::warn("cannot open the flyout", &err);
-            }
+    /// The content height the UI wants, in logical pixels. Resizes the panel on the main thread
+    /// while it is open (so Win32 `SetWindowPos` runs synchronously), or records the height for
+    /// the next opening.
+    pub fn set_height(self: &Arc<Self>, requested: f64) {
+        lock(&self.state).height = requested;
+        let flyout = Arc::clone(self);
+        let app = self.app.clone();
+        if let Err(err) = app.run_on_main_thread(move || flyout.resize_visible()) {
+            diag::warn("cannot resize the flyout", &err);
+        }
+    }
+
+    fn resize_visible(&self) {
+        if !self.is_visible() {
             return;
         }
-        if self.is_visible()
-            && let Some(placement) = placement
-            && let Err(err) = self.apply(placement, requested, false)
+        let (placement, height) = {
+            let state = lock(&self.state);
+            (state.placement, state.height)
+        };
+        let at = placement.or_else(|| self.locate(None).ok());
+        if let Some(at) = at
+            && let Err(err) = self.apply(at, height, false)
         {
             diag::warn("cannot resize the flyout", &err);
         }

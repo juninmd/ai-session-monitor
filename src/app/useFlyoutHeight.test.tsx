@@ -30,10 +30,18 @@ class FakeResizeObserver implements ResizeObserver {
   }
 }
 
-function Probe({ backend, measure }: { backend: Backend; measure: () => number }) {
+function Probe({
+  backend,
+  measure,
+  ready = true,
+}: {
+  backend: Backend;
+  measure: () => number;
+  ready?: boolean;
+}) {
   const root = useRef<HTMLDivElement>(null);
   const scroller = useRef<HTMLDivElement>(null);
-  useFlyoutHeight(backend, root, scroller, measure);
+  useFlyoutHeight(backend, root, scroller, measure, ready);
   return (
     <div ref={root} data-testid="root">
       <div ref={scroller}>
@@ -127,6 +135,19 @@ describe('useFlyoutHeight', () => {
     vi.advanceTimersByTime(200);
     expect(observer.disconnected).toBe(true);
     expect(report).not.toHaveBeenCalled();
+  });
+
+  it('waits until ready is true before observing and reporting height', () => {
+    const backend = createMockBackend();
+    const report = vi.spyOn(backend, 'setFlyoutHeight');
+    const { rerender } = render(<Probe backend={backend} measure={() => 540} ready={false} />);
+    vi.advanceTimersByTime(200);
+    expect(FakeResizeObserver.instances).toHaveLength(0);
+    expect(report).not.toHaveBeenCalled();
+
+    rerender(<Probe backend={backend} measure={() => 540} ready={true} />);
+    vi.advanceTimersByTime(50);
+    expect(report).toHaveBeenCalledExactlyOnceWith(540);
   });
 });
 

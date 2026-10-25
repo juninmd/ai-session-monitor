@@ -19,8 +19,10 @@ export function useFlyoutHeight(
   rootRef: RefObject<HTMLElement | null>,
   scrollRef: RefObject<HTMLElement | null>,
   measure: (root: HTMLElement, scroller: HTMLElement) => number = naturalHeight,
+  ready = true,
 ): void {
   useEffect(() => {
+    if (!ready) return;
     const root = rootRef.current;
     const scroller = scrollRef.current;
     if (!root || !scroller) return;
@@ -52,5 +54,5 @@ export function useFlyoutHeight(
       observer.disconnect();
       if (timer !== undefined) clearTimeout(timer);
     };
-  }, [backend, rootRef, scrollRef, measure]);
+  }, [backend, rootRef, scrollRef, measure, ready]);
 }

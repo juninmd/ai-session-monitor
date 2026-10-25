@@ -72,15 +72,15 @@ and never touches a file it cannot parse.
 
 ### D7. Flyout window
 
-A hidden, undecorated, transparent, always-on-top, skip-taskbar window, positioned from the tray
-icon rectangle against the monitor work area in physical pixels (the positioner plugin ignores the
-work area), hidden on blur with a short re-open guard. Single-instance plugin first. The
-`tauri.conf.json` entry carries `create: false`: the shell builds the window once the service
-exists (a window opened from the config would run the page's first commands before anything is
-managed), parks it at the notification corner and shows it only when the UI reports its content
-height, so no empty or wrongly placed frame is ever presented. The window has no OS backdrop (no
-Mica) and no background of its own, so the frame between "shown" and "first presented frame" is
-see-through instead of white; the glass alphas keep text readable over whatever is behind it.
+A hidden, undecorated, transparent, shadowless (`shadow: false`), always-on-top, skip-taskbar
+window, positioned from the tray icon rectangle against the monitor work area in physical pixels
+(the positioner plugin ignores the work area), hidden on blur with a short re-open guard.
+Single-instance plugin first. The `tauri.conf.json` entry carries `create: false`: the shell
+registers `AppService` and `Updater` before building the window (since `WebviewWindowBuilder::build`
+pumps the Win32 message loop), parks the window at the notification corner and opens it on startup
+(when `first_run_done` is false or `AISM_SHOW_ON_START=1`) so WebView2's compositor presents on a
+visible transparent surface without non-client border artifacts. Resizes (`set_flyout_height`) are
+dispatched onto the Win32 main thread so `SetWindowPos` settles synchronously.
 The `unstable` Tauri feature stays off (it breaks blur, tauri#13633). Window behaviour can only
 be validated on a real Windows 11 session; `docs/manual-windows-checklist.md` lists what to check.
 

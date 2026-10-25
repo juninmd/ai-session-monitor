@@ -8,10 +8,12 @@
   color-scheme: dark;
   --page: var(--sk-ink);
   --solid: var(--sk-panel);
-  --surface: color-mix(in srgb, var(--sk-panel) 90%, transparent);
+  --surface: color-mix(in srgb, var(--sk-panel) 95%, transparent);
   --raise: color-mix(in srgb, var(--sk-panel) 92%, white);
   --raise-2: color-mix(in srgb, var(--sk-panel) 86%, white);
   --raise-3: color-mix(in srgb, var(--sk-panel) 80%, white);
+  --raise-0: var(--raise);
+  --raise-2-0: var(--raise-2);
   --ink: var(--sk-fg);
   --ink-2: var(--sk-muted);
   --ink-3: var(--sk-faint);
@@ -30,14 +32,16 @@
 :root[data-skin="claro"] {
   color-scheme: light;
   --solid: var(--sk-ink);
-  --surface: color-mix(in srgb, var(--sk-ink) 90%, transparent);
+  --surface: color-mix(in srgb, var(--sk-ink) 95%, transparent);
   --raise: var(--sk-panel);
   --raise-2: var(--sk-edge);
   --raise-3: color-mix(in srgb, var(--sk-edge) 85%, black);
-  --line: color-mix(in srgb, var(--sk-edge) 90%, transparent);
-  --line-2: color-mix(in srgb, var(--sk-line) 45%, transparent);
-  --glass-hi: rgb(255 255 255 / 0.55);
-  --glass-edge: rgb(255 255 255 / 0.7);
+  --raise-0: var(--raise);
+  --raise-2-0: var(--raise-2);
+  --line: color-mix(in srgb, var(--sk-line) 28%, var(--sk-edge));
+  --line-2: color-mix(in srgb, var(--sk-line) 55%, transparent);
+  --glass-hi: transparent;
+  --glass-edge: rgb(255 255 255 / 0.85);
   --shadow: 0 18px 48px rgb(16 24 40 / 0.28), 0 2px 8px rgb(16 24 40 / 0.16);
 }
 
@@ -121,6 +125,7 @@
   --glass-frame: 55%;
   --glass-card: 48%;
   --glass-blur: 40px;
+  --card-blur: blur(12px);
   --glass-hi: rgb(255 255 255 / 0.12);
   --glass-edge: rgb(255 255 255 / 0.22);
 }

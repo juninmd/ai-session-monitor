@@ -39,12 +39,16 @@ fn the_flyout_is_the_window_the_config_declares() {
 
 #[test]
 fn the_shell_builds_the_window_itself_and_places_it() {
-    // `create: false` keeps Tauri from opening the webview before the service, the tray and the
-    // paint gate exist; `center: false` keeps the OS from choosing the position `settle_hidden`
-    // would then have to undo.
+    // `create: false` keeps Tauri from opening the webview before the service and updater are
+    // managed; `center: false` keeps the OS from choosing the position; `shadow: false` with
+    // `decorations: false` and `transparent: true` prevents tao's undecorated-shadow non-client
+    // frame (which otherwise adds an opaque 16x9 border and breaks inner_size settling).
     let config: serde_json::Value =
         serde_json::from_str(include_str!("../../tauri.conf.json")).expect("json");
     let window = &config["app"]["windows"][0];
     assert_eq!(window["create"], false, "the shell builds the window once the service exists");
     assert_eq!(window["center"], false, "the shell positions the window from the tray");
+    assert_eq!(window["decorations"], false, "the flyout draws its own rounded frame");
+    assert_eq!(window["transparent"], true, "the flyout surface is transparent");
+    assert_eq!(window["shadow"], false, "undecorated shadow adds an opaque Win32 non-client frame");
 }
