@@ -1,5 +1,5 @@
 // The two list surfaces, rendered on fabricated data: the urgency-ordered grid and the horizon.
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { BackendError } from '../lib/backend';
 import triageCss from './home-triage.css?raw';
@@ -323,5 +323,18 @@ describe('pinned providers', () => {
       'aria-pressed',
       'true',
     );
+  });
+
+  it('says when the pin could not be saved and leaves the pin where it was', async () => {
+    const { backend, user } = mount();
+    vi.spyOn(backend, 'saveSettings').mockRejectedValueOnce(
+      new BackendError({ code: 'internal', retryable: false, params: {} }),
+    );
+    await openDetail(user, 'MiniMax');
+    const pin = screen.getByRole('button', { name: 'Fixar MiniMax no topo' });
+    await user.click(pin);
+    const drawer = screen.getByRole('dialog');
+    expect(await within(drawer).findByRole('alert')).toBeInTheDocument();
+    expect(pin).toHaveAttribute('aria-pressed', 'false');
   });
 });
