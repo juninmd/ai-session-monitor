@@ -7,6 +7,7 @@ import { SettingSwitch } from '../forms/SettingControls';
 import { Banner } from '../panel/Banner';
 
 const CLEAR_BUTTON = 'history-clear';
+const CONFIRM_REGION = 'history-clear-confirm';
 
 /** The switch for the stored quota history and the two-step button that erases it. */
 export function HistorySettings({ enabled }: { enabled: boolean }) {
@@ -35,6 +36,7 @@ export function HistorySettings({ enabled }: { enabled: boolean }) {
           type="button"
           className="btn"
           aria-expanded={confirming}
+          aria-controls={confirming ? CONFIRM_REGION : undefined}
           onClick={() => {
             setCleared(false);
             setConfirming(true);
@@ -44,7 +46,7 @@ export function HistorySettings({ enabled }: { enabled: boolean }) {
         </button>
       </div>
       {confirming && (
-        <div role="alert">
+        <div id={CONFIRM_REGION} role="alert">
           <Banner tone="warn">
             <p>{t('settings.history_clear_confirm')}</p>
             <div className="actions">
