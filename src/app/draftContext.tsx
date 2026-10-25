@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -95,8 +96,14 @@ export function DraftProvider({ children }: { children: ReactNode }) {
     prompt.action();
     prompt.origin?.focus();
   };
+  // The registry outlives every form field, so a parent re-render must not hand its consumers a
+  // new object and drag all of them through a render of their own.
+  const api = useMemo<DraftApi>(
+    () => ({ entries, locked, set, request, blocked, lock }),
+    [entries, locked, set, request, blocked, lock],
+  );
   return (
-    <DraftContext value={{ entries, locked, set, request, blocked, lock }}>
+    <DraftContext value={api}>
       {children}
       {prompt && (
         <PendingChanges
