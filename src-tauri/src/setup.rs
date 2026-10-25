@@ -34,12 +34,6 @@ pub fn run(app: &mut App, overrides: &Overrides) -> Result<(), Reason> {
     let paths = resolve_paths(&handle, overrides).map_err(|err| Reason::Paths.because(&err))?;
     std::fs::create_dir_all(&paths.data_dir).map_err(|err| Reason::DataDir.because(&err))?;
 
-    let flyout = Flyout::new(&handle).map_err(|err| Reason::Window.because(&err))?;
-    let flyout = Arc::new(flyout);
-    flyout.attach();
-    flyout.settle_hidden();
-    tray::build(&handle, Arc::clone(&flyout)).map_err(|err| Reason::Tray.because(&err))?;
-
     let effects = TauriEffects::new(&handle, autostart(overrides));
     let sink = Arc::new(ShellSink::new(effects, sink::system_clock()));
 
@@ -48,13 +42,23 @@ pub fn run(app: &mut App, overrides: &Overrides) -> Result<(), Reason> {
     let update_dir = paths.data_dir.clone();
     let service = AppService::new(paths, secret_store(overrides), sink.clone(), adapters)
         .map_err(|err| Reason::Service(err.code).because(&"the service refused to start"))?;
-
     let settings = service.settings();
-    sink.prime(&settings);
-    let open_first = !settings.general.first_run_done || overrides.show_on_start;
+
+    // The webview is built here, once the service exists: the page calls commands as soon as it
+    // loads, so it must not find an app whose state is still missing. It is parked hidden where the
+    // next opening will put it and stays that way until the UI reports its height (see `Flyout`).
+    let window = flyout::create(&handle).map_err(|err| Reason::Window.because(&err))?;
+    let flyout = Arc::new(Flyout::new(&handle, window));
+    flyout.attach();
     app.manage(Arc::clone(&flyout));
-    app.manage(Arc::clone(&service));
+    // Armed before the page can finish loading: a first-run opening must not be missed.
+    let open_first = !settings.general.first_run_done || overrides.show_on_start;
     app.manage(OpenOnLoad(AtomicBool::new(open_first)));
+    flyout.settle_hidden();
+    tray::build(&handle, Arc::clone(&flyout)).map_err(|err| Reason::Tray.because(&err))?;
+    sink.prime(&settings);
+
+    app.manage(Arc::clone(&service));
     crate::update::attach(&handle, Arc::clone(&service), update_dir, !overrides.is_active());
 
     supervise_polling(Arc::clone(&service));
@@ -63,17 +67,13 @@ pub fn run(app: &mut App, overrides: &Overrides) -> Result<(), Reason> {
     Ok(())
 }
 
-/// Page-load hook: the one-shot first-run opening waits for the page so the user never sees an
-/// empty panel.
+/// Page-load hook: the one-shot first-run opening waits for the page, and the window shows itself
+/// only once the UI reports its height (`Flyout::set_height`), so an empty webview is never seen.
 pub fn on_page_load(webview: &Webview, payload: &PageLoadPayload<'_>) {
     if webview.label() != flyout::LABEL || !matches!(payload.event(), PageLoadEvent::Finished) {
         return;
     }
-    flyout::mark_page_ready();
     let app = webview.app_handle();
-    if let Some(flyout) = app.try_state::<Arc<Flyout>>() {
-        flyout.page_loaded();
-    }
     let armed =
         app.try_state::<OpenOnLoad>().is_some_and(|gate| gate.0.swap(false, Ordering::SeqCst));
     if !armed {

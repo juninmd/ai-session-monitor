@@ -26,7 +26,7 @@ webview never shows raw error text.
 | `clear_history` | - | - | Forgets every stored reading, in memory and on disk (the `history.corrupt.json` copy too). Idempotent. |
 | `open_link` | `link: ExternalLink` | - | Opens a fixed destination in the default browser. The webview cannot pass a URL. |
 | `hide_flyout` | - | - | |
-| `set_flyout_height` | `height: number` | - | Content height in CSS px; the shell clamps to the monitor work area and resizes keeping the anchor edge. |
+| `set_flyout_height` | `height: number` | - | Content height in CSS px; the shell clamps to the monitor work area and resizes keeping the anchor edge. The first report also tells the shell the page has painted: the window stays hidden until it arrives. |
 | `quit_app` | - | - | |
 | `get_update_status` | - | `UpdateStatus` | Current updater state; no network. |
 | `check_update` | - | `UpdateStatus` | Checks the fixed public GitHub channel through SafeClient. |
@@ -72,6 +72,17 @@ An external settings event updates clean fields but preserves local edits.
 
 ## Window protocol
 
+- The shell builds the window itself (the `tauri.conf.json` entry carries `create: false`), once
+  the service exists: the page calls commands as soon as it loads, so it never finds an app with
+  nothing managed yet. It is parked hidden at the notification corner, so no frame the shell did
+  not place can appear at the position the OS picked for a new window.
+- It is shown only once the webview reports its content height: before that the webview has nothing
+  painted to present and the window would open as an empty panel at the config's guess (and then
+  shrink in steps as the UI measured itself). The first `set_flyout_height` is therefore the "the
+  page is ready" signal; a page that fails to load never opens a window.
+- The window has no OS backdrop (no Mica) and no opaque background of its own: the frame and the
+  cards are the only paint, so the gap between showing the window and the first presented frame is
+  see-through instead of white.
 - The shell hides the flyout on blur (with a ~250 ms re-open guard so the tray click that
   re-opens it does not immediately close it) and on `Esc` pressed in the webview (`hide_flyout`).
 - The webview owns its height: after each render it measures its content and calls

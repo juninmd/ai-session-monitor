@@ -47,11 +47,13 @@
   --crit: light-dark(#d03b3b, #ef6b61);
 
   /* The flyout's glass: how opaque the frame and the cards stay, and how much the backdrop blurs.
-     The copies keep the solid values reachable once the flyout redefines --raise as translucent. */
+     The window has no OS backdrop (no Mica), so these alphas are what keeps text at AA contrast
+     over whatever the user happens to have behind the flyout. The copies keep the solid values
+     reachable once the flyout redefines --raise as translucent. */
   --raise-0: var(--raise);
   --raise-2-0: var(--raise-2);
-  --glass-frame: 68%;
-  --glass-card: 60%;
+  --glass-frame: 88%;
+  --glass-card: 80%;
   --glass-blur: 32px;
   --glass-hi: light-dark(rgb(255 255 255 / 0.55), rgb(255 255 255 / 0.07));
   --glass-edge: light-dark(rgb(255 255 255 / 0.7), rgb(255 255 255 / 0.14));

@@ -17,8 +17,8 @@ body {
   line-height: 1.4;
 }
 
-/* Transparent until the host is known, so the Tauri window never flashes white while the page
-   loads and the OS can draw its backdrop behind the translucent flyout. */
+/* Transparent, page and window both: the flyout paints its own glass, and an unpainted webview
+   shows what is behind the window instead of a white panel while the page loads. */
 html,
 body {
   background: transparent;

@@ -36,3 +36,15 @@ fn the_flyout_is_the_window_the_config_declares() {
     assert_eq!(window["height"].as_f64(), Some(INITIAL_HEIGHT_LOGICAL));
     assert_eq!(window["visible"], false);
 }
+
+#[test]
+fn the_shell_builds_the_window_itself_and_places_it() {
+    // `create: false` keeps Tauri from opening the webview before the service, the tray and the
+    // paint gate exist; `center: false` keeps the OS from choosing the position `settle_hidden`
+    // would then have to undo.
+    let config: serde_json::Value =
+        serde_json::from_str(include_str!("../../tauri.conf.json")).expect("json");
+    let window = &config["app"]["windows"][0];
+    assert_eq!(window["create"], false, "the shell builds the window once the service exists");
+    assert_eq!(window["center"], false, "the shell positions the window from the tray");
+}

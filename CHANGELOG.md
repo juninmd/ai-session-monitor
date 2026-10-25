@@ -116,6 +116,10 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Fixed
 
+- The flyout opened as an empty panel at the position and size the OS picked for a new window, then
+  jumped and shrank in steps: the shell now builds the window after the service exists, parks it at
+  the notification corner and shows it only when the UI reports its content height, with no opaque
+  backdrop left to flash white before the page paints.
 - Screen readers announce a failed read, a stale-data notice and the update banner when they appear,
   and the command palette keeps a visible focus cue on its search field.
 - The provider and settings drawers are announced as modal and keep Tab inside them, so keyboard

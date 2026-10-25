@@ -13,17 +13,19 @@
     "windows": [
       {
         "label": "flyout",
+        "create": false,
         "title": "AI Session Monitor",
         "width": 432,
         "height": 720,
         "visible": false,
+        "center": false,
         "decorations": false,
         "transparent": true,
         "shadow": true,
         "alwaysOnTop": true,
         "skipTaskbar": true,
         "resizable": false,
-        "windowEffects": { "effects": ["mica"] }
+        "dragDropEnabled": false
       }
     ],
     "security": {
