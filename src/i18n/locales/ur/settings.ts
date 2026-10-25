@@ -54,6 +54,11 @@ export const settingsMessages = {
   'settings.notify_out': 'ختم ہونے پر اطلاع دیں',
   'settings.notify_reset': 'ونڈو ری سیٹ ہونے پر اطلاع دیں',
   'settings.notify_risk': 'تجدید سے پہلے کوٹا ختم ہونے کا امکان ہو تو اطلاع دیں',
+  'settings.quiet_hours': 'خاموش اوقات',
+  'settings.quiet_hint':
+    'اس وقت ڈیسک ٹاپ کی اطلاعات نہیں دکھائی جائیں گی۔ فلائی آؤٹ پھر بھی اپ ڈیٹ ہوتا رہے گا۔',
+  'settings.quiet_from': 'اس وقت سے خاموش',
+  'settings.quiet_to': 'اس وقت تک خاموش',
   'settings.sources': 'ڈیٹا سورسز',
   'settings.enabled': 'یہ سورس پڑھیں',
   'settings.unofficial_chip': 'غیر سرکاری',

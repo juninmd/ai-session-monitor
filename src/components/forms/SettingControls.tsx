@@ -6,7 +6,7 @@ import { fieldMessage } from '../../app/fieldErrors';
 import { useSettingsApi } from '../../app/settingsContext';
 import { useAsyncAction } from '../../app/useAsyncAction';
 import type { Settings } from '../../lib/contract';
-import { type Option, SegmentedRow, SelectRow, SwitchRow } from './fields';
+import { type Option, SegmentedRow, SelectRow, SwitchRow, TimeRow } from './fields';
 
 type Apply<V> = (settings: Settings, value: V) => Settings;
 
@@ -69,4 +69,24 @@ export function SettingSegmented<V extends string>(props: SegmentedProps<V>) {
   const { apply, id, ...rest } = props;
   const { run, error } = useApply(apply);
   return <SegmentedRow {...rest} name={id} error={error} onChange={(value) => void run(value)} />;
+}
+
+interface TimeProps {
+  id: string;
+  label: string;
+  minutes: number;
+  apply: Apply<number>;
+}
+
+export function SettingTime({ id, label, minutes, apply }: TimeProps) {
+  const { run, error } = useApply(apply);
+  return (
+    <TimeRow
+      id={id}
+      label={label}
+      minutes={minutes}
+      error={error}
+      onChange={(value) => void run(value)}
+    />
+  );
 }

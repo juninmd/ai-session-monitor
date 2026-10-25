@@ -55,6 +55,11 @@ export const settingsMessages = {
   'settings.notify_out': 'Notify when depleted',
   'settings.notify_reset': 'Notify when the window resets',
   'settings.notify_risk': 'Notify if the quota is likely to run out before it renews',
+  'settings.quiet_hours': 'Quiet hours',
+  'settings.quiet_hint':
+    'Desktop notifications in this window are dropped. The flyout still updates.',
+  'settings.quiet_from': 'Quiet from',
+  'settings.quiet_to': 'Quiet until',
   'settings.sources': 'Data sources',
   'settings.enabled': 'Read this source',
   'settings.unofficial_chip': 'unofficial',

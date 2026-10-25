@@ -42,9 +42,7 @@ impl Publisher {
         // Judged against the snapshot the user saw, before the emit below replaces it.
         let lapsed = self.collect_lapsed(shared, &views, now_secs);
         self.emit_changes(shared, views, now_secs);
-        for note in &lapsed {
-            shared.sink.notify(note);
-        }
+        announce(shared, now_secs, &lapsed);
         if let Some(shown) = &self.published {
             self.told.retain(|key| notify::still_waiting(shown, key));
         }
@@ -89,9 +87,20 @@ impl Publisher {
         self.last_emit = Some(now);
         self.flush_at = None;
         shared.sink.snapshot_changed(&snapshot);
-        for note in &notes {
-            shared.sink.notify(note);
-        }
+        announce(shared, now_secs, &notes);
+    }
+}
+
+/// Hands the toasts to the shell, unless the user's quiet hours are on at `now_secs`. A held toast
+/// is dropped, not queued: the snapshot still updates, and the window's markers are already spent.
+fn announce(shared: &Shared, now_secs: i64, notes: &[Notification]) {
+    let quiet =
+        notify::is_quiet(&shared.settings().general, now_secs, shared.clock.utc_offset_secs());
+    if quiet {
+        return;
+    }
+    for note in notes {
+        shared.sink.notify(note);
     }
 }
 

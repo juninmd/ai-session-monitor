@@ -20,6 +20,8 @@ pub const MAX_ALERT_THRESHOLDS: usize = 4;
 pub const DEFAULT_ALERT_THRESHOLDS: [u8; 2] = [80, 95];
 /// The loopback port of the optional local API. Fixed on purpose: consumers must find it.
 pub const LOCAL_API_PORT: u16 = 6737;
+/// The quiet-hours bounds: minutes after local midnight, `0..MINUTES_PER_DAY`.
+pub const MINUTES_PER_DAY: u16 = 24 * 60;
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
@@ -76,6 +78,8 @@ impl Settings {
         self.general.interval_secs =
             self.general.interval_secs.clamp(MIN_INTERVAL_SECS, MAX_INTERVAL_SECS);
         self.general.warn_at_pct = self.general.warn_at_pct.clamp(5, 90);
+        self.general.quiet_from = self.general.quiet_from.min(MINUTES_PER_DAY - 1);
+        self.general.quiet_to = self.general.quiet_to.min(MINUTES_PER_DAY - 1);
         normalize_thresholds(&mut self.general.alert_thresholds);
         self.litellm.poll_interval_secs =
             self.litellm.poll_interval_secs.clamp(MIN_LITELLM_POLL_SECS, MAX_INTERVAL_SECS);
@@ -177,6 +181,14 @@ pub struct GeneralSettings {
     pub notify_on_reset: bool,
     /// Warn once per window when the current pace would run it out before it renews.
     pub notify_on_risk: bool,
+    /// Hold desktop notifications between `quiet_from` and `quiet_to`. Held ones are dropped, not
+    /// queued. Off by default.
+    pub quiet_hours_on: bool,
+    /// Start of the quiet window, minutes after local midnight (`0..1440`).
+    pub quiet_from: u16,
+    /// End of the quiet window, minutes after local midnight (`0..1440`). Earlier than
+    /// `quiet_from` means the window wraps past midnight; equal means no window.
+    pub quiet_to: u16,
     /// Used percentages (1..=99) that raise one toast each time a window crosses them. Empty
     /// switches the alerts off. Sorted, deduplicated, at most `MAX_ALERT_THRESHOLDS`.
     pub alert_thresholds: Vec<u8>,
@@ -213,6 +225,9 @@ impl Default for GeneralSettings {
             notify_on_out: false,
             notify_on_reset: false,
             notify_on_risk: false,
+            quiet_hours_on: false,
+            quiet_from: 22 * 60,
+            quiet_to: 8 * 60,
             alert_thresholds: DEFAULT_ALERT_THRESHOLDS.to_vec(),
             adaptive: true,
             history_enabled: true,

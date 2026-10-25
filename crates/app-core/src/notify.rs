@@ -7,11 +7,13 @@ use usage_model::{HarnessId, Settings, Snapshot, ViewState};
 
 mod lapsed;
 mod pace;
+mod quiet;
 mod text;
 mod threshold;
 
 pub(crate) use lapsed::{ResetKey, key_of, lapsed_resets, next_lapse, still_waiting};
 pub(crate) use pace::PaceState;
+pub(crate) use quiet::is_quiet;
 pub(crate) use text::settings_recovered;
 pub(crate) use threshold::ThresholdState;
 

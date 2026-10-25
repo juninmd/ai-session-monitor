@@ -66,3 +66,24 @@ async fn a_notification_follows_the_snapshot_it_belongs_to() {
     assert_eq!(kinds[at - 1], "snapshot", "the UI shows the new state before the toast");
     assert_eq!(kinds.iter().filter(|kind| **kind == "notice").count(), 1);
 }
+
+#[tokio::test(start_paused = true)]
+async fn quiet_hours_hold_the_toasts_inside_the_window_and_not_after_it() {
+    // BASE is 08:00 UTC. The out is read at 120 s (08:02), inside 08:00-08:03; the reset at 240 s
+    // (08:04) falls after it.
+    let rig = notifying(&[60.0, 100.0, 100.0, 20.0, 20.0])
+        .settings(|s| {
+            s.general.quiet_hours_on = true;
+            s.general.quiet_from = 8 * 60;
+            s.general.quiet_to = 8 * 60 + 3;
+        })
+        .start()
+        .await;
+
+    rig.at(seconds(130)).await;
+    assert!(rig.sink.notices().is_empty(), "the out inside the window is dropped, not queued");
+
+    rig.at(seconds(250)).await;
+    let kinds: Vec<_> = rig.sink.notices().iter().map(|n| n.kind).collect();
+    assert_eq!(kinds, [NotificationKind::WindowReset]);
+}

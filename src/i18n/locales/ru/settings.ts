@@ -55,6 +55,11 @@ export const settingsMessages = {
   'settings.notify_out': 'Уведомлять об исчерпании',
   'settings.notify_reset': 'Уведомлять о сбросе окна',
   'settings.notify_risk': 'Уведомлять, если квота может закончиться до обновления',
+  'settings.quiet_hours': 'Тихие часы',
+  'settings.quiet_hint':
+    'Уведомления на рабочем столе в этот период не показываются. Окно продолжает обновляться.',
+  'settings.quiet_from': 'Тихо с',
+  'settings.quiet_to': 'Тихо до',
   'settings.sources': 'Источники данных',
   'settings.enabled': 'Читать этот источник',
   'settings.unofficial_chip': 'неофициальный',
