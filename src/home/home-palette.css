@@ -55,6 +55,11 @@
   outline: none;
 }
 
+/* The input drops its outline; the field shows focus instead, so keyboard users keep a cue. */
+.nx-palette-field:focus-within {
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
 .nx-palette-list {
   padding: 0.25rem;
   overflow: auto;

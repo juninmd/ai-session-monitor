@@ -4,6 +4,7 @@
 //! the main thread, which may in turn be waiting for the same lock.
 
 use std::error::Error;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex, MutexGuard, PoisonError};
 use std::time::Instant;
 
@@ -26,9 +27,18 @@ pub const LABEL: &str = "flyout";
 const WIDTH_LOGICAL: f64 = 432.0;
 const MARGIN_LOGICAL: f64 = 8.0;
 /// The height in tauri.conf.json, kept until the UI reports its content height.
-const INITIAL_HEIGHT_LOGICAL: f64 = 600.0;
+const INITIAL_HEIGHT_LOGICAL: f64 = 720.0;
 /// Resizes tried before giving up on the requested size; the second one lands in practice.
 const SIZE_ATTEMPTS: usize = 3;
+
+/// Set once the page finished loading; before that the window would show an empty webview. A
+/// static because the page can finish loading before the flyout is registered with the app.
+static PAGE_READY: AtomicBool = AtomicBool::new(false);
+
+/// The page finished loading.
+pub fn mark_page_ready() {
+    PAGE_READY.store(true, Ordering::SeqCst);
+}
 
 type Failure = Box<dyn Error + Send + Sync>;
 
@@ -44,6 +54,8 @@ struct State {
     placement: Option<Placement>,
     /// The UI's last requested content height; clamped again on every placement.
     height: f64,
+    /// An opening asked for before the page was ready, with the tray rectangle it came with.
+    deferred: Option<Option<tauri::Rect>>,
 }
 
 pub struct Flyout {
@@ -81,8 +93,12 @@ fn monitor_rects(monitor: &Monitor) -> (Rect, Rect) {
 impl Flyout {
     pub fn new(app: &AppHandle) -> tauri::Result<Self> {
         let window = app.get_webview_window(LABEL).ok_or(tauri::Error::WindowNotFound)?;
-        let state =
-            State { gate: Gate::default(), placement: None, height: INITIAL_HEIGHT_LOGICAL };
+        let state = State {
+            gate: Gate::default(),
+            placement: None,
+            height: INITIAL_HEIGHT_LOGICAL,
+            deferred: None,
+        };
         Ok(Self { app: app.clone(), window, state: Mutex::new(state) })
     }
 
@@ -103,7 +119,24 @@ impl Flyout {
         self.window.is_visible().unwrap_or(false)
     }
 
+    /// The page finished loading: from now on the window may be shown, and an opening that was
+    /// asked for earlier happens now.
+    pub fn page_loaded(&self) {
+        mark_page_ready();
+        let deferred = lock(&self.state).deferred.take();
+        if let Some(tray) = deferred {
+            self.show(tray.as_ref());
+        }
+    }
+
     pub fn show(&self, tray: Option<&tauri::Rect>) {
+        {
+            let mut state = lock(&self.state);
+            if !PAGE_READY.load(Ordering::SeqCst) {
+                state.deferred = Some(tray.cloned());
+                return;
+            }
+        }
         if let Err(err) = self.try_show(tray) {
             diag::warn("cannot open the flyout", &err);
         }

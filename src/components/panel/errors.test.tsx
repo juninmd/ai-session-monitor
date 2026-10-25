@@ -46,6 +46,13 @@ const ACTION_LABEL: Record<ErrorCode, string> = {
 };
 
 describe('an error block', () => {
+  // It appears after a poll fails, so it must be announced without the user looking for it.
+  // Polite, not assertive: a failed action inside it already carries its own alert.
+  it('is announced politely when it appears', () => {
+    show(failing('litellm', problem('timeout')));
+    expect(screen.getByRole('status')).toHaveTextContent(t('error.timeout.title'));
+  });
+
   it.each(ERROR_CODES)('explains %s in pt-BR and offers exactly one action', (code) => {
     show(failing('litellm', problem(code)));
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(t(`error.${code}.title`));

@@ -43,7 +43,6 @@ export const surfacesMessages = {
   'triage.loading': '加载中',
   'triage.amount_of': '{used} / {limit}',
   'triage.pinned': '已置顶',
-  'triage.more_quotas.other': '详情中另有 {count} 项额度',
   'triage.empty.title': '没有监控任何数据源',
   'triage.empty.body':
     '尚未读取任何内容。选择要关注的数据源后，面板会按紧急程度排序，并在每张卡片上直接显示各额度的预测。',

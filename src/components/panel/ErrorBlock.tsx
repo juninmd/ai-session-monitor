@@ -8,7 +8,7 @@ export function ErrorBlock({ error, harness }: { error: HarnessError; harness: H
   const text = describeError(error, harness);
   const task = useErrorAction(text.action, harness);
   return (
-    <section className="card notice" data-status="crit">
+    <section className="card notice" data-status="crit" role="status">
       <span className="badge">
         <Icon name="warn" />
       </span>

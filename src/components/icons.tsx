@@ -15,6 +15,14 @@ const PATHS = {
       <circle cx="6" cy="11" r="1.7" />
     </>
   ),
+  palette: (
+    <>
+      <path d="M8 2.5a5.5 5.5 0 1 0 0 11c1 0 1.4-.7 1.1-1.4-.4-.9.1-1.6 1-1.6H12a1.5 1.5 0 0 0 1.5-1.5C13.5 5 11 2.5 8 2.5Z" />
+      <circle cx="5.2" cy="7.6" r=".7" fill="currentColor" />
+      <circle cx="7.6" cy="5.2" r=".7" fill="currentColor" />
+      <circle cx="10.4" cy="6" r=".7" fill="currentColor" />
+    </>
+  ),
   back: (
     <>
       <path d="M9.5 3.5 5 8l4.5 4.5" />

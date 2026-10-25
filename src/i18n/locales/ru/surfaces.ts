@@ -52,10 +52,6 @@ export const surfacesMessages = {
   'triage.loading': 'Загрузка',
   'triage.amount_of': '{used} из {limit}',
   'triage.pinned': 'Закреплено сверху',
-  'triage.more_quotas.one': '+{count} квота в подробностях',
-  'triage.more_quotas.few': '+{count} квоты в подробностях',
-  'triage.more_quotas.many': '+{count} квот в подробностях',
-  'triage.more_quotas.other': '+{count} квоты в подробностях',
   'triage.empty.title': 'Нет отслеживаемых источников',
   'triage.empty.body':
     'Данных пока нет. Выберите, что отслеживать: панель откроется с сортировкой по срочности, а прогноз по каждой квоте будет прямо на её карточке.',
