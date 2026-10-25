@@ -95,7 +95,7 @@ export function CommandPalette({
               setIndex(0);
             }}
           />
-          <kbd>Esc</kbd>
+          <kbd>{t('palette.key.esc')}</kbd>
         </div>
         <div id="nx-palette-list" ref={listRef} className="nx-palette-list" role="listbox">
           {results.length === 0 && <p className="nx-palette-empty">{t('palette.empty')}</p>}
@@ -123,7 +123,8 @@ export function CommandPalette({
         </div>
         <p className="nx-palette-foot">
           <kbd>↑</kbd>
-          <kbd>↓</kbd> {t('palette.foot.navigate')} · <kbd>Enter</kbd> {t('palette.foot.run')}
+          <kbd>↓</kbd> {t('palette.foot.navigate')} · <kbd>{t('palette.key.enter')}</kbd>{' '}
+          {t('palette.foot.run')}
         </p>
       </div>
     </div>

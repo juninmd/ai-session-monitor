@@ -76,6 +76,8 @@ export const flyoutMessages = {
   'palette.empty': 'কিছু পাওয়া যায়নি',
   'palette.foot.navigate': 'নেভিগেট',
   'palette.foot.run': 'চালান',
+  'palette.key.esc': 'Esc',
+  'palette.key.enter': 'Enter',
 
   // Provider actions (preview only)
   'provider_actions.outcome.reset': 'রিসেট অনুকরণ করা হয়েছে। প্রিভিউতে কোটা ও ব্যালান্স আপডেট হয়েছে।',

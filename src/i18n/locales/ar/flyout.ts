@@ -89,6 +89,8 @@ export const flyoutMessages = {
   'palette.empty': 'لم يُعثر على شيء',
   'palette.foot.navigate': 'تنقّل',
   'palette.foot.run': 'تنفيذ',
+  'palette.key.esc': 'Esc',
+  'palette.key.enter': 'Enter',
 
   // Provider actions (preview only)
   'provider_actions.outcome.reset': 'تمت محاكاة إعادة الضبط. تم تحديث الحصص والرصيد في المعاينة.',

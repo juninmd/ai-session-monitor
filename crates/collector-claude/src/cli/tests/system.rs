@@ -78,14 +78,16 @@ mod windows {
     }
 
     /// Prints a fabricated answer only for exactly the argv and environment the collector owes.
-    fn picky_script(answer: &Path, config_dir: &str) -> String {
+    fn picky_script(answer: &Path, config_dir: &str, cwd: &Path) -> String {
         let answer = answer.display();
+        let cwd = cwd.display();
         format!(
             "@echo off\r\nif not \"%~1\"==\"-p\" exit /b 3\r\nif not \"%~2\"==\"/usage\" exit /b 3\r\n\
              if not \"%~3\"==\"--output-format\" exit /b 3\r\nif not \"%~4\"==\"json\" exit /b 3\r\n\
              if not \"%~5\"==\"--max-budget-usd\" exit /b 3\r\nif not \"%~6\"==\"0.02\" exit /b 3\r\n\
              if not \"%~7\"==\"--setting-sources\" exit /b 3\r\nif not \"%~8\"==\"project\" exit /b 3\r\n\
              if not \"%~9\"==\"--no-session-persistence\" exit /b 3\r\n\
+             if /i not \"%CD%\"==\"{cwd}\" exit /b 5\r\n\
              if not \"%CLAUDE_CONFIG_DIR%\"==\"{config_dir}\" exit /b 4\r\ntype \"{answer}\"\r\n"
         )
     }
@@ -96,7 +98,12 @@ mod windows {
         let answer = answers.path().join("answer.json");
         std::fs::write(&answer, envelope(REPORT).to_string()).unwrap();
         let config = answers.path().join("outro perfil");
-        let home = profile(&picky_script(&answer, &config.display().to_string()));
+        // The working directory is the app's own `cli-cwd`, never the shared temp dir.
+        let home = tempfile::tempdir().unwrap();
+        let cwd = home.path().join("cli-cwd");
+        let script = picky_script(&answer, &config.display().to_string(), &cwd);
+        touch(home.path(), &LOCATION);
+        std::fs::write(home.path().join(".local").join("bin").join("claude.cmd"), script).unwrap();
         let ctx = Ctx::new(NOW, home.path(), home.path());
 
         let body = cli(Duration::from_secs(10)).usage(&ctx, Some(&config)).await.expect("runs");

@@ -6,7 +6,7 @@ use std::time::Duration;
 
 use serde_json::Value;
 use usage_model::{Ctx, ErrorCode, HarnessError};
-use usage_support::{CommandSpec, run_capped};
+use usage_support::{CommandSpec, neutral_dir, run_capped};
 
 use super::{Cli, CliError};
 
@@ -47,7 +47,9 @@ impl Cli for SystemCli {
         let mut spec = CommandSpec::new(program);
         spec.args = ARGS.map(OsString::from).to_vec();
         // A neutral directory: the CLI must not pick up a project's settings or write into one.
-        spec.cwd = Some(std::env::temp_dir());
+        let cwd = neutral_dir(&ctx.data_dir)
+            .map_err(|_| CliError::Failed(HarnessError::new(ErrorCode::SpawnFailed, false)))?;
+        spec.cwd = Some(cwd);
         spec.timeout = self.timeout;
         spec.max_stdout = MAX_STDOUT;
         spec.max_stderr = MAX_STDERR;

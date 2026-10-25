@@ -89,6 +89,8 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Changed
 
+- The command palette names its Esc and Enter keys in the flyout's language (Intro and Échap in
+  Spanish and French, for example).
 - The flyout has one home screen instead of a tab per harness: **Triagem** (every reachable provider
   in one urgency-ordered grid, each card carrying its own quota windows and renewals), **Horizonte**
   (one runway bar per provider, from now to that window's renewal) and **Canais de cota** (the
@@ -153,6 +155,8 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Security
 
+- The Claude and Antigravity CLI probes start in an empty directory under the app's data dir, not in
+  the shared temp dir, so a stray `.claude` folder there is never read as project settings.
 - All network access happens in Rust through one hardened client (https only, no redirects, size and
   time caps); the webview has no network access and never receives a secret.
 - The flyout capability grants only `core:event:allow-listen` and `allow-unlisten`; the webview
