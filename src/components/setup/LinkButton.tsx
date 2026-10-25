@@ -19,7 +19,12 @@ export function LinkButton({
   return (
     <>
       <div className="actions">
-        <button type="button" className="btn" onClick={() => void open.run()}>
+        <button
+          type="button"
+          className="btn"
+          disabled={open.pending}
+          onClick={() => void open.run()}
+        >
           {label}
           <Icon name="external" />
         </button>
