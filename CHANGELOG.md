@@ -6,6 +6,8 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Added
 
+- Quiet hours (`general.quietHoursOn`, off by default): desktop notifications whose time falls in
+  the window you pick are dropped, not queued. The window can wrap past midnight. Settings → General.
 - Cursor and GitHub Copilot (both unofficial, opt-in): Cursor reads the sign-in token from its local
   database and shows the included usage and on-demand spend; Copilot shows the monthly premium
   requests with a pasted token or the one the extension keeps on disk.

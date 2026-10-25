@@ -55,6 +55,11 @@ export const settingsMessages = {
   'settings.notify_out': 'Avisar ao esgotar',
   'settings.notify_reset': 'Avisar quando a janela resetar',
   'settings.notify_risk': 'Avisar se a cota deve acabar antes de renovar',
+  'settings.quiet_hours': 'Horas silenciosas',
+  'settings.quiet_hint':
+    'Notificações do sistema nesse horário são descartadas. A janela continua atualizando.',
+  'settings.quiet_from': 'Silenciar a partir de',
+  'settings.quiet_to': 'Silenciar até',
   'settings.sources': 'Fontes de dados',
   'settings.enabled': 'Ler esta fonte',
   'settings.unofficial_chip': 'não oficial',

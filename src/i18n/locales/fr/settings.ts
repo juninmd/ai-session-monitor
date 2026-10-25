@@ -56,6 +56,11 @@ export const settingsMessages = {
   'settings.notify_out': 'Notifier en cas d’épuisement',
   'settings.notify_reset': 'Notifier à la réinitialisation de la fenêtre',
   'settings.notify_risk': 'Notifier si le quota risque de s’épuiser avant son renouvellement',
+  'settings.quiet_hours': 'Heures silencieuses',
+  'settings.quiet_hint':
+    'Les notifications du bureau pendant cette plage sont ignorées. La fenêtre continue de se mettre à jour.',
+  'settings.quiet_from': 'Silencieux à partir de',
+  'settings.quiet_to': 'Silencieux jusqu’à',
   'settings.sources': 'Sources de données',
   'settings.enabled': 'Lire cette source',
   'settings.unofficial_chip': 'non officielle',

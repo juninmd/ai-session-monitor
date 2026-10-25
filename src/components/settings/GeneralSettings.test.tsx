@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react';
+import { fireEvent, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { BackendError } from '../../lib/backend';
 import { LIMITS } from '../../lib/contract';
@@ -88,6 +88,7 @@ describe('switches', () => {
     ['Avisar ao esgotar', 'notifyOnOut'],
     ['Avisar quando a janela resetar', 'notifyOnReset'],
     ['Avisar se a cota deve acabar antes de renovar', 'notifyOnRisk'],
+    ['Horas silenciosas', 'quietHoursOn'],
   ])('%s toggles %s and says which way it is', async (label, key) => {
     const { user, backend } = renderPanel(<GeneralSettings />);
     const control = screen.getByRole('switch', { name: label });
@@ -104,6 +105,28 @@ describe('switches', () => {
     screen.getByRole('switch', { name: 'Avisar ao esgotar' }).focus();
     await user.keyboard(' ');
     await vi.waitFor(async () => expect((await stored(backend)).notifyOnOut).toBe(true));
+  });
+});
+
+describe('quiet hours', () => {
+  it('shows the two times only while the window is on', async () => {
+    const { user } = renderPanel(<GeneralSettings />);
+    expect(screen.queryByLabelText('Silenciar a partir de')).toBeNull();
+    await user.click(screen.getByRole('switch', { name: 'Horas silenciosas' }));
+    expect(await screen.findByLabelText('Silenciar a partir de')).toHaveValue('22:00');
+    expect(screen.getByLabelText('Silenciar até')).toHaveValue('08:00');
+  });
+
+  it('saves the start as minutes after midnight', async () => {
+    const { backend } = renderPanel(<GeneralSettings />, {
+      settings: settingsWith((s) => {
+        s.general.quietHoursOn = true;
+      }),
+    });
+    fireEvent.change(await screen.findByLabelText('Silenciar a partir de'), {
+      target: { value: '23:15' },
+    });
+    await vi.waitFor(async () => expect((await stored(backend)).quietFrom).toBe(23 * 60 + 15));
   });
 });
 

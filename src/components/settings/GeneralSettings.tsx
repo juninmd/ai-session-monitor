@@ -21,7 +21,12 @@ import {
   type WeekFormat,
 } from '../../lib/contract';
 import type { Option } from '../forms/fields';
-import { SettingSegmented, SettingSelect, SettingSwitch } from '../forms/SettingControls';
+import {
+  SettingSegmented,
+  SettingSelect,
+  SettingSwitch,
+  SettingTime,
+} from '../forms/SettingControls';
 import { LanguageSetting } from './LanguageSetting';
 
 const patch = (settings: Settings, change: Partial<General>): Settings => ({
@@ -178,6 +183,29 @@ export function GeneralSettings() {
           checked={g.notifyOnRisk}
           apply={(current, notifyOnRisk) => patch(current, { notifyOnRisk })}
         />
+        <SettingSwitch
+          id="set-quiet"
+          label={t('settings.quiet_hours')}
+          hint={t('settings.quiet_hint')}
+          checked={g.quietHoursOn}
+          apply={(current, quietHoursOn) => patch(current, { quietHoursOn })}
+        />
+        {g.quietHoursOn && (
+          <>
+            <SettingTime
+              id="set-quiet-from"
+              label={t('settings.quiet_from')}
+              minutes={g.quietFrom}
+              apply={(current, quietFrom) => patch(current, { quietFrom })}
+            />
+            <SettingTime
+              id="set-quiet-to"
+              label={t('settings.quiet_to')}
+              minutes={g.quietTo}
+              apply={(current, quietTo) => patch(current, { quietTo })}
+            />
+          </>
+        )}
       </section>
     </>
   );

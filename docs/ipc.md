@@ -260,6 +260,10 @@ OpenRouter (`key_credits`) and DeepSeek (`user_balance`) are official and docume
 `general.notifyOnRisk` (off by default) adds one toast per window epoch when the pace (`Pace::Risk`) projects the window
 running out before it renews; a window first seen already at risk only sets the baseline.
 `general.alertThresholds` (default `[80, 95]`, empty = off) switches the usage-threshold toasts.
+`general.quietHoursOn` (off by default) drops the desktop toasts whose moment falls in `[quietFrom, quietTo)`,
+both in minutes after local midnight (defaults 1320 and 480). The window wraps past midnight when `quietFrom`
+is later than `quietTo`. A dropped toast is not queued; the snapshot still updates. The settings-file recovery
+notice is not held.
 `general.showUsed` (default `false`) is presentation only: the UI, the tray tooltip and the "limite disponível"
 toast print the used share instead of the available one; every payload keeps `usedPct`, and the tray icon arc
 stays on the available share.
