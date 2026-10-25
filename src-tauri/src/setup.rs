@@ -19,7 +19,7 @@ use crate::paths::Overrides;
 use crate::secrets_keyring::{KeyringSecretStore, UnavailableSecretStore};
 use crate::sink::{self, ShellSink};
 use crate::startup::Reason;
-use crate::{claude_dir, diag, shim_path, supervisor, tray, wiring};
+use crate::{claude_dir, diag, shim_path, supervisor, tray, update, wiring};
 
 const APP_NAME: &str = "AI Session Monitor";
 /// The tray is re-rendered this often: countdowns move and windows expire between snapshots.
