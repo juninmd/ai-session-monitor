@@ -9,7 +9,7 @@ pub mod secret;
 pub mod time;
 pub mod update;
 
-pub use fsutil::{atomic_write, read_capped, read_json_capped};
+pub use fsutil::{atomic_write, neutral_dir, read_capped, read_json_capped};
 pub use http::{
     Auth, ClientOptions, RequestSpec, SafeClient, TlsPolicy, append_path, append_query, check_url,
 };
