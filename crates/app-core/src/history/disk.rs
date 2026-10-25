@@ -4,7 +4,7 @@
 use std::io;
 use std::path::Path;
 
-use usage_support::fsutil::{atomic_write, read_json_capped};
+use usage_support::fsutil::read_json_capped;
 
 use super::ledger::{Ledger, VERSION};
 
@@ -45,10 +45,4 @@ pub(super) fn encode(ledger: &mut Ledger, max_bytes: usize) -> Option<Vec<u8>> {
         }
         ledger.cap_points(ledger.point_count() * 9 / 10);
     }
-}
-
-pub(super) fn save(path: &Path, ledger: &mut Ledger) -> io::Result<()> {
-    let bytes = encode(ledger, MAX_WRITE_BYTES)
-        .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "history not serializable"))?;
-    atomic_write(path, &bytes)
 }
