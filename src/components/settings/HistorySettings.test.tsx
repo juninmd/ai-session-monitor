@@ -34,6 +34,16 @@ describe('history settings', () => {
     expect(clearButton()).toHaveFocus();
   });
 
+  it('ties the erase button to the confirmation it opens', async () => {
+    const { user } = show();
+    expect(clearButton()).toHaveAttribute('aria-expanded', 'false');
+    expect(clearButton()).not.toHaveAttribute('aria-controls');
+    await user.click(clearButton());
+    expect(clearButton()).toHaveAttribute('aria-expanded', 'true');
+    const region = document.getElementById(clearButton().getAttribute('aria-controls') ?? '');
+    expect(region).toHaveTextContent(/Apagar todo o histórico salvo/);
+  });
+
   it('erases after the confirmation and announces it', async () => {
     const { user, backend } = show();
     await user.click(clearButton());
