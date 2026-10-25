@@ -7,7 +7,7 @@ export function UpdateBanner({ onOpen }: { onOpen: () => void }) {
   const status = useContext(UpdateContext)?.status;
   if (!status || (status.phase !== 'available' && status.phase !== 'ready')) return null;
   return (
-    <div className="update-banner">
+    <div className="update-banner" role="status">
       <div className="update-banner-lead">
         <Icon name="info" className="update-banner-icon" />
         <span>{t('update.available', { version: status.availableVersion ?? '—' })}</span>
