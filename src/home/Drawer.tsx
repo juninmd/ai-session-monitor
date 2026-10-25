@@ -7,6 +7,7 @@ import { useSettingsApi } from '../app/settingsContext';
 import { useAsyncAction } from '../app/useAsyncAction';
 import type { ViewContext } from '../app/windowModel';
 import { Icon } from '../components/icons';
+import { ActionError } from '../components/panel/ErrorActions';
 import { t } from '../i18n';
 import type { HarnessView } from '../lib/contract';
 import { DrawerShell } from './DrawerShell';
@@ -73,6 +74,7 @@ export function DetailDrawer({
         </>
       }
     >
+      {togglePin.error && <ActionError error={togglePin.error} />}
       <Panel view={view} ctx={ctx} />
     </DrawerShell>
   );
