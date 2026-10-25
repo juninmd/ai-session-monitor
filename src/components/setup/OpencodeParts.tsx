@@ -56,6 +56,7 @@ export function OpencodeLinks({
           <button
             type="button"
             className="btn"
+            disabled={open.pending}
             onClick={() => void open.run('opencode_go_console')}
           >
             {t('opencode.console')}
@@ -63,7 +64,12 @@ export function OpencodeLinks({
           </button>
         )}
         {showBilling && (
-          <button type="button" className="btn" onClick={() => void open.run('opencode_billing')}>
+          <button
+            type="button"
+            className="btn"
+            disabled={open.pending}
+            onClick={() => void open.run('opencode_billing')}
+          >
             {t('opencode.billing')}
             <Icon name="external" />
           </button>
