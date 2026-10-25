@@ -172,9 +172,12 @@ describe('closing notes per source', () => {
     );
     const edit = screen.getByRole('button', { name: 'Editar conexão' });
     expect(edit).toHaveAttribute('aria-expanded', 'false');
+    expect(edit).not.toHaveAttribute('aria-controls');
     expect(screen.queryByLabelText('URL do servidor')).toBeNull();
     await user.click(edit);
     expect(edit).toHaveAttribute('aria-expanded', 'true');
+    const region = document.getElementById(edit.getAttribute('aria-controls') ?? '');
+    expect(region).toContainElement(screen.getByLabelText('URL do servidor'));
     expect(screen.getByLabelText('URL do servidor')).toHaveValue('https://gateway.exemplo.dev');
     await user.click(edit);
     expect(screen.queryByLabelText('URL do servidor')).toBeNull();
