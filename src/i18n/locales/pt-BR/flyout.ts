@@ -78,6 +78,8 @@ export const flyoutMessages = {
   'palette.empty': 'Nada encontrado',
   'palette.foot.navigate': 'navegar',
   'palette.foot.run': 'executar',
+  'palette.key.esc': 'Esc',
+  'palette.key.enter': 'Enter',
 
   // Provider actions (preview only)
   'provider_actions.outcome.reset': 'Reset simulado. Cotas e saldo atualizados na prévia.',

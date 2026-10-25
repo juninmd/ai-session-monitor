@@ -3,8 +3,11 @@
 // under it. Both the provider detail and one settings section ride on this shell; it owns the bar,
 // the scrolling body, and the two things every drawer does — take the keyboard on open, close on
 // the scrim.
-import { type ReactNode, useEffect, useRef } from 'react';
+import { type KeyboardEvent, type ReactNode, useEffect, useRef } from 'react';
 import { Icon } from '../components/icons';
+
+const FOCUSABLE =
+  'button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex="0"]';
 
 export interface DrawerShellProps {
   /** The drawer's own heading id: the dialog and the shell focus it through it. */
@@ -35,14 +38,37 @@ export function DrawerShell({
   children,
 }: DrawerShellProps) {
   const closeRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLElement>(null);
   // Focus moves into the drawer on open; the stage puts it back where it came from.
   useEffect(() => {
     closeRef.current?.focus();
   }, []);
+  // The scrim covers the flyout but leaves its controls in the tab order; Tab wraps inside the drawer.
+  const trapTab = (event: KeyboardEvent<HTMLElement>) => {
+    if (event.key !== 'Tab') return;
+    const controls = panelRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? [];
+    const first = controls[0];
+    const last = controls[controls.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last?.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first?.focus();
+    }
+  };
   return (
     <div className="nx-drawer-host">
       <button type="button" className="nx-drawer-scrim" aria-label={closeLabel} onClick={onClose} />
-      <aside className="nx-drawer" role="dialog" aria-labelledby={titleId} data-size={size}>
+      <aside
+        ref={panelRef}
+        className="nx-drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        data-size={size}
+        onKeyDown={trapTab}
+      >
         <header className="nx-drawer-bar">
           <button
             ref={closeRef}

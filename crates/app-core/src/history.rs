@@ -8,6 +8,7 @@ use std::sync::Mutex;
 
 use usage_model::history::MAX_EPOCHS_PER_WINDOW;
 use usage_model::{ErrorCode, HarnessError, HarnessHistory, HarnessId, HarnessView, ViewState};
+use usage_support::fsutil::atomic_write;
 
 use crate::sync::lock;
 
@@ -29,6 +30,9 @@ struct State {
 pub(crate) struct HistoryStore {
     path: PathBuf,
     state: Mutex<State>,
+    /// Serializes file writes and `clear`, so an older write can never land after a newer one.
+    /// Taken before `state`, never the other way round, and never held by a reader.
+    order: Mutex<()>,
 }
 
 fn write_failed() -> HarnessError {
@@ -38,7 +42,11 @@ fn write_failed() -> HarnessError {
 impl HistoryStore {
     pub(crate) fn load(path: PathBuf, now_secs: i64) -> Self {
         let ledger = disk::load(&path, now_secs);
-        Self { path, state: Mutex::new(State { ledger, dirty: false, last_flush: now_secs }) }
+        Self {
+            path,
+            state: Mutex::new(State { ledger, dirty: false, last_flush: now_secs }),
+            order: Mutex::new(()),
+        }
     }
 
     /// Samples a fresh reading. Failed, stale and empty views carry no new measurement.
@@ -56,25 +64,37 @@ impl HistoryStore {
     /// Writes when something changed and the last write is old enough. A failure keeps the data
     /// in memory and the dirty mark, so the next call retries.
     pub(crate) fn flush_if_due(&self, now_secs: i64) {
-        let mut state = lock(&self.state);
-        if state.dirty && now_secs - state.last_flush >= FLUSH_GAP_SECS {
-            self.write(&mut state, now_secs);
+        let due = {
+            let state = lock(&self.state);
+            state.dirty && now_secs - state.last_flush >= FLUSH_GAP_SECS
+        };
+        if due {
+            self.write(now_secs);
         }
     }
 
     /// For shutdown: writes whatever is pending, regardless of the gap.
     pub(crate) fn flush(&self, now_secs: i64) {
-        let mut state = lock(&self.state);
-        if state.dirty {
-            self.write(&mut state, now_secs);
+        let dirty = lock(&self.state).dirty;
+        if dirty {
+            self.write(now_secs);
         }
     }
 
-    fn write(&self, state: &mut State, now_secs: i64) {
-        if disk::save(&self.path, &mut state.ledger).is_ok() {
+    /// Encodes under the state lock, then writes the file without it, so a query never waits on
+    /// the disk. A reading that lands during the write marks the ledger dirty again.
+    fn write(&self, now_secs: i64) {
+        let _order = lock(&self.order);
+        let bytes = {
+            let mut state = lock(&self.state);
             state.dirty = false;
+            state.last_flush = now_secs;
+            disk::encode(&mut state.ledger, disk::MAX_WRITE_BYTES)
+        };
+        let written = bytes.is_some_and(|bytes| atomic_write(&self.path, &bytes).is_ok());
+        if !written {
+            lock(&self.state).dirty = true;
         }
-        state.last_flush = now_secs;
     }
 
     /// The newest `limit` epochs of each window of `harness`.
@@ -85,6 +105,7 @@ impl HistoryStore {
 
     /// Forgets everything, in memory and on disk (the set-aside copy included).
     pub(crate) fn clear(&self, now_secs: i64) -> Result<(), HarnessError> {
+        let _order = lock(&self.order);
         let mut state = lock(&self.state);
         state.ledger = Ledger::default();
         state.dirty = false;

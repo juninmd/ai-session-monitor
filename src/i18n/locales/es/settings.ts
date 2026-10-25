@@ -56,6 +56,11 @@ export const settingsMessages = {
   'settings.notify_out': 'Notificar cuando se agote',
   'settings.notify_reset': 'Notificar cuando la ventana se restablezca',
   'settings.notify_risk': 'Notificar si es probable que la cuota se agote antes de renovarse',
+  'settings.quiet_hours': 'Horario silencioso',
+  'settings.quiet_hint':
+    'Las notificaciones del escritorio en ese horario se descartan. La ventana sigue actualizándose.',
+  'settings.quiet_from': 'Silenciar desde',
+  'settings.quiet_to': 'Silenciar hasta',
   'settings.sources': 'Fuentes de datos',
   'settings.enabled': 'Leer esta fuente',
   'settings.unofficial_chip': 'no oficial',

@@ -185,6 +185,42 @@ export function SelectRow<V extends string | number>(props: SelectRowProps<V>) {
   );
 }
 
+interface TimeRowProps {
+  id: string;
+  label: string;
+  /** Minutes after local midnight, `0..1439`. */
+  minutes: number;
+  onChange: (minutes: number) => void;
+  error?: string | null;
+}
+
+/** A clock time as `HH:MM`, the value a `type="time"` input speaks. */
+const clockOf = (minutes: number) =>
+  `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
+
+export function TimeRow({ id, label, minutes, onChange, error }: TimeRowProps) {
+  return (
+    <>
+      <div className="srow">
+        <div className="lbl">
+          <label htmlFor={id}>{label}</label>
+        </div>
+        <input
+          id={id}
+          type="time"
+          value={clockOf(minutes)}
+          aria-describedby={describedBy(error && `${id}-err`)}
+          onChange={(event) => {
+            const [hh = Number.NaN, mm = Number.NaN] = event.target.value.split(':').map(Number);
+            if (Number.isInteger(hh) && Number.isInteger(mm)) onChange(hh * 60 + mm);
+          }}
+        />
+      </div>
+      {error && <ErrorLine id={`${id}-err`}>{error}</ErrorLine>}
+    </>
+  );
+}
+
 interface SegmentedProps<V extends string> {
   name: string;
   legend: string;

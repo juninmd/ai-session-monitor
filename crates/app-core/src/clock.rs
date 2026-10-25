@@ -3,9 +3,16 @@
 
 use std::time::{SystemTime, UNIX_EPOCH};
 
+use chrono::Local;
+
 pub trait Clock: Send + Sync {
     /// Seconds since the Unix epoch (UTC).
     fn now_secs(&self) -> i64;
+
+    /// Seconds the local zone is ahead of UTC right now. UTC unless a clock says otherwise.
+    fn utc_offset_secs(&self) -> i32 {
+        0
+    }
 }
 
 /// The operating system clock.
@@ -17,6 +24,10 @@ impl Clock for SystemClock {
         SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .map_or(0, |elapsed| i64::try_from(elapsed.as_secs()).unwrap_or(i64::MAX))
+    }
+
+    fn utc_offset_secs(&self) -> i32 {
+        Local::now().offset().local_minus_utc()
     }
 }
 

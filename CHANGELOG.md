@@ -8,6 +8,8 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 - Opt-in risk alert (`general.notifyOnRisk`): one notification per window when the pace projects it
   running out before it renews.
+- Quiet hours (`general.quietHoursOn`, off by default): desktop notifications whose time falls in
+  the window you pick are dropped, not queued. The window can wrap past midnight. Settings → General.
 - Cursor and GitHub Copilot (both unofficial, opt-in): Cursor reads the sign-in token from its local
   database and shows the included usage and on-demand spend; Copilot shows the monthly premium
   requests with a pasted token or the one the extension keeps on disk.
@@ -91,6 +93,8 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Changed
 
+- The command palette names its Esc and Enter keys in the flyout's language (Intro and Échap in
+  Spanish and French, for example).
 - The flyout has one home screen instead of a tab per harness: **Triagem** (every reachable provider
   in one urgency-ordered grid, each card carrying its own quota windows and renewals), **Horizonte**
   (one runway bar per provider, from now to that window's renewal) and **Canais de cota** (the
@@ -114,6 +118,8 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 - Screen readers announce a failed read, a stale-data notice and the update banner when they appear,
   and the command palette keeps a visible focus cue on its search field.
+- The provider and settings drawers are announced as modal and keep Tab inside them, so keyboard
+  focus no longer leaks to the flyout behind the scrim.
 - Claude shim install keeps the previous `statusLine` (saved and chained) instead of replacing it.
 - Shim state is per Claude profile: files in the data dir carry an FNV-1a suffix of the config dir,
   and the saved `statusLine` record is also kept beside `settings.json`
@@ -153,6 +159,8 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Security
 
+- The Claude and Antigravity CLI probes start in an empty directory under the app's data dir, not in
+  the shared temp dir, so a stray `.claude` folder there is never read as project settings.
 - All network access happens in Rust through one hardened client (https only, no redirects, size and
   time caps); the webview has no network access and never receives a secret.
 - The flyout capability grants only `core:event:allow-listen` and `allow-unlisten`; the webview

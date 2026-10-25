@@ -132,3 +132,22 @@ fn the_stored_file_holds_only_ids_times_and_percentages() {
     let text = fs::read_to_string(dir.path().join("history.json")).expect("read");
     assert!(!text.contains("secret"), "{text}");
 }
+
+#[test]
+fn a_failed_write_keeps_the_data_pending_for_the_next_flush() {
+    let dir = TempDir::new().expect("temp dir");
+    let file = dir.path().join("history.json");
+    let store = store(&dir);
+    // A directory where the file belongs: the rename cannot replace it, so the write fails.
+    fs::create_dir(&file).expect("obstacle");
+    store.record(&view(10.0), NOW + 1);
+    store.flush(NOW + 2);
+    fs::remove_dir(&file).expect("clear the obstacle");
+    store.flush(NOW + 3);
+    assert!(file.is_file(), "the next flush wrote what the failed one could not");
+    assert_eq!(store_at(&dir).query(HarnessId::Claude, 8).epochs[0].points[0].used_pct, 10.0);
+}
+
+fn store_at(dir: &TempDir) -> HistoryStore {
+    HistoryStore::load(dir.path().join("history.json"), NOW + 4)
+}

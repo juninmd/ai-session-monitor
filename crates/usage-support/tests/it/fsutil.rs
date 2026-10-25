@@ -9,7 +9,18 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 use serde::Deserialize;
-use usage_support::{atomic_write, read_capped, read_json_capped};
+use usage_support::{atomic_write, neutral_dir, read_capped, read_json_capped};
+
+#[test]
+fn the_cli_cwd_lives_under_the_app_data_dir_and_is_reused() {
+    // A shared temp dir may hold a `.claude` folder from another tool; the app's own dir never does.
+    let data = tempfile::tempdir().unwrap();
+    let dir = neutral_dir(data.path()).unwrap();
+    assert_eq!(dir, data.path().join("cli-cwd"));
+    assert!(dir.is_dir());
+    assert_eq!(neutral_dir(data.path()).unwrap(), dir);
+    assert_eq!(fs::read_dir(&dir).unwrap().count(), 0);
+}
 
 fn entries(dir: &Path) -> Vec<String> {
     let mut names: Vec<String> = fs::read_dir(dir)
