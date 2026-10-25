@@ -6,12 +6,13 @@
 [![Tauri 2](https://img.shields.io/badge/Tauri-v2-24C8DB?style=for-the-badge&logo=tauri&logoColor=white)](https://v2.tauri.app/)
 [![Rust 2024](https://img.shields.io/badge/Rust-2024%20(1.97.1)-DEA584?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org/)
 [![React 19](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![CI](https://github.com/juninmd/ai-session-monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/juninmd/ai-session-monitor/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![Auto Updates](https://img.shields.io/badge/Updates-Minisign%20Signed-informational?style=for-the-badge&logo=github)](https://github.com/juninmd/ai-session-monitor/releases)
 
 **Monitore a cota restante, o tempo de reset e o ritmo de consumo das suas sessões de IA direto da bandeja do Windows.**
 
-[Recursos](#-principais-recursos) • [Provedores Suportados](#-provedores-suportados) • [Instalação](#-instalação-e-download) • [Segurança](#-privacidade-e-segurança) • [Desenvolvimento](#-desenvolvimento-e-build) • [Arquitetura](#-arquitetura)
+[Recursos](#-principais-recursos) • [Tela](#-tela) • [Provedores Suportados](#-provedores-suportados) • [Segurança](#-privacidade-e-segurança) • [Instalação](#-instalação-e-download) • [Uso](#-uso) • [Desenvolvimento](#-desenvolvimento-e-build) • [Testes e CI](#-testes-lint-e-gates-de-ci) • [Arquitetura](#-arquitetura)
 
 </div>
 
@@ -19,7 +20,7 @@
 
 ## 💡 O que é o AI Session Monitor?
 
-O **AI Session Monitor** é um aplicativo nativo e ultraleve para a área de notificação (System Tray) do Windows. Desenvolvido com **Tauri 2, Rust e React 19**, ele consolida em um único painel elegante o status das suas sessões de codificação e créditos em **16 ferramentas e provedores de IA**.
+O **AI Session Monitor** é um aplicativo nativo e ultraleve para a área de notificação (bandeja do sistema) do Windows. Desenvolvido com **Tauri 2, Rust e React 19**, ele consolida em um único painel elegante o status das suas sessões de codificação e créditos em **16 ferramentas e provedores de IA**. É para quem programa com assistentes de IA e quer saber, de relance, quanto ainda dá para usar antes de a cota acabar.
 
 Nunca mais seja pego de surpresa pelo fim da janela de 5 horas do Claude, pela cota semanal do Codex ou pelo saldo zerado de uma API no meio de uma tarefa complexa.
 
@@ -28,16 +29,23 @@ Nunca mais seja pego de surpresa pelo fim da janela de 5 horas do Claude, pela c
 ## ✨ Principais Recursos
 
 - ⏱️ **Janelas de Sessão em Tempo Real:** Acompanhe a porcentagem restante e o tempo exato até o próximo reset em janelas de 5 horas, semanais e mensais.
-- ⚡ **Estimativa de Ritmo (Burn Rate):** Sabe em quanto tempo sua cota vai acabar se continuar codando no ritmo atual.
-- 🛡️ **Zero-Trust & Privacidade Total:** Suas chaves ficam guardadas no **Windows Credential Manager**. O app é estritamente **read-only**, não grava em servidores remotos e o webview não tem acesso à internet externa.
+- ⚡ **Estimativa de Ritmo de Consumo:** Sabe em quanto tempo sua cota vai acabar se continuar codando no ritmo atual.
+- 🛡️ **Privacidade Total e Zero Confiança:** Suas chaves ficam guardadas no **Windows Credential Manager**. O app é estritamente **read-only**, não grava em servidores remotos e o webview não tem acesso à internet externa.
 - 📊 **Histórico Local de 35 Dias:** Visualize tendências de consumo diretamente pelo app. Os dados ficam salvos apenas na sua máquina em `history.json` e podem ser desativados a qualquer momento.
 - 🎛️ **Navegação entre Provedores:** Busque uma ferramenta e veja o estado de todas no quadro “Todas as ferramentas”. Ative ou desative fontes nas Configurações.
 - 🔄 **Releases Assinadas:** O pipeline do GitHub gera instaladores com **Minisign** e verifica o manifesto, os bytes baixados e as assinaturas antes da publicação. O aplicativo consulta e instala atualizações assinadas; a prova da primeira publicação com esse fluxo ainda está pendente.
 - 🔔 **Alertas Inteligentes:** Notificações discretas na bandeja do Windows quando uma sessão atingir níveis de alerta ou esgotamento.
-- 🌐 **Dez Idiomas:** Inglês (padrão), 简体中文, हिन्दी, Español, Français, العربية, বাংলা, Português (Brasil), Русский e اردو, em Configurações → Geral → Idioma. Notificações, ícone e menu da bandeja acompanham a escolha.
-- 🎨 **Temas:** Default, Hueco Mundo, Dracula, Glass, Light ou seguir o tema do sistema, em Configurações → Geral → Tema.
-- 🙈 **Oculto de Capturas:** Opção para que a janela não apareça em capturas de tela nem em compartilhamento de tela.
-- 🔌 **API Local Opcional:** JSON somente leitura em `127.0.0.1:6737` para outras ferramentas lerem seus dados. Vem desligada.
+- 🌍 **10 Idiomas de Interface:** Inglês (padrão), `zh-CN`, `hi`, `es`, `fr`, `ar`, `bn`, `pt-BR`, `ru` e `ur`, com suporte a escrita da direita para a esquerda; o tema visual é uma escolha separada.
+- 🔌 **API Local Opcional:** `GET /v1/limits` em `127.0.0.1:6737`, somente leitura, desligada por padrão, para scripts e barras de status.
+- 🙈 **Ocultar da Captura de Tela:** Opção que protege o conteúdo das janelas contra gravação e prints (`general.hideFromCapture`).
+
+---
+
+## 🖼️ Tela
+
+![Painel do AI Session Monitor no backend mock, cenário demo](docs/screenshot.png)
+
+Captura do painel rodando no navegador com o backend mock (`pnpm dev`, cenário `?mock=demo`): os dados são fabricados e o idioma é o padrão (inglês). Nenhuma conta real foi lida.
 
 ---
 
@@ -77,7 +85,6 @@ Projetado sob o princípio do **privilégio mínimo**:
 3. **Isolamento de Rede na Interface:** A janela do app roda com **Content Security Policy (CSP)** estrita (`connect-src ipc:`). O frontend React não faz chamadas HTTP diretas; todas as requisições partem do núcleo em Rust através de um cliente seguro (`SafeClient`) com limites rigorosos de tempo e tamanho.
 4. **Proteção Contra Vazamento em Proxies:** O cliente HTTP em Rust ignora deliberadamente variáveis de ambiente `HTTP(S)_PROXY` do sistema, evitando que proxies de terceiros interceptem credenciais.
 5. **Consentimento Explícito:** Fontes que leem arquivos locais ou inspecionam processos (como Claude, OpenCode e Antigravity) permanecem pausadas até você autorizar expressamente na aba.
-6. **API Local Restrita:** Desligada por padrão. Quando ligada, escuta apenas em `127.0.0.1`, valida o cabeçalho `Host`, recusa requisições com `Origin` e não libera CORS. Responde somente leituras.
 
 ---
 
@@ -92,6 +99,39 @@ Acesse a página de **[Releases](https://github.com/juninmd/ai-session-monitor/r
 - `AI.Session.Monitor_<versao>_x64-setup.exe` (Instalador NSIS por usuário, não requer elevação de administrador).
 
 O aplicativo cria o ícone na bandeja do sistema. O fluxo de atualização implementado consulta o GitHub automaticamente a cada 6 horas (configurável), mostra a nova versão e permite baixar e instalar após confirmação. O instalador é verificado por assinatura antes da execução. A primeira publicação com esse fluxo e a prova de upgrade entre versões assinadas ainda estão pendentes; veja [o progresso e as validações](docs/ui-updater-progress.md).
+
+---
+
+## 🧭 Uso
+
+Exemplos reais; a saída citada vem de execução local ou dos testes do repositório.
+
+**1. Explorar a interface sem tocar nas suas contas** (backend mock no navegador):
+
+```sh
+pnpm dev
+# VITE v8.3.4  ready ... Local: http://127.0.0.1:1420/
+```
+
+Abra `http://127.0.0.1:1420/?mock=critical` para ver sessões em esgotamento iminente (cenários na seção de desenvolvimento).
+
+**2. Checar lint e formatação (a suíte completa é `pnpm verify`):**
+
+```sh
+pnpm lint
+# Checked 481 files in 1462ms. No fixes applied.
+```
+
+**3. Ler os limites pela API local** (precisa ligar "API local" nas Configurações; saída não verificada, formato em [`docs/ipc.md`](docs/ipc.md)):
+
+```sh
+curl -fsS http://127.0.0.1:6737/v1/health
+# {"ok":true}
+curl -fsS http://127.0.0.1:6737/v1/limits
+# {"version":1,"generatedAt":"...","harnesses":[{"id":"claude","state":"ready","windows":[...]}]}
+```
+
+**4. Rodar o app nativo isolado do seu perfil** (compilação de debug): veja "Isolamento Seguro em Builds de Debug" abaixo.
 
 ---
 
@@ -157,9 +197,56 @@ pnpm tauri build
 
 ---
 
+## ✅ Testes, Lint e Gates de CI
+
+| Tarefa | Comando |
+|---|---|
+| Lint e formatação (Biome) | `pnpm lint` (corrige formatação com `pnpm format`) |
+| Tipos (TypeScript) | `pnpm typecheck` |
+| Testes web (Vitest) + script de release (`node --test`) | `pnpm test` |
+| Build web | `pnpm build` |
+| Tudo da web em sequência | `pnpm verify` |
+| Rust: formatação, clippy e testes | `cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets -- -D warnings`, `cargo test --workspace` |
+
+O `src-tauri` compila contra `../dist`: rode `pnpm build` antes de `cargo clippy --workspace` ou `cargo test --workspace` em um checkout novo.
+
+Workflows em `.github/workflows`:
+
+| Workflow | O que checa |
+|---|---|
+| `ci.yml` | `web`: `pnpm verify` (Ubuntu). `desktop`: build do frontend, `cargo fmt`, `clippy -D warnings`, `cargo test --workspace` e `pnpm tauri build --no-bundle` (Windows). `audit`: RustSec, `cargo-deny` e `pnpm audit --audit-level high` |
+| `security.yml` | Varredura de segurança via `juninmd/base-actions` (manual, push na `master` e semanal) |
+| `release.yml` | Planeja e publica releases assinadas (a cada 6 h e a cada push na `master`) |
+| `release-commit.yml` | Reutilizado pelo `release.yml`: verifica o commit (`pnpm verify` e gates Rust) e publica o instalador |
+
+---
+
 ## 🏛️ Arquitetura
 
 O projeto é organizado como um workspace modular garantindo separação rígida de responsabilidades:
+
+```mermaid
+flowchart LR
+    subgraph Fontes
+        CLI["Claude Code / Codex / Antigravity<br/>(processos e arquivos locais)"]
+        API["APIs de provedores<br/>(Cursor, Copilot, OpenRouter, ...)"]
+    end
+    SHIM["crates/statusline-shim"]
+    COL["crates/collector-*"]
+    CORE["crates/app-core<br/>hub, scheduler, notificações"]
+    TAURI["src-tauri<br/>bandeja, flyout, keyring, IPC"]
+    UI["src<br/>React 19 (Backend)"]
+    LAPI["API local 127.0.0.1:6737<br/>(opcional)"]
+
+    CLI --> COL
+    API -->|"SafeClient (usage-support)"| COL
+    SHIM -->|"arquivo atômico"| COL
+    COL -->|"HarnessView"| TAURI
+    TAURI --> CORE
+    CORE -->|"snapshot"| TAURI
+    TAURI -->|"IPC (docs/ipc.md)"| UI
+    CORE --> LAPI
+```
 
 ```
 ai-session-monitor/

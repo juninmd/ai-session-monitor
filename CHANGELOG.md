@@ -112,6 +112,8 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Fixed
 
+- Screen readers announce a failed read, a stale-data notice and the update banner when they appear,
+  and the command palette keeps a visible focus cue on its search field.
 - Claude shim install keeps the previous `statusLine` (saved and chained) instead of replacing it.
 - Shim state is per Claude profile: files in the data dir carry an FNV-1a suffix of the config dir,
   and the saved `statusLine` record is also kept beside `settings.json`

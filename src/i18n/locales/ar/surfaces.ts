@@ -58,12 +58,6 @@ export const surfacesMessages = {
   'triage.loading': 'جارٍ التحميل',
   'triage.amount_of': '{used} من {limit}',
   'triage.pinned': 'مثبّت في الأعلى',
-  'triage.more_quotas.zero': '+{count} حصة في التفاصيل',
-  'triage.more_quotas.one': '+حصة واحدة في التفاصيل',
-  'triage.more_quotas.two': '+حصتان في التفاصيل',
-  'triage.more_quotas.few': '+{count} حصص في التفاصيل',
-  'triage.more_quotas.many': '+{count} حصة في التفاصيل',
-  'triage.more_quotas.other': '+{count} حصة في التفاصيل',
   'triage.empty.title': 'لا يوجد مصدر قيد المراقبة',
   'triage.empty.body':
     'لم تتم قراءة أي شيء بعد. اختر ما تريد متابعته لتفتح اللوحة مرتّبة حسب الإلحاح، مع توقّع كل حصة على بطاقتها مباشرة.',

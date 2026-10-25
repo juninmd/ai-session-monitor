@@ -49,9 +49,6 @@ export const surfacesMessages = {
   'triage.loading': 'Cargando',
   'triage.amount_of': '{used} de {limit}',
   'triage.pinned': 'Fijado arriba',
-  'triage.more_quotas.one': '+{count} cuota en los detalles',
-  'triage.more_quotas.many': '+{count} de cuotas en los detalles',
-  'triage.more_quotas.other': '+{count} cuotas en los detalles',
   'triage.empty.title': 'Ninguna fuente monitoreada',
   'triage.empty.body':
     'Aún no se ha leído nada. Elige qué seguir y el panel se abrirá ordenado por urgencia, con la previsión de cada cuota en su tarjeta.',

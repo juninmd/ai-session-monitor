@@ -26,8 +26,6 @@ export const settingsMessages = {
     'Serves the readings as read-only JSON at 127.0.0.1:{port} for scripts and status bars. Any program on this computer can read it. Off by default.',
   'settings.language': 'Language',
   'settings.language_hint': 'Applies to the panel and to notifications.',
-  'settings.skin': 'Theme',
-  'settings.skin_hint': 'Only changes the colors of this panel; saved on this computer.',
   'skin.system': 'Follow the system',
   'skin.default': 'Default',
   'skin.hueco_mundo': 'Hueco Mundo',

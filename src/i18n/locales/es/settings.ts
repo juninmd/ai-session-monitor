@@ -26,8 +26,6 @@ export const settingsMessages = {
     'Ofrece las lecturas como JSON de solo lectura en 127.0.0.1:{port} para scripts y barras de estado. Cualquier programa de este equipo puede leerlas. Desactivada por defecto.',
   'settings.language': 'Idioma',
   'settings.language_hint': 'Se aplica al panel y a las notificaciones.',
-  'settings.skin': 'Tema',
-  'settings.skin_hint': 'Solo cambia los colores de este panel; se guarda en este equipo.',
   'skin.system': 'Seguir el sistema',
   'skin.default': 'Predeterminado',
   'skin.hueco_mundo': 'Hueco Mundo',

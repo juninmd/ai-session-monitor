@@ -26,8 +26,6 @@ export const settingsMessages = {
     'ریڈنگز کو اسکرپٹس اور اسٹیٹس بارز کے لیے 127.0.0.1:{port} پر صرف پڑھنے والے JSON کے طور پر پیش کرتا ہے۔ اس کمپیوٹر کا کوئی بھی پروگرام اسے پڑھ سکتا ہے۔ ڈیفالٹ میں بند۔',
   'settings.language': 'زبان',
   'settings.language_hint': 'پینل اور نوٹیفکیشنز پر لاگو ہوتی ہے۔',
-  'settings.skin': 'تھیم',
-  'settings.skin_hint': 'صرف اس پینل کے رنگ بدلتا ہے؛ اسی کمپیوٹر پر محفوظ رہتا ہے۔',
   'skin.system': 'سسٹم کے مطابق',
   'skin.default': 'ڈیفالٹ',
   'skin.hueco_mundo': 'Hueco Mundo',
