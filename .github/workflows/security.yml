@@ -7,6 +7,12 @@ on:
   schedule:
     - cron: '0 0 * * 0'
 
+# The reusable scan only needs to read the repo; the caller grants no more than that.
+permissions:
+  contents: read
+
 jobs:
   scan:
-    uses: juninmd/base-actions/.github/workflows/reusable-security-scan.yml@main
+    # Pinned to a commit, not `@main`, so a change in base-actions cannot alter this repo's scan
+    # unreviewed. Bump the SHA on purpose.
+    uses: juninmd/base-actions/.github/workflows/reusable-security-scan.yml@b1a957daf1a734fdfe18b28f984e85b3c471f4d4 # main @ 2026-10-25
