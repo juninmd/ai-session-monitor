@@ -1,6 +1,7 @@
 // The two list surfaces, rendered on fabricated data: the urgency-ordered grid and the horizon.
 import { screen, waitFor } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { BackendError } from '../lib/backend';
 import triageCss from './home-triage.css?raw';
 import { detail, mount, openDetail, panel, RANK, rows } from './testHarness';
 
@@ -226,6 +227,17 @@ describe('triage surface', () => {
     ).toBeVisible();
     expect(screen.getByRole('button', { name: /^Continuar com/ })).toBeVisible();
     expect(screen.queryByRole('button', { name: /^Triagem/ })).toBeNull();
+  });
+
+  it('says why the first-run choice was not saved and stays on the choice', async () => {
+    const { backend, user } = mount('fresh');
+    await screen.findByRole('heading', { name: /O que você quer acompanhar\?/ });
+    vi.spyOn(backend, 'saveSettings').mockRejectedValueOnce(
+      new BackendError({ code: 'internal', retryable: false, params: {} }),
+    );
+    await user.click(screen.getByRole('button', { name: /^Continuar com/ }));
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /O que você quer acompanhar\?/ })).toBeVisible();
   });
 
   it('renders the setup surface for a provider that cannot be read yet', async () => {
