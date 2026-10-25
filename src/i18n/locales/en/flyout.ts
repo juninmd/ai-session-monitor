@@ -79,6 +79,8 @@ export const flyoutMessages = {
   'palette.empty': 'Nothing found',
   'palette.foot.navigate': 'navigate',
   'palette.foot.run': 'run',
+  'palette.key.esc': 'Esc',
+  'palette.key.enter': 'Enter',
 
   // Provider actions (preview only)
   'provider_actions.outcome.reset': 'Reset simulated. Quotas and balance updated in the preview.',

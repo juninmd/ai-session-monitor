@@ -86,6 +86,8 @@ export const flyoutMessages = {
   'palette.empty': 'Ничего не найдено',
   'palette.foot.navigate': 'навигация',
   'palette.foot.run': 'выполнить',
+  'palette.key.esc': 'Esc',
+  'palette.key.enter': 'Enter',
 
   // Provider actions (preview only)
   'provider_actions.outcome.reset': 'Сброс имитирован. Квоты и баланс обновлены в предпросмотре.',

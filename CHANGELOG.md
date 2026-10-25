@@ -89,6 +89,8 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Changed
 
+- The command palette names its Esc and Enter keys in the flyout's language (Intro and Échap in
+  Spanish and French, for example).
 - The flyout has one home screen instead of a tab per harness: **Triagem** (every reachable provider
   in one urgency-ordered grid, each card carrying its own quota windows and renewals), **Horizonte**
   (one runway bar per provider, from now to that window's renewal) and **Canais de cota** (the

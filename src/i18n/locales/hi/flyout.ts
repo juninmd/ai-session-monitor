@@ -76,6 +76,8 @@ export const flyoutMessages = {
   'palette.empty': 'कुछ नहीं मिला',
   'palette.foot.navigate': 'नेविगेट करें',
   'palette.foot.run': 'चलाएँ',
+  'palette.key.esc': 'Esc',
+  'palette.key.enter': 'Enter',
 
   // Provider actions (preview only)
   'provider_actions.outcome.reset': 'रीसेट का सिमुलेशन हुआ। पूर्वावलोकन में कोटा और बैलेंस अपडेट हो गए।',
