@@ -110,6 +110,8 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Fixed
 
+- The provider and settings drawers are announced as modal and keep Tab inside them, so keyboard
+  focus no longer leaks to the flyout behind the scrim.
 - Claude shim install keeps the previous `statusLine` (saved and chained) instead of replacing it.
 - Shim state is per Claude profile: files in the data dir carry an FNV-1a suffix of the config dir,
   and the saved `statusLine` record is also kept beside `settings.json`
