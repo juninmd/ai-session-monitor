@@ -6,6 +6,8 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Added
 
+- Opt-in risk alert (`general.notifyOnRisk`): one notification per window when the pace projects it
+  running out before it renews.
 - Cursor and GitHub Copilot (both unofficial, opt-in): Cursor reads the sign-in token from its local
   database and shows the included usage and on-demand spend; Copilot shows the monthly premium
   requests with a pasted token or the one the extension keeps on disk.
@@ -157,4 +159,5 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
   told once; the `authHeader` setting accepts only header-name characters and refuses headers the
   HTTP client sets itself, and custom paths refuse UNC shares and device paths.
 - Supply chain: direct crates and npm packages must be at least 7 days old, pnpm install scripts
-  are denied, and CI runs RustSec audit and `cargo deny` (licences, bans, sources).
+  are denied, and CI runs RustSec audit and `cargo deny` (licences, bans, sources), plus a security
+  scan workflow (`.github/workflows/security.yml`).

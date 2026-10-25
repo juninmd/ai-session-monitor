@@ -19,7 +19,7 @@
 
 ## 💡 O que é o AI Session Monitor?
 
-O **AI Session Monitor** é um aplicativo nativo e ultraleve para a área de notificação (System Tray) do Windows. Desenvolvido com **Tauri 2, Rust e React 19**, ele consolida em um único painel elegante o status das suas sessões de codificação e créditos em **14 ferramentas e provedores de IA**.
+O **AI Session Monitor** é um aplicativo nativo e ultraleve para a área de notificação (System Tray) do Windows. Desenvolvido com **Tauri 2, Rust e React 19**, ele consolida em um único painel elegante o status das suas sessões de codificação e créditos em **16 ferramentas e provedores de IA**.
 
 Nunca mais seja pego de surpresa pelo fim da janela de 5 horas do Claude, pela cota semanal do Codex ou pelo saldo zerado de uma API no meio de uma tarefa complexa.
 
@@ -32,8 +32,12 @@ Nunca mais seja pego de surpresa pelo fim da janela de 5 horas do Claude, pela c
 - 🛡️ **Zero-Trust & Privacidade Total:** Suas chaves ficam guardadas no **Windows Credential Manager**. O app é estritamente **read-only**, não grava em servidores remotos e o webview não tem acesso à internet externa.
 - 📊 **Histórico Local de 35 Dias:** Visualize tendências de consumo diretamente pelo app. Os dados ficam salvos apenas na sua máquina em `history.json` e podem ser desativados a qualquer momento.
 - 🎛️ **Navegação entre Provedores:** Busque uma ferramenta e veja o estado de todas no quadro “Todas as ferramentas”. Ative ou desative fontes nas Configurações.
-- 🔄 **Releases Assinadas:** O pipeline do GitHub gera instaladores com **Minisign** e verifica o manifesto, os bytes baixados e as assinaturas antes da publicação. A integração da consulta e instalação no aplicativo está em desenvolvimento.
+- 🔄 **Releases Assinadas:** O pipeline do GitHub gera instaladores com **Minisign** e verifica o manifesto, os bytes baixados e as assinaturas antes da publicação. O aplicativo consulta e instala atualizações assinadas; a prova da primeira publicação com esse fluxo ainda está pendente.
 - 🔔 **Alertas Inteligentes:** Notificações discretas na bandeja do Windows quando uma sessão atingir níveis de alerta ou esgotamento.
+- 🌐 **Dez Idiomas:** Inglês (padrão), 简体中文, हिन्दी, Español, Français, العربية, বাংলা, Português (Brasil), Русский e اردو, em Configurações → Geral → Idioma. Notificações, ícone e menu da bandeja acompanham a escolha.
+- 🎨 **Temas:** Default, Hueco Mundo, Dracula, Glass, Light ou seguir o tema do sistema, em Configurações → Geral → Tema.
+- 🙈 **Oculto de Capturas:** Opção para que a janela não apareça em capturas de tela nem em compartilhamento de tela.
+- 🔌 **API Local Opcional:** JSON somente leitura em `127.0.0.1:6737` para outras ferramentas lerem seus dados. Vem desligada.
 
 ---
 
@@ -73,6 +77,7 @@ Projetado sob o princípio do **privilégio mínimo**:
 3. **Isolamento de Rede na Interface:** A janela do app roda com **Content Security Policy (CSP)** estrita (`connect-src ipc:`). O frontend React não faz chamadas HTTP diretas; todas as requisições partem do núcleo em Rust através de um cliente seguro (`SafeClient`) com limites rigorosos de tempo e tamanho.
 4. **Proteção Contra Vazamento em Proxies:** O cliente HTTP em Rust ignora deliberadamente variáveis de ambiente `HTTP(S)_PROXY` do sistema, evitando que proxies de terceiros interceptem credenciais.
 5. **Consentimento Explícito:** Fontes que leem arquivos locais ou inspecionam processos (como Claude, OpenCode e Antigravity) permanecem pausadas até você autorizar expressamente na aba.
+6. **API Local Restrita:** Desligada por padrão. Quando ligada, escuta apenas em `127.0.0.1`, valida o cabeçalho `Host`, recusa requisições com `Origin` e não libera CORS. Responde somente leituras.
 
 ---
 
