@@ -155,6 +155,11 @@ Release build only; the test overrides skip this on purpose.
       plugin only sets the app identity for installed builds, so a debug build is expected to
       show Windows PowerShell as the source.
 - [ ] Do Not Disturb / Focus Assist holds the toast back as usual.
+- [ ] Quiet hours (`general.quietHoursOn`): set the window to start a few minutes ago and end a few
+      minutes from now, on this machine's clock. A window running out inside it shows no toast, and
+      the flyout still shows the new state. After the window ends, the next reset toast does show.
+      Repeat with the window across midnight (for example 23:00 to 01:00) and check the local time,
+      not UTC. Note the UTC offset and whether DST is in effect at the time of the check.
 - [ ] Put garbage in `settings.json` while the app is closed, then start it: one toast titled
       `Configurações restauradas` appears right after the start (the service announces it, once
       per start) and names `settings.corrupt-<epoch>.json` with no folder path. The app runs on
