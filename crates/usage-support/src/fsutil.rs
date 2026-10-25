@@ -18,6 +18,14 @@ const TEMP_NAME_STEM_CHARS: usize = 64;
 const PREALLOCATE_LIMIT: u64 = 1 << 20;
 const UTF8_BOM: &[u8] = b"\xEF\xBB\xBF";
 
+/// The directory a CLI child runs in, so it starts outside any project. It lives under the app's
+/// own data dir: a shared temp dir may hold a `.claude` folder that someone else left there.
+pub fn neutral_dir(data_dir: &Path) -> io::Result<PathBuf> {
+    let dir = data_dir.join("cli-cwd");
+    fs::create_dir_all(&dir)?;
+    Ok(dir)
+}
+
 /// Replaces `path` with `bytes` so a concurrent reader sees the old or the new content, never a
 /// partial or empty file: the bytes go to a temp file in the same directory, are flushed and
 /// synced, then renamed over the target. Missing parent directories are created; the temp file is

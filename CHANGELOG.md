@@ -153,6 +153,8 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Security
 
+- The Claude and Antigravity CLI probes start in an empty directory under the app's data dir, not in
+  the shared temp dir, so a stray `.claude` folder there is never read as project settings.
 - All network access happens in Rust through one hardened client (https only, no redirects, size and
   time caps); the webview has no network access and never receives a secret.
 - The flyout capability grants only `core:event:allow-listen` and `allow-unlisten`; the webview

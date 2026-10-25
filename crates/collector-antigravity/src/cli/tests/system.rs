@@ -22,20 +22,27 @@ fn ctx_in(home: &Path) -> Ctx {
     Ctx::new(NOW, home, home)
 }
 
-/// Prints the fixture only for exactly the four arguments the collector must send.
-fn picky_script() -> String {
+/// Prints the fixture only for exactly the four arguments the collector must send, from its
+/// app-owned working directory (exit 5 otherwise).
+fn picky_script(cwd: &Path) -> String {
     // `type` rejects a path that mixes both separators.
     let fixture = FIXTURE.replace('/', "\\");
+    let cwd = cwd.display();
     format!(
         "@echo off\r\nif not \"%~1\"==\"-p\" exit /b 3\r\nif not \"%~2\"==\"/usage\" exit /b 3\r\n\
          if not \"%~3\"==\"--output-format\" exit /b 3\r\nif not \"%~4\"==\"json\" exit /b 3\r\n\
-         if not \"%~5\"==\"\" exit /b 3\r\ntype \"{fixture}\"\r\n"
+         if not \"%~5\"==\"\" exit /b 3\r\nif /i not \"%CD%\"==\"{cwd}\" exit /b 5\r\n\
+         type \"{fixture}\"\r\n"
     )
 }
 
 #[tokio::test]
 async fn the_installed_program_is_run_with_exactly_the_usage_arguments() {
-    let home = profile("agy.cmd", &picky_script());
+    let home = tempfile::tempdir().unwrap();
+    let cwd = home.path().join("cli-cwd");
+    let bin = home.path().join("AppData").join("Local").join("agy").join("bin");
+    std::fs::create_dir_all(&bin).unwrap();
+    std::fs::write(bin.join("agy.cmd"), picky_script(&cwd)).unwrap();
     let cli = SystemCli::with("agy.cmd", Duration::from_secs(10));
     let output = cli.usage(&ctx_in(home.path())).await.expect("runs");
     let read = parse_usage(&output, NOW).expect("parses");
