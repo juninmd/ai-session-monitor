@@ -49,9 +49,6 @@ export const surfacesMessages = {
   'triage.loading': 'Chargement',
   'triage.amount_of': '{used} sur {limit}',
   'triage.pinned': 'Épinglé en haut',
-  'triage.more_quotas.one': '+{count} quota dans les détails',
-  'triage.more_quotas.many': '+{count} de quotas dans les détails',
-  'triage.more_quotas.other': '+{count} quotas dans les détails',
   'triage.empty.title': 'Aucune source surveillée',
   'triage.empty.body':
     'Rien n’a encore été lu. Choisissez ce que vous voulez suivre : le panneau s’ouvre trié par urgence, avec la prévision de chaque quota directement sur sa carte.',

@@ -46,8 +46,6 @@ export const surfacesMessages = {
   'triage.loading': 'Loading',
   'triage.amount_of': '{used} of {limit}',
   'triage.pinned': 'Pinned to the top',
-  'triage.more_quotas.one': '+{count} quota in the details',
-  'triage.more_quotas.other': '+{count} quotas in the details',
   'triage.empty.title': 'No source monitored',
   'triage.empty.body':
     'Nothing has been read yet. Pick what to follow and the panel opens sorted by urgency, with each quota’s forecast right on its card.',

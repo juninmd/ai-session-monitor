@@ -21,6 +21,7 @@ export const shellMessages = {
   'header.refresh': 'Обновить сейчас',
   'header.retry': 'Повторить (сбоев: {count})',
   'header.settings': 'Настройки',
+  'header.theme': 'Тема: {name} (нажмите, чтобы сменить)',
   'header.quit': 'Выход',
   'header.tray': 'Минимум доступно: {pct}',
   'header.tray_used': 'Максимум использовано: {pct}',

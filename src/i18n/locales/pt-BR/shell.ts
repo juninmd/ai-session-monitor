@@ -21,6 +21,7 @@ export const shellMessages = {
   'header.refresh': 'Atualizar agora',
   'header.retry': 'Tentar de novo ({count} com erro)',
   'header.settings': 'Configurações',
+  'header.theme': 'Tema: {name} (clique para trocar)',
   'header.quit': 'Sair',
   'header.tray': 'Menor disponível: {pct}',
   'header.tray_used': 'Maior uso: {pct}',

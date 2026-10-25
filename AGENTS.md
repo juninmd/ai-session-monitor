@@ -34,7 +34,7 @@ Run from the repository root. Toolchains are pinned (`rust-toolchain.toml`, `pac
 
 ```sh
 pnpm install --frozen-lockfile     # Node 22.22.2+, 24.15+ or 26+ (package.json engines)
-pnpm verify                     # biome check, tsc --noEmit, vitest, vite build
+pnpm verify                     # pnpm lint (biome check), typecheck (tsc --noEmit), test (vitest + node --test scripts/verify-release.test.mjs), build (vite build)
 pnpm dev                        # UI in a browser on 127.0.0.1:1420 with a mock backend (?mock=demo|fresh|healthy|critical|stale|errors|loading; Ctrl+K switches scenario there)
 pnpm tauri dev                  # the real app (tray + flyout)
 cargo fmt --all -- --check
@@ -44,6 +44,11 @@ UPDATE_GOLDEN=1 cargo test -p usage-model --test golden   # regenerate contract/
 node scripts/soak.mjs npm react,vite [days]               # comma-separated; newest version at least [days] old (default 1)
 node scripts/soak.mjs crates tauri,keyring [days]          # same, for crates
 ```
+
+CI gates (`.github/workflows`): `ci.yml` runs `web` (`pnpm verify`), `desktop` (Windows: `pnpm build`,
+`cargo fmt`, `clippy -D warnings`, `cargo test --workspace --locked`, `pnpm tauri build --no-bundle`) and `audit`
+(RustSec, cargo-deny, `pnpm audit --audit-level high`); `security.yml` is the reusable security scan;
+`release.yml` + `release-commit.yml` verify and publish signed releases. Run the same commands locally before a PR.
 
 `src-tauri` compiles against `../dist`, so build the frontend (`pnpm build`) before `cargo clippy
 --workspace` or `cargo test --workspace` on a fresh checkout.

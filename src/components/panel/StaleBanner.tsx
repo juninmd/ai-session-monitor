@@ -35,7 +35,7 @@ export function StaleBanner({ view, ctx }: { view: HarnessView; ctx: ViewContext
   const age = view.readAt === null ? null : formatAge(ctx.nowSecs - view.readAt);
   const left = cooldownLeft(view, ctx.nowSecs);
   return (
-    <Banner tone="warn">
+    <Banner tone="warn" role="status">
       {view.stale && <p>{age === null ? t('stale.banner_noage') : t('stale.banner', { age })}</p>}
       <FailedRefresh view={view} />
       {left !== null && <p>{nextAttemptText(left)}</p>}

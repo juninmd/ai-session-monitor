@@ -12,13 +12,15 @@ const DEFAULT_ICON: Record<BannerTone, IconName> = {
 interface BannerProps {
   tone?: BannerTone;
   icon?: IconName;
+  /** Set when the banner appears after load, so screen readers announce it. */
+  role?: 'status' | 'alert';
   children: ReactNode;
 }
 
 /** Tinted callout. The icon and the text carry the meaning, the tint only reinforces it. */
-export function Banner({ tone = 'warn', icon, children }: BannerProps) {
+export function Banner({ tone = 'warn', icon, role, children }: BannerProps) {
   return (
-    <div className={tone === 'warn' ? 'banner' : `banner ${tone}`}>
+    <div className={tone === 'warn' ? 'banner' : `banner ${tone}`} role={role}>
       <Icon name={icon ?? DEFAULT_ICON[tone]} />
       <div className="banner-body">{children}</div>
     </div>

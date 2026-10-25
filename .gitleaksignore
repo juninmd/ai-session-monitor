@@ -1,0 +1,18 @@
+# Fixtures e exemplos fabricados (tokens/keys de teste, sem valor real). Verificado em 2026-10-24.
+272b32da24a3e0c0eada423b7c167a67925c8513:crates/usage-support/tests/it/http_request.rs:juninmd-authorization-header:22
+272b32da24a3e0c0eada423b7c167a67925c8513:crates/usage-support/tests/it/http_tls.rs:juninmd-authorization-header:57
+272b32da24a3e0c0eada423b7c167a67925c8513:crates/usage-support/tests/it/redact.rs:juninmd-authorization-header:17
+3a6dd709bb4fb385f338218c4ea3fe30bfcd3874:crates/collector-cursor/tests/fixtures/tokens.json:jwt:2
+3a6dd709bb4fb385f338218c4ea3fe30bfcd3874:crates/collector-cursor/tests/fixtures/tokens.json:jwt:3
+3a6dd709bb4fb385f338218c4ea3fe30bfcd3874:crates/collector-cursor/tests/fixtures/tokens.json:jwt:4
+3a6dd709bb4fb385f338218c4ea3fe30bfcd3874:crates/collector-cursor/tests/fixtures/tokens.json:jwt:5
+3a6dd709bb4fb385f338218c4ea3fe30bfcd3874:crates/collector-cursor/tests/fixtures/tokens.json:jwt:6
+4da786c7a0801e2ca095800ade5cec4e4298fd8b:crates/usage-support/tests/it/http_request.rs:juninmd-authorization-header:22
+4da786c7a0801e2ca095800ade5cec4e4298fd8b:crates/usage-support/tests/it/http_tls.rs:juninmd-authorization-header:57
+4da786c7a0801e2ca095800ade5cec4e4298fd8b:crates/usage-support/tests/it/redact.rs:juninmd-authorization-header:17
+6a321804e3a796db5d896452d07cad248a34f00e:crates/collector-cursor/tests/fixtures/tokens.json:jwt:2
+6a321804e3a796db5d896452d07cad248a34f00e:crates/collector-cursor/tests/fixtures/tokens.json:jwt:3
+6a321804e3a796db5d896452d07cad248a34f00e:crates/collector-cursor/tests/fixtures/tokens.json:jwt:4
+6a321804e3a796db5d896452d07cad248a34f00e:crates/collector-cursor/tests/fixtures/tokens.json:jwt:5
+6a321804e3a796db5d896452d07cad248a34f00e:crates/collector-cursor/tests/fixtures/tokens.json:jwt:6
+87af5875f494c000b2d1fbea4ceb6cfa1375e331:crates/usage-support/src/update/fixture.json:generic-api-key:3

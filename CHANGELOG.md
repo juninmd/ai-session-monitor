@@ -110,6 +110,8 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Fixed
 
+- Screen readers announce a failed read, a stale-data notice and the update banner when they appear,
+  and the command palette keeps a visible focus cue on its search field.
 - The provider and settings drawers are announced as modal and keep Tab inside them, so keyboard
   focus no longer leaks to the flyout behind the scrim.
 - Claude shim install keeps the previous `statusLine` (saved and chained) instead of replacing it.
