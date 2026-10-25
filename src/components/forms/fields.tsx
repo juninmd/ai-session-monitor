@@ -97,6 +97,7 @@ export function SwitchRow(props: SwitchRowProps) {
           aria-checked={checked}
           checked={checked}
           disabled={disabled}
+          aria-invalid={error ? 'true' : undefined}
           aria-describedby={describedBy(hint && `${id}-hint`, error && `${id}-err`)}
           onChange={(event) => onChange(event.target.checked)}
         />
@@ -167,6 +168,7 @@ export function SelectRow<V extends string | number>(props: SelectRowProps<V>) {
           id={id}
           value={String(value)}
           disabled={disabled}
+          aria-invalid={error ? 'true' : undefined}
           aria-describedby={describedBy(hint && `${id}-hint`, error && `${id}-err`)}
           onChange={(event) => {
             const picked = options.find((o) => String(o.value) === event.target.value);
@@ -209,6 +211,7 @@ export function TimeRow({ id, label, minutes, onChange, error }: TimeRowProps) {
           id={id}
           type="time"
           value={clockOf(minutes)}
+          aria-invalid={error ? 'true' : undefined}
           aria-describedby={describedBy(error && `${id}-err`)}
           onChange={(event) => {
             const [hh = Number.NaN, mm = Number.NaN] = event.target.value.split(':').map(Number);
@@ -228,13 +231,21 @@ interface SegmentedProps<V extends string> {
   options: readonly Option<V>[];
   onChange: (value: V) => void;
   disabled?: boolean;
+  /** Id of the error line that describes the group, when there is one. */
+  errorId?: string;
 }
 
 /** Radio group drawn as a segmented control; arrow keys move between segments natively. */
 export function Segmented<V extends string>(props: SegmentedProps<V>) {
-  const { name, legend, value, options, onChange, disabled } = props;
+  const { name, legend, value, options, onChange, disabled, errorId } = props;
   return (
-    <div className="seg" role="radiogroup" aria-label={legend}>
+    <div
+      className="seg"
+      role="radiogroup"
+      aria-label={legend}
+      aria-invalid={errorId ? 'true' : undefined}
+      aria-describedby={errorId}
+    >
       {options.map((o) => (
         <label key={o.value}>
           <input
@@ -267,7 +278,7 @@ export function SegmentedRow<V extends string>(props: SegmentedRowProps<V>) {
           <span aria-hidden="true">{group.legend}</span>
           {hint && <small className="hint">{hint}</small>}
         </div>
-        <Segmented {...group} />
+        <Segmented {...group} errorId={error ? `${group.name}-err` : undefined} />
       </div>
       {error && <ErrorLine id={`${group.name}-err`}>{error}</ErrorLine>}
     </>

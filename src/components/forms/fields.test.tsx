@@ -43,4 +43,24 @@ describe('a field error', () => {
     const alert = screen.getByRole('alert');
     expect(screen.getByLabelText('Campo')).toHaveAttribute('aria-describedby', alert.id);
   });
+
+  // A screen reader reads the error only from the control it is linked to, so each kind of
+  // control must be marked invalid and point at its error line.
+  it.each([
+    ['SwitchRow', () => screen.getByRole('switch')],
+    ['SelectRow', () => screen.getByRole('combobox')],
+    ['SegmentedRow', () => screen.getByRole('radiogroup')],
+  ])('%s is marked invalid and describes its error', (name, control) => {
+    render(withError(MESSAGE)[name as keyof ReturnType<typeof withError>]);
+    const alert = screen.getByRole('alert');
+    expect(control()).toHaveAttribute('aria-invalid', 'true');
+    expect(control()).toHaveAttribute('aria-describedby', alert.id);
+  });
+
+  it('clears aria-invalid on a valid segmented group', () => {
+    render(withError(null).SegmentedRow);
+    const group = screen.getByRole('radiogroup');
+    expect(group).not.toHaveAttribute('aria-invalid');
+    expect(group).not.toHaveAttribute('aria-describedby');
+  });
 });
