@@ -37,6 +37,7 @@ pub fn run(app: &mut App, overrides: &Overrides) -> Result<(), Reason> {
     let flyout = Flyout::new(&handle).map_err(|err| Reason::Window.because(&err))?;
     let flyout = Arc::new(flyout);
     flyout.attach();
+    flyout.settle_hidden();
     tray::build(&handle, Arc::clone(&flyout)).map_err(|err| Reason::Tray.because(&err))?;
 
     let effects = TauriEffects::new(&handle, autostart(overrides));
@@ -86,6 +87,10 @@ pub fn on_page_load(webview: &Webview, payload: &PageLoadPayload<'_>) {
 
 /// Called on a second launch: show the running instance instead of starting another.
 pub fn reopen(app: &AppHandle) {
+    // The relaunch after an update must leave the app in the tray, not open a window.
+    if update::installing() {
+        return;
+    }
     if let Some(flyout) = app.try_state::<Arc<Flyout>>() {
         tray::open_flyout(app, &flyout);
     }

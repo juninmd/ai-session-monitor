@@ -2,6 +2,7 @@
 
 use std::path::PathBuf;
 use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use app_core::AppService;
@@ -10,6 +11,14 @@ use tauri::{AppHandle, Emitter, Manager};
 use usage_model::{HarnessError, UpdateStatus};
 
 mod installer;
+
+/// Set once the installer is about to start: the instance that remains until it exits must not
+/// react to the relaunched app by opening its window.
+static INSTALLING: AtomicBool = AtomicBool::new(false);
+
+pub fn installing() -> bool {
+    INSTALLING.load(Ordering::SeqCst)
+}
 
 pub struct Updater {
     pub manager: Arc<UpdateManager>,
