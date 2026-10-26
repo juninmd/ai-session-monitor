@@ -30,6 +30,8 @@ const MARGIN_LOGICAL: f64 = 8.0;
 const INITIAL_HEIGHT_LOGICAL: f64 = 720.0;
 /// Resizes tried before giving up on the requested size; the second one lands in practice.
 const SIZE_ATTEMPTS: usize = 3;
+/// How long an opening waits for the page's first height report before showing the window anyway.
+const FIRST_PAINT_DEADLINE: std::time::Duration = std::time::Duration::from_secs(4);
 
 type Failure = Box<dyn Error + Send + Sync>;
 
@@ -112,6 +114,7 @@ impl Flyout {
 
     /// Hides on blur and turns a close request into a hide.
     pub fn attach(self: &Arc<Self>) {
+        self.watch_first_paint();
         let flyout = Arc::clone(self);
         self.window.on_window_event(move |event| match event {
             WindowEvent::Focused(focused) => flyout.focus_changed(*focused),
@@ -120,6 +123,37 @@ impl Flyout {
                 flyout.hide();
             }
             _ => {}
+        });
+    }
+
+    /// The UI reports its height only once settings and a snapshot have loaded, so a page that
+    /// never gets there (a slow or failed load, a render error) would leave an opening deferred
+    /// forever. After a deadline the window opens anyway: the page shows its own loading or error
+    /// state, which beats a tray click that does nothing.
+    fn watch_first_paint(self: &Arc<Self>) {
+        let flyout = Arc::clone(self);
+        tauri::async_runtime::spawn(async move {
+            tokio::time::sleep(FIRST_PAINT_DEADLINE).await;
+            let pending = {
+                let mut state = lock(&flyout.state);
+                if state.painted {
+                    return;
+                }
+                state.painted = true;
+                state.deferred.take()
+            };
+            diag::warn("the flyout page did not report a height", &"opening it anyway");
+            if let Some(tray) = pending {
+                let app = flyout.app.clone();
+                let target = Arc::clone(&flyout);
+                if let Err(err) = app.run_on_main_thread(move || {
+                    if let Err(err) = target.try_show(tray.as_ref()) {
+                        diag::warn("cannot open the flyout", &err);
+                    }
+                }) {
+                    diag::warn("cannot open the flyout", &err);
+                }
+            }
         });
     }
 
