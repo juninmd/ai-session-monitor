@@ -30,6 +30,10 @@ const MARGIN_LOGICAL: f64 = 8.0;
 const INITIAL_HEIGHT_LOGICAL: f64 = 720.0;
 /// Resizes tried before giving up on the requested size; the second one lands in practice.
 const SIZE_ATTEMPTS: usize = 3;
+/// Where the hidden window waits, far outside every monitor. Windows keeps compositing a stale,
+/// captioned white frame of a window that was created and never shown; parked off-screen it can
+/// never surface as an unclickable white panel next to the tray.
+const PARK: i32 = -32_000;
 /// How long the page gets to report its first height before it is reloaded.
 const FIRST_PAINT_DEADLINE: std::time::Duration = std::time::Duration::from_secs(6);
 const RELOAD_ATTEMPTS: usize = 3;
@@ -181,6 +185,9 @@ impl Flyout {
             if let Err(err) = self.apply(at, height, true) {
                 diag::warn("cannot park the hidden flyout", &err);
             }
+        }
+        if let Err(err) = self.window.set_position(PhysicalPosition::new(PARK, PARK)) {
+            diag::warn("cannot park the hidden flyout", &err);
         }
     }
 

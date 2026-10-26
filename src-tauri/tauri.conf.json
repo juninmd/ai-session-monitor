@@ -19,6 +19,8 @@
         "height": 720,
         "visible": false,
         "center": false,
+        "x": -32000,
+        "y": -32000,
         "decorations": false,
         "transparent": true,
         "shadow": false,
