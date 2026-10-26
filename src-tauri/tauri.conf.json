@@ -24,7 +24,9 @@
         "shadow": false,
         "alwaysOnTop": true,
         "skipTaskbar": true,
-        "resizable": false,
+        "resizable": true,
+        "minWidth": 360,
+        "minHeight": 200,
         "dragDropEnabled": false
       }
     ],
