@@ -50,5 +50,6 @@ fn the_shell_builds_the_window_itself_and_places_it() {
     assert_eq!(window["center"], false, "the shell positions the window from the tray");
     assert_eq!(window["decorations"], false, "the flyout draws its own rounded frame");
     assert_eq!(window["transparent"], true, "the flyout surface is transparent");
+    assert_eq!(window["resizable"], true, "the flyout can be resized by its edges");
     assert_eq!(window["shadow"], false, "undecorated shadow adds an opaque Win32 non-client frame");
 }
