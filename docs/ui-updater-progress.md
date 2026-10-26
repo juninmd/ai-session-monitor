@@ -2,7 +2,7 @@
 
 ## Implemented locally
 
-- Searchable overview of all 14 tools, current statuses, keyboard focus restoration,
+- Searchable overview of all 16 tools, current statuses, keyboard focus restoration,
   Escape handling and responsive light/dark layouts. Tab navigation follows rendered tools.
 - Backend-owned updater state, four IPC commands, progress event, strict Rust/TypeScript
   contract, permissions, golden fixtures and deterministic browser mock.
