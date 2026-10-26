@@ -143,6 +143,11 @@ impl Flyout {
     /// Startup: places the hidden window at the notification corner so the first opening starts
     /// from the target monitor and position instead of where the OS created it.
     pub fn place_hidden(&self) {
+        // The config already says `decorations: false`; setting it again at runtime keeps the
+        // native title bar and its buttons from ever surfacing if the shell ignored the config.
+        if let Err(err) = self.window.set_decorations(false) {
+            diag::warn("cannot remove the flyout frame", &err);
+        }
         let height = lock(&self.state).height;
         if let Ok(at) = self.locate(None) {
             lock(&self.state).placement = Some(at);
