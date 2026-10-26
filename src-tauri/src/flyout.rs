@@ -30,8 +30,13 @@ const MARGIN_LOGICAL: f64 = 8.0;
 const INITIAL_HEIGHT_LOGICAL: f64 = 720.0;
 /// Resizes tried before giving up on the requested size; the second one lands in practice.
 const SIZE_ATTEMPTS: usize = 3;
-/// How long an opening waits for the page's first height report before showing the window anyway.
-const FIRST_PAINT_DEADLINE: std::time::Duration = std::time::Duration::from_secs(4);
+/// Where the hidden window waits, far outside every monitor. Windows keeps compositing a stale,
+/// captioned white frame of a window that was created and never shown; parked off-screen it can
+/// never surface as an unclickable white panel next to the tray.
+const PARK: i32 = -32_000;
+/// How long the page gets to report its first height before it is reloaded.
+const FIRST_PAINT_DEADLINE: std::time::Duration = std::time::Duration::from_secs(6);
+const RELOAD_ATTEMPTS: usize = 3;
 
 type Failure = Box<dyn Error + Send + Sync>;
 
@@ -126,33 +131,25 @@ impl Flyout {
         });
     }
 
-    /// The UI reports its height only once settings and a snapshot have loaded, so a page that
-    /// never gets there (a slow or failed load, a render error) would leave an opening deferred
-    /// forever. After a deadline the window opens anyway: the page shows its own loading or error
-    /// state, which beats a tray click that does nothing.
+    /// The UI reports its height only once settings and a snapshot have loaded. A page that never
+    /// gets there (a cold WebView2 start, a failed load) must not be shown: it is a blank, dead
+    /// panel. The watchdog reloads it instead, a few times, and the opening that waited happens
+    /// on the first report.
     fn watch_first_paint(self: &Arc<Self>) {
         let flyout = Arc::clone(self);
         tauri::async_runtime::spawn(async move {
-            tokio::time::sleep(FIRST_PAINT_DEADLINE).await;
-            let pending = {
-                let mut state = lock(&flyout.state);
-                if state.painted {
+            for _ in 0..RELOAD_ATTEMPTS {
+                tokio::time::sleep(FIRST_PAINT_DEADLINE).await;
+                if lock(&flyout.state).painted {
                     return;
                 }
-                state.painted = true;
-                state.deferred.take()
-            };
-            diag::warn("the flyout page did not report a height", &"opening it anyway");
-            if let Some(tray) = pending {
-                let app = flyout.app.clone();
-                let target = Arc::clone(&flyout);
-                if let Err(err) = app.run_on_main_thread(move || {
-                    if let Err(err) = target.try_show(tray.as_ref()) {
-                        diag::warn("cannot open the flyout", &err);
+                diag::warn("the flyout page did not report a height", &"reloading it");
+                let window = flyout.window.clone();
+                let _ = flyout.app.run_on_main_thread(move || {
+                    if let Err(err) = window.eval("window.location.reload()") {
+                        diag::warn("cannot reload the flyout page", &err);
                     }
-                }) {
-                    diag::warn("cannot open the flyout", &err);
-                }
+                });
             }
         });
     }
@@ -188,6 +185,9 @@ impl Flyout {
             if let Err(err) = self.apply(at, height, true) {
                 diag::warn("cannot park the hidden flyout", &err);
             }
+        }
+        if let Err(err) = self.window.set_position(PhysicalPosition::new(PARK, PARK)) {
+            diag::warn("cannot park the hidden flyout", &err);
         }
     }
 

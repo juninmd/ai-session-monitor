@@ -53,3 +53,12 @@ fn the_shell_builds_the_window_itself_and_places_it() {
     assert_eq!(window["resizable"], true, "the flyout can be resized by its edges");
     assert_eq!(window["shadow"], false, "undecorated shadow adds an opaque Win32 non-client frame");
 }
+
+#[test]
+fn the_window_is_created_and_parked_outside_every_monitor() {
+    let config: serde_json::Value =
+        serde_json::from_str(include_str!("../../tauri.conf.json")).expect("json");
+    let window = &config["app"]["windows"][0];
+    assert_eq!(window["x"].as_i64(), Some(i64::from(PARK)));
+    assert_eq!(window["y"].as_i64(), Some(i64::from(PARK)));
+}
