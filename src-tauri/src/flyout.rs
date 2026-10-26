@@ -59,6 +59,11 @@ struct State {
     placement: Option<Placement>,
     /// The UI's last requested content height; clamped again on every placement.
     height: f64,
+    /// Set by the UI's first height report. Before it the webview has neither laid out nor painted,
+    /// so showing the window would only show a blank white panel.
+    painted: bool,
+    /// An opening asked for before that report, with the tray rectangle it came with.
+    deferred: Option<Option<tauri::Rect>>,
 }
 
 pub struct Flyout {
@@ -95,8 +100,13 @@ fn monitor_rects(monitor: &Monitor) -> (Rect, Rect) {
 
 impl Flyout {
     pub fn new(app: &AppHandle, window: WebviewWindow) -> Self {
-        let state =
-            State { gate: Gate::default(), placement: None, height: INITIAL_HEIGHT_LOGICAL };
+        let state = State {
+            gate: Gate::default(),
+            placement: None,
+            height: INITIAL_HEIGHT_LOGICAL,
+            painted: false,
+            deferred: None,
+        };
         Self { app: app.clone(), window, state: Mutex::new(state) }
     }
 
@@ -118,6 +128,13 @@ impl Flyout {
     }
 
     pub fn show(&self, tray: Option<&tauri::Rect>) {
+        {
+            let mut state = lock(&self.state);
+            if !state.painted {
+                state.deferred = Some(tray.cloned());
+                return;
+            }
+        }
         if let Err(err) = self.try_show(tray) {
             diag::warn("cannot open the flyout", &err);
         }
@@ -162,7 +179,27 @@ impl Flyout {
     /// while it is open (so Win32 `SetWindowPos` runs synchronously), or records the height for
     /// the next opening.
     pub fn set_height(self: &Arc<Self>, requested: f64) {
-        lock(&self.state).height = requested;
+        let pending = {
+            let mut state = lock(&self.state);
+            state.height = requested;
+            let first = !state.painted;
+            state.painted = true;
+            if first { state.deferred.take() } else { None }
+        };
+        // The first report is the cue that the page has painted: an opening that waited for it
+        // happens now, at the height just reported.
+        if let Some(tray) = pending {
+            let flyout = Arc::clone(self);
+            let app = self.app.clone();
+            if let Err(err) = app.run_on_main_thread(move || {
+                if let Err(err) = flyout.try_show(tray.as_ref()) {
+                    diag::warn("cannot open the flyout", &err);
+                }
+            }) {
+                diag::warn("cannot open the flyout", &err);
+            }
+            return;
+        }
         let flyout = Arc::clone(self);
         let app = self.app.clone();
         if let Err(err) = app.run_on_main_thread(move || flyout.resize_visible()) {
