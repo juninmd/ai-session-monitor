@@ -49,6 +49,21 @@ async fn the_installed_program_is_run_with_exactly_the_usage_arguments() {
     assert_eq!(read.windows.len(), 4);
 }
 
+/// `agy -p` starts a detached `--bg-updater` that runs `agy --version` with no console, so Windows
+/// opens a visible terminal and takes the foreground (seen on a real refresh); the switch stops it.
+#[tokio::test]
+async fn the_auto_updater_is_switched_off_so_no_terminal_window_steals_the_focus() {
+    let fixture = FIXTURE.replace('/', "\\");
+    let body = format!(
+        "@echo off\r\nif not \"%AGY_CLI_DISABLE_AUTO_UPDATE%\"==\"1\" exit /b 7\r\ntype \"{fixture}\"\r\n"
+    );
+    let home = profile("agy.cmd", &body);
+    let cli = SystemCli::with("agy.cmd", Duration::from_secs(10));
+    let output =
+        cli.usage(&ctx_in(home.path())).await.expect("the updater switch reaches the child");
+    assert_eq!(parse_usage(&output, NOW).expect("parses").windows.len(), 4);
+}
+
 #[tokio::test]
 async fn no_install_means_absent_and_the_path_is_never_searched() {
     let home = tempfile::tempdir().unwrap();
