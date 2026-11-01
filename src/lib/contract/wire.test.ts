@@ -2,6 +2,7 @@
 // pass every other test and fail on a user's machine, when the strict parse drops the snapshot.
 // This reads the Rust enum definitions themselves and compares their wire names with the Zod lists.
 import { describe, expect, it } from 'vitest';
+import harnessesRs from '../../../crates/usage-model/src/settings/harnesses.rs?raw';
 import settingsRs from '../../../crates/usage-model/src/settings.rs?raw';
 import updateRs from '../../../crates/usage-model/src/update.rs?raw';
 import viewRs from '../../../crates/usage-model/src/view.rs?raw';
@@ -41,7 +42,7 @@ describe('wire enums', () => {
     ['ErrorCode', viewRs, ERROR_CODES],
     ['TimeFormat', settingsRs, TimeFormatSchema.options],
     ['WeekFormat', settingsRs, WeekFormatSchema.options],
-    ['LitellmScope', settingsRs, LITELLM_SCOPES],
+    ['LitellmScope', harnessesRs, LITELLM_SCOPES],
   ] as const)('%s lists exactly the wire names of the Rust enum', (name, source, mirror) => {
     expect([...mirror].sort()).toEqual(wireNames(source, name).sort());
   });
