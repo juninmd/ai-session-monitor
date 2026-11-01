@@ -14,10 +14,6 @@ export const updateMessages = {
   'update.unavailable': 'Updates are not available in this session.',
   'update.download': 'Download update',
   'update.install': 'Install and restart',
-  'update.confirm':
-    'Save any changes in your forms before continuing. The app will close and the Windows installer will open.',
-  'update.confirm_button': 'Confirm installation',
-  'update.later': 'Not now',
   'update.notes': "What's new in this version",
   'update.manage': 'View update',
   'update.dev': 'Installing is only available in the production app for Windows x64.',

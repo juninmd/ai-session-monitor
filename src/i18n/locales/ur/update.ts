@@ -15,10 +15,6 @@ export const updateMessages = {
   'update.unavailable': 'اس سیشن میں اپڈیٹس دستیاب نہیں ہیں۔',
   'update.download': 'اپڈیٹ ڈاؤن لوڈ کریں',
   'update.install': 'انسٹال کریں اور دوبارہ شروع کریں',
-  'update.confirm':
-    'آگے بڑھنے سے پہلے فارمز کی تبدیلیاں محفوظ کر لیں۔ ایپ بند ہو جائے گی اور Windows انسٹالر کھل جائے گا۔',
-  'update.confirm_button': 'انسٹال کی تصدیق کریں',
-  'update.later': 'ابھی نہیں',
   'update.notes': 'اس ورژن میں نیا کیا ہے',
   'update.manage': 'اپڈیٹ دیکھیں',
   'update.dev': 'انسٹال صرف Windows x64 کی پروڈکشن ایپ میں دستیاب ہے۔',
