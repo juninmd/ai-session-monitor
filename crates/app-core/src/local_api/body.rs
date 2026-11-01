@@ -1,7 +1,10 @@
 //! The JSON of `GET /v1/limits`. Built from the same views the webview gets, narrowed to what is
-//! worth showing in a status bar: ids, states, percentages, reset moments and numeric facts. Errors,
-//! notices, `meta`, window labels and groups are not here, so nothing a collector put there (a
-//! host, a path, a provider's label) can leave the app through this port.
+//! worth showing in a status bar: ids, states, the plan name, percentages, reset moments and facts
+//! (`number`, `text`, `unit`). Errors, notices, `meta`, window labels and groups are not here, so
+//! nothing a collector put there (a host, a path, a provider's label) can leave the app through
+//! this port. `plan` and a fact's `text` and `unit` do come from collectors: they are short display
+//! strings, and a collector must never put an account name or address in them. The key allowlist in
+//! `tests/body.rs` pins the shape, not the content.
 
 use serde::Serialize;
 use usage_model::status::{Status, available_pct, is_expired, status_of};
