@@ -61,7 +61,7 @@ assets. SafeClient bounds redirects to GitHub release hosts, time and body size 
 manifest, 128 MiB installer), uses verified TLS and sends no credentials. Installation
 requires an authenticated NSIS executable and signed version. Failed downloads never
 invoke an installer. A ready download remains in memory until explicit installation or
-app exit. Installation confirmation drains queued settings saves, shuts down collectors
+app exit. Installing drains queued settings saves, shuts down collectors
 and flushes history. If staging or process launch fails, monitoring remains or resumes.
 Unsaved form drafts block installation until saved or explicitly discarded. The UI freezes
 settings inputs while draining saves and invoking installation. Closing an edited source,

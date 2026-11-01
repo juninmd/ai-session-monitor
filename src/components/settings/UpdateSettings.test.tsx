@@ -24,28 +24,24 @@ describe('update settings', () => {
     const { user, backend } = renderPanel(<UpdateSettings />);
     await user.click(await screen.findByRole('button', { name: 'Buscar atualização' }));
     await user.click(await screen.findByRole('button', { name: 'Baixar atualização' }));
-    await user.click(await screen.findByRole('button', { name: 'Instalar e reiniciar' }));
+    await screen.findByRole('button', { name: 'Instalar e reiniciar' });
     vi.spyOn(backend, 'saveSettings').mockRejectedValue(
       new BackendError({ code: 'internal', retryable: false, params: {} }),
     );
-    await user.click(screen.getByRole('button', { name: 'Confirmar instalação' }));
+    await user.click(screen.getByRole('button', { name: 'Instalar e reiniciar' }));
     await screen.findByRole('alert');
     expect(backend.calls).not.toContain('install_update');
   });
-  it('checks, downloads and requires a separate installation confirmation', async () => {
+  it('installs with one click after saving settings, with no extra confirmation step', async () => {
     const { user, backend } = renderPanel(<UpdateSettings />);
     await user.click(await screen.findByRole('button', { name: 'Buscar atualização' }));
     await user.click(await screen.findByRole('button', { name: 'Baixar atualização' }));
     await user.click(await screen.findByRole('button', { name: 'Instalar e reiniciar' }));
-    expect(backend.calls).not.toContain('install_update');
-    await user.click(screen.getByRole('button', { name: 'Agora não' }));
-    expect(screen.queryByRole('button', { name: 'Confirmar instalação' })).toBeNull();
-    await user.click(screen.getByRole('button', { name: 'Instalar e reiniciar' }));
-    await user.click(screen.getByRole('button', { name: 'Confirmar instalação' }));
     await vi.waitFor(() => expect(backend.calls).toContain('install_update'));
     expect(backend.calls.indexOf('save_settings')).toBeLessThan(
       backend.calls.indexOf('install_update'),
     );
+    expect(screen.queryByRole('button', { name: 'Confirmar instalação' })).toBeNull();
   });
 
   it('persists automatic checks without initiating a download', async () => {

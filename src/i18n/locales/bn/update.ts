@@ -16,10 +16,6 @@ export const updateMessages = {
   'update.unavailable': 'এই সেশনে আপডেট পাওয়া যাচ্ছে না।',
   'update.download': 'আপডেট ডাউনলোড করুন',
   'update.install': 'ইনস্টল করে রিস্টার্ট করুন',
-  'update.confirm':
-    'চালিয়ে যাওয়ার আগে ফর্মের পরিবর্তনগুলো সংরক্ষণ করুন। অ্যাপ বন্ধ হবে এবং Windows ইনস্টলার খুলবে।',
-  'update.confirm_button': 'ইনস্টল নিশ্চিত করুন',
-  'update.later': 'এখন নয়',
   'update.notes': 'এই সংস্করণে নতুন কী আছে',
   'update.manage': 'আপডেট দেখুন',
   'update.dev': 'ইনস্টল শুধু Windows x64-এর প্রোডাকশন অ্যাপে পাওয়া যায়।',

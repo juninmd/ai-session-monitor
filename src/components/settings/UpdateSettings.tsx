@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { useBackend } from '../../app/backendContext';
 import { useDraftGuard } from '../../app/draftContext';
 import { useSettingsApi } from '../../app/settingsContext';
@@ -22,7 +22,6 @@ function Standalone() {
 function UpdateBody({ api }: { api: UpdateApi }) {
   const settings = useSettingsApi();
   const drafts = useDraftGuard();
-  const [confirm, setConfirm] = useState(false);
   const { status, action } = api;
   const install = useAsyncAction(async () => {
     if (drafts?.blocked()) return;
@@ -119,35 +118,17 @@ function UpdateBody({ api }: { api: UpdateApi }) {
             {t('update.download')}
           </button>
         )}
-        {status?.phase === 'ready' && !confirm && (
+        {status?.phase === 'ready' && (
           <button
             type="button"
             className="btn primary"
             disabled={busy || hasDraft || !status.installable}
-            onClick={() => setConfirm(true)}
+            onClick={() => void install.run()}
           >
             {t('update.install')}
           </button>
         )}
       </div>
-      {confirm && status?.phase === 'ready' && (
-        <fieldset className="update-confirm" aria-label={t('update.install')}>
-          <p>{t('update.confirm')}</p>
-          <div className="actions">
-            <button
-              type="button"
-              className="btn primary"
-              disabled={busy || hasDraft}
-              onClick={() => void install.run()}
-            >
-              {t('update.confirm_button')}
-            </button>
-            <button type="button" className="btn" disabled={busy} onClick={() => setConfirm(false)}>
-              {t('update.later')}
-            </button>
-          </div>
-        </fieldset>
-      )}
       {action.error && <ActionError error={action.error} />}
       {install.error && <ActionError error={install.error} />}
     </section>

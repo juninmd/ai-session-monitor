@@ -15,10 +15,6 @@ export const updateMessages = {
   'update.unavailable': 'В этом сеансе обновления недоступны.',
   'update.download': 'Скачать обновление',
   'update.install': 'Установить и перезапустить',
-  'update.confirm':
-    'Сохраните изменения в формах, прежде чем продолжить. Приложение закроется, и откроется установщик Windows.',
-  'update.confirm_button': 'Подтвердить установку',
-  'update.later': 'Не сейчас',
   'update.notes': 'Что нового в этой версии',
   'update.manage': 'Открыть обновление',
   'update.dev': 'Установка доступна только в рабочей версии приложения для Windows x64.',

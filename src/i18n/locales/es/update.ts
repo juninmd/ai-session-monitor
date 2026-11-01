@@ -14,10 +14,6 @@ export const updateMessages = {
   'update.unavailable': 'Las actualizaciones no están disponibles en esta sesión.',
   'update.download': 'Descargar actualización',
   'update.install': 'Instalar y reiniciar',
-  'update.confirm':
-    'Guarda los cambios de tus formularios antes de continuar. La aplicación se cerrará y se abrirá el instalador de Windows.',
-  'update.confirm_button': 'Confirmar instalación',
-  'update.later': 'Ahora no',
   'update.notes': 'Novedades de esta versión',
   'update.manage': 'Ver actualización',
   'update.dev':
