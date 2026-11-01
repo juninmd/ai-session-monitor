@@ -2,6 +2,7 @@
 
 use std::time::Duration;
 
+use usage_model::settings::{MIN_INTERVAL_SECS, MIN_LITELLM_POLL_SECS};
 use usage_model::{HarnessId, Settings};
 
 mod adaptive;
@@ -26,7 +27,10 @@ const MAX_DOUBLINGS: u32 = 10;
 
 /// How often a healthy harness is collected.
 pub(crate) fn cadence(id: HarnessId, settings: &Settings) -> Duration {
-    let local = Duration::from_secs(u64::from(settings.general.interval_secs));
+    // `Settings::normalize` already clamps these; the floors keep a value that skipped it from
+    // becoming a zero wait, which would spin the scheduler.
+    let local =
+        Duration::from_secs(u64::from(settings.general.interval_secs.max(MIN_INTERVAL_SECS)));
     match id {
         HarnessId::Claude | HarnessId::Codex | HarnessId::Antigravity => local,
         HarnessId::Cursor
@@ -41,7 +45,9 @@ pub(crate) fn cadence(id: HarnessId, settings: &Settings) -> Duration {
         | HarnessId::Novita
         | HarnessId::Ollama
         | HarnessId::Minimax => local.max(REMOTE_MIN_CADENCE),
-        HarnessId::Litellm => Duration::from_secs(u64::from(settings.litellm.poll_interval_secs)),
+        HarnessId::Litellm => Duration::from_secs(u64::from(
+            settings.litellm.poll_interval_secs.max(MIN_LITELLM_POLL_SECS),
+        )),
     }
 }
 
@@ -117,6 +123,19 @@ mod tests {
             assert_eq!(cadence(id, &settings), secs(900), "{id:?}: a slower interval wins");
         }
         assert_eq!(cadence(HarnessId::Claude, &settings), secs(900));
+    }
+
+    #[test]
+    fn a_settings_value_below_its_floor_never_makes_a_cadence_shorter_than_the_floor() {
+        // Settings that skipped `normalize()` must not turn into a busy loop in the scheduler.
+        let mut settings = Settings::default();
+        settings.general.interval_secs = 0;
+        settings.litellm.poll_interval_secs = 0;
+        let floor = secs(u64::from(MIN_INTERVAL_SECS));
+        for id in [HarnessId::Claude, HarnessId::Codex, HarnessId::Antigravity] {
+            assert_eq!(cadence(id, &settings), floor, "{id:?}");
+        }
+        assert_eq!(cadence(HarnessId::Litellm, &settings), secs(u64::from(MIN_LITELLM_POLL_SECS)));
     }
 
     #[test]
