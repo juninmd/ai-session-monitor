@@ -18,6 +18,9 @@ const TIMEOUT: Duration = Duration::from_secs(15);
 const MAX_STDOUT: usize = 256 << 10;
 const MAX_STDERR: usize = 16 << 10;
 const ARGS: [&str; 4] = ["-p", "/usage", "--output-format", "json"];
+/// Without it `agy -p` spawns a detached `--bg-updater` that runs `agy --version` without our hidden
+/// console: Windows opens a terminal window and gives it the foreground, even over a fullscreen game.
+const NO_AUTO_UPDATE: (&str, &str) = ("AGY_CLI_DISABLE_AUTO_UPDATE", "1");
 
 #[derive(Debug)]
 pub(crate) struct SystemCli {
@@ -46,6 +49,7 @@ impl Cli for SystemCli {
         }
         let mut spec = CommandSpec::new(program);
         spec.args = ARGS.map(OsString::from).to_vec();
+        spec.env = vec![(NO_AUTO_UPDATE.0.into(), NO_AUTO_UPDATE.1.into())];
         // A neutral directory: the CLI must not pick up a project's settings or write into one.
         let cwd = neutral_dir(&ctx.data_dir)
             .map_err(|_| CliError::Failed(HarnessError::new(ErrorCode::SpawnFailed, false)))?;
