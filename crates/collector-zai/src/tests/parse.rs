@@ -179,3 +179,14 @@ fn documented_in_band_auth_codes_are_the_same_ambiguous_unauthorized_as_http_401
         assert_eq!(parse_quota(&body, NOW).unwrap_err().code, ErrorCode::EndpointChanged, "{code}");
     }
 }
+
+#[test]
+fn a_limit_named_by_name_and_a_day_unit_four_are_read() {
+    let body = json!({ "code": 200, "success": true, "data": { "limits": [
+        { "name": "TOKENS_LIMIT", "unit": 4, "number": 1, "percentage": 7 },
+        { "name": "TIME_LIMIT", "usage": 100, "currentValue": 10 },
+    ] } });
+    let parsed = parse_quota(&body, NOW).unwrap();
+    assert_eq!(ids(&parsed), ["daily", "mcp"]);
+    assert_eq!(window(&parsed, "daily").window_minutes, Some(1_440));
+}
