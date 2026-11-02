@@ -73,7 +73,8 @@ fn envelope_check(root: &Map<String, Value>) -> Result<(), HarnessError> {
 /// A `TOKENS_LIMIT`/`CREDIT_LIMIT` entry is a rolling window whose length is `number * unit`; a
 /// `TIME_LIMIT` entry is the monthly MCP tool allowance. Anything else is not read.
 fn window_of(entry: &Map<String, Value>, now_secs: i64) -> Option<UsageWindow> {
-    let kind = entry.get("type")?.as_str()?;
+    // Some revisions of the payload name the limit in `name` instead of `type`.
+    let kind = entry.get("type").or_else(|| entry.get("name"))?.as_str()?;
     let (mut window, minutes, unit) = match kind {
         "TOKENS_LIMIT" | "CREDIT_LIMIT" => {
             let minutes = minutes_of(entry)?;
@@ -109,7 +110,8 @@ fn classify(minutes: u32) -> (String, WindowKind) {
 fn minutes_of(entry: &Map<String, Value>) -> Option<u32> {
     let number = whole(entry.get("number"))?;
     let factor: u64 = match whole(entry.get("unit"))? {
-        1 => 1_440,
+        // 1 and 4 both appear as "day" across payload revisions.
+        1 | 4 => 1_440,
         3 => 60,
         5 => 1,
         6 => 10_080,
