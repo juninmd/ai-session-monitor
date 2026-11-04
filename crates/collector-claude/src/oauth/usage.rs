@@ -12,7 +12,7 @@ use usage_model::{ErrorCode, HarnessError, UsageWindow, WindowKind};
 use usage_support::{Auth, ClientOptions, RequestSpec, SafeClient, Secret, parse_rfc3339_secs};
 
 use super::Endpoint;
-use crate::datafile::WEEKLY_MINUTES;
+use crate::datafile::{FIVE_HOUR_MINUTES, WEEKLY_MINUTES};
 use crate::lenient::{clean_text, percent, plausible, slug};
 
 /// Claude Code sends the same header; the endpoint rejects requests without it.
@@ -63,6 +63,52 @@ pub(crate) fn parse(body: &Value) -> Result<Vec<UsageWindow>, HarnessError> {
     }
     found.truncate(MAX_EXTRA_WINDOWS);
     Ok(found)
+}
+
+/// The primary `five_hour` and `weekly` windows of a response, used when a statusLine window has
+/// expired or the statusLine recording is at least 10 min old.
+pub(crate) fn parse_primary(body: &Value) -> Vec<UsageWindow> {
+    let Some(object) = body.as_object() else { return Vec::new() };
+    let limits = object.get("limits").and_then(Value::as_array);
+    let mut out = Vec::new();
+    for (id, kind, minutes, limit_kind, flat_key) in [
+        ("five_hour", WindowKind::FiveHour, FIVE_HOUR_MINUTES, "session", "five_hour"),
+        ("weekly", WindowKind::Weekly, WEEKLY_MINUTES, "weekly_all", "seven_day"),
+    ] {
+        let from_limits = limits.and_then(|arr| {
+            arr.iter()
+                .take(MAX_LIMIT_ENTRIES)
+                .find(|entry| entry.get("kind").and_then(Value::as_str) == Some(limit_kind))
+                .and_then(|entry| primary_window(id, kind, minutes, entry, "percent"))
+        });
+        let from_flat = object
+            .get(flat_key)
+            .and_then(|raw| primary_window(id, kind, minutes, raw, "utilization"));
+        if let Some(window) = from_limits.or(from_flat) {
+            out.push(window);
+        }
+    }
+    out
+}
+
+fn primary_window(
+    id: &str,
+    kind: WindowKind,
+    minutes: u32,
+    raw: &Value,
+    pct_key: &str,
+) -> Option<UsageWindow> {
+    let object = raw.as_object()?;
+    let used_pct = percent(object.get(pct_key), 100.0);
+    let resets_at = resets(object.get("resets_at"));
+    if used_pct.is_none() && resets_at.is_none() {
+        return None;
+    }
+    let mut window = UsageWindow::new(id, kind);
+    window.window_minutes = Some(minutes);
+    window.used_pct = used_pct;
+    window.resets_at = resets_at;
+    Some(window)
 }
 
 /// A `weekly_scoped` entry of `limits[]`.

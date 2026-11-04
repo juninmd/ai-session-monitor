@@ -122,3 +122,20 @@ async fn an_unusable_config_dir_adds_nothing_and_asks_nothing() {
     assert!(view.windows.is_empty() && view.notices.is_empty());
     server.assert_untouched();
 }
+
+#[tokio::test]
+async fn an_expired_statusline_window_is_refreshed_by_the_oauth_answer() {
+    let env = ready_env();
+    let updated = usage_limits()
+        .replace("23.5", "44.0")
+        .replace("2027-01-15T10:30:00", "2027-01-15T15:30:00");
+    let server = FakeServer::json(&updated);
+    // Warm the OAuth cache before the 5-hour reset (NOW + 9_000); crossing the reset invalidates it.
+    poll(&env, &server, NOW + 8_900).await;
+    assert_eq!(server.connections(), 1);
+    let view = poll(&env, &server, NOW + 9_010).await;
+    assert_eq!(server.connections(), 2);
+    assert_eq!(view.windows[0].used_pct, Some(44.0));
+    assert_eq!(view.windows[0].resets_at, Some(NOW + 27_000));
+    assert_eq!(view.read_at, Some(NOW + 9_010));
+}

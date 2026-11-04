@@ -36,13 +36,37 @@ enum Stored {
 }
 
 /// The outcome of the last attempt when it is recent enough to stand in for a new one.
+#[cfg(test)]
 pub(crate) fn fresh(path: &Path, now: i64) -> Option<Result<Extras, HarnessError>> {
+    fresh_since(path, now, None)
+}
+
+/// Like [`fresh`], but drops a cached `Ok` recorded before `min_attempted_at` or whose cached
+/// windows crossed their `resets_at` since `attempted_at`.
+pub(crate) fn fresh_since(
+    path: &Path,
+    now: i64,
+    min_attempted_at: Option<i64>,
+) -> Option<Result<Extras, HarnessError>> {
     let file: CacheFile = usage_support::read_json_capped(path, MAX_FILE_BYTES).ok()?;
     if file.v != 1 {
         return None;
     }
     let wait = match &file.outcome {
-        Stored::Ok { .. } => MIN_WAIT_SECS,
+        Stored::Ok { extras } => {
+            if min_attempted_at.is_some_and(|r| file.attempted_at < r) {
+                return None;
+            }
+            if extras
+                .primary
+                .iter()
+                .chain(extras.windows.iter())
+                .any(|w| w.resets_at.is_some_and(|r| r > file.attempted_at && r <= now))
+            {
+                return None;
+            }
+            MIN_WAIT_SECS
+        }
         Stored::Failed { error } => retry_after(error).clamp(MIN_WAIT_SECS, MAX_WAIT_SECS),
     };
     // A timestamp in the future (clock moved back) proves nothing about how long ago it was.
@@ -51,7 +75,11 @@ pub(crate) fn fresh(path: &Path, now: i64) -> Option<Result<Extras, HarnessError
         return None;
     }
     Some(match file.outcome {
-        Stored::Ok { extras } => Ok(Extras { plan: extras.plan, windows: bounded(extras.windows) }),
+        Stored::Ok { extras } => Ok(Extras {
+            plan: extras.plan,
+            windows: bounded(extras.windows),
+            primary: bounded(extras.primary),
+        }),
         Stored::Failed { error } => Err(scrub(error)),
     })
 }
@@ -96,7 +124,7 @@ mod tests {
         window.group = Some("opus".into());
         window.used_pct = Some(30.0);
         window.resets_at = Some(NOW + 3600);
-        Extras { plan: Some("Max 5x".into()), windows: vec![window] }
+        Extras { plan: Some("Max 5x".into()), windows: vec![window], primary: Vec::new() }
     }
 
     fn rate_limited(retry_after: Option<&str>) -> HarnessError {
