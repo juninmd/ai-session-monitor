@@ -95,8 +95,12 @@ pub(crate) async fn collect_with_cli<C: cli::Cli>(
     // Extras ride on a usable statusLine view; an idle machine does not poll an unofficial API.
     // The CLI is preferred (no token involved); the OAuth API only answers when it cannot.
     let wants_extras = settings.oauth_usage && view.state == ViewState::Ready && !view.stale;
-    if wants_extras && !cli::add_extras(&mut view, settings, ctx, cli).await {
-        oauth::add_extras(&mut view, settings, ctx, endpoint).await;
+    if wants_extras {
+        if !cli::add_extras(&mut view, settings, ctx, cli).await {
+            oauth::add_extras(&mut view, settings, ctx, endpoint).await;
+        } else if oauth::missing_primary_resets(&view) {
+            oauth::fill_resets(&mut view, settings, ctx, endpoint).await;
+        }
     }
     view
 }

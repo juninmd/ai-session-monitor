@@ -155,3 +155,15 @@ fn two_lines_for_one_family_keep_the_more_consumed_one() {
     assert_eq!(got.len(), 1);
     assert_eq!(got[0].used_pct, Some(30.0));
 }
+
+#[test]
+fn report_keeps_session_and_weekly_percentages_and_rounds_minute_59_resets() {
+    let text = block(&[
+        "Current session: 44% used · resets Nov 4, 8:50pm (America/Sao_Paulo)".into(),
+        week("all models", "96", "Nov 7, 7:59pm (America/Sao_Paulo)"),
+        week("Fable", "0", "Nov 7, 8pm (America/Sao_Paulo)"),
+    ]);
+    let parsed = crate::cli::parse::report(&envelope(&text)).expect("parses");
+    assert_eq!((parsed.session_pct, parsed.weekly_pct), (Some(44.0), Some(96.0)));
+    assert_eq!(parsed.rows, [row("Fable", Some(0.0), true)]);
+}

@@ -148,3 +148,18 @@ fn bounded_cleans_what_came_from_a_cache_file() {
     );
     assert_eq!(cleaned[1].label.as_deref().map(str::len), Some(40));
 }
+
+#[test]
+fn parse_primary_extracts_session_and_weekly_windows_from_limits_or_flat_keys() {
+    let body = json!({
+        "five_hour": {"utilization": 10.0, "resets_at": "2026-10-11T12:00:00+00:00"},
+        "seven_day": {"utilization": 20.0, "resets_at": "2026-10-14T12:00:00+00:00"},
+        "limits": [
+            {"kind": "session", "percent": 44.0, "resets_at": "2026-10-11T12:00:00+00:00"},
+            {"kind": "weekly_all", "percent": 96.0, "resets_at": "2026-10-14T12:00:00+00:00"}
+        ]
+    });
+    let primary = parse_primary(&body);
+    assert_eq!(ids(&primary), ["five_hour", "weekly"]);
+    assert_eq!((primary[0].used_pct, primary[1].used_pct), (Some(44.0), Some(96.0)));
+}

@@ -21,15 +21,18 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tokio::sync::Mutex;
 use usage_model::settings::ClaudeSettings;
-use usage_model::{Ctx, HarnessError, HarnessView, UsageWindow};
+use usage_model::status::is_expired;
+use usage_model::{Ctx, HarnessError, HarnessView, UsageWindow, WindowKind};
 
 pub(crate) use system::SystemCli;
 
+use crate::datafile::{FIVE_HOUR_MINUTES, WEEKLY_MINUTES};
 use crate::oauth::{blocking, bounded, weekly};
 use crate::paths::Paths;
 
 /// `view.meta` value of `extra_source` when the windows come from this source.
 pub(crate) const META_VALUE: &str = "cli_usage";
+const FIVE_HOUR_ID: &str = "five_hour";
 const WEEKLY_ID: &str = "weekly";
 
 /// Why there is no answer from the CLI.
@@ -61,11 +64,19 @@ pub(crate) struct ModelRow {
     pub same_reset: bool,
 }
 
+#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub(crate) struct CliReport {
+    pub session_pct: Option<f64>,
+    pub weekly_pct: Option<f64>,
+    pub rows: Vec<ModelRow>,
+}
+
 /// Two polls (a tick and a manual refresh) must not start two processes.
 static RUN_LOCK: Mutex<()> = Mutex::const_new(());
 
-/// Adds the per-model windows to a usable statusLine view. `true` when the CLI answered (even with
-/// no per-model line); `false` when the caller should fall back to the OAuth source.
+/// Adds the CLI windows to a statusLine view (and refreshes expired/missing primary windows).
+/// `true` when the CLI answered; `false` when the caller should fall back to the OAuth source.
 pub(crate) async fn add_extras<C: Cli>(
     view: &mut HarnessView,
     settings: &ClaudeSettings,
@@ -74,32 +85,83 @@ pub(crate) async fn add_extras<C: Cli>(
 ) -> bool {
     let Some(paths) = Paths::resolve(settings, ctx) else { return false };
     let _one_at_a_time = RUN_LOCK.lock().await;
-    let Some(Ok(rows)) = rows(&paths, settings, ctx, cli).await else { return false };
-    let epoch = view.windows.iter().find(|w| w.id == WEEKLY_ID).and_then(|w| w.resets_at);
-    let windows = windows(&rows, epoch);
-    if !windows.is_empty() {
-        view.windows.extend(windows);
+    let min_attempted_at = view
+        .windows
+        .iter()
+        .filter(|w| is_expired(w, ctx.now_secs))
+        .filter_map(|w| w.resets_at)
+        .max();
+    let Some(Ok(report)) = fetch_report(&paths, settings, ctx, min_attempted_at, cli).await else {
+        return false;
+    };
+    let needs_primary = view.read_at.is_some_and(|t| ctx.now_secs.saturating_sub(t) >= 600)
+        || view.windows.iter().any(|w| is_expired(w, ctx.now_secs));
+    if needs_primary && refresh_primary(view, &report, ctx.now_secs) {
+        view.read_at = Some(ctx.now_secs);
+        view.meta.insert("extra_source".to_owned(), META_VALUE.to_owned());
+    }
+    let epoch = view
+        .windows
+        .iter()
+        .find(|w| w.id == WEEKLY_ID && !is_expired(w, ctx.now_secs))
+        .and_then(|w| w.resets_at);
+    let extras = windows(&report.rows, epoch);
+    if !extras.is_empty() {
+        view.windows.extend(extras);
         view.meta.insert("extra_source".to_owned(), META_VALUE.to_owned());
     }
     true
 }
 
+fn refresh_primary(view: &mut HarnessView, report: &CliReport, now: i64) -> bool {
+    let mut changed = false;
+    for (id, kind, minutes, pct) in [
+        (FIVE_HOUR_ID, WindowKind::FiveHour, FIVE_HOUR_MINUTES, report.session_pct),
+        (WEEKLY_ID, WindowKind::Weekly, WEEKLY_MINUTES, report.weekly_pct),
+    ] {
+        if let Some(existing) = view.windows.iter_mut().find(|w| w.id == id) {
+            if let Some(pct) = pct {
+                if is_expired(existing, now) {
+                    existing.resets_at = None;
+                }
+                existing.used_pct = Some(pct);
+                changed = true;
+            }
+        } else if let Some(pct) = pct {
+            let mut window = UsageWindow::new(id, kind);
+            window.window_minutes = Some(minutes);
+            window.used_pct = Some(pct);
+            if id == FIVE_HOUR_ID {
+                view.windows.insert(0, window);
+            } else {
+                let pos = usize::from(view.windows.first().is_some_and(|w| w.id == FIVE_HOUR_ID));
+                view.windows.insert(pos, window);
+            }
+            changed = true;
+        }
+    }
+    changed
+}
+
 /// `None` when there is nothing to use and nothing to cache (CLI absent).
-async fn rows<C: Cli>(
+async fn fetch_report<C: Cli>(
     paths: &Paths,
     settings: &ClaudeSettings,
     ctx: &Ctx,
+    min_attempted_at: Option<i64>,
     cli: &C,
-) -> Option<Result<Vec<ModelRow>, HarnessError>> {
+) -> Option<Result<CliReport, HarnessError>> {
     let (path, now) = (paths.cli_cache.clone(), ctx.now_secs);
-    if let Some(hit) = blocking(move || cache::fresh(&path, now)).await.flatten() {
+    if let Some(hit) =
+        blocking(move || cache::fresh_since(&path, now, min_attempted_at)).await.flatten()
+    {
         return Some(hit);
     }
     let config_dir = settings.config_dir.as_deref().map(str::trim).filter(|d| !d.is_empty());
     let outcome = match cli.usage(ctx, config_dir.map(Path::new)).await {
         Err(CliError::Absent) => return None,
         Err(CliError::Failed(error)) => Err(error),
-        Ok(envelope) => parse::envelope(&envelope),
+        Ok(envelope) => parse::report(&envelope),
     };
     let (path, stored) = (paths.cli_cache.clone(), outcome.clone());
     blocking(move || cache::store(&path, now, &stored)).await;

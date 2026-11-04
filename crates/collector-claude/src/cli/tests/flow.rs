@@ -184,3 +184,33 @@ async fn both_sources_failing_leaves_the_statusline_and_one_notice() {
     assert_eq!(notice_codes(&view), ["claude_oauth_partial"]);
     assert_eq!(view.notices[0].params["reason"], "not_signed_in");
 }
+
+#[tokio::test]
+async fn an_expired_five_hour_window_is_refreshed_from_the_cli_and_re_dated_by_oauth() {
+    let env = installed_env();
+    let cli = ScriptedCli::says(REPORT);
+    // Warm the CLI cache just before the 5-hour reset (NOW + 9_000); crossing the reset must
+    // invalidate that pre-reset cache entry and run the CLI again.
+    poll(&env, &cli, NOW + 8_900).await;
+    assert_eq!(cli.calls(), 1);
+    let cli_only = poll(&env, &cli, NOW + 9_010).await;
+    assert_eq!(cli.calls(), 2, "a pre-reset cache entry is dropped once the window expires");
+    assert_eq!(cli_only.windows[0].id, "five_hour");
+    assert_eq!((cli_only.windows[0].used_pct, cli_only.windows[0].resets_at), (Some(1.0), None));
+    assert_eq!(
+        (cli_only.windows[1].used_pct, cli_only.windows[1].resets_at),
+        (Some(78.0), Some(WEEKLY_RESET))
+    );
+    assert_eq!(cli_only.read_at, Some(NOW + 9_010));
+
+    let env = installed_env();
+    env.write_credentials((NOW + 2 * 86_400) * 1000);
+    let server = FakeServer::json(&usage_limits().replace("10:30:00+00:00", "15:30:00+00:00"));
+    let cli = ScriptedCli::says(REPORT);
+    let with_oauth =
+        crate::collect_with_cli(&on(&env), &env.ctx_at(NOW + 10_000), &endpoint(&server), &cli)
+            .await;
+    assert_eq!(with_oauth.windows[0].used_pct, Some(1.0));
+    assert_eq!(with_oauth.windows[0].resets_at, Some(NOW + 27_000));
+    assert_eq!(with_oauth.plan.as_deref(), Some("Max 5x"));
+}
