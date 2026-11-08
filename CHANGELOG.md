@@ -6,6 +6,12 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Added
 
+- Event hooks (`general.eventHooks`, off until you add one): run a program when a window resets,
+  runs out or crosses an alert threshold. Each entry is `{ "event": "reset" | "out" | "threshold",
+  "program": "<absolute path>", "args": [...] }`, at most 8 hooks and 16 arguments. The program
+  starts directly (no shell, no `PATH` search), with no console window, and is stopped after 30 s.
+  The event, harness and window arrive only as `AISM_HOOK_EVENT`, `AISM_HOOK_HARNESS` and
+  `AISM_HOOK_WINDOW`. Hooks run during quiet hours too. Invalid entries are dropped on load.
 - Opt-in risk alert (`general.notifyOnRisk`): one notification per window when the pace projects it
   running out before it renews.
 - Quiet hours (`general.quietHoursOn`, off by default): desktop notifications whose time falls in

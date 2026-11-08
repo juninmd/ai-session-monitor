@@ -16,6 +16,7 @@ mod effects;
 mod events;
 mod flyout;
 mod gate;
+mod hooks;
 mod icon;
 mod links;
 mod paths;

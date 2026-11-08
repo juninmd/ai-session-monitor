@@ -34,6 +34,8 @@ pub trait EventSink: Send + Sync + 'static {
     fn snapshot_changed(&self, snapshot: &Snapshot);
     fn settings_changed(&self, settings: &Settings);
     fn notify(&self, notification: &Notification);
+    /// Starts one user event hook. Default: nothing, so a sink without hooks stays valid.
+    fn run_hook(&self, _run: &crate::HookRun) {}
 }
 
 pub struct AppService {

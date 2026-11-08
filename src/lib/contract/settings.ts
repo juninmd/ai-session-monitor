@@ -38,6 +38,17 @@ export const GeneralSettingsSchema = z.strictObject({
   quietFrom: z.number().int().min(0).max(1439),
   quietTo: z.number().int().min(0).max(1439),
   alertThresholds: z.array(z.number().int().min(1).max(99)).max(4),
+  eventHooks: z
+    .array(
+      z
+        .object({
+          event: z.enum(['reset', 'out', 'threshold']),
+          program: z.string().min(1).max(260),
+          args: z.array(z.string().max(256)).max(16),
+        })
+        .strict(),
+    )
+    .max(8),
   adaptive: z.boolean(),
   historyEnabled: z.boolean(),
   timeFormat: TimeFormatSchema,
@@ -191,6 +202,7 @@ export const defaultSettings: Settings = {
     quietFrom: 1320,
     quietTo: 480,
     alertThresholds: [80, 95],
+    eventHooks: [],
     adaptive: true,
     historyEnabled: true,
     timeFormat: 'hm',

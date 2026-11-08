@@ -27,6 +27,7 @@ pub mod service;
 pub mod update;
 
 mod history;
+mod hooks;
 mod hub;
 mod publish;
 mod relay;
@@ -39,6 +40,7 @@ mod validate;
 
 pub use clock::{Clock, SystemClock};
 pub use collectors::{Adapters, ClaudeShim, CollectFuture, Collector};
+pub use hooks::HookRun;
 pub use notify::{Notification, NotificationKind};
 pub use paths::AppPaths;
 pub use secrets::{MemorySecretStore, SecretStore};

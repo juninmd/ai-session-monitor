@@ -6,7 +6,7 @@ use std::sync::{Arc, Mutex, MutexGuard, PoisonError};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use app_core::i18n::messages;
-use app_core::{EventSink, Notification, NotificationKind};
+use app_core::{EventSink, HookRun, Notification, NotificationKind};
 use usage_model::settings::Language;
 use usage_model::status::Status;
 use usage_model::{HarnessId, Settings, Snapshot};
@@ -253,5 +253,9 @@ impl<E: Effects> EventSink for ShellSink<E> {
 
     fn notify(&self, notification: &Notification) {
         self.effects.toast(notification);
+    }
+
+    fn run_hook(&self, run: &HookRun) {
+        crate::hooks::start(run);
     }
 }

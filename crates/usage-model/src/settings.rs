@@ -7,11 +7,14 @@ use serde::{Deserialize, Serialize};
 use crate::HarnessId;
 
 mod harnesses;
+mod hooks;
 mod keyed;
 pub use harnesses::{
     AntigravitySettings, ClaudeSettings, CodexSettings, CopilotSettings, CursorSettings,
     LitellmScope, LitellmSettings, OpencodeSettings, TlsMode,
 };
+use hooks::normalize_hooks;
+pub use hooks::{EventHook, HookEvent, MAX_EVENT_HOOKS, MAX_HOOK_ARGS};
 pub use keyed::{
     DeepinfraSettings, DeepseekSettings, KimiSettings, MinimaxSettings, MoonshotSettings,
     NovitaSettings, OllamaSettings, OpenrouterSettings, ZaiSettings,
@@ -86,6 +89,7 @@ impl Settings {
         self.general.quiet_from = self.general.quiet_from.min(MINUTES_PER_DAY - 1);
         self.general.quiet_to = self.general.quiet_to.min(MINUTES_PER_DAY - 1);
         normalize_thresholds(&mut self.general.alert_thresholds);
+        normalize_hooks(&mut self.general.event_hooks);
         self.litellm.poll_interval_secs =
             self.litellm.poll_interval_secs.clamp(MIN_LITELLM_POLL_SECS, MAX_INTERVAL_SECS);
         self.litellm.timeout_secs = self.litellm.timeout_secs.clamp(1, 30);
@@ -216,6 +220,8 @@ pub struct GeneralSettings {
     /// Keep the flyout out of screenshots, screen recordings and screen sharing (Windows
     /// `WDA_EXCLUDEFROMCAPTURE`). Presentation only.
     pub hide_from_capture: bool,
+    /// Programs run on quota events, see `EventHook`. Empty means none; at most `MAX_EVENT_HOOKS`.
+    pub event_hooks: Vec<EventHook>,
 }
 
 impl Default for GeneralSettings {
@@ -234,6 +240,7 @@ impl Default for GeneralSettings {
             quiet_from: 22 * 60,
             quiet_to: 8 * 60,
             alert_thresholds: DEFAULT_ALERT_THRESHOLDS.to_vec(),
+            event_hooks: Vec::new(),
             adaptive: true,
             history_enabled: true,
             time_format: TimeFormat::Hm,

@@ -14,7 +14,7 @@ pub use ctx::Ctx;
 pub use harness::HarnessId;
 pub use history::{HarnessHistory, HistoryEpoch, HistoryPoint};
 pub use ipc::{ExternalLink, SecretKind, SecretStatus, ShimState, ShimStatus};
-pub use settings::Settings;
+pub use settings::{EventHook, HookEvent, Settings};
 pub use status::{Pace, Status, Summary};
 pub use update::{UpdateFailure, UpdatePhase, UpdateStatus};
 pub use view::{

@@ -103,6 +103,9 @@ fn announce<'a>(shared: &Shared, notes: impl IntoIterator<Item = (i64, &'a Notif
     let settings = shared.settings();
     let offset = shared.clock.utc_offset_secs();
     for (at, note) in notes {
+        for run in crate::hooks::plan(note, &settings) {
+            shared.sink.run_hook(&run);
+        }
         if !notify::is_quiet(&settings.general, at, offset) {
             shared.sink.notify(note);
         }
