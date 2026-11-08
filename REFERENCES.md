@@ -33,7 +33,7 @@ Official and community documentation, specifications, and upstream repositories 
 - [MiniMax](https://platform.minimax.io/) - Token Plan `token_plan/remains` route on `api.minimax.io` (community-documented; not published by MiniMax).
 
 ### Related Projects (comparison)
-- [CodexBar](https://github.com/steipete/CodexBar) - macOS menu bar app for the same kind of limits; see `docs/competitors.md`.
+- [CodexBar](https://github.com/steipete/CodexBar) - macOS menu bar app for the same kind of limits.
 - [ai-usagebar](https://github.com/akitaonrails/ai-usagebar) - Rust CLI/TUI/tray for many providers, including a Windows tray build.
 - [Usage Monitor for Claude](https://github.com/jens-duttke/usage-monitor-for-claude) - Windows and Linux tray app for Claude with event commands.
 - [ClaudeBar](https://github.com/tddworks/ClaudeBar) - macOS menu bar app with a long provider list.
