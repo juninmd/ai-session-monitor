@@ -138,7 +138,7 @@ fn the_statement_is_pinned_to_the_one_key_and_the_one_table() {
 /// Everything SQLite asks the authorizer while `statement` runs against the production connection.
 fn reads_of(statement: &str) -> Vec<String> {
     let db = FakeDb::with_token(&token("valid"));
-    let conn = store::open(&db.path(), &FAST).unwrap();
+    let mut conn = store::open(&db.path(), &FAST).unwrap();
     let seen = Arc::new(Mutex::new(Vec::new()));
     let sink = Arc::clone(&seen);
     conn.authorizer(Some(move |ctx: AuthContext<'_>| {

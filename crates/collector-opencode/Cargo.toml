@@ -15,7 +15,7 @@ tokio.workspace = true
 # `bundled` compiles SQLite with the MSVC toolchain Rust already needs, so the app never depends on
 # a system sqlite3.dll. `hooks` provides the authorizer and progress handler that fence the
 # read-only query. The default features (statement cache, wasm shim) stay off.
-rusqlite = { version = "0.40.2", default-features = false, features = ["bundled", "hooks"] }
+rusqlite = { version = "0.41.1", default-features = false, features = ["bundled", "hooks"] }
 
 [dev-dependencies]
 tempfile.workspace = true

@@ -83,7 +83,7 @@ enum Seen {
 }
 
 /// Records what SQLite asks the authorizer, then lets the production fence decide.
-fn recording(conn: &Connection) -> Arc<Mutex<Vec<Seen>>> {
+fn recording(conn: &mut Connection) -> Arc<Mutex<Vec<Seen>>> {
     let log = Arc::new(Mutex::new(Vec::new()));
     let sink = Arc::clone(&log);
     let hook = move |ctx: AuthContext<'_>| {
@@ -108,8 +108,8 @@ fn recording(conn: &Connection) -> Arc<Mutex<Vec<Seen>>> {
 #[test]
 fn the_queries_read_two_columns_and_call_only_the_listed_functions() {
     let fake = populated();
-    let conn = db::open(&fake.path(), &FAST).unwrap();
-    let log = recording(&conn);
+    let mut conn = db::open(&fake.path(), &FAST).unwrap();
+    let log = recording(&mut conn);
     db::aggregate(&conn, NOW).unwrap();
     db::require_dates(&conn).unwrap();
     let seen = log.lock().unwrap();
@@ -137,8 +137,8 @@ fn the_queries_read_two_columns_and_call_only_the_listed_functions() {
 #[test]
 fn the_schema_probe_asks_for_table_info_of_the_message_table_and_nothing_else() {
     let fake = populated();
-    let conn = db::open(&fake.path(), &FAST).unwrap();
-    let log = recording(&conn);
+    let mut conn = db::open(&fake.path(), &FAST).unwrap();
+    let log = recording(&mut conn);
     let mut statement = conn.prepare(sql::SCHEMA_PROBE).unwrap();
     assert!(statement.query_map([], |row| row.get::<_, String>(1)).unwrap().count() >= 2);
     let probe = Seen::Pragma("table_info".to_owned(), Some(sql::TABLE.to_owned()));
@@ -215,7 +215,7 @@ fn a_denied_read_is_reported_as_an_authorization_failure() {
 #[test]
 fn the_connection_is_read_only_even_when_the_fence_is_removed() {
     let fake = populated();
-    let conn = db::open(&fake.path(), &FAST).unwrap();
+    let mut conn = db::open(&fake.path(), &FAST).unwrap();
     conn.authorizer(None::<fn(AuthContext<'_>) -> Authorization>).unwrap();
     for text in [
         "INSERT INTO session_message VALUES ('x', 's', 'assistant', 1, 1, 1, '{}')",
