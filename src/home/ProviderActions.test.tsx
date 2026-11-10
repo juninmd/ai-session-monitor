@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import type { ViewContext } from '../app/windowModel';
+import type { ViewContext } from '../app/model/windowModel';
 import { createMockBackend } from '../mock';
 import { fact, viewOf } from '../mock/fixtures';
 import { ctxOf, freezeClock, NOW, win } from '../test/helpers';

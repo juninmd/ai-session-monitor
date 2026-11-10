@@ -1,9 +1,9 @@
-import { useBackend } from '../../app/backendContext';
-import { describeError, type ErrorAction } from '../../app/errorText';
-import { consoleLink } from '../../app/harness';
-import { useNavigation } from '../../app/navigation';
-import { useSettingsApi } from '../../app/settingsContext';
-import { useAsyncAction } from '../../app/useAsyncAction';
+import { useBackend } from '../../app/context/backendContext';
+import { useNavigation } from '../../app/context/navigation';
+import { useSettingsApi } from '../../app/context/settingsContext';
+import { useAsyncAction } from '../../app/hooks/useAsyncAction';
+import { consoleLink } from '../../app/model/harness';
+import { describeError, type ErrorAction } from '../../app/text/errorText';
 import { hasMessage, type MessageKey, t } from '../../i18n';
 import type { HarnessError, HarnessId } from '../../lib/contract';
 import { Icon } from '../icons';

@@ -13,6 +13,8 @@ export const historyMessages = {
     'المحور الأفقي: من بداية النافذة إلى إعادة الضبط. المحور الرأسي: الاستخدام من 0 إلى 100%. الخط العريض هو النافذة الحالية والخطوط الباهتة هي النوافذ السابقة.',
   'history.axis_start': 'البداية',
   'history.axis_end': 'إعادة الضبط',
+  'history.inspect.label': 'فحص قراءات النافذة الحالية',
+  'history.inspect.reading': '{pct} مستخدَم بعد {elapsed}',
   'history.label_current': 'الحالية {pct}',
   'history.label_past': 'سابقة',
   'history.peak_now': 'ذروة {pct} {when} في هذه النافذة.',

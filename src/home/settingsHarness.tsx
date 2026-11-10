@@ -1,7 +1,7 @@
 // The settings screen the way the flyout composes it: the menu in the scrolling body, the section
 // drawer over the frame. Panel tests drive the same two siblings App renders, without the shell.
 import { useEffect, useState } from 'react';
-import type { SettingsSection } from '../app/harness';
+import type { SettingsSection } from '../app/model/harness';
 import { SettingsView } from '../components/settings/SettingsView';
 import { SettingsDrawer } from './SettingsDrawer';
 

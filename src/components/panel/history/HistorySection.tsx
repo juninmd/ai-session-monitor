@@ -1,8 +1,8 @@
 import { useId, useState } from 'react';
-import { burndownOf } from '../../../app/burndown';
-import { summarySentences } from '../../../app/burndownText';
-import { useHistory } from '../../../app/useHistory';
-import { type ViewContext, windowTitle } from '../../../app/windowModel';
+import { useHistory } from '../../../app/hooks/useHistory';
+import { burndownOf } from '../../../app/model/burndown';
+import { type ViewContext, windowTitle } from '../../../app/model/windowModel';
+import { summarySentences } from '../../../app/text/burndownText';
 import { t } from '../../../i18n';
 import type { HarnessView, UsageWindow } from '../../../lib/contract';
 import { Note } from '../Banner';

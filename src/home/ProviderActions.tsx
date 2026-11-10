@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react';
-import { useAsyncAction } from '../app/useAsyncAction';
-import type { ViewContext } from '../app/windowModel';
+import { useAsyncAction } from '../app/hooks/useAsyncAction';
+import type { ViewContext } from '../app/model/windowModel';
 import { t, tn } from '../i18n';
 import type { HarnessView } from '../lib/contract';
 import { PreviewActionsContext, type ResetOutcome, resetCreditCount } from './actionModel';

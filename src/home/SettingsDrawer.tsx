@@ -3,10 +3,10 @@
 // The menu stays mounted under the scrim, so the expansion of a source group survives closing and
 // reopening the section; leaving the screen throws that state away with the component.
 import { useEffect, useRef, useState } from 'react';
-import { useDraftGuard } from '../app/draftContext';
-import type { SettingsSection } from '../app/harness';
-import { SETTINGS_TITLE_ID } from '../app/homeIds';
-import { useSettingsApi } from '../app/settingsContext';
+import { useDraftGuard } from '../app/context/draftContext';
+import { useSettingsApi } from '../app/context/settingsContext';
+import type { SettingsSection } from '../app/model/harness';
+import { SETTINGS_TITLE_ID } from '../app/model/homeIds';
 import { GeneralSettings } from '../components/settings/GeneralSettings';
 import { HistorySettings } from '../components/settings/HistorySettings';
 import { LEVEL_TITLE, paneOf, sourceOf } from '../components/settings/levels';

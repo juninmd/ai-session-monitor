@@ -1,4 +1,4 @@
-import { describeError } from '../../app/errorText';
+import { describeError } from '../../app/text/errorText';
 import type { HarnessError, HarnessId } from '../../lib/contract';
 import { Icon } from '../icons';
 import { ActionError, useErrorAction } from './ErrorActions';

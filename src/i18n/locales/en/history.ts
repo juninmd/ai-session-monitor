@@ -13,6 +13,8 @@ export const historyMessages = {
     'Horizontal: from the start of the window to the reset. Vertical: usage from 0 to 100%. The bold line is the current window and the faint ones are earlier windows.',
   'history.axis_start': 'start',
   'history.axis_end': 'reset',
+  'history.inspect.label': "Inspect the current window's readings",
+  'history.inspect.reading': '{pct} used after {elapsed}',
   'history.label_current': 'current {pct}',
   'history.label_past': 'earlier',
   'history.peak_now': 'Peak of {pct} {when} in this window.',

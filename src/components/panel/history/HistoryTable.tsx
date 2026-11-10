@@ -1,5 +1,5 @@
-import type { Burndown } from '../../../app/burndown';
-import { tableRows } from '../../../app/burndownText';
+import type { Burndown } from '../../../app/model/burndown';
+import { tableRows } from '../../../app/text/burndownText';
 import { t } from '../../../i18n';
 
 /** The same numbers as the chart, as a table: the accessible way to read them. */

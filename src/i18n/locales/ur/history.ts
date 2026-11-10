@@ -13,6 +13,8 @@ export const historyMessages = {
     'افقی: ونڈو کے آغاز سے ری سیٹ تک۔ عمودی: 0 سے 100% تک استعمال۔ موٹی لکیر موجودہ ونڈو ہے اور ہلکی لکیریں پچھلی ونڈوز ہیں۔',
   'history.axis_start': 'آغاز',
   'history.axis_end': 'ری سیٹ',
+  'history.inspect.label': 'موجودہ ونڈو کی ریڈنگز دیکھیں',
+  'history.inspect.reading': '{elapsed} بعد {pct} استعمال',
   'history.label_current': 'موجودہ {pct}',
   'history.label_past': 'پچھلی',
   'history.peak_now': 'اس ونڈو میں {when} {pct} کی چوٹی۔',

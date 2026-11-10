@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { UpdateContext } from '../../app/useUpdateState';
+import { UpdateContext } from '../../app/hooks/useUpdateState';
 import { t } from '../../i18n';
 import { Icon } from '../icons';
 

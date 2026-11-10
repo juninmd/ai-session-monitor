@@ -1,7 +1,7 @@
 // The horizon answers one question per provider: does the remaining quota cover the time until the
 // renewal? These tests pin the shape of that answer, including what it refuses to project.
 import { describe, expect, it } from 'vitest';
-import type { ViewContext } from '../app/windowModel';
+import type { ViewContext } from '../app/model/windowModel';
 import { defaultSettings, type HarnessId, type HarnessView } from '../lib/contract';
 import { asStale, viewOf, type WindowSpec, windowOf } from '../mock/fixtures';
 import { startFor } from '../mock/scenarios';

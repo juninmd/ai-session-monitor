@@ -1,10 +1,10 @@
 // Controls that save the moment they change. The saved value is the source of truth, so a
 // rejected save leaves the control where it was and prints the backend's reason beside it.
 import type { ReactNode } from 'react';
-import { fieldOf } from '../../app/errorText';
-import { fieldMessage } from '../../app/fieldErrors';
-import { useSettingsApi } from '../../app/settingsContext';
-import { useAsyncAction } from '../../app/useAsyncAction';
+import { useSettingsApi } from '../../app/context/settingsContext';
+import { useAsyncAction } from '../../app/hooks/useAsyncAction';
+import { fieldOf } from '../../app/text/errorText';
+import { fieldMessage } from '../../app/text/fieldErrors';
 import type { Settings } from '../../lib/contract';
 import { type Option, SegmentedRow, SelectRow, SwitchRow, TimeRow } from './fields';
 

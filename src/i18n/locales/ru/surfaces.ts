@@ -66,6 +66,12 @@ export const surfacesMessages = {
   'triage.sub_left.other': '{count} провайдера · квота доступна',
   'triage.see': 'Открыть {name}',
   'triage.by_urgency': 'По срочности',
+  'triage.filter.label': 'Фильтр по состоянию',
+  'triage.filter.all': 'Все',
+  'triage.filter.act': 'Требуют действий',
+  'triage.filter.watch': 'Под наблюдением',
+  'triage.filter.fine': 'В норме',
+  'triage.filter.idle': 'Нет данных',
 
   'horizon.figure.out': 'исчерпано',
   'horizon.figure.short': '{duration} без квоты',

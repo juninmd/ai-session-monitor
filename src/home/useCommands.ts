@@ -1,7 +1,7 @@
 // The Ctrl+K list, built from what the home monitors: one jump per provider, the fleet actions,
 // the settings entries and — in the browser dev loop only — the fabricated scenarios.
 import { useMemo } from 'react';
-import type { ViewContext } from '../app/windowModel';
+import type { ViewContext } from '../app/model/windowModel';
 import { useLocale } from '../i18n/locale';
 import { isTauriRuntime } from '../lib/backend';
 import type { HarnessId, HarnessView } from '../lib/contract';

@@ -1,8 +1,8 @@
 // The triage rules are the whole point of the proposed home: which provider a person should look
 // at first, and what the headline says. Pure functions, so they are tested without a DOM.
 import { describe, expect, it } from 'vitest';
-import { describeError } from '../app/errorText';
-import type { ViewContext } from '../app/windowModel';
+import type { ViewContext } from '../app/model/windowModel';
+import { describeError } from '../app/text/errorText';
 import { defaultSettings, type HarnessId, type HarnessView } from '../lib/contract';
 import { asStale, problem, viewOf, type WindowSpec, windowOf } from '../mock/fixtures';
 import { startFor } from '../mock/scenarios';

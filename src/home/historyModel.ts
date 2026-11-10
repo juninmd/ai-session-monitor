@@ -6,8 +6,8 @@
 // them, because an unfinished pass has necessarily peaked lower than a finished one. And the
 // projection is anchored at the live reading, not at the last stored one, so the line the chart
 // draws is the line `paceOf` decided.
-import type { Burndown } from '../app/burndown';
-import { durationFormat, type ViewContext, type WindowModel } from '../app/windowModel';
+import type { Burndown } from '../app/model/burndown';
+import { durationFormat, type ViewContext, type WindowModel } from '../app/model/windowModel';
 import { t, tn } from '../i18n';
 import { formatDuration, formatPercent } from '../i18n/format';
 

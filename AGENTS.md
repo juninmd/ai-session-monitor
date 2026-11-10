@@ -3,7 +3,8 @@
 Windows-first system-tray app (Tauri 2 + Vite + React + TypeScript, Rust workspace) that shows how
 much of each AI coding tool's session is still available: Claude Code, Codex, Cursor, GitHub Copilot, Antigravity,
 OpenCode, Kimi Code, z.ai, OpenRouter, DeepSeek, DeepInfra, Moonshot, Novita, Ollama Cloud, MiniMax and a parametrizable LiteLLM connection. The UI speaks the ten most spoken languages (English by default, `general.language`); code, identifiers,
-comments and commits are English. Decisions: `docs/adr/0001-architecture.md`. Wire contract:
+comments and commits are English. Decisions: `docs/adr/0001-architecture.md`; the last review and its
+benchmark: `docs/architecture-review.md`. Wire contract:
 `docs/ipc.md`. Data sources and trust levels: `docs/data-sources.md`.
 
 ## Layout and ownership
@@ -17,7 +18,8 @@ comments and commits are English. Decisions: `docs/adr/0001-architecture.md`. Wi
 | `crates/app-core` | Window-free core: settings store, hub, scheduler, notification plan, `AppService` | usage-model, usage-support (no collectors) |
 | `src-tauri` | Composition root: tray, flyout window, keyring, wiring, commands | app-core, collectors |
 | `src` | React UI; talks only to `Backend` (`src/lib/backend.ts`) | `src/lib/contract` |
-| `src/home` | The flyout's own surfaces — triagem, horizonte, canais de cota, the lateral detail and the Ctrl+K palette — which `App` composes | `src/app`, `src/components` |
+| `src/app` | What the UI knows apart from how it looks: `hooks/` (state and effects), `context/` (what the tree shares), `text/` (wire codes to sentences), `model/` (pure view models) | `src/lib`, `src/i18n`; from `src/components` only types, and the one dialog `context/draftContext` renders |
+| `src/home` | The flyout's own surfaces — triage, horizon, quota channels, the lateral detail and the Ctrl+K palette — which `App` composes | `src/app`, `src/components` |
 | `contract` | Golden files pinning Rust and TypeScript to the same wire shape | - |
 
 Rules that keep the boundaries honest:
@@ -27,6 +29,8 @@ Rules that keep the boundaries honest:
   allows only `ipc:`). Every HTTP call goes through `usage_support::SafeClient`.
 - A collector gates on settings **before any I/O**: disabled, needs consent, needs setup.
 - Unknown is `null`, never `0`. A window whose `resetsAt` passed is expired: no status, no pace.
+- Production modules never import fabricated data: `src/mock` is loaded on demand, outside Tauri
+  only (`src/test/boundaries.test.ts`; the scenario names live apart in `mock/scenarioNames.ts`).
 
 ## Commands
 
@@ -43,6 +47,7 @@ cargo test --workspace
 UPDATE_GOLDEN=1 cargo test -p usage-model --test golden   # regenerate contract/{snapshot,settings,ipc}.json after an intentional shape change
 node scripts/soak.mjs npm react,vite [days]               # comma-separated; newest version at least [days] old (default 1)
 node scripts/soak.mjs crates tauri,keyring [days]          # same, for crates
+node scripts/bench-boot.mjs before=<old dist> after=dist   # boot benchmark of built bundles (needs Playwright + Chromium on the machine)
 ```
 
 CI gates (`.github/workflows`): `ci.yml` runs `web` (`pnpm verify`), `desktop` (Windows: `pnpm build`,
@@ -86,7 +91,9 @@ CI gates (`.github/workflows`): `ci.yml` runs `web` (`pnpm verify`), `desktop` (
 - Ten locales: `en` (default and fallback), `zh-CN`, `hi`, `es`, `fr`, `ar`, `bn`, `pt-BR`, `ru`, `ur`;
   `ar` and `ur` are RTL (`dir` is set on the document, so CSS stays logical-property based).
   The choice is `settings.general.language` (Rust `Language`, Zod `LanguageSchema`) and is mirrored
-  into `src/i18n/locale.ts`; `t()` falls back to English key by key.
+  into `src/i18n/locale.ts`; `t()` falls back to English key by key. English ships in the entry
+  chunk; every other locale is its own chunk, fetched on first use (`src/i18n/catalogs.ts`:
+  `loadCatalog`, `catalogOf`). `t()` stays synchronous and reads English until the chunk lands.
 - A message lives in `src/i18n/locales/<tag>/<partial>.ts`, same partials and keys in every locale
   (English is the master: its keys are `MessageKey`). One whole sentence per key with `{name}`
   placeholders, never concatenated fragments; counts go through `tn()` with `key.one|few|many|other`
@@ -94,7 +101,9 @@ CI gates (`.github/workflows`): `ci.yml` runs `web` (`pnpm verify`), `desktop` (
   home on a language change). Numerals stay Latin in every language (`-u-nu-latn`).
 - `src/i18n/locales.test.ts` checks every locale against English (keys, placeholders, plural
   forms). The Vitest setup pins pt-BR (`pinLocale`), so the older tests keep asserting Portuguese;
-  a test of another language calls `releaseLocale()`/`setLocale()`.
+  a test of another language calls `releaseLocale()`/`setLocale()`. The setup preloads every
+  catalog (`loadAllCatalogs`), so tests switch language synchronously; a test that resets the
+  module graph loads the catalog it pins (see `src/main.test.tsx`).
 - Rust text (notifications, tray tooltip and menu, startup toasts) is in
   `crates/app-core/src/i18n/lang_<tag>.rs`, one `Messages` struct per language; a test checks that
   every language keeps the placeholders of every field. The tray text is relabelled when the

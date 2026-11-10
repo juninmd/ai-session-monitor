@@ -1,5 +1,5 @@
-import { CATALOGS, type MessageKey } from './catalogs';
-import { DEFAULT_LOCALE, getLocale } from './locale';
+import { catalogOf, ENGLISH, type MessageKey } from './catalogs';
+import { getLocale } from './locale';
 
 export type { MessageKey } from './catalogs';
 
@@ -11,7 +11,7 @@ const PLACEHOLDER = /\{(\w+)\}/g;
 
 /** Looks up a message in the active language (English when it lacks the key) and fills `{name}`. */
 export function t(key: MessageKey, params?: MessageParams): string {
-  const template: string = CATALOGS[getLocale()]?.[key] ?? CATALOGS[DEFAULT_LOCALE]?.[key] ?? '';
+  const template: string = catalogOf(getLocale())?.[key] ?? ENGLISH[key] ?? '';
   return template.replace(PLACEHOLDER, (_match, name: string) => {
     const value = params?.[name];
     return value === undefined ? MISSING : String(value);
@@ -23,16 +23,26 @@ export function t(key: MessageKey, params?: MessageParams): string {
  * uses (`key.one`, `key.few`, `key.other`, ...); `key.other` must always exist. `{count}` is filled.
  */
 export function tn(base: string, count: number, params?: MessageParams): string {
-  const category = new Intl.PluralRules(getLocale()).select(count);
+  const category = pluralRules(getLocale()).select(count);
   const key = `${base}.${category}`;
   const picked = isDefined(key) ? key : `${base}.other`;
   return t(picked as MessageKey, { ...params, count });
 }
 
+// One Intl.PluralRules per locale: constructing one per message showed up in list renders.
+const rules = new Map<string, Intl.PluralRules>();
+function pluralRules(locale: string): Intl.PluralRules {
+  let cached = rules.get(locale);
+  if (cached === undefined) {
+    cached = new Intl.PluralRules(locale);
+    rules.set(locale, cached);
+  }
+  return cached;
+}
+
 const isDefined = (key: string): boolean =>
-  Object.hasOwn(CATALOGS[getLocale()] ?? {}, key) ||
-  Object.hasOwn(CATALOGS[DEFAULT_LOCALE] ?? {}, key);
+  Object.hasOwn(catalogOf(getLocale()) ?? {}, key) || Object.hasOwn(ENGLISH, key);
 
 export function hasMessage(key: string): key is MessageKey {
-  return Object.hasOwn(CATALOGS[DEFAULT_LOCALE] ?? {}, key);
+  return Object.hasOwn(ENGLISH, key);
 }

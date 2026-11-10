@@ -1,6 +1,6 @@
 // The one-line state each row of the settings menu shows, read from the stored settings.
-import { TAB_ORDER } from '../../app/harness';
-import { intervalLabel, percentLabel } from '../../app/options';
+import { TAB_ORDER } from '../../app/model/harness';
+import { intervalLabel, percentLabel } from '../../app/model/options';
 import { t } from '../../i18n';
 import type { HarnessId, Settings, UpdateStatus } from '../../lib/contract';
 

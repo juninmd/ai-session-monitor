@@ -1,7 +1,7 @@
-import { useNavigation } from '../../app/navigation';
-import { noticeAction, noticeKey, noticeText, uniqueNotices } from '../../app/noticeText';
-import { useSettingsApi } from '../../app/settingsContext';
-import { useAsyncAction } from '../../app/useAsyncAction';
+import { useNavigation } from '../../app/context/navigation';
+import { useSettingsApi } from '../../app/context/settingsContext';
+import { useAsyncAction } from '../../app/hooks/useAsyncAction';
+import { noticeAction, noticeKey, noticeText, uniqueNotices } from '../../app/text/noticeText';
 import { t } from '../../i18n';
 import type { HarnessId, Notice } from '../../lib/contract';
 import { Banner, Note } from './Banner';

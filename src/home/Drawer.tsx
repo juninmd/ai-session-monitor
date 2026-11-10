@@ -1,11 +1,12 @@
 // The provider detail, opened laterally over the grid. The shell owns the layer; this file decides
 // what the bar carries and puts the audit in the body.
-import { harnessName } from '../app/harness';
-import { NX_DRAWER_CLOSE_ID, nxTitleId } from '../app/homeIds';
-import { useNavigation } from '../app/navigation';
-import { useSettingsApi } from '../app/settingsContext';
-import { useAsyncAction } from '../app/useAsyncAction';
-import type { ViewContext } from '../app/windowModel';
+
+import { useNavigation } from '../app/context/navigation';
+import { useSettingsApi } from '../app/context/settingsContext';
+import { useAsyncAction } from '../app/hooks/useAsyncAction';
+import { harnessName } from '../app/model/harness';
+import { NX_DRAWER_CLOSE_ID, nxTitleId } from '../app/model/homeIds';
+import type { ViewContext } from '../app/model/windowModel';
 import { Icon } from '../components/icons';
 import { ActionError } from '../components/panel/ErrorActions';
 import { t } from '../i18n';

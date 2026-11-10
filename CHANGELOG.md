@@ -6,6 +6,13 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Added
 
+- State filter on the triage: a segmented bar shows how many providers need action, are worth
+  watching, are fine or have no reading, and the same states are chips that filter the grid. It
+  appears only when there are two states to tell apart, and a filter whose state emptied out falls
+  back to everything.
+- Chart inspection: move the pointer over the trend chart, or focus it and use the arrow keys, to
+  read the running window at that moment ("41% used after 1h 30m"). The line under the chart shows
+  the latest reading otherwise. The closed windows are now also drawn as the range they covered.
 - Event hooks (`general.eventHooks`, off until you add one): run a program when a window resets,
   runs out or crosses an alert threshold. Each entry is `{ "event": "reset" | "out" | "threshold",
   "program": "<absolute path>", "args": [...] }`, at most 8 hooks and 16 arguments. The program
@@ -99,6 +106,14 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Changed
 
+- The flyout starts faster: only the language in use is loaded, instead of all ten (entry script
+  1 384 kB → 560 kB; time to the first settled frame −28 % in the benchmark,
+  `docs/architecture-review.md`).
+- Motion: the selected surface is marked by a pill that slides between the tabs, a surface and the
+  detail drawer ease in, and the trend line draws itself once. All of it is off under
+  `prefers-reduced-motion`.
+- The trend chart uses its full width, its hairlines land on whole pixels, and its labels no longer
+  overlap the projection.
 - The command palette names its Esc and Enter keys in the flyout's language (Intro and Échap in
   Spanish and French, for example).
 - The flyout has one home screen instead of a tab per harness: **Triagem** (every reachable provider
@@ -169,6 +184,9 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Security
 
+- `rusqlite` 0.41.1, which bundles SQLite 3.54.1: earlier bundled versions could return stale
+  process memory when a database was opened next to a write-ahead log with a different page size
+  (RUSTSEC-2026-0459). Cursor and OpenCode are the two sources that open a SQLite file.
 - The Claude and Antigravity CLI probes start in an empty directory under the app's data dir, not in
   the shared temp dir, so a stray `.claude` folder there is never read as project settings.
 - All network access happens in Rust through one hardened client (https only, no redirects, size and

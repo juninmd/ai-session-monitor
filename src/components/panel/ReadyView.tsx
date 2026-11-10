@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { layoutWindows, type WindowLayout } from '../../app/layout';
-import type { ViewContext } from '../../app/windowModel';
+import { layoutWindows, type WindowLayout } from '../../app/model/layout';
+import type { ViewContext } from '../../app/model/windowModel';
 import { t } from '../../i18n';
 import type { HarnessView } from '../../lib/contract';
 import { Note } from './Banner';

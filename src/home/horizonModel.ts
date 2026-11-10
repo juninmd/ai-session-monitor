@@ -2,13 +2,13 @@
 // stretch with no quota?" Each bar runs from now to that window's reset, and the fill is the share
 // of that stretch the remaining quota can cover. The rest of the track is time with no quota. The
 // projections come from paceOf via WindowModel.pace; nothing here recomputes a status.
-import { summaryOf } from '../app/tabModel';
+import { summaryOf } from '../app/model/tabModel';
 import {
   durationFormat,
   modelWindow,
   type ViewContext,
   type WindowModel,
-} from '../app/windowModel';
+} from '../app/model/windowModel';
 import { t } from '../i18n';
 import { formatClock, formatDuration } from '../i18n/format';
 import type { HarnessView, UsageWindow } from '../lib/contract';

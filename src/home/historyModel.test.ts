@@ -1,8 +1,8 @@
 // The comparison sentence and the projection the chart draws. The projection must never disagree
 // with paceOf: it exists to draw what that rule already decided, anchored at the live reading.
 import { describe, expect, it } from 'vitest';
-import { type Burndown, burndownOf } from '../app/burndown';
-import { modelWindow, type ViewContext } from '../app/windowModel';
+import { type Burndown, burndownOf } from '../app/model/burndown';
+import { modelWindow, type ViewContext } from '../app/model/windowModel';
 import { defaultSettings, type HistoryEpoch } from '../lib/contract';
 import { windowOf } from '../mock/fixtures';
 import { startFor } from '../mock/scenarios';

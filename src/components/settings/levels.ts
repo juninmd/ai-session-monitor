@@ -1,6 +1,6 @@
 // The panes of the settings screen: the menu opens one, and every source group lands on the same
 // one. The screen's own heading is the menu's; a pane prints its title in the drawer bar.
-import { isHarnessId, type SettingsSection } from '../../app/harness';
+import { isHarnessId, type SettingsSection } from '../../app/model/harness';
 import type { MessageKey } from '../../i18n';
 import type { HarnessId } from '../../lib/contract';
 

@@ -1,6 +1,6 @@
 // What the home surfaces monitor: the sources that are reachable right now.
-import { isEnabled } from '../app/settingsPatch';
-import type { ViewContext } from '../app/windowModel';
+import { isEnabled } from '../app/model/settingsPatch';
+import type { ViewContext } from '../app/model/windowModel';
 import type { HarnessView } from '../lib/contract';
 
 /** Connected sources remain reachable through loading, stale data and temporary failures. */

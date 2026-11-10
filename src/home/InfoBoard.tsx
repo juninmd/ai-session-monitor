@@ -1,10 +1,11 @@
 // Informações adicionais: the facts, the notices and the way into the settings, as a labelled grid
 // instead of a column of sentences. Everything here is already on the wire view; nothing is read
 // from anywhere else.
-import { isEstimatedFact } from '../app/estimate';
-import { useNavigation } from '../app/navigation';
-import { uniqueNotices } from '../app/noticeText';
-import type { ViewContext } from '../app/windowModel';
+
+import { useNavigation } from '../app/context/navigation';
+import { isEstimatedFact } from '../app/model/estimate';
+import type { ViewContext } from '../app/model/windowModel';
+import { uniqueNotices } from '../app/text/noticeText';
 import { EstimateMark } from '../components/panel/EstimateMark';
 import { factLabel } from '../components/panel/Facts';
 import { Notices } from '../components/panel/Notices';

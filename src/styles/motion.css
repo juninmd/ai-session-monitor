@@ -65,6 +65,71 @@
   .nx-headline[data-tone="attention"] > .ico {
     animation: nx-pulse 2s ease-in-out infinite;
   }
+
+  /* A surface arrives as one piece; its cards then rise on their own stagger. */
+  .nx-triage,
+  .nx-horizon,
+  .nx-sources {
+    animation: nx-surface-in 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nx-health-bar > i {
+    transition:
+      flex-grow 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.2s;
+  }
+
+  .nx-health-chip {
+    transition:
+      background-color 0.15s,
+      border-color 0.15s,
+      color 0.15s;
+  }
+}
+
+/* The pressed surface is marked by one pill that slides between the tabs. Without motion, or in
+   forced colours, each button keeps its own pressed fill instead (home.css). */
+@media (prefers-reduced-motion: no-preference) and (forced-colors: none) {
+  .nx-surfaces {
+    position: relative;
+  }
+
+  .nx-surfaces::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 0.7rem;
+    inset-inline: 0;
+    inline-size: 2rem;
+    block-size: 2rem;
+    margin-inline: auto;
+    border-radius: var(--r-ctl);
+    background: var(--raise-2);
+    translate: 0 calc(var(--nx-surface-at, 0) * 2.15rem);
+    transition: translate 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nx-fly[data-surface="horizon"] {
+    --nx-surface-at: 1;
+  }
+
+  .nx-fly[data-surface="channels"] {
+    --nx-surface-at: 2;
+  }
+
+  .nx-surfaces > button {
+    position: relative;
+  }
+
+  .nx-surfaces > button[aria-pressed="true"]:not(:hover) {
+    background: transparent;
+  }
+}
+
+@keyframes nx-surface-in {
+  from {
+    translate: 0 4px;
+    opacity: 0;
+  }
 }
 
 @keyframes nx-grow {

@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import type { ViewContext } from '../app/windowModel';
+import type { ViewContext } from '../app/model/windowModel';
 import type { HarnessView } from '../lib/contract';
 import { isExpired } from '../lib/usage';
 import type { MockBackend } from '../mock';

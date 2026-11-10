@@ -1,6 +1,6 @@
 // Pieces shared by the GitHub Copilot connect card and its settings group: an optional pasted
 // token, or the consent to read the one the Copilot extension keeps on disk.
-import { useSettingsApi } from '../../app/settingsContext';
+import { useSettingsApi } from '../../app/context/settingsContext';
 import { t } from '../../i18n';
 import { SecretField } from '../forms/SecretField';
 import { SettingSwitch } from '../forms/SettingControls';

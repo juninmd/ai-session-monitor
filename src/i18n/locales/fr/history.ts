@@ -14,6 +14,8 @@ export const historyMessages = {
     'Horizontal : du début de la fenêtre à la réinitialisation. Vertical : utilisation de 0 à 100 %. La ligne épaisse est la fenêtre en cours, les lignes pâles sont les fenêtres précédentes.',
   'history.axis_start': 'début',
   'history.axis_end': 'réinit.',
+  'history.inspect.label': 'Inspecter les relevés de la fenêtre en cours',
+  'history.inspect.reading': '{pct} utilisé après {elapsed}',
   'history.label_current': 'actuel {pct}',
   'history.label_past': 'précédentes',
   'history.peak_now': 'Pic de {pct} {when} dans cette fenêtre.',

@@ -21,23 +21,9 @@ import {
 import { copilotView, cursorView } from './editors';
 import { asStale, type Env, failed, type Mood, notice, problem, viewOf } from './fixtures';
 import { deepseekView, kimiView, openrouterView, zaiView } from './keyed';
+import { SCENARIO_NAMES, type ScenarioName, scenarioFromSearch } from './scenarioNames';
 
-export const SCENARIO_NAMES = [
-  'demo',
-  'fresh',
-  'healthy',
-  'critical',
-  'stale',
-  'errors',
-  'loading',
-] as const;
-export type ScenarioName = (typeof SCENARIO_NAMES)[number];
-
-/** Anything that is not a known name falls back to the demo: the query string is untrusted. */
-export function scenarioFromSearch(search: string): ScenarioName {
-  const raw = new URLSearchParams(search).get('mock');
-  return SCENARIO_NAMES.find((name) => name === raw) ?? 'demo';
-}
+export { SCENARIO_NAMES, type ScenarioName, scenarioFromSearch };
 
 type Maker = (env: Env) => HarnessView;
 type Makers = Record<HarnessId, Maker>;

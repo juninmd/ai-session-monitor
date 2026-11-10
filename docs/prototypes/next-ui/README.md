@@ -33,7 +33,7 @@ The current interface answers "how much is left?" well and "will it last?" badly
 | Settings | fourteen collapsed groups | the first run has no sequence, only a list |
 
 Everything that decides status, pace and expiry comes from `src/lib/usage.ts` (`statusOf`,
-`paceOf`, `summarize`) through `src/app/windowModel.ts`. The prototype adds **no new rule**; it
+`paceOf`, `summarize`) through `src/app/model/windowModel.ts`. The prototype adds **no new rule**; it
 changes where the existing numbers are printed and in what order.
 
 ## What the demo turns on
@@ -166,7 +166,7 @@ and a way straight into that source's settings; the summary keeps a count of war
 ### Canais de cota — the evidence list
 
 The answer to "are there more quotas and budgets to read?" — see `channels.ts`,
-`channels-read.ts`, `channels-blocked.ts` and `candidates.ts`. Each row names the endpoint and the
+`channelsRead.ts`, `channelsBlocked.ts` and `candidates.ts`. Each row names the endpoint and the
 fields, its shape in the app's model (**window** with a percentage and a reset, or **fact** with no
 limit), the confidence, and whether the app can reach it with the credential it already accepts.
 
@@ -229,7 +229,7 @@ interface and this view are gone; the `nx-` prefix stays as the home's own names
 - No collector, contract or Rust file was changed. The proposal needed no wire change: every new
   channel is either a `UsageWindow` or a `Fact`, both of which already exist in
   `crates/usage-model`.
-- One production line changed on purpose: `gaugeLabel` in `src/app/windowModel.ts` now checks
+- One production line changed on purpose: `gaugeLabel` in `src/app/model/windowModel.ts` now checks
   whether a window already reset **before** checking for a missing percentage, so the accessible
   name matches the void meter the detail draws for that case. It is a wording fix with no rule
   change.

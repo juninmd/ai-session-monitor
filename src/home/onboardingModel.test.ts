@@ -1,7 +1,7 @@
 // The first-run wizard decides what each source needs and what a reading produced. Pure helpers,
 // so the states that were wrong in the first draft stay wrong-proofed.
 import { describe, expect, it } from 'vitest';
-import type { ViewContext } from '../app/windowModel';
+import type { ViewContext } from '../app/model/windowModel';
 import { defaultSettings, type HarnessId, type HarnessView } from '../lib/contract';
 import { problem, viewOf, type WindowSpec, windowOf } from '../mock/fixtures';
 import { startFor } from '../mock/scenarios';

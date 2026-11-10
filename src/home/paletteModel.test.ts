@@ -1,7 +1,7 @@
 // The command list is built from data and filtered by text, so both can be checked without
 // rendering the palette.
 import { describe, expect, it, vi } from 'vitest';
-import type { ViewContext } from '../app/windowModel';
+import type { ViewContext } from '../app/model/windowModel';
 import { defaultSettings, type HarnessView } from '../lib/contract';
 import { viewOf, windowOf } from '../mock/fixtures';
 import { startFor } from '../mock/scenarios';

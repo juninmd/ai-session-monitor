@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { CATALOGS } from './catalogs';
+import { catalogOf, ENGLISH, loadAllCatalogs } from './catalogs';
 import { LOCALES } from './locale';
 
 type Catalog = Readonly<Record<string, string>>;
 
-const en = CATALOGS.en as Catalog;
+// The suites below are built while the file is collected, before any hook runs.
+await loadAllCatalogs();
+
+const en = ENGLISH as Catalog;
 const PLURAL = /\.(zero|one|two|few|many|other)$/;
 const FORMS = ['zero', 'one', 'two', 'few', 'many', 'other'];
 const placeholders = (text: string) => [...new Set(text.match(/\{\w+\}/g) ?? [])].sort();
@@ -22,10 +25,10 @@ function expectedKeys(): { plain: string[]; plural: string[] } {
 describe.each(LOCALES.filter((locale) => locale.id !== 'en').map((locale) => locale.id))(
   'catalog %s',
   (id) => {
-    const catalog = (CATALOGS[id] ?? {}) as Catalog;
+    const catalog = (catalogOf(id) ?? {}) as Catalog;
 
     it('is registered and translates every plain message', () => {
-      expect(CATALOGS[id], 'locale has no catalog').toBeDefined();
+      expect(catalogOf(id), 'locale has no catalog').toBeDefined();
       expect(expectedKeys().plain.filter((key) => !(key in catalog))).toEqual([]);
     });
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { tq } from '../../app/quota';
-import { applySkin, loadSkin, SKIN_IDS, skinOptions } from '../../app/skin';
+import { tq } from '../../app/model/quota';
+import { applySkin, loadSkin, SKIN_IDS, skinOptions } from '../../app/model/skin';
 import { t } from '../../i18n';
 import { formatPercent } from '../../i18n/format';
 import type { Status } from '../../lib/usage';

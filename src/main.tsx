@@ -1,8 +1,9 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './App';
-import { applySkin, loadSkin } from './app/skin';
+import { applySkin, loadSkin } from './app/model/skin';
 import { ErrorBoundary } from './components/shell/ErrorBoundary';
+import { loadCatalog } from './i18n/catalogs';
 import { applyDocumentLocale, getLocale, recalledLocale, setLocale } from './i18n/locale';
 import { type Backend, createTauriBackend, isTauriRuntime } from './lib/backend';
 import './styles/index.css';
@@ -25,9 +26,12 @@ async function start(): Promise<void> {
   // The browser host draws a page and a shadow around the flyout; the Tauri window does not.
   document.documentElement.dataset.host = isTauriRuntime() ? 'tauri' : 'browser';
   applySkin(loadSkin());
-  setLocale(recalledLocale() ?? getLocale());
+  // The remembered language's chunk loads while the backend is chosen; a missing chunk is not a
+  // reason to stay closed, the texts fall back to English.
+  const locale = recalledLocale() ?? getLocale();
+  const [backend] = await Promise.all([selectBackend(), loadCatalog(locale).catch(() => {})]);
+  setLocale(locale);
   applyDocumentLocale(getLocale());
-  const backend = await selectBackend();
   createRoot(container).render(
     <StrictMode>
       <ErrorBoundary>

@@ -2,11 +2,11 @@
 // each source actually answered. Everything it writes goes through the settings API the current
 // settings screen already uses.
 import { useMemo, useState } from 'react';
-import { useBackend } from '../app/backendContext';
-import { useSettingsApi } from '../app/settingsContext';
-import { withEnabled } from '../app/settingsPatch';
-import { useAsyncAction } from '../app/useAsyncAction';
-import type { ViewContext } from '../app/windowModel';
+import { useBackend } from '../app/context/backendContext';
+import { useSettingsApi } from '../app/context/settingsContext';
+import { useAsyncAction } from '../app/hooks/useAsyncAction';
+import { withEnabled } from '../app/model/settingsPatch';
+import type { ViewContext } from '../app/model/windowModel';
 import { Icon } from '../components/icons';
 import { ActionError } from '../components/panel/ErrorActions';
 import { VendorKey } from '../components/setup/KeyConnect';

@@ -1,6 +1,6 @@
 // Small per-source additions to a ready view that the generic window layout cannot express.
 import { useState } from 'react';
-import { useNavigation } from '../../app/navigation';
+import { useNavigation } from '../../app/context/navigation';
 import { t } from '../../i18n';
 import type { HarnessId } from '../../lib/contract';
 import { Icon } from '../icons';

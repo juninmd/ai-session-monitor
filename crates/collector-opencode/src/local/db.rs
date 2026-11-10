@@ -40,7 +40,7 @@ fn try_read(path: &Path, now_secs: i64, limits: &Limits) -> Result<Facts, Reason
 /// deny-by-default authorizer. A WAL database stays in WAL mode and is never checkpointed.
 pub(crate) fn open(path: &Path, limits: &Limits) -> Result<Connection, Reason> {
     let flags = OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX;
-    let conn = Connection::open_with_flags(path, flags).map_err(|e| classify(&e))?;
+    let mut conn = Connection::open_with_flags(path, flags).map_err(|e| classify(&e))?;
     conn.busy_timeout(limits.busy).map_err(|e| classify(&e))?;
     let deadline = Instant::now() + limits.budget;
     conn.progress_handler(PROGRESS_OPS, Some(move || Instant::now() >= deadline))

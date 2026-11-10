@@ -1,5 +1,5 @@
-import { useSettingsApi } from '../../app/settingsContext';
-import { isEnabled, withEnabled } from '../../app/settingsPatch';
+import { useSettingsApi } from '../../app/context/settingsContext';
+import { isEnabled, withEnabled } from '../../app/model/settingsPatch';
 import { t } from '../../i18n';
 import type { HarnessId } from '../../lib/contract';
 import { SettingSwitch } from '../forms/SettingControls';

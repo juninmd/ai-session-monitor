@@ -4,8 +4,8 @@
 // mirrors docs/data-sources.md. Nothing here needs an OAuth token, a cookie or a dashboard.
 
 import { t } from '../i18n';
-import { blockedChannels } from './channels-blocked';
-import { alreadyChannels, nowChannels } from './channels-read';
+import { blockedChannels } from './channelsBlocked';
+import { alreadyChannels, nowChannels } from './channelsRead';
 
 export type Reach =
   /** Already read today. */

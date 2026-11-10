@@ -1,8 +1,8 @@
 // The Claude Code statusLine command: what is installed now, and the buttons that change it.
 import { useEffect } from 'react';
-import { useBackend } from '../../app/backendContext';
-import { useSettingsApi } from '../../app/settingsContext';
-import { useAsyncAction } from '../../app/useAsyncAction';
+import { useBackend } from '../../app/context/backendContext';
+import { useSettingsApi } from '../../app/context/settingsContext';
+import { useAsyncAction } from '../../app/hooks/useAsyncAction';
 import { t } from '../../i18n';
 import type { ShimState, ShimStatus } from '../../lib/contract';
 import { Icon, type IconName } from '../icons';

@@ -2,9 +2,9 @@
 // priority order (palette, settings section, settings, detail, hide) and the focus that returns
 // after the settings close. App owns the state these read; the hook only subscribes and routes keys.
 import { useCallback, useEffect, useRef } from 'react';
-import { focusRow, NX_DRAWER_CLOSE_ID, SETTINGS_TITLE_ID } from '../app/homeIds';
-import { useEscape } from '../app/useEscape';
-import { useSubscription } from '../app/useSubscription';
+import { useEscape } from '../app/hooks/useEscape';
+import { useSubscription } from '../app/hooks/useSubscription';
+import { focusRow, NX_DRAWER_CLOSE_ID, SETTINGS_TITLE_ID } from '../app/model/homeIds';
 import type { Backend } from '../lib/backend';
 import type { HarnessId } from '../lib/contract';
 

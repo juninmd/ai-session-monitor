@@ -1,14 +1,14 @@
 // The command list behind Ctrl+K. Pure: it turns views, a context and a set of callbacks into
 // rankable commands, so the filtering rules can be tested without a DOM.
-import { harnessName } from '../app/harness';
-import { sharePct, showsUsed } from '../app/quota';
-import { summaryOf } from '../app/tabModel';
-import type { ViewContext } from '../app/windowModel';
+import { harnessName } from '../app/model/harness';
+import { sharePct, showsUsed } from '../app/model/quota';
+import { summaryOf } from '../app/model/tabModel';
+import type { ViewContext } from '../app/model/windowModel';
 import { t, tn } from '../i18n';
 import { formatPercent } from '../i18n/format';
 import { getLocale } from '../i18n/locale';
 import type { HarnessId, HarnessView } from '../lib/contract';
-import { SCENARIO_NAMES } from '../mock/scenarios';
+import { SCENARIO_NAMES } from '../mock/scenarioNames';
 import { triageRow } from './triageModel';
 
 /** The group's id; the heading is `paletteGroupLabel(group)`, so the language can change. */

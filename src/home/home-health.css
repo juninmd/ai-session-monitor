@@ -1,0 +1,105 @@
+/* The triage's health strip: the share of providers in each state as one segmented bar, and the
+   same states as filter chips. The bar is a picture of the chips' counts; the chips carry the words. */
+.nx-health {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.nx-health-bar {
+  display: flex;
+  gap: 2px;
+  block-size: 6px;
+  overflow: hidden;
+  border-radius: 3px;
+}
+
+.nx-health-bar > i {
+  flex: 0 1 0;
+  min-inline-size: 6px;
+  background: var(--tone);
+}
+
+.nx-health-bar > i[data-dim] {
+  opacity: 0.28;
+}
+
+.nx-health [data-bucket="act"] {
+  --tone: var(--crit);
+}
+
+.nx-health [data-bucket="watch"] {
+  --tone: var(--warn-fill);
+}
+
+.nx-health [data-bucket="fine"] {
+  --tone: var(--accent);
+}
+
+.nx-health [data-bucket="idle"] {
+  --tone: color-mix(in oklab, var(--ink-3) 55%, transparent);
+}
+
+.nx-health-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.nx-health-chip {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-block-size: 1.5rem;
+  padding: 0.1rem 0.4rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: var(--fs-xs);
+  cursor: pointer;
+}
+
+.nx-health-chip:hover {
+  background: var(--raise-2);
+  color: var(--ink);
+}
+
+.nx-health-chip[aria-pressed="true"] {
+  border-color: color-mix(in oklab, var(--accent) 65%, var(--line));
+  background: color-mix(in oklab, var(--accent) 12%, var(--raise));
+  color: var(--ink);
+}
+
+.nx-health-chip > i {
+  flex: none;
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: 50%;
+  background: var(--tone);
+}
+
+.nx-health-chip[data-bucket="all"] > i {
+  display: none;
+}
+
+.nx-health-chip > b {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (forced-colors: active) {
+  .nx-health-bar {
+    display: none;
+  }
+
+  .nx-health-chip[aria-pressed="true"] {
+    border-color: Highlight;
+    outline: 1px solid Highlight;
+  }
+}

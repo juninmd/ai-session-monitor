@@ -1,5 +1,10 @@
 import type { CSSProperties } from 'react';
-import { gaugeLabel, gaugeTip, type ViewContext, type WindowModel } from '../../app/windowModel';
+import {
+  gaugeLabel,
+  gaugeTip,
+  type ViewContext,
+  type WindowModel,
+} from '../../app/model/windowModel';
 
 interface GaugeProps {
   model: WindowModel;

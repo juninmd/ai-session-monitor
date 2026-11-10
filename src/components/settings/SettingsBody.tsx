@@ -1,9 +1,9 @@
 // What a settings screen shows before its own content: why the stored file could not be read, or
 // that it is still being read. The fieldset freezes every control while a draft is in flight.
 import type { ReactNode } from 'react';
-import { useDraftGuard } from '../../app/draftContext';
-import { describeError } from '../../app/errorText';
-import { useSettingsApi } from '../../app/settingsContext';
+import { useDraftGuard } from '../../app/context/draftContext';
+import { useSettingsApi } from '../../app/context/settingsContext';
+import { describeError } from '../../app/text/errorText';
 import { t } from '../../i18n';
 import { Icon } from '../icons';
 

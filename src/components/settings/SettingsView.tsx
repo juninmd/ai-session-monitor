@@ -2,9 +2,9 @@
 // a lateral drawer over the whole flyout, which App owns next to the provider detail, so this file
 // stays the short menu — the rows report a section's state and ask App to open it.
 import { useEffect, useRef } from 'react';
-import type { SettingsSection } from '../../app/harness';
-import { SETTINGS_TITLE_ID } from '../../app/homeIds';
-import { useSettingsApi } from '../../app/settingsContext';
+import { useSettingsApi } from '../../app/context/settingsContext';
+import type { SettingsSection } from '../../app/model/harness';
+import { SETTINGS_TITLE_ID } from '../../app/model/homeIds';
 import { t } from '../../i18n';
 import { Icon } from '../icons';
 import { SettingsBody } from './SettingsBody';

@@ -1,4 +1,4 @@
-import { groupName } from '../app/layout';
+import { groupName } from '../app/model/layout';
 import {
   durationFormat,
   gaugeLabel,
@@ -8,7 +8,7 @@ import {
   rowTitle,
   type ViewContext,
   type WindowModel,
-} from '../app/windowModel';
+} from '../app/model/windowModel';
 import { t } from '../i18n';
 import { formatDuration, formatPercent } from '../i18n/format';
 import type { HarnessView, UsageWindow } from '../lib/contract';

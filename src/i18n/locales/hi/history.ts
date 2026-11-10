@@ -14,6 +14,8 @@ export const historyMessages = {
     'क्षैतिज: विंडो की शुरुआत से रीसेट तक। ऊर्ध्वाधर: 0 से 100% तक उपयोग। मोटी रेखा मौजूदा विंडो है और हल्की रेखाएँ पिछली विंडो हैं।',
   'history.axis_start': 'शुरू',
   'history.axis_end': 'रीसेट',
+  'history.inspect.label': 'मौजूदा विंडो की रीडिंग देखें',
+  'history.inspect.reading': '{elapsed} बाद {pct} उपयोग',
   'history.label_current': 'मौजूदा {pct}',
   'history.label_past': 'पिछली',
   'history.peak_now': 'इस विंडो में {when} {pct} का शिखर।',

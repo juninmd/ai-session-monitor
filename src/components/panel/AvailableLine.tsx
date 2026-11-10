@@ -1,5 +1,5 @@
-import { tq } from '../../app/quota';
-import type { WindowModel } from '../../app/windowModel';
+import { tq } from '../../app/model/quota';
+import type { WindowModel } from '../../app/model/windowModel';
 import { t } from '../../i18n';
 import { formatPercent } from '../../i18n/format';
 

@@ -2,8 +2,8 @@
 // selected surface (or the settings screen), the lateral detail drawer and the Ctrl+K palette.
 // Everything it shows arrives as props; the state and the backend wiring live in App.
 import type { RefObject } from 'react';
-import type { SettingsSection } from '../app/harness';
-import type { ViewContext } from '../app/windowModel';
+import type { SettingsSection } from '../app/model/harness';
+import type { ViewContext } from '../app/model/windowModel';
 import { Icon, type IconName } from '../components/icons';
 import { Banner } from '../components/panel/Banner';
 import { ActionError } from '../components/panel/ErrorActions';
@@ -24,20 +24,14 @@ import { Sources } from './Sources';
 import { Triage } from './Triage';
 
 /** The surfaces the user navigates between. The first run is not one of them: it replaces them. */
-export type Surface = 'triagem' | 'horizonte' | 'canais';
+export type Surface = 'triage' | 'horizon' | 'channels';
 
 /** The tabs in order, with no wording: callers that only need the id (Alt+digit) read this. */
 export const SURFACES: readonly { id: Surface; icon: IconName }[] = [
-  { id: 'triagem', icon: 'triage' },
-  { id: 'horizonte', icon: 'horizon' },
-  { id: 'canais', icon: 'channels' },
+  { id: 'triage', icon: 'triage' },
+  { id: 'horizon', icon: 'horizon' },
+  { id: 'channels', icon: 'channels' },
 ];
-
-const SURFACE_WORDS = {
-  triagem: 'triage',
-  horizonte: 'horizon',
-  canais: 'channels',
-} as const satisfies Record<Surface, string>;
 
 /** The tabs with their label and hint in the active language; read it at render time. */
 export function surfaceTabs(): readonly {
@@ -48,8 +42,8 @@ export function surfaceTabs(): readonly {
 }[] {
   return SURFACES.map((item) => ({
     ...item,
-    label: t(`surface.${SURFACE_WORDS[item.id]}.label`),
-    hint: t(`surface.${SURFACE_WORDS[item.id]}.hint`),
+    label: t(`surface.${item.id}.label`),
+    hint: t(`surface.${item.id}.hint`),
   }));
 }
 
@@ -153,7 +147,7 @@ export function Fly(props: FlyProps) {
   } = props;
   const inSettings = screen.kind === 'settings';
   const surfaces = loaded && !inSettings && !firstRun && failure === null;
-  const listSurface = surfaces && (surface === 'triagem' || surface === 'horizonte');
+  const listSurface = surfaces && (surface === 'triage' || surface === 'horizon');
   return (
     <div
       ref={rootRef}
@@ -229,7 +223,7 @@ export function Fly(props: FlyProps) {
                 </div>
               </section>
             )}
-            {surfaces && surface === 'triagem' && (
+            {surfaces && surface === 'triage' && (
               <Triage
                 views={active}
                 ctx={ctx}
@@ -239,7 +233,7 @@ export function Fly(props: FlyProps) {
                 onConfigure={onConfigure}
               />
             )}
-            {surfaces && surface === 'horizonte' && (
+            {surfaces && surface === 'horizon' && (
               <Horizon
                 views={active}
                 ctx={ctx}
@@ -250,7 +244,7 @@ export function Fly(props: FlyProps) {
                 onTrend={onTrend}
               />
             )}
-            {surfaces && surface === 'canais' && <Sources />}
+            {surfaces && surface === 'channels' && <Sources />}
             {/* Kept mounted whichever surface is on screen: opening a source's settings from the
                 wizard would otherwise throw the picked list and the step away. */}
             <div className="nx-slot" hidden={inSettings || !firstRun || failure !== null}>
