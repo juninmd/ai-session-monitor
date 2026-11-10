@@ -2,7 +2,7 @@
 // in one grid of two per row, ordered by urgency rather than by registration. The wider card is
 // spent on detail — each provider's own quota windows with their reading and renewal — while the
 // alarm stays in the headline and the card itself only states the facts.
-import { Fragment, type KeyboardEvent, useMemo } from 'react';
+import { Fragment, type KeyboardEvent, useMemo, useState } from 'react';
 import { harnessName } from '../app/harness';
 import { nxNameId, nxTabId } from '../app/homeIds';
 import { showsUsed } from '../app/quota';
@@ -13,7 +13,15 @@ import { t, tn } from '../i18n';
 import { formatAmountValue, formatPercent } from '../i18n/format';
 import type { HarnessId, HarnessView, UsageWindow } from '../lib/contract';
 import { GroupHead, Logo, ShareBar, type Tone } from './Bits';
+import { HealthStrip } from './HealthStrip';
 import { compactQuota, gridQuotas } from './quotaModel';
+import {
+  effectiveFilter,
+  filterRows,
+  healthOf,
+  showsHealth,
+  type TriageFilter,
+} from './triageFilter';
 import { headlineOf, type TriageBoard, type TriageRow, triageOf } from './triageModel';
 import { useRovingTabs } from './useRovingTabs';
 import { quotaName } from './wording';
@@ -98,12 +106,15 @@ function Tile({
   row,
   ctx,
   selected,
+  tabStop,
   onOpen,
   onKeyDown,
 }: {
   row: TriageRow;
   ctx: ViewContext;
   selected: boolean;
+  /** The one tile Tab lands on; the arrows move between the rest. */
+  tabStop: boolean;
   onOpen: (id: HarnessId) => void;
   onKeyDown: (event: KeyboardEvent<HTMLElement>) => void;
 }) {
@@ -118,7 +129,7 @@ function Tile({
       id={nxTabId(id)}
       className="nx-tile"
       aria-pressed={selected}
-      tabIndex={selected ? 0 : -1}
+      tabIndex={tabStop ? 0 : -1}
       data-tier={row.tier}
       title={row.detail}
       onKeyDown={onKeyDown}
@@ -160,11 +171,17 @@ function Tile({
 export function Triage({ views, ctx, selected, onSelect, onOpen, onConfigure }: TriageProps) {
   const triage: TriageBoard = useMemo(() => triageOf(views, ctx), [views, ctx]);
   const headline = useMemo(() => headlineOf(triage), [triage]);
+  const health = useMemo(() => healthOf(triage.rows), [triage]);
+  const [wanted, setWanted] = useState<TriageFilter>('all');
+  const filter = effectiveFilter(wanted, health);
+  const rows = useMemo(() => filterRows(triage.rows, filter), [triage, filter]);
   const onKeyDown = useRovingTabs(
-    triage.rows.map((row) => row.view.id),
+    rows.map((row) => row.view.id),
     selected,
     onSelect,
   );
+  // The highlighted provider can be filtered out; the grid still needs one tile in the tab order.
+  const tabStop = rows.some((row) => row.view.id === selected) ? selected : rows[0]?.view.id;
   const shown = showsUsed(ctx.settings);
 
   if (triage.rows.length === 0) {
@@ -204,14 +221,23 @@ export function Triage({ views, ctx, selected, onSelect, onOpen, onConfigure }: 
         </div>
       </section>
       <section className="nx-section">
-        <GroupHead title={t('triage.by_urgency')} count={triage.rows.length} />
-        <div className="nx-tiles">
-          {triage.rows.map((row) => (
+        <GroupHead title={t('triage.by_urgency')} count={rows.length} />
+        {showsHealth(health) && (
+          <HealthStrip
+            health={health}
+            total={triage.rows.length}
+            filter={filter}
+            onFilter={setWanted}
+          />
+        )}
+        <div className="nx-tiles" key={filter}>
+          {rows.map((row) => (
             <Tile
               key={row.view.id}
               row={row}
               ctx={ctx}
               selected={row.view.id === selected}
+              tabStop={row.view.id === tabStop}
               onOpen={onOpen}
               onKeyDown={onKeyDown}
             />

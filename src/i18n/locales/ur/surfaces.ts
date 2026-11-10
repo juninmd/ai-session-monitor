@@ -56,6 +56,12 @@ export const surfacesMessages = {
   'triage.sub_left.other': '{count} فراہم کنندگان · کوٹا دستیاب',
   'triage.see': '{name} دیکھیں',
   'triage.by_urgency': 'فوری ضرورت کے مطابق',
+  'triage.filter.label': 'حالت کے مطابق فلٹر کریں',
+  'triage.filter.all': 'سب',
+  'triage.filter.act': 'ابھی عمل کریں',
+  'triage.filter.watch': 'نظر رکھیں',
+  'triage.filter.fine': 'ٹھیک',
+  'triage.filter.idle': 'کوئی ریڈنگ نہیں',
 
   'horizon.figure.out': 'ختم',
   'horizon.figure.short': '{duration} بغیر کوٹا',

@@ -13,6 +13,8 @@ export const historyMessages = {
     'По горизонтали: от начала окна до сброса. По вертикали: расход от 0 до 100%. Жирная линия: текущее окно, бледные: прошлые окна.',
   'history.axis_start': 'начало',
   'history.axis_end': 'сброс',
+  'history.inspect.label': 'Просмотр показаний текущего окна',
+  'history.inspect.reading': '{pct} использовано через {elapsed}',
   'history.label_current': 'сейчас {pct}',
   'history.label_past': 'ранее',
   'history.peak_now': 'В этом окне пик {pct} {when}.',

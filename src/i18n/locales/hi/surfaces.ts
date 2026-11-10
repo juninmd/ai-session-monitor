@@ -57,6 +57,12 @@ export const surfacesMessages = {
   'triage.sub_left.other': '{count} प्रदाता · कोटा उपलब्ध',
   'triage.see': '{name} देखें',
   'triage.by_urgency': 'तात्कालिकता के अनुसार',
+  'triage.filter.label': 'स्थिति के अनुसार फ़िल्टर करें',
+  'triage.filter.all': 'सभी',
+  'triage.filter.act': 'अभी कार्रवाई',
+  'triage.filter.watch': 'नज़र रखें',
+  'triage.filter.fine': 'ठीक',
+  'triage.filter.idle': 'कोई रीडिंग नहीं',
 
   'horizon.figure.out': 'खत्म',
   'horizon.figure.short': '{duration} बिना कोटा',

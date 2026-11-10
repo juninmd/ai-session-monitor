@@ -2,17 +2,101 @@
    One hue for the passes that closed, the accent for the one running, and the warning colours
    where the rest of the app already puts them. */
 
+.nx-chart-wrap {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.nx-chart-stage {
+  position: relative;
+  border-radius: var(--r-ctl);
+  cursor: crosshair;
+}
+
+/* The scrubber is drawn by the chart itself, so its ring goes around the picture it moves in. */
+.nx-chart-stage:has(.nx-chart-scrub:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* No height cap: the frame follows the viewBox, so the scrubber laid over the plot and the
+   pointer's position map onto the same pixels the curve is drawn in. */
 .nx-chart {
   display: block;
   inline-size: 100%;
   block-size: auto;
-  max-block-size: 11rem;
+  aspect-ratio: 340 / 172;
   overflow: visible;
+  text-rendering: geometricPrecision;
+}
+
+/* A native range over the plot: keyboard, drag and touch for free, with nothing of its own drawn.
+   The x axis reads left to right in every language, so it does not mirror either. */
+.nx-chart-scrub {
+  position: absolute;
+  inset-block: 0;
+  block-size: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: crosshair;
+}
+
+/* Hairlines land on whole device pixels and keep their weight at any scale: a grid line that
+   straddles two rows of pixels is what makes a small chart look soft. */
+.nx-chart-grid,
+.nx-chart-now,
+.nx-chart-cursor {
+  shape-rendering: crispEdges;
+  vector-effect: non-scaling-stroke;
 }
 
 .nx-chart-grid {
   stroke: var(--line);
   stroke-width: 1;
+}
+
+.nx-chart-grid[data-minor] {
+  stroke-dasharray: 1 3;
+}
+
+/* What the closed passes covered: a range, where their lines alone are a tangle. */
+.nx-chart-band {
+  fill: var(--ink-3);
+  opacity: 0.1;
+}
+
+.nx-chart-cursor {
+  stroke: var(--ink-2);
+  stroke-width: 1;
+}
+
+.nx-chart-cursor-dot {
+  fill: var(--solid);
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.nx-chart-readout {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-block-size: 1.1rem;
+  color: var(--ink-3);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.nx-chart-readout > i {
+  flex: none;
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.nx-chart-readout[data-live] {
+  color: var(--ink);
 }
 
 .nx-chart-txt {
@@ -27,7 +111,7 @@
   stroke: var(--ink-3);
   stroke-width: 1;
   stroke-linejoin: round;
-  opacity: 0.45;
+  opacity: 0.32;
 }
 
 .nx-chart-cur {
@@ -40,7 +124,7 @@
 
 .nx-chart-stop-a {
   stop-color: var(--accent);
-  stop-opacity: 0.28;
+  stop-opacity: 0.3;
 }
 
 .nx-chart-stop-b {
@@ -108,5 +192,66 @@
 
   .nx-chart-lbl {
     fill: CanvasText;
+  }
+
+  .nx-chart-band {
+    display: none;
+  }
+
+  .nx-chart-cursor,
+  .nx-chart-cursor-dot {
+    stroke: CanvasText;
+  }
+}
+
+/* The running pass draws itself once, then its reading lands. Nothing here carries meaning. */
+@media (prefers-reduced-motion: no-preference) {
+  .nx-chart-cur {
+    animation: nx-chart-draw 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+
+  .nx-chart-area,
+  .nx-chart-band {
+    animation: nx-chart-fade 0.6s ease-out 0.15s backwards;
+  }
+
+  .nx-chart-dot,
+  .nx-chart-cross {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: nx-chart-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 0.55s backwards;
+  }
+
+  .nx-chart-proj,
+  .nx-chart-lbl {
+    animation: nx-chart-fade 0.3s ease-out 0.6s backwards;
+  }
+
+  .nx-chart-readout {
+    transition: color 0.12s;
+  }
+}
+
+@keyframes nx-chart-draw {
+  from {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+
+  to {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes nx-chart-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes nx-chart-pop {
+  from {
+    scale: 0;
   }
 }

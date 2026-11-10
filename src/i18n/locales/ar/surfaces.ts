@@ -76,6 +76,12 @@ export const surfacesMessages = {
   'triage.sub_left.other': '{count} مزوّد · الحصة المتاحة',
   'triage.see': 'عرض {name}',
   'triage.by_urgency': 'حسب الإلحاح',
+  'triage.filter.label': 'التصفية حسب الحالة',
+  'triage.filter.all': 'الكل',
+  'triage.filter.act': 'تصرّف الآن',
+  'triage.filter.watch': 'راقب',
+  'triage.filter.fine': 'جيد',
+  'triage.filter.idle': 'بلا قراءة',
 
   'horizon.figure.out': 'نفدت',
   'horizon.figure.short': '{duration} بلا حصة',

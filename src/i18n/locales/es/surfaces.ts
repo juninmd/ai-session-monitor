@@ -61,6 +61,12 @@ export const surfacesMessages = {
   'triage.sub_left.other': '{count} proveedores · cuota disponible',
   'triage.see': 'Ver {name}',
   'triage.by_urgency': 'Por urgencia',
+  'triage.filter.label': 'Filtrar por estado',
+  'triage.filter.all': 'Todos',
+  'triage.filter.act': 'Actuar ya',
+  'triage.filter.watch': 'Vigilar',
+  'triage.filter.fine': 'Bien',
+  'triage.filter.idle': 'Sin lectura',
 
   'horizon.figure.out': 'agotado',
   'horizon.figure.short': '{duration} sin cuota',

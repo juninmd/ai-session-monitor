@@ -13,6 +13,8 @@ export const historyMessages = {
     'অনুভূমিক: উইন্ডোর শুরু থেকে রিসেট পর্যন্ত। উল্লম্ব: 0 থেকে 100% ব্যবহার। গাঢ় রেখাটি বর্তমান উইন্ডো, আর হালকাগুলো আগের উইন্ডো।',
   'history.axis_start': 'শুরু',
   'history.axis_end': 'রিসেট',
+  'history.inspect.label': 'বর্তমান উইন্ডোর রিডিং দেখুন',
+  'history.inspect.reading': '{elapsed} পরে {pct} ব্যবহৃত',
   'history.label_current': 'বর্তমান {pct}',
   'history.label_past': 'আগের',
   'history.peak_now': 'এই উইন্ডোতে {when} সর্বোচ্চ {pct}।',

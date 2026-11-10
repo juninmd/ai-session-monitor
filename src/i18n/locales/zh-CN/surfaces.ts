@@ -51,6 +51,12 @@ export const surfacesMessages = {
   'triage.sub_left.other': '{count} 个服务商 · 额度剩余',
   'triage.see': '查看 {name}',
   'triage.by_urgency': '按紧急程度',
+  'triage.filter.label': '按状态筛选',
+  'triage.filter.all': '全部',
+  'triage.filter.act': '需处理',
+  'triage.filter.watch': '留意',
+  'triage.filter.fine': '正常',
+  'triage.filter.idle': '无读数',
 
   'horizon.figure.out': '已用完',
   'horizon.figure.short': '{duration}无额度',

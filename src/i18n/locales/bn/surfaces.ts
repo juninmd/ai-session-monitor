@@ -56,6 +56,12 @@ export const surfacesMessages = {
   'triage.sub_left.other': '{count}টি প্রোভাইডার · কোটা বাকি',
   'triage.see': '{name} দেখুন',
   'triage.by_urgency': 'জরুরি অবস্থা অনুযায়ী',
+  'triage.filter.label': 'অবস্থা অনুযায়ী ফিল্টার',
+  'triage.filter.all': 'সব',
+  'triage.filter.act': 'এখনই ব্যবস্থা নিন',
+  'triage.filter.watch': 'নজর রাখুন',
+  'triage.filter.fine': 'ঠিক আছে',
+  'triage.filter.idle': 'রিডিং নেই',
 
   'horizon.figure.out': 'শেষ',
   'horizon.figure.short': '{duration} কোটা ছাড়া',

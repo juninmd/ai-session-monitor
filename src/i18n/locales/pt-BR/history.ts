@@ -13,6 +13,8 @@ export const historyMessages = {
     'Horizontal: do início da janela até o reinício. Vertical: uso de 0 a 100%. A linha forte é a janela atual e as fracas são as anteriores.',
   'history.axis_start': 'início',
   'history.axis_end': 'reinício',
+  'history.inspect.label': 'Inspecionar as leituras da janela atual',
+  'history.inspect.reading': '{pct} usado após {elapsed}',
   'history.label_current': 'atual {pct}',
   'history.label_past': 'anteriores',
   'history.peak_now': 'Pico de {pct} {when} nesta janela.',

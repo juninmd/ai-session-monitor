@@ -13,6 +13,8 @@ export const historyMessages = {
     '横轴：从窗口开始到重置。纵轴：用量，0 到 100%。粗线是当前窗口，淡线是之前的窗口。',
   'history.axis_start': '开始',
   'history.axis_end': '重置',
+  'history.inspect.label': '查看当前窗口的读数',
+  'history.inspect.reading': '{elapsed} 后已用 {pct}',
   'history.label_current': '当前 {pct}',
   'history.label_past': '之前',
   'history.peak_now': '本窗口在{when}达到峰值 {pct}。',
