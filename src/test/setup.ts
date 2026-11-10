@@ -1,7 +1,14 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
-import { afterEach, beforeEach, vi } from 'vitest';
+import { afterEach, beforeAll, beforeEach, vi } from 'vitest';
 import { pinLocale } from '../i18n/locale';
+
+// Production fetches a locale's chunk on demand; the suite switches languages synchronously.
+// Imported here, not at the top: a test file's vi.mock of a catalog must reach it first.
+beforeAll(async () => {
+  const { loadAllCatalogs } = await import('../i18n/catalogs');
+  await loadAllCatalogs();
+});
 
 // The suite reads Portuguese: the stored language is English, and the assertions predate it.
 beforeEach(() => pinLocale('pt-BR'));

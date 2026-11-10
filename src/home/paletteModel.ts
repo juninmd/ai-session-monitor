@@ -8,7 +8,7 @@ import { t, tn } from '../i18n';
 import { formatPercent } from '../i18n/format';
 import { getLocale } from '../i18n/locale';
 import type { HarnessId, HarnessView } from '../lib/contract';
-import { SCENARIO_NAMES } from '../mock/scenarios';
+import { SCENARIO_NAMES } from '../mock/scenarioNames';
 import { triageRow } from './triageModel';
 
 /** The group's id; the heading is `paletteGroupLabel(group)`, so the language can change. */
