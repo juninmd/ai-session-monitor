@@ -166,7 +166,7 @@ and a way straight into that source's settings; the summary keeps a count of war
 ### Canais de cota — the evidence list
 
 The answer to "are there more quotas and budgets to read?" — see `channels.ts`,
-`channels-read.ts`, `channels-blocked.ts` and `candidates.ts`. Each row names the endpoint and the
+`channelsRead.ts`, `channelsBlocked.ts` and `candidates.ts`. Each row names the endpoint and the
 fields, its shape in the app's model (**window** with a percentage and a reset, or **fact** with no
 limit), the confidence, and whether the app can reach it with the credential it already accepts.
 

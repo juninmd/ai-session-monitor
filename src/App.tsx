@@ -1,7 +1,7 @@
-// The flyout: the home surfaces (triagem, horizonte, canais), the settings screen, the lateral
+// The flyout: the home surfaces (triage, horizon, channels), the settings screen, the lateral
 // detail drawer and the Ctrl+K palette. Everything it shows comes from the Backend; this component
 // only wires state, focus and the height protocol.
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { cooldownLeft, waitText } from './app/cooldown';
 import { DraftProvider, useDraftGuard } from './app/draftContext';
 import { harnessName, TAB_ORDER } from './app/harness';
@@ -12,14 +12,16 @@ import { useLocaleSync } from './app/useLocaleSync';
 import { useNowSecs } from './app/useNowSecs';
 import { useSettingsState } from './app/useSettingsState';
 import { useSnapshotState } from './app/useSnapshotState';
+import { useTimedText } from './app/useTimedText';
 import { useUpdateState } from './app/useUpdateState';
 import type { ViewContext } from './app/windowModel';
-import { SURFACES, type Surface } from './home/Fly';
 import { Home } from './home/Home';
 import { useCommands } from './home/useCommands';
 import { useHomeShell } from './home/useHomeShell';
 import { useHomeView } from './home/useHomeView';
+import { useOverlays } from './home/useOverlays';
 import { useSettingsScreen } from './home/useSettingsScreen';
+import { useSurface } from './home/useSurface';
 import { t } from './i18n';
 import type { Backend } from './lib/backend';
 import type { HarnessId } from './lib/contract';
@@ -39,21 +41,18 @@ function AppBody({ backend }: { backend: Backend }) {
   const updateApi = useUpdateState(backend);
   const locale = useLocaleSync(settingsApi.settings.general.language, settingsApi.loaded);
   const { nowSecs, sync } = useNowSecs();
-  const [surface, setSurface] = useState<Surface>('triagem');
   const [preferred, setPreferred] = useState<HarnessId>(TAB_ORDER[0] ?? 'claude');
-  const [paletteOpen, setPaletteOpen] = useState(false);
-  const [detailOpen, setDetailOpen] = useState(false);
   const [trend, setTrend] = useState(false);
   // The first run shows the wizard until the user finishes it once; the empty triage then keeps a
   // way back to it. Nothing is written: the flag is about this session, not about the profile.
   const [runDone, setRunDone] = useState(false);
   const [wizardRun, setWizardRun] = useState(0);
-  const [notice, setNotice] = useState('');
-  const [blocked, setBlocked] = useState('');
+  const [notice, setNotice] = useTimedText(6000);
+  const [blocked, setBlocked] = useTimedText(8000);
+  const overlays = useOverlays();
+  const { paletteOpen, detailOpen, closePalette, hideDetail, showDetail } = overlays;
   const rootRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const paletteOpener = useRef<Element | null>(null);
-  const detailOpener = useRef<Element | null>(null);
 
   const refresh = useAsyncAction((id?: HarnessId) => backend.refresh(id));
   const quit = useAsyncAction(() => backend.quit());
@@ -91,7 +90,6 @@ function AppBody({ backend }: { backend: Backend }) {
     [request],
   );
 
-  const hideDetail = useCallback(() => setDetailOpen(false), []);
   const {
     screen,
     inSettings,
@@ -105,61 +103,23 @@ function AppBody({ backend }: { backend: Backend }) {
     navigation,
   } = useSettingsScreen({ guarded, hideDetail, toTop });
 
-  const changeSurface = useCallback(
-    (next: Surface) => {
-      guarded(() => {
-        setSurface(next);
-        setDetailOpen(false);
-        toTop();
-      });
-    },
-    [guarded, toTop],
-  );
+  const { surface, changeSurface, showTriage } = useSurface({
+    guarded,
+    hideDetail,
+    toTop,
+    shortcutsOff: paletteOpen,
+  });
   // Arrow keys move the highlight; activating a provider opens its lateral detail, so browsing the
   // list with the keyboard never steals focus into the drawer.
   const highlight = useCallback((id: HarnessId) => setPreferred(id), []);
-  const openDetail = useCallback((id: HarnessId) => {
-    detailOpener.current = document.activeElement;
-    setPreferred(id);
-    setDetailOpen(true);
-  }, []);
-  const closeDetail = useCallback(() => {
-    setDetailOpen(false);
-    const opener = detailOpener.current;
-    if (opener instanceof HTMLElement) opener.focus();
-  }, []);
-
-  const openPalette = useCallback(() => {
-    paletteOpener.current = document.activeElement;
-    setPaletteOpen(true);
-  }, []);
-  const closePalette = useCallback(() => {
-    setPaletteOpen(false);
-    const opener = paletteOpener.current;
-    if (opener instanceof HTMLElement) opener.focus();
-  }, []);
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key.toLowerCase() !== 'k' || !(event.ctrlKey || event.metaKey)) return;
-      event.preventDefault();
-      openPalette();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [openPalette]);
-
-  // Alt+1..3 jump to a surface; the digit maps to its position in the vertical tab list.
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (!event.altKey || event.ctrlKey || event.metaKey || paletteOpen) return;
-      const target = SURFACES[Number(event.key) - 1];
-      if (target === undefined) return;
-      event.preventDefault();
-      changeSurface(target.id);
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [changeSurface, paletteOpen]);
+  const { openDetail: rememberAndOpen, closeDetail } = overlays;
+  const openDetail = useCallback(
+    (id: HarnessId) => {
+      setPreferred(id);
+      rememberAndOpen();
+    },
+    [rememberAndOpen],
+  );
 
   // A manual refresh during a cool-down is dropped by the scheduler; say why instead of nothing.
   const refreshNow = useCallback(
@@ -173,38 +133,30 @@ function AppBody({ backend }: { backend: Backend }) {
       );
       void refresh.run(id);
     },
-    [active, view, nowSecs, refresh],
+    [active, view, nowSecs, refresh, setBlocked],
   );
-  useEffect(() => {
-    if (blocked === '') return;
-    const timer = setTimeout(() => setBlocked(''), 8000);
-    return () => clearTimeout(timer);
-  }, [blocked]);
-  useEffect(() => {
-    if (notice === '') return;
-    const timer = setTimeout(() => setNotice(''), 6000);
-    return () => clearTimeout(timer);
-  }, [notice]);
 
-  const copySummary = useCallback((text: string) => {
-    const written = navigator.clipboard?.writeText(text);
-    if (written === undefined) {
-      setNotice(t('copy.failed'));
-      return;
-    }
-    void written.then(
-      () => setNotice(t('copy.done')),
-      () => setNotice(t('copy.failed')),
-    );
-  }, []);
+  const copySummary = useCallback(
+    (text: string) => {
+      const written = navigator.clipboard?.writeText(text);
+      if (written === undefined) {
+        setNotice(t('copy.failed'));
+        return;
+      }
+      void written.then(
+        () => setNotice(t('copy.done')),
+        () => setNotice(t('copy.failed')),
+      );
+    },
+    [setNotice],
+  );
   const commands = useCommands({
     views: active,
     ctx,
     select: (id) => {
       setPreferred(id);
-      setSurface('triagem');
-      setDetailOpen(true);
-      toTop();
+      showTriage();
+      showDetail();
     },
     refresh: (id) => refreshNow(id),
     openSettings: (section) => openSettings(section),
@@ -285,14 +237,12 @@ function AppBody({ backend }: { backend: Backend }) {
         onCloseSettings: requestCloseSettings,
         onFinishOnboarding: () => {
           setRunDone(true);
-          setSurface('triagem');
-          toTop();
+          showTriage();
         },
         onConfigure: () => {
           setRunDone(false);
           setWizardRun((run) => run + 1);
-          setSurface('triagem');
-          toTop();
+          showTriage();
         },
       }}
     />
