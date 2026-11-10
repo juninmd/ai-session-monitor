@@ -1,6 +1,6 @@
 // Wording for the proposed surfaces (from the message catalog). Kept in one place so the same fact is never
 // described two different ways in two lists.
-import { groupName } from '../app/layout';
+import { groupName } from '../app/model/layout';
 import {
   leftText,
   resetMoment,
@@ -8,7 +8,7 @@ import {
   type ViewContext,
   type WindowModel,
   windowTitle,
-} from '../app/windowModel';
+} from '../app/model/windowModel';
 import { t } from '../i18n';
 import type { HarnessId, UsageWindow } from '../lib/contract';
 

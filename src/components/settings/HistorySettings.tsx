@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useBackend } from '../../app/backendContext';
-import { describeError } from '../../app/errorText';
-import { useAsyncAction } from '../../app/useAsyncAction';
+import { useBackend } from '../../app/context/backendContext';
+import { useAsyncAction } from '../../app/hooks/useAsyncAction';
+import { describeError } from '../../app/text/errorText';
 import { t } from '../../i18n';
 import { SettingSwitch } from '../forms/SettingControls';
 import { Banner } from '../panel/Banner';

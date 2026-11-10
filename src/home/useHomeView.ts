@@ -1,11 +1,11 @@
 // What the home shows: the views in tab order, the reachable ones, the selected provider, the tray
 // summary the header prints, the line the announcer reads and the first-run state.
 import { useMemo } from 'react';
-import { describeError } from '../app/errorText';
-import { latestReadAt, viewsInTabOrder } from '../app/placeholder';
-import { traySummary } from '../app/tabModel';
-import { useAnnouncer } from '../app/useAnnouncer';
-import type { ViewContext } from '../app/windowModel';
+import { useAnnouncer } from '../app/hooks/useAnnouncer';
+import { latestReadAt, viewsInTabOrder } from '../app/model/placeholder';
+import { traySummary } from '../app/model/tabModel';
+import type { ViewContext } from '../app/model/windowModel';
+import { describeError } from '../app/text/errorText';
 import type { HarnessError, HarnessId, HarnessView, Snapshot } from '../lib/contract';
 import { activeViews } from './model';
 

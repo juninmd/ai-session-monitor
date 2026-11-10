@@ -1,4 +1,4 @@
-import type { ViewContext } from '../../app/windowModel';
+import type { ViewContext } from '../../app/model/windowModel';
 import { hasMessage, t } from '../../i18n';
 import { formatAge } from '../../i18n/format';
 import type { HarnessView } from '../../lib/contract';

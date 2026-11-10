@@ -3,8 +3,8 @@
 // keeps its rate. Every fact it draws is also printed as a sentence next to it; the line under it
 // reads the running pass at the moment the pointer or the scrubber rests on.
 import { type PointerEvent, useId, useState } from 'react';
-import type { Burndown } from '../app/burndown';
-import { durationFormat, type ViewContext, type WindowModel } from '../app/windowModel';
+import type { Burndown } from '../app/model/burndown';
+import { durationFormat, type ViewContext, type WindowModel } from '../app/model/windowModel';
 import { t } from '../i18n';
 import { formatDuration, formatPercent } from '../i18n/format';
 import { nowPoint, projectionLabel, projectionOf, type Segment } from './historyModel';

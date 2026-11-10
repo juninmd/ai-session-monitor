@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { fieldOf } from '../../app/errorText';
-import { fieldMessage } from '../../app/fieldErrors';
-import { useSettingsApi } from '../../app/settingsContext';
-import { useAsyncAction } from '../../app/useAsyncAction';
+import { useSettingsApi } from '../../app/context/settingsContext';
+import { useAsyncAction } from '../../app/hooks/useAsyncAction';
+import { fieldOf } from '../../app/text/errorText';
+import { fieldMessage } from '../../app/text/fieldErrors';
 import { t } from '../../i18n';
 import type { Settings } from '../../lib/contract';
 import { SwitchRow } from '../forms/fields';

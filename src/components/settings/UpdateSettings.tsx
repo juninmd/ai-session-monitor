@@ -1,9 +1,9 @@
 import { useContext } from 'react';
-import { useBackend } from '../../app/backendContext';
-import { useDraftGuard } from '../../app/draftContext';
-import { useSettingsApi } from '../../app/settingsContext';
-import { useAsyncAction } from '../../app/useAsyncAction';
-import { type UpdateApi, UpdateContext, useUpdateState } from '../../app/useUpdateState';
+import { useBackend } from '../../app/context/backendContext';
+import { useDraftGuard } from '../../app/context/draftContext';
+import { useSettingsApi } from '../../app/context/settingsContext';
+import { useAsyncAction } from '../../app/hooks/useAsyncAction';
+import { type UpdateApi, UpdateContext, useUpdateState } from '../../app/hooks/useUpdateState';
 import { t } from '../../i18n';
 import { formatMegabytes } from '../../i18n/format';
 import { SettingSwitch } from '../forms/SettingControls';

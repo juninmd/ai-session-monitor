@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import type { Burndown, Curve } from '../../../app/burndown';
+import type { Burndown, Curve } from '../../../app/model/burndown';
 import { t } from '../../../i18n';
 import { formatPercent } from '../../../i18n/format';
 

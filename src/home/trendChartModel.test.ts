@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Curve } from '../app/burndown';
+import type { Curve } from '../app/model/burndown';
 import { bandOf, clampMoment, domainOf, labelSpot, valueAt } from './trendChartModel';
 
 const curve = (plot: [number, number][]): Curve => ({

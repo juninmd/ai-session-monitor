@@ -2,8 +2,8 @@
 // selected surface (or the settings screen), the lateral detail drawer and the Ctrl+K palette.
 // Everything it shows arrives as props; the state and the backend wiring live in App.
 import type { RefObject } from 'react';
-import type { SettingsSection } from '../app/harness';
-import type { ViewContext } from '../app/windowModel';
+import type { SettingsSection } from '../app/model/harness';
+import type { ViewContext } from '../app/model/windowModel';
 import { Icon, type IconName } from '../components/icons';
 import { Banner } from '../components/panel/Banner';
 import { ActionError } from '../components/panel/ErrorActions';

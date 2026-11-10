@@ -1,5 +1,5 @@
-import type { Pool, PoolRow } from '../../app/layout';
-import { leftText, type ViewContext } from '../../app/windowModel';
+import type { Pool, PoolRow } from '../../app/model/layout';
+import { leftText, type ViewContext } from '../../app/model/windowModel';
 import { t } from '../../i18n';
 import { formatPercent } from '../../i18n/format';
 import { EstimateMark } from './EstimateMark';

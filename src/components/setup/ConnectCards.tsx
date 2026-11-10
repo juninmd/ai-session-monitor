@@ -1,11 +1,11 @@
 // First-run consent surfaces. Nothing is read until the user agrees; "Agora não" switches the
 // source off, which the tab then shows as "Desligado" with a one-click way back.
 import type { ReactNode } from 'react';
-import { useBackend } from '../../app/backendContext';
-import { parkFocus } from '../../app/homeIds';
-import { useSettingsApi } from '../../app/settingsContext';
-import { withEnabled } from '../../app/settingsPatch';
-import { useAsyncAction } from '../../app/useAsyncAction';
+import { useBackend } from '../../app/context/backendContext';
+import { useSettingsApi } from '../../app/context/settingsContext';
+import { useAsyncAction } from '../../app/hooks/useAsyncAction';
+import { parkFocus } from '../../app/model/homeIds';
+import { withEnabled } from '../../app/model/settingsPatch';
 import { t } from '../../i18n';
 import type { HarnessId } from '../../lib/contract';
 import { Banner } from '../panel/Banner';

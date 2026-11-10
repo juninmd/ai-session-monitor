@@ -1,5 +1,5 @@
 // The body of each source group in the settings view (everything below its on/off switch).
-import { useSettingsApi } from '../../app/settingsContext';
+import { useSettingsApi } from '../../app/context/settingsContext';
 import { t } from '../../i18n';
 import { PathField } from '../forms/PathField';
 import { SettingSwitch } from '../forms/SettingControls';

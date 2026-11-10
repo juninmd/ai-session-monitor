@@ -1,4 +1,5 @@
-import { harnessName, TAB_ORDER } from '../../app/harness';
+import { useSettingsApi } from '../../app/context/settingsContext';
+import { harnessName, TAB_ORDER } from '../../app/model/harness';
 import {
   INTERVAL_PRESETS,
   intervalLabel,
@@ -8,8 +9,7 @@ import {
   thresholdKey,
   thresholdOptions,
   WARN_PRESETS,
-} from '../../app/options';
-import { useSettingsApi } from '../../app/settingsContext';
+} from '../../app/model/options';
 import { t } from '../../i18n';
 import {
   type GeneralSettings as General,

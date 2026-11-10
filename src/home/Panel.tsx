@@ -1,6 +1,6 @@
 // The detail content of one provider: every window it reports as a ficha, the stored trend, and the
 // extra information. The frame around it — the lateral drawer and its heading — lives in Drawer.tsx.
-import type { ViewContext } from '../app/windowModel';
+import type { ViewContext } from '../app/model/windowModel';
 import { HarnessPanel } from '../components/HarnessPanel';
 import { MetaChips } from '../components/panel/MetaChips';
 import { StaleBanner } from '../components/panel/StaleBanner';

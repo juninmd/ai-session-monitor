@@ -1,8 +1,8 @@
 // The quota sheet of one provider: every window it reports, with its pool, in the order the
 // source gives them. Nothing is merged and nothing is capped: this is the audit view, so a quota
 // that never fits a card still appears here.
-import { groupName } from '../app/layout';
-import { modelWindow, type ViewContext, type WindowModel } from '../app/windowModel';
+import { groupName } from '../app/model/layout';
+import { modelWindow, type ViewContext, type WindowModel } from '../app/model/windowModel';
 import { hasMessage, t } from '../i18n';
 import type { HarnessView, UsageWindow } from '../lib/contract';
 

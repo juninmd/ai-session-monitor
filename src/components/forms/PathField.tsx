@@ -1,10 +1,10 @@
 // A saved-on-demand text setting (a file or folder path). Blank means "use the default" (null).
 import { type FormEvent, useState } from 'react';
-import { usePendingDraft } from '../../app/draftContext';
-import { fieldOf } from '../../app/errorText';
-import { fieldMessage } from '../../app/fieldErrors';
-import { useSettingsApi } from '../../app/settingsContext';
-import { useAsyncAction } from '../../app/useAsyncAction';
+import { usePendingDraft } from '../../app/context/draftContext';
+import { useSettingsApi } from '../../app/context/settingsContext';
+import { useAsyncAction } from '../../app/hooks/useAsyncAction';
+import { fieldOf } from '../../app/text/errorText';
+import { fieldMessage } from '../../app/text/fieldErrors';
 import { t } from '../../i18n';
 import type { Settings } from '../../lib/contract';
 import { TextField } from './fields';

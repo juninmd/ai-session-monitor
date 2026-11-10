@@ -1,9 +1,9 @@
 // The settings menu: one row per section with its current state, then the secrets note and help.
 import { useContext } from 'react';
-import { useBackend } from '../../app/backendContext';
-import { useSettingsApi } from '../../app/settingsContext';
-import { useAsyncAction } from '../../app/useAsyncAction';
-import { UpdateContext } from '../../app/useUpdateState';
+import { useBackend } from '../../app/context/backendContext';
+import { useSettingsApi } from '../../app/context/settingsContext';
+import { useAsyncAction } from '../../app/hooks/useAsyncAction';
+import { UpdateContext } from '../../app/hooks/useUpdateState';
 import { t } from '../../i18n';
 import { Icon } from '../icons';
 import { Note } from '../panel/Banner';

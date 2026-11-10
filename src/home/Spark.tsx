@@ -1,8 +1,9 @@
 // A trend line for one window, built from the stored epochs the burndown already reads. It is
 // decorative: every number it draws is also printed as text next to it, and it renders nothing
 // while there are fewer than two readings to join. The caller decides when to ask for history.
-import { burndownOf } from '../app/burndown';
-import { useHistory } from '../app/useHistory';
+
+import { useHistory } from '../app/hooks/useHistory';
+import { burndownOf } from '../app/model/burndown';
 import type { HarnessView, UsageWindow } from '../lib/contract';
 
 function line(points: readonly { x: number; y: number }[]): string {

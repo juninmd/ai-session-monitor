@@ -1,7 +1,7 @@
 // The quota sheet and the trend sentences. Pure, so the wording and the grouping are pinned
 // without rendering anything.
 import { describe, expect, it } from 'vitest';
-import type { ViewContext } from '../app/windowModel';
+import type { ViewContext } from '../app/model/windowModel';
 import { defaultSettings, type HarnessView } from '../lib/contract';
 import { viewOf, type WindowSpec, windowOf } from '../mock/fixtures';
 import { startFor } from '../mock/scenarios';

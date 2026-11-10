@@ -7,13 +7,16 @@ changed is listed with the reason; what was left alone is listed too, with why.
 
 ## Verdict
 
-The Rust side holds its shape. `usage-model` is the only vocabulary, `app-core` depends on no
-collector, the collectors know nothing of Tauri, and the contract is pinned from both sides by the
-golden files. Nothing there was changed.
+The Rust side holds its shape, checked against the manifests rather than taken from the ADR:
+`usage-model` and `statusline-shim` depend on no workspace crate, `usage-support` only on
+`usage-model`, `app-core` and all sixteen collectors only on those two, and `src-tauri` is the one
+crate that names Tauri and the collectors. The contract is pinned from both sides by the golden
+files. Nothing there was changed.
 
 The web side had drifted in three places, all fixed here: the bundle shipped every language to
 every user, production code imported fabricated fixtures, and `App.tsx` had grown into the place
-where every piece of flyout state lived.
+where every piece of flyout state lived. A fourth, the flat `src/app` folder, was a matter of
+finding things rather than of correctness, and is sorted here too.
 
 ## Findings and what was done
 
@@ -25,7 +28,8 @@ where every piece of flyout state lived.
 | 4 | Surface ids were Portuguese (`triagem`, `horizonte`, `canais`) against "identifiers are English", with a table translating them back for the message keys | `SURFACE_WORDS` in `Fly.tsx` | Ids are `triage`, `horizon`, `channels`; the table is gone |
 | 5 | Two modules were kebab-case in a camelCase tree | `channels-blocked.ts`, `channels-read.ts` | Renamed to `channelsBlocked.ts`, `channelsRead.ts` |
 | 6 | `tn()` built an `Intl.PluralRules` per call | one per counted message, per render | Cached per locale, as the other `Intl` objects already were |
-| 7 | The trend chart reserved a fifth of its width for labels that then overlapped the projection, and capped its height so the picture letterboxed inside its box | `RIGHT = 66` of 340; `max-block-size` | Labels are placed around the dot by rule (`labelSpot`), the plot uses the width, the frame follows the viewBox |
+| 7 | `src/app` held 60 files in one folder: hooks, contexts, wording and pure models side by side | `ls src/app` | Four folders by what a file is: `hooks/` (12), `context/` (4), `text/` (7), `model/` (16), tests beside their subject. A move only, in a commit of its own, so `git log --follow` reads through it |
+| 8 | The trend chart reserved a fifth of its width for labels that then overlapped the projection, and capped its height so the picture letterboxed inside its box | `RIGHT = 66` of 340; `max-block-size` | Labels are placed around the dot by rule (`labelSpot`), the plot uses the width, the frame follows the viewBox |
 
 ## Benchmark
 
@@ -51,10 +55,6 @@ What is left in the entry chunk: `react-dom` (about 202 kB), `zod` (89 kB), the 
 
 ## Left alone, on purpose
 
-- **Splitting `src/app` (60 files, flat) into `hooks/`, `model/`, `text/`.** The names already say
-  what each file is (`use*`, `*Model`, `*Text`), and the move touches about 400 import lines for no
-  change in behaviour or in what a reader finds. Worth doing alone, in a commit that does nothing
-  else, so `git log --follow` stays readable.
 - **The legacy ready panel.** `components/panel/ReadyView` renders a ready view only in tests: the
   product routes ready views through `home/Panel`. `ErrorView` still borrows `WindowsBlock` from it,
   and about 1 800 lines of tests reach the honesty rules through it. Removing it means moving those
@@ -63,8 +63,11 @@ What is left in the entry chunk: `react-dom` (about 202 kB), `zod` (89 kB), the 
   price of rewriting every schema in the contract layer. The strict parse is the contract; not traded for size here.
 - **Lazy-loading settings, onboarding and the palette.** About 45 kB together; `Suspense` in a
   window that reports its own height to the shell would need the height protocol reworked.
-- **Rust.** No hot path was found that a benchmark would justify touching. The release profile is
-  already `opt-level = "s"`, LTO, one codegen unit, stripped.
+- **Rust.** Not profiled. What was read is the loop every reading goes through (`app-core`'s `hub`
+  and `publish`): a snapshot is compared with the last one before it is emitted, emits are spaced by
+  `EMIT_MIN_GAP`, and the per-publish cost is cloning sixteen views. The time is spent waiting on
+  the collectors' I/O, not there. The release profile is already `opt-level = "s"`, LTO, one codegen
+  unit, stripped.
 
 ## What a later pass should measure
 

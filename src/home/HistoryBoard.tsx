@@ -2,11 +2,11 @@
 // against the earlier passes spelled out and the readings still available as a table. It is only
 // mounted when the setting allows it, so a disabled preference never reaches the backend.
 import { useMemo, useState } from 'react';
-import { burndownOf } from '../app/burndown';
-import { summarySentences } from '../app/burndownText';
-import { sharePct, showsUsed } from '../app/quota';
-import { useHistory } from '../app/useHistory';
-import { modelWindow, type ViewContext, windowTitle } from '../app/windowModel';
+import { useHistory } from '../app/hooks/useHistory';
+import { burndownOf } from '../app/model/burndown';
+import { sharePct, showsUsed } from '../app/model/quota';
+import { modelWindow, type ViewContext, windowTitle } from '../app/model/windowModel';
+import { summarySentences } from '../app/text/burndownText';
 import { Icon } from '../components/icons';
 import { HistoryTable } from '../components/panel/history/HistoryTable';
 import { t } from '../i18n';

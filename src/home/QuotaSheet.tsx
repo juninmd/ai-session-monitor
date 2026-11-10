@@ -4,13 +4,13 @@
 //
 // A stale or expired window has no current number and no pace: the percentage, the amount and the
 // projection belong to a reading, and an old reading has none. The card says so and stops there.
-import { tq } from '../app/quota';
+import { tq } from '../app/model/quota';
 import {
   durationFormat,
   resetMoment,
   type ViewContext,
   type WindowModel,
-} from '../app/windowModel';
+} from '../app/model/windowModel';
 import { EstimateMark } from '../components/panel/EstimateMark';
 import { Gauge } from '../components/panel/Gauge';
 import { PaceLine } from '../components/panel/PaceLine';

@@ -1,6 +1,6 @@
-import { cooldownLeft, nextAttemptText } from '../../app/cooldown';
-import { describeError } from '../../app/errorText';
-import type { ViewContext } from '../../app/windowModel';
+import { cooldownLeft, nextAttemptText } from '../../app/model/cooldown';
+import type { ViewContext } from '../../app/model/windowModel';
+import { describeError } from '../../app/text/errorText';
 import { t } from '../../i18n';
 import { formatAge } from '../../i18n/format';
 import type { HarnessView } from '../../lib/contract';

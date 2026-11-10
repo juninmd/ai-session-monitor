@@ -3,11 +3,11 @@
 // spent on detail — each provider's own quota windows with their reading and renewal — while the
 // alarm stays in the headline and the card itself only states the facts.
 import { Fragment, type KeyboardEvent, useMemo, useState } from 'react';
-import { harnessName } from '../app/harness';
-import { nxNameId, nxTabId } from '../app/homeIds';
-import { showsUsed } from '../app/quota';
-import { summaryOf, tabChip } from '../app/tabModel';
-import type { ViewContext } from '../app/windowModel';
+import { harnessName } from '../app/model/harness';
+import { nxNameId, nxTabId } from '../app/model/homeIds';
+import { showsUsed } from '../app/model/quota';
+import { summaryOf, tabChip } from '../app/model/tabModel';
+import type { ViewContext } from '../app/model/windowModel';
 import { Icon } from '../components/icons';
 import { t, tn } from '../i18n';
 import { formatAmountValue, formatPercent } from '../i18n/format';

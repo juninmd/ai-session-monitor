@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { cooldownLeft, nextAttemptText } from '../../app/cooldown';
-import { layoutWindows } from '../../app/layout';
-import type { ViewContext } from '../../app/windowModel';
+import { cooldownLeft, nextAttemptText } from '../../app/model/cooldown';
+import { layoutWindows } from '../../app/model/layout';
+import type { ViewContext } from '../../app/model/windowModel';
 import { t } from '../../i18n';
 import { formatAge } from '../../i18n/format';
 import type { HarnessError, HarnessView } from '../../lib/contract';

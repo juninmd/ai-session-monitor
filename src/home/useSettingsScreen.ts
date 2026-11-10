@@ -2,9 +2,9 @@
 // the guard on leaving either, and the keyboard that goes back to whatever opened the section.
 // App owns the pieces around it (the detail, the body's scroll position) and passes them in.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { SettingsSection } from '../app/harness';
-import { SETTINGS_TITLE_ID } from '../app/homeIds';
-import type { Navigation } from '../app/navigation';
+import type { Navigation } from '../app/context/navigation';
+import type { SettingsSection } from '../app/model/harness';
+import { SETTINGS_TITLE_ID } from '../app/model/homeIds';
 import type { Screen } from './Fly';
 
 export interface SettingsScreenApi {

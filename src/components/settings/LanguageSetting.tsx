@@ -1,4 +1,4 @@
-import { useSettingsApi } from '../../app/settingsContext';
+import { useSettingsApi } from '../../app/context/settingsContext';
 import { t } from '../../i18n';
 import { LOCALES } from '../../i18n/locale';
 import type { Language } from '../../lib/contract';

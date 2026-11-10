@@ -1,11 +1,11 @@
 import type { ReactNode } from 'react';
-import { useBackend } from '../../app/backendContext';
-import { harnessName } from '../../app/harness';
-import { useNavigation } from '../../app/navigation';
-import { noticeKey, noticeText, uniqueNotices } from '../../app/noticeText';
-import { useSettingsApi } from '../../app/settingsContext';
-import { withEnabled } from '../../app/settingsPatch';
-import { useAsyncAction } from '../../app/useAsyncAction';
+import { useBackend } from '../../app/context/backendContext';
+import { useNavigation } from '../../app/context/navigation';
+import { useSettingsApi } from '../../app/context/settingsContext';
+import { useAsyncAction } from '../../app/hooks/useAsyncAction';
+import { harnessName } from '../../app/model/harness';
+import { withEnabled } from '../../app/model/settingsPatch';
+import { noticeKey, noticeText, uniqueNotices } from '../../app/text/noticeText';
 import { hasMessage, t } from '../../i18n';
 import type { HarnessId, HarnessView } from '../../lib/contract';
 import { HarnessLogo } from '../brand/HarnessLogo';

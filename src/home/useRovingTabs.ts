@@ -1,7 +1,7 @@
 // Roving focus over one vertical list of providers: arrows wrap, Home and End jump to the ends,
 // and only the selected row is a tab stop.
 import { type KeyboardEvent, useCallback } from 'react';
-import { focusRow } from '../app/homeIds';
+import { focusRow } from '../app/model/homeIds';
 import type { HarnessId } from '../lib/contract';
 
 export function useRovingTabs(

@@ -1,4 +1,4 @@
-import { paceLine, type ViewContext, type WindowModel } from '../../app/windowModel';
+import { paceLine, type ViewContext, type WindowModel } from '../../app/model/windowModel';
 import { Icon } from '../icons';
 import { EstimateMark } from './EstimateMark';
 

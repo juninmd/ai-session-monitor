@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './App';
-import { applySkin, loadSkin } from './app/skin';
+import { applySkin, loadSkin } from './app/model/skin';
 import { ErrorBoundary } from './components/shell/ErrorBoundary';
 import { loadCatalog } from './i18n/catalogs';
 import { applyDocumentLocale, getLocale, recalledLocale, setLocale } from './i18n/locale';

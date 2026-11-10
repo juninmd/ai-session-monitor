@@ -1,6 +1,6 @@
 // A button that opens one fixed destination; the backend maps the link name to its URL.
-import { useBackend } from '../../app/backendContext';
-import { useAsyncAction } from '../../app/useAsyncAction';
+import { useBackend } from '../../app/context/backendContext';
+import { useAsyncAction } from '../../app/hooks/useAsyncAction';
 import type { ExternalLink, HarnessId } from '../../lib/contract';
 import { Icon } from '../icons';
 import { ActionError } from '../panel/ErrorActions';

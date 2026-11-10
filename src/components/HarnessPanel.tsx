@@ -1,5 +1,5 @@
 // One renderer per ViewState; the switch is exhaustive, so a new state fails the build here.
-import type { ViewContext } from '../app/windowModel';
+import type { ViewContext } from '../app/model/windowModel';
 import type { HarnessId, HarnessView } from '../lib/contract';
 import { ErrorView } from './panel/ErrorView';
 import { Notices } from './panel/Notices';

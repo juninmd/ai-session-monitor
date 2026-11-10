@@ -1,10 +1,9 @@
 // LiteLLM connection: URL, key, scope and the advanced transport options. Settings are saved
 // first and the key after them, so the refresh the key triggers already sees a complete setup.
 import { type FormEvent, useEffect, useRef, useState } from 'react';
-import { useBackend } from '../../app/backendContext';
-import { usePendingDraft } from '../../app/draftContext';
-import { fieldOf } from '../../app/errorText';
-import { fieldMessage } from '../../app/fieldErrors';
+import { useBackend } from '../../app/context/backendContext';
+import { usePendingDraft } from '../../app/context/draftContext';
+import { useSettingsApi } from '../../app/context/settingsContext';
 import {
   checkBaseUrl,
   type DraftErrors,
@@ -14,16 +13,17 @@ import {
   type LitellmDraft,
   toDraft,
   validateDraft,
-} from '../../app/litellmDraft';
+} from '../../app/model/litellmDraft';
 import {
   intervalLabel,
   LITELLM_POLL_PRESETS,
   numericOptions,
   secondsLabel,
   TIMEOUT_PRESETS,
-} from '../../app/options';
-import { useSettingsApi } from '../../app/settingsContext';
-import { toHarnessError } from '../../app/toHarnessError';
+} from '../../app/model/options';
+import { toHarnessError } from '../../app/model/toHarnessError';
+import { fieldOf } from '../../app/text/errorText';
+import { fieldMessage } from '../../app/text/fieldErrors';
 import { t } from '../../i18n';
 import {
   LIMITS,

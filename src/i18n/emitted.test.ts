@@ -2,8 +2,8 @@
 // src/test/vocabulary.ts; this file checks it against the Rust sources in both directions, so a
 // code added over there without a sentence here (or a sentence for a code nobody sends) fails.
 import { describe, expect, it } from 'vitest';
-import { describeError } from '../app/errorText';
-import { noticeText } from '../app/noticeText';
+import { describeError } from '../app/text/errorText';
+import { noticeText } from '../app/text/noticeText';
 import { ERROR_CODES, type ErrorCode } from '../lib/contract';
 import { notice, problem } from '../mock/fixtures';
 import {

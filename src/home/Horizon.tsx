@@ -1,9 +1,9 @@
 // Horizon: every provider on the same question. Each bar spans from now to that window's reset,
 // so a shortfall is a coloured stretch with a size in time, not a percentage to interpret.
 import { type KeyboardEvent, useId, useMemo } from 'react';
-import { harnessName } from '../app/harness';
-import { nxNameId, nxTabId } from '../app/homeIds';
-import { durationFormat, leftText, type ViewContext } from '../app/windowModel';
+import { harnessName } from '../app/model/harness';
+import { nxNameId, nxTabId } from '../app/model/homeIds';
+import { durationFormat, leftText, type ViewContext } from '../app/model/windowModel';
 import { Icon } from '../components/icons';
 import { t } from '../i18n';
 import { formatDuration } from '../i18n/format';

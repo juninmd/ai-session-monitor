@@ -1,4 +1,4 @@
-import { isEstimatedFact } from '../../app/estimate';
+import { isEstimatedFact } from '../../app/model/estimate';
 import { hasMessage, t } from '../../i18n';
 import { formatFactValue } from '../../i18n/format';
 import type { Fact, HarnessView } from '../../lib/contract';

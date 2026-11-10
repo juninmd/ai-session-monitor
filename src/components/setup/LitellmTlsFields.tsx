@@ -1,6 +1,6 @@
 // TLS choice for the LiteLLM connection. "Do not verify" is per host, needs an explicit
 // confirmation, and always carries a warning: the key travels over an unauthenticated channel.
-import { type DraftErrors, hostOf, type LitellmDraft } from '../../app/litellmDraft';
+import { type DraftErrors, hostOf, type LitellmDraft } from '../../app/model/litellmDraft';
 import { t } from '../../i18n';
 import type { TlsMode } from '../../lib/contract';
 import { CheckField, type Option, Segmented, TextField } from '../forms/fields';

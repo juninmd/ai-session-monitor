@@ -1,6 +1,6 @@
 // The trend chart's arithmetic, apart from its drawing: reading a curve at a moment, the band the
 // closed passes cover, and where a label fits. Pure, so the picture and its text agree.
-import type { Curve } from '../app/burndown';
+import type { Curve } from '../app/model/burndown';
 import type { Segment } from './historyModel';
 
 const clamp = (value: number, low: number, high: number) => Math.min(high, Math.max(low, value));

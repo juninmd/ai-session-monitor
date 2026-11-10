@@ -1,8 +1,8 @@
 // The key-only sources share one shape: a key unlocks the reading, and a button opens the vendor's key page.
 // Pieces shared by the first-run card and the settings group.
-import { useBackend } from '../../app/backendContext';
-import { useSettingsApi } from '../../app/settingsContext';
-import { useAsyncAction } from '../../app/useAsyncAction';
+import { useBackend } from '../../app/context/backendContext';
+import { useSettingsApi } from '../../app/context/settingsContext';
+import { useAsyncAction } from '../../app/hooks/useAsyncAction';
 import { t } from '../../i18n';
 import { SecretField } from '../forms/SecretField';
 import { Icon } from '../icons';

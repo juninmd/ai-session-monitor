@@ -1,7 +1,7 @@
 // The screen check in emitted.test.tsx must go red when the catalog loses a label. Here it does:
 // four labels are removed from the catalog before anything renders.
 import { describe, expect, it, vi } from 'vitest';
-import { describeError } from '../../app/errorText';
+import { describeError } from '../../app/text/errorText';
 import { hasMessage } from '../../i18n';
 import { litellmEmitted } from '../../mock/emitted';
 import { problem } from '../../mock/fixtures';

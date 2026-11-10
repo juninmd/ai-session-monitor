@@ -1,7 +1,8 @@
 // The Fontes de dados section: the secrets banner and one collapsible group per source.
-import { harnessName, TAB_ORDER } from '../../app/harness';
-import { useSettingsApi } from '../../app/settingsContext';
-import { isEnabled } from '../../app/settingsPatch';
+
+import { useSettingsApi } from '../../app/context/settingsContext';
+import { harnessName, TAB_ORDER } from '../../app/model/harness';
+import { isEnabled } from '../../app/model/settingsPatch';
 import { t } from '../../i18n';
 import type { HarnessId } from '../../lib/contract';
 import { HarnessLogo } from '../brand/HarnessLogo';

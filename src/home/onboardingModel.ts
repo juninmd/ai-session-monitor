@@ -1,8 +1,9 @@
 // First-run wizard: what each source needs before it can show anything, and what a reading
 // attempt actually produced. Pure helpers; the wizard only sequences them.
-import { describeError } from '../app/errorText';
-import { harnessName } from '../app/harness';
-import type { ViewContext } from '../app/windowModel';
+
+import { harnessName } from '../app/model/harness';
+import type { ViewContext } from '../app/model/windowModel';
+import { describeError } from '../app/text/errorText';
 import type { KeyedHarness } from '../components/setup/KeyConnect';
 import { t, tn } from '../i18n';
 import { formatAge } from '../i18n/format';

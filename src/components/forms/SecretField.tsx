@@ -1,10 +1,10 @@
 // Secret fields never echo a value: the input is write-only, cleared the moment a save succeeds,
 // and the only thing rendered about a stored key is the saved / not-saved chip.
 import { type FormEvent, type Ref, useRef, useState } from 'react';
-import { usePendingDraft } from '../../app/draftContext';
-import { fieldOf } from '../../app/errorText';
-import { fieldMessage } from '../../app/fieldErrors';
-import { useAsyncAction } from '../../app/useAsyncAction';
+import { usePendingDraft } from '../../app/context/draftContext';
+import { useAsyncAction } from '../../app/hooks/useAsyncAction';
+import { fieldOf } from '../../app/text/errorText';
+import { fieldMessage } from '../../app/text/fieldErrors';
 import { t } from '../../i18n';
 import { Icon } from '../icons';
 import { describedBy, ErrorLine } from './fields';

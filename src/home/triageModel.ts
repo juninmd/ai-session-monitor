@@ -1,15 +1,16 @@
 // Triage: orders the providers by what the user must act on and writes one plain-language
 // verdict per provider. Status, pace and expiry come from src/lib/usage.ts through
-// src/app/windowModel.ts; nothing here recomputes a rule.
-import { describeError } from '../app/errorText';
-import { summaryOf } from '../app/tabModel';
+// src/app/model/windowModel.ts; nothing here recomputes a rule.
+
+import { summaryOf } from '../app/model/tabModel';
 import {
   durationFormat,
   modelWindow,
   paceLine,
   type ViewContext,
   type WindowModel,
-} from '../app/windowModel';
+} from '../app/model/windowModel';
+import { describeError } from '../app/text/errorText';
 import { t, tn } from '../i18n';
 import { formatAge, formatClock, formatDuration } from '../i18n/format';
 import type { HarnessId, HarnessView, UsageWindow } from '../lib/contract';

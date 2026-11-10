@@ -1,7 +1,7 @@
 // The settings menu: one row per section, the state each row reports, and the way in and out.
 import { screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import type { SettingsSection } from '../../app/harness';
+import type { SettingsSection } from '../../app/model/harness';
 import { SettingsScreen } from '../../home/settingsHarness';
 import { type PanelOptions, renderPanel, settingsWith } from '../../test/helpers';
 

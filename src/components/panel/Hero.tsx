@@ -1,12 +1,12 @@
 import { Fragment } from 'react';
-import { tq } from '../../app/quota';
+import { tq } from '../../app/model/quota';
 import {
   durationFormat,
   leftText,
   resetMoment,
   type ViewContext,
   type WindowModel,
-} from '../../app/windowModel';
+} from '../../app/model/windowModel';
 import { t } from '../../i18n';
 import { durationParts, formatAmountValue, formatPercent, spokenDuration } from '../../i18n/format';
 import { Icon } from '../icons';

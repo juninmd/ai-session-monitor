@@ -1,4 +1,9 @@
-import { leftText, resetMoment, type ViewContext, type WindowModel } from '../../app/windowModel';
+import {
+  leftText,
+  resetMoment,
+  type ViewContext,
+  type WindowModel,
+} from '../../app/model/windowModel';
 import { t } from '../../i18n';
 import { formatAmountValue, formatPercent, spokenDuration } from '../../i18n/format';
 import { Icon } from '../icons';

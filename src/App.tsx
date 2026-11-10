@@ -2,19 +2,19 @@
 // detail drawer and the Ctrl+K palette. Everything it shows comes from the Backend; this component
 // only wires state, focus and the height protocol.
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { cooldownLeft, waitText } from './app/cooldown';
-import { DraftProvider, useDraftGuard } from './app/draftContext';
-import { harnessName, TAB_ORDER } from './app/harness';
-import { sharePct, showsUsed } from './app/quota';
-import { useAsyncAction } from './app/useAsyncAction';
-import { useFlyoutHeight } from './app/useFlyoutHeight';
-import { useLocaleSync } from './app/useLocaleSync';
-import { useNowSecs } from './app/useNowSecs';
-import { useSettingsState } from './app/useSettingsState';
-import { useSnapshotState } from './app/useSnapshotState';
-import { useTimedText } from './app/useTimedText';
-import { useUpdateState } from './app/useUpdateState';
-import type { ViewContext } from './app/windowModel';
+import { DraftProvider, useDraftGuard } from './app/context/draftContext';
+import { useAsyncAction } from './app/hooks/useAsyncAction';
+import { useFlyoutHeight } from './app/hooks/useFlyoutHeight';
+import { useLocaleSync } from './app/hooks/useLocaleSync';
+import { useNowSecs } from './app/hooks/useNowSecs';
+import { useSettingsState } from './app/hooks/useSettingsState';
+import { useSnapshotState } from './app/hooks/useSnapshotState';
+import { useTimedText } from './app/hooks/useTimedText';
+import { useUpdateState } from './app/hooks/useUpdateState';
+import { cooldownLeft, waitText } from './app/model/cooldown';
+import { harnessName, TAB_ORDER } from './app/model/harness';
+import { sharePct, showsUsed } from './app/model/quota';
+import type { ViewContext } from './app/model/windowModel';
 import { Home } from './home/Home';
 import { useCommands } from './home/useCommands';
 import { useHomeShell } from './home/useHomeShell';

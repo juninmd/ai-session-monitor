@@ -1,7 +1,7 @@
 import { act, screen, within } from '@testing-library/react';
 import type { UserEvent } from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import { type SettingsSection, TAB_ORDER } from '../../app/harness';
+import { type SettingsSection, TAB_ORDER } from '../../app/model/harness';
 import { SettingsScreen } from '../../home/settingsHarness';
 import { BackendError } from '../../lib/backend';
 import { problem } from '../../mock/fixtures';

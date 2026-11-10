@@ -18,6 +18,7 @@ benchmark: `docs/architecture-review.md`. Wire contract:
 | `crates/app-core` | Window-free core: settings store, hub, scheduler, notification plan, `AppService` | usage-model, usage-support (no collectors) |
 | `src-tauri` | Composition root: tray, flyout window, keyring, wiring, commands | app-core, collectors |
 | `src` | React UI; talks only to `Backend` (`src/lib/backend.ts`) | `src/lib/contract` |
+| `src/app` | What the UI knows apart from how it looks: `hooks/` (state and effects), `context/` (what the tree shares), `text/` (wire codes to sentences), `model/` (pure view models) | `src/lib`, `src/i18n` |
 | `src/home` | The flyout's own surfaces — triage, horizon, quota channels, the lateral detail and the Ctrl+K palette — which `App` composes | `src/app`, `src/components` |
 | `contract` | Golden files pinning Rust and TypeScript to the same wire shape | - |
 
