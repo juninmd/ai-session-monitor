@@ -10,7 +10,6 @@ import { ActionError } from '../components/panel/ErrorActions';
 import { SettingsView } from '../components/settings/SettingsView';
 import { Footer } from '../components/shell/Footer';
 import { Header } from '../components/shell/Header';
-import { UpdateBanner } from '../components/shell/UpdateBanner';
 import { t } from '../i18n';
 import type { HarnessError, HarnessId, HarnessView } from '../lib/contract';
 import type { Status } from '../lib/usage';
@@ -190,7 +189,6 @@ export function Fly(props: FlyProps) {
           {...(inSettings ? { role: 'region', 'aria-labelledby': 'settings-title' } : {})}
         >
           <div className="fly-content">
-            {!inSettings && <UpdateBanner onOpen={() => onOpenSettings('update')} />}
             {shellFailure && <ActionError error={shellFailure} />}
             {eventsFailed && (
               <Banner tone="warn">
@@ -270,7 +268,7 @@ export function Fly(props: FlyProps) {
       {/* A section covers the whole frame, not the scrolling body: it must not scroll away with
           the menu it lands on. */}
       {inSettings && <SettingsDrawer section={screen.section} onSection={onSection} />}
-      <Footer readAt={readAt} nowSecs={nowSecs} />
+      <Footer readAt={readAt} nowSecs={nowSecs} onOpenUpdate={() => onOpenSettings('update')} />
       {/* The palette opens from anywhere in the flyout, so it listens for Ctrl+K itself (App). */}
       {paletteOpen && <CommandPalette commands={commands} onClose={onClosePalette} />}
     </div>
