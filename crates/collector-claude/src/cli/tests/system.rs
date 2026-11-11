@@ -77,7 +77,9 @@ mod windows {
         }
     }
 
-    /// Prints a fabricated answer only for exactly the argv and environment the collector owes.
+    /// Prints a fabricated answer only for exactly the argv and environment the collector owes:
+    /// no MCP server and no self-update may start from a console-less poll (either could open a
+    /// terminal window that takes the focus, as agy's detached updater did).
     fn picky_script(answer: &Path, config_dir: &str, cwd: &Path) -> String {
         let answer = answer.display();
         let cwd = cwd.display();
@@ -86,7 +88,10 @@ mod windows {
              if not \"%~3\"==\"--output-format\" exit /b 3\r\nif not \"%~4\"==\"json\" exit /b 3\r\n\
              if not \"%~5\"==\"--max-budget-usd\" exit /b 3\r\nif not \"%~6\"==\"0.02\" exit /b 3\r\n\
              if not \"%~7\"==\"--setting-sources\" exit /b 3\r\nif not \"%~8\"==\"project\" exit /b 3\r\n\
-             if not \"%~9\"==\"--no-session-persistence\" exit /b 3\r\n\
+             if not \"%~9\"==\"--strict-mcp-config\" exit /b 3\r\nshift\r\n\
+             if not \"%~9\"==\"--no-session-persistence\" exit /b 3\r\nshift\r\n\
+             if not \"%~9\"==\"\" exit /b 3\r\n\
+             if not \"%DISABLE_AUTOUPDATER%\"==\"1\" exit /b 6\r\n\
              if /i not \"%CD%\"==\"{cwd}\" exit /b 5\r\n\
              if not \"%CLAUDE_CONFIG_DIR%\"==\"{config_dir}\" exit /b 4\r\ntype \"{answer}\"\r\n"
         )
