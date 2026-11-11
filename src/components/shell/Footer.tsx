@@ -19,6 +19,14 @@ function UpdateArea({ onOpen }: { onOpen: () => void }) {
   const status = useContext(UpdateContext)?.status;
   if (!status || !SHOWN.includes(status.phase)) return null;
   const downloading = status.phase === 'downloading';
+  const text =
+    status.phase === 'downloading'
+      ? t('update.downloading')
+      : status.phase === 'ready'
+        ? t('update.ready')
+        : status.phase === 'installing'
+          ? t('update.installing')
+          : t('update.available', { version: status.availableVersion ?? '—' });
   const pct =
     downloading && status.totalBytes
       ? Math.min(100, Math.round((status.downloadedBytes / status.totalBytes) * 100))
@@ -27,7 +35,7 @@ function UpdateArea({ onOpen }: { onOpen: () => void }) {
     <div className="update-banner update-area" role="status" data-phase={status.phase}>
       <div className="update-banner-lead">
         <Icon name="info" className="update-banner-icon" />
-        <span>{t('update.available', { version: status.availableVersion ?? '—' })}</span>
+        <span>{text}</span>
       </div>
       {downloading ? (
         <progress
