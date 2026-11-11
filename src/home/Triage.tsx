@@ -12,7 +12,7 @@ import { Icon } from '../components/icons';
 import { t, tn } from '../i18n';
 import { formatAmountValue, formatPercent } from '../i18n/format';
 import type { HarnessId, HarnessView, UsageWindow } from '../lib/contract';
-import { GroupHead, Logo, ShareBar, type Tone } from './Bits';
+import { GroupHead, Logo, Ring, ShareBar, type Tone } from './Bits';
 import { HealthStrip } from './HealthStrip';
 import { compactQuota, gridQuotas } from './quotaModel';
 import {
@@ -136,7 +136,10 @@ function Tile({
       onClick={() => onOpen(id)}
     >
       <span className="nx-tile-head">
-        <Logo id={id} size={16} />
+        <span className="nx-logo-ring">
+          <Ring pct={pct} tone={tone} />
+          <Logo id={id} size={14} />
+        </span>
         <span className="nx-name" id={nxNameId(id)}>
           {name}
         </span>

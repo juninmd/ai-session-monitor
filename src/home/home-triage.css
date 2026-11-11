@@ -273,3 +273,63 @@
   flex: none;
   color: var(--ink-2);
 }
+
+/* The ring runs around the provider's logo, so it costs the name no width. */
+.nx-logo-ring {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  margin-inline-end: 0.1rem;
+}
+
+.nx-ring {
+  flex: none;
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  transform: rotate(-90deg);
+  --ring-c: var(--accent);
+}
+
+.nx-ring[data-status="warn"] {
+  --ring-c: var(--warn-fill);
+}
+
+.nx-ring[data-status="crit"],
+.nx-ring[data-status="out"] {
+  --ring-c: var(--crit);
+}
+
+.nx-ring[data-status="none"] {
+  --ring-c: var(--ink-3);
+}
+
+.nx-ring circle {
+  fill: none;
+  stroke-width: 2.4;
+}
+
+.nx-ring-track {
+  stroke: var(--line);
+}
+
+.nx-ring-fill {
+  stroke: var(--ring-c);
+  stroke-linecap: round;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nx-ring-fill {
+    animation: nx-ring-draw 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  @keyframes nx-ring-draw {
+    from {
+      stroke-dasharray: 0 100;
+    }
+  }
+}
