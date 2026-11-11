@@ -162,7 +162,7 @@ mod real_os {
     /// The command line of `pid` as the operating system reports it, bypassing the scan's filters.
     fn raw_command_line(pid: u32) -> Vec<String> {
         let pid = Pid::from_u32(pid);
-        let mut system = System::new();
+        let mut system = System::new().expect("system information");
         let kind = ProcessRefreshKind::nothing().with_cmd(UpdateKind::Always);
         system.refresh_processes_specifics(ProcessesToUpdate::Some(&[pid]), true, kind);
         let args = system.process(pid).map(|process| process.cmd().to_vec()).unwrap_or_default();

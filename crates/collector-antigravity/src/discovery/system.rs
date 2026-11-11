@@ -68,7 +68,8 @@ fn name_matches(name: &OsStr, prefix: &str) -> bool {
 }
 
 fn scan(prefix: &str) -> Vec<Server> {
-    let mut system = System::new();
+    // sysinfo 0.40 can fail to initialise; nothing to scan then, which is a refusal like any other.
+    let Ok(mut system) = System::new() else { return Vec::new() };
     system.refresh_processes_specifics(ProcessesToUpdate::All, true, ProcessRefreshKind::nothing());
     let pids: Vec<Pid> = system
         .processes()
