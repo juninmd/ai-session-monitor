@@ -174,11 +174,15 @@ export function Fly(props: FlyProps) {
                 type="button"
                 aria-pressed={surface === item.id}
                 aria-label={item.label}
-                title={t('surface.tab_title', { label: item.label, hint: item.hint, n: index + 1 })}
                 aria-keyshortcuts={`Alt+${index + 1}`}
                 onClick={() => onSurface(item.id)}
               >
                 <Icon name={item.icon} />
+                <span className="nx-surf-tip" aria-hidden="true">
+                  <b>{item.label}</b>
+                  <span>{item.hint}</span>
+                  <kbd>Alt+{index + 1}</kbd>
+                </span>
               </button>
             ))}
           </nav>
