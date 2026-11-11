@@ -51,11 +51,13 @@ async fn the_installed_program_is_run_with_exactly_the_usage_arguments() {
 
 /// `agy -p` starts a detached `--bg-updater` that runs `agy --version` with no console, so Windows
 /// opens a visible terminal and takes the foreground (seen on a real refresh); the switch stops it.
+/// Only the exact word `true` counts: agy 1.5.6 ignores `1`, which is what let the window back in.
 #[tokio::test]
 async fn the_auto_updater_is_switched_off_so_no_terminal_window_steals_the_focus() {
     let fixture = FIXTURE.replace('/', "\\");
+    // Case-sensitive on purpose (`if` without `/i`): `True`, `TRUE` or `1` would fail here too.
     let body = format!(
-        "@echo off\r\nif not \"%AGY_CLI_DISABLE_AUTO_UPDATE%\"==\"1\" exit /b 7\r\ntype \"{fixture}\"\r\n"
+        "@echo off\r\nif not \"%AGY_CLI_DISABLE_AUTO_UPDATE%\"==\"true\" exit /b 7\r\ntype \"{fixture}\"\r\n"
     );
     let home = profile("agy.cmd", &body);
     let cli = SystemCli::with("agy.cmd", Duration::from_secs(10));

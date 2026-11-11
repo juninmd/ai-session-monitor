@@ -26,7 +26,9 @@ const MAX_STDERR: usize = 16 << 10;
 /// `--no-session-persistence` keeps the polls out of the user's session history. Loading only the
 /// `project` settings (the neutral working directory has none) keeps the user's global hooks and
 /// plugins from firing on every poll, where a hook that opens a terminal would steal the focus.
-const ARGS: [&str; 8] = [
+/// `--strict-mcp-config` with no `--mcp-config` starts no MCP server from any scope: each is a
+/// program of the user's that would otherwise start (and could open a window) on every poll.
+const ARGS: [&str; 9] = [
     "-p",
     "/usage",
     "--output-format",
@@ -35,8 +37,12 @@ const ARGS: [&str; 8] = [
     "0.02",
     "--setting-sources",
     "project",
+    "--strict-mcp-config",
 ];
 const NO_SESSION_FLAG: &str = "--no-session-persistence";
+/// A self-update started from a console-less poll is the same shape as agy's `--bg-updater`, which
+/// opened a terminal window and took the focus. A poll has no business updating the user's CLI.
+const NO_AUTO_UPDATE: (&str, &str) = ("DISABLE_AUTOUPDATER", "1");
 
 #[derive(Debug)]
 pub(crate) struct SystemCli {
@@ -68,8 +74,9 @@ impl Cli for SystemCli {
         let Some(program) = self.program(&ctx.home_dir) else { return Err(CliError::Absent) };
         let mut spec = CommandSpec::new(program);
         spec.args = ARGS.iter().chain([&NO_SESSION_FLAG]).map(OsString::from).collect();
+        spec.env = vec![(NO_AUTO_UPDATE.0.into(), NO_AUTO_UPDATE.1.into())];
         if let Some(dir) = config_dir {
-            spec.env = vec![("CLAUDE_CONFIG_DIR".into(), dir.as_os_str().to_owned())];
+            spec.env.push(("CLAUDE_CONFIG_DIR".into(), dir.as_os_str().to_owned()));
         }
         // A neutral directory: the CLI must not pick up a project's settings or write into one.
         let cwd = neutral_dir(&ctx.data_dir)

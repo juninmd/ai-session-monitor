@@ -20,7 +20,9 @@ const MAX_STDERR: usize = 16 << 10;
 const ARGS: [&str; 4] = ["-p", "/usage", "--output-format", "json"];
 /// Without it `agy -p` spawns a detached `--bg-updater` that runs `agy --version` without our hidden
 /// console: Windows opens a terminal window and gives it the foreground, even over a fullscreen game.
-const NO_AUTO_UPDATE: (&str, &str) = ("AGY_CLI_DISABLE_AUTO_UPDATE", "1");
+/// The value must be the word `true`: agy 1.5.6 ignores `1` (measured on 2026-11-11 with a fresh
+/// profile per run: `1` still started the updater and opened Windows Terminal, `true` did not).
+const NO_AUTO_UPDATE: (&str, &str) = ("AGY_CLI_DISABLE_AUTO_UPDATE", "true");
 
 #[derive(Debug)]
 pub(crate) struct SystemCli {

@@ -184,6 +184,12 @@ with virtual time; this is the check in a real session.
 - [ ] Run a debug build from a terminal for an hour: stderr never shows
       `ai-session-monitor: polling stopped: ...`. If it does, the app recovered by itself but
       something panicked: keep the line (it names the cause and carries no data) and file a bug.
+- [ ] No poll opens a window. After installing or updating Claude Code, agy or Codex, run each
+      installed one through `./scripts/window-audit.ps1 -Preset claude|agy|codex` (add
+      `-Isolated` to run from a throwaway profile, which is what makes a throttled self-updater
+      fire). Each must end with `VERDICT: no console, no window, no focus change`. A third-party
+      CLI can change how its off switches are read: agy 1.5.6 stopped honouring
+      `AGY_CLI_DISABLE_AUTO_UPDATE=1` and only this check showed the Windows Terminal window.
 
 ## Quota history
 
