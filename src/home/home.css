@@ -109,6 +109,71 @@
   outline-offset: -1px;
 }
 
+/* The name, the hint and the shortcut open beside a tab on hover or keyboard focus, floating over
+   the body so the rail never changes width. The accessible name stays in aria-label. */
+.nx-surfaces > button {
+  position: relative;
+}
+
+.nx-surf-tip {
+  position: absolute;
+  inset-inline-start: calc(100% + 0.4rem);
+  inset-block-start: 50%;
+  translate: 0 -50%;
+  z-index: 5;
+  display: grid;
+  gap: 0.05rem;
+  inline-size: max-content;
+  max-inline-size: 14rem;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-ctl);
+  background: var(--raise);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.16);
+  color: var(--ink);
+  font-size: var(--fs-xs);
+  text-align: start;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nx-surf-tip b {
+  font-size: var(--fs-sm);
+}
+
+.nx-surf-tip span {
+  color: var(--ink-2);
+}
+
+.nx-surf-tip kbd {
+  justify-self: start;
+  margin-block-start: 0.1rem;
+  padding: 0.02rem 0.3rem;
+  border: 1px solid var(--line-2);
+  border-radius: 4px;
+  font: inherit;
+  color: var(--ink-3);
+}
+
+.nx-surfaces > button:hover .nx-surf-tip,
+.nx-surfaces > button:focus-visible .nx-surf-tip {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nx-surf-tip {
+    transition:
+      opacity 0.16s ease 0.12s,
+      translate 0.2s cubic-bezier(0.22, 1, 0.36, 1) 0.12s;
+    translate: -4px -50%;
+  }
+
+  .nx-surfaces > button:hover .nx-surf-tip,
+  .nx-surfaces > button:focus-visible .nx-surf-tip {
+    translate: 0 -50%;
+  }
+}
+
 /* The one line that answers "did that work?" for a copied summary. */
 .nx-notice {
   padding: 0.35rem 0.55rem;
