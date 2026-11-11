@@ -16,6 +16,25 @@ export function ShareBar({ pct, tone, label }: { pct: number | null; tone: Tone;
   );
 }
 
+/** The reading as a ring around the card's number: the same share the bars print, drawn once. */
+export function Ring({ pct, tone }: { pct: number | null; tone: Tone }) {
+  return (
+    <svg className="nx-ring" viewBox="0 0 20 20" aria-hidden="true" data-status={tone}>
+      <circle className="nx-ring-track" cx="10" cy="10" r="8" pathLength="100" />
+      {pct !== null && (
+        <circle
+          className="nx-ring-fill"
+          cx="10"
+          cy="10"
+          r="8"
+          pathLength="100"
+          style={{ strokeDasharray: `${Math.min(100, Math.max(0, pct))} 100` }}
+        />
+      )}
+    </svg>
+  );
+}
+
 export function Logo({ id, size = 18 }: { id: HarnessId; size?: number }) {
   return <HarnessLogo id={id} size={size} />;
 }
