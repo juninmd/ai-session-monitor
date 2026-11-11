@@ -79,3 +79,24 @@
     flex-direction: column;
   }
 }
+
+/* The area sits above the footer, flush to the frame, instead of scrolling with the cards. */
+.update-area {
+  flex: none;
+  border-radius: 0;
+  border-inline: 0;
+  border-block-end: 0;
+  padding-block: 0.45rem;
+  animation: nx-rise 0.3s ease-out;
+}
+
+.update-area-bar {
+  inline-size: 40%;
+  block-size: 0.4rem;
+  accent-color: var(--accent);
+}
+
+.fly-version {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
