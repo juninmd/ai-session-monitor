@@ -154,17 +154,21 @@ async fn without_the_cli_the_oauth_api_answers() {
 }
 
 #[tokio::test]
-async fn a_failing_cli_falls_back_and_is_not_retried_for_half_an_hour() {
+async fn a_failing_cli_falls_back_and_is_retried_after_a_growing_wait() {
     let (env, server) = oauth_ready().await;
     let cli = ScriptedCli::new(Err(CliError::Failed(HarnessError::new(ErrorCode::Timeout, true))));
     let view = crate::collect_with_cli(&on(&env), &env.ctx(), &endpoint(&server), &cli).await;
     assert_eq!(view.meta["extra_source"], "oauth_usage");
 
-    // Past the OAuth throttle but inside the CLI backoff.
-    crate::collect_with_cli(&on(&env), &env.ctx_at(NOW + 1000), &endpoint(&server), &cli).await;
-    assert_eq!(cli.calls(), 1);
-    crate::collect_with_cli(&on(&env), &env.ctx_at(NOW + 1800), &endpoint(&server), &cli).await;
+    crate::collect_with_cli(&on(&env), &env.ctx_at(NOW + 299), &endpoint(&server), &cli).await;
+    assert_eq!(cli.calls(), 1, "inside the first backoff");
+    crate::collect_with_cli(&on(&env), &env.ctx_at(NOW + 300), &endpoint(&server), &cli).await;
     assert_eq!(cli.calls(), 2);
+    // The second failure in a row waits twice as long.
+    crate::collect_with_cli(&on(&env), &env.ctx_at(NOW + 899), &endpoint(&server), &cli).await;
+    assert_eq!(cli.calls(), 2);
+    crate::collect_with_cli(&on(&env), &env.ctx_at(NOW + 900), &endpoint(&server), &cli).await;
+    assert_eq!(cli.calls(), 3);
 }
 
 #[tokio::test]
@@ -213,4 +217,22 @@ async fn an_expired_five_hour_window_is_refreshed_from_the_cli_and_re_dated_by_o
     assert_eq!(with_oauth.windows[0].used_pct, Some(1.0));
     assert_eq!(with_oauth.windows[0].resets_at, Some(NOW + 27_000));
     assert_eq!(with_oauth.plan.as_deref(), Some("Max 5x"));
+}
+
+#[tokio::test]
+async fn when_both_sources_fail_the_last_per_model_windows_stand_in_for_an_hour() {
+    // No login file here, so the OAuth fallback fails before any request.
+    let env = installed_env();
+    poll(&env, &ScriptedCli::says(REPORT), NOW).await;
+
+    let failing =
+        ScriptedCli::new(Err(CliError::Failed(HarnessError::new(ErrorCode::Timeout, true))));
+    let view = poll(&env, &failing, NOW + 700).await;
+    assert_eq!(notice_codes(&view), ["claude_oauth_partial"], "the failure is still reported");
+    assert_eq!(ids(&view), ["five_hour", "weekly", "fable:weekly", "opus:weekly", "sonnet:weekly"]);
+    assert_eq!(view.meta["extra_source"], "cli_usage");
+
+    let later = poll(&env, &failing, NOW + 3601).await;
+    assert_eq!(notice_codes(&later), ["claude_oauth_partial"]);
+    assert_eq!(ids(&later), ["five_hour", "weekly"], "old numbers do not stand in for longer");
 }

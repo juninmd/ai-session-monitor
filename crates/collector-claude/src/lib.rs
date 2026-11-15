@@ -27,12 +27,14 @@
 //!   exercised against a live account here, only against a fabricated loopback server. It is off
 //!   by default, polled at most every five minutes, and a failure never hides the statusLine data.
 //!
-//! Collectors are stateless; the only memory kept between polls is a small cache file for the
-//! OAuth throttle. Nothing in this crate reads the process environment: the caller resolves the
+//! Collectors are stateless; the only memory kept between polls is three small files: the OAuth
+//! and CLI throttles, and the per-model windows as they were last read (`lastgood`), which stand
+//! in for an hour when both extra sources fail. Nothing in this crate reads the process environment: the caller resolves the
 //! Claude config directory (`CLAUDE_CONFIG_DIR`) into `ClaudeSettings::config_dir`.
 
 mod cli;
 mod datafile;
+mod lastgood;
 mod lenient;
 mod local;
 mod notice;
@@ -56,6 +58,8 @@ pub const NOTICE_CODES: &[&str] = &[
     notice::NO_RATE_LIMITS,
     notice::SHIM_OUTDATED,
     notice::OAUTH_PARTIAL,
+    notice::STATUS_LINE_REPLACED,
+    notice::STATUS_LINE_REMOVED,
 ];
 
 /// One read of Claude Code's limits. Gates run before any I/O: a disabled tab or a missing consent
@@ -101,6 +105,8 @@ pub(crate) async fn collect_with_cli<C: cli::Cli>(
         } else if oauth::missing_primary_resets(&view) {
             oauth::fill_resets(&mut view, settings, ctx, endpoint).await;
         }
+        // Both sources failing must not empty the tab: the last per-model windows stand in.
+        lastgood::settle(&mut view, settings, ctx).await;
     }
     view
 }

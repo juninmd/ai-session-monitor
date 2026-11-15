@@ -149,6 +149,24 @@ async fn somebody_elses_status_line_needs_the_setup_too_and_is_left_alone() {
 }
 
 #[tokio::test]
+async fn a_status_line_taken_out_after_it_recorded_needs_setup_and_says_why() {
+    for (settings, code) in [
+        (settings_foreign(), "claude_status_line_replaced"),
+        (settings_plain(), "claude_status_line_removed"),
+    ] {
+        let env = installed();
+        env.write_rate_limits(&ok_both());
+        env.write_settings(settings);
+        let view = view_of(&env).await;
+        assert_eq!(view.state, ViewState::NeedsSetup);
+        assert_eq!(notice_codes(&view), [code]);
+        assert_eq!(view.notices[0].severity, Severity::Warn);
+        assert!(view.notices[0].params.is_empty());
+        assert!(view.windows.is_empty(), "old numbers are not shown behind a lost command");
+    }
+}
+
+#[tokio::test]
 async fn an_installed_shim_whose_file_went_missing_needs_setup_and_says_why() {
     let env = installed();
     env.write_rate_limits(&ok_both());

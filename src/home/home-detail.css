@@ -87,6 +87,15 @@
   color: var(--crit);
 }
 
+/* A stale view's last number: marked "old" in words, and drawn in the quiet ink. */
+.nx-chip[data-old] .nx-chip-pct {
+  color: var(--ink-3);
+}
+
+.nx-chip[data-old] .gauge meter {
+  opacity: 0.5;
+}
+
 /* One wrapping line: the reading, then when it renews. */
 .nx-chip-foot {
   display: flex;

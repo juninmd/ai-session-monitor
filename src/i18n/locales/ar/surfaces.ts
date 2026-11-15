@@ -24,6 +24,7 @@ export const surfacesMessages = {
   'triage.verdict.stale_age': 'قراءة قديمة · منذ {age}',
   'triage.short.stale': 'قديمة',
   'triage.short.failed': 'فشلت',
+  'triage.short.setup': 'غير متصل',
   'triage.short.loading': 'جارٍ القراءة',
   'triage.short.no_reading': 'بلا قراءة',
   'triage.verdict.out': 'نفدت · تعود {when}',

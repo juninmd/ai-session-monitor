@@ -15,6 +15,8 @@ const clip = (value: string) =>
 
 const ACTIONS: Readonly<Record<string, NoticeAction>> = {
   claude_shim_outdated: 'reinstall',
+  claude_status_line_replaced: 'reinstall',
+  claude_status_line_removed: 'reinstall',
   opencode_no_key: 'settings',
 };
 
@@ -28,6 +30,14 @@ const ERROR_CODE_REASON: ReadonlySet<string> = new Set([
   'codex_rollout_fallback',
   'litellm_level_unreadable',
 ]);
+
+/** The error code a notice names as its reason, for the ones whose `reason` is one. */
+export function noticeErrorCode(notice: Notice): ErrorCode | null {
+  const reason = notice.params.reason;
+  return ERROR_CODE_REASON.has(notice.code) && reason !== undefined && isErrorCode(reason)
+    ? reason
+    : null;
+}
 
 // A count from the wire: plain digits only, so "1e3" or "-3" never pass for a number.
 const COUNT = /^\d{1,6}$/;

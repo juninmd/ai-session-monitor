@@ -7,8 +7,12 @@ export const noticeMessages = {
     'Claude Code ne signale aucune limite (facturation par clé API ou forfait sans limites).',
   'notice.code.claude_shim_outdated':
     'La commande installée dans la ligne d’état de Claude Code est introuvable. Réinstallez-la pour reprendre la lecture.',
+  'notice.code.claude_status_line_replaced':
+    'Un autre programme a remplacé la commande de la ligne d’état dans le settings.json de Claude Code, et les limites n’arrivent plus. Réinstallez la commande pour reprendre la lecture.',
+  'notice.code.claude_status_line_removed':
+    'La commande de la ligne d’état n’est plus dans le settings.json de Claude Code, et les limites n’arrivent plus. Réinstallez la commande pour reprendre la lecture.',
   'notice.code.claude_oauth_partial':
-    'L’utilisation par modèle (claude /usage ou l’API d’utilisation du compte) est activée, mais elle a échoué ({reason}). Seules les données de la ligne d’état sont affichées.',
+    'L’utilisation par modèle (claude /usage ou l’API d’utilisation du compte) est activée, mais elle a échoué ({reason}). Les données de la ligne d’état sont affichées ; les chiffres par modèle peuvent manquer ou dater d’une heure au plus.',
   'notice.code.codex_rollout_fallback':
     'Le serveur d’application codex n’a pas répondu ({reason}). Lecture de la dernière session enregistrée ; les chiffres peuvent être anciens.',
   'notice.code.codex_no_limits':

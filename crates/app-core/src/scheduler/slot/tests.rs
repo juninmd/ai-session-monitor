@@ -131,6 +131,23 @@ fn a_parked_result_stops_polling_and_forgets_the_failures() {
     assert!(!slot.is_due(now + secs(86_400)), "a parked harness is never polled");
 }
 
+#[test]
+fn claude_waiting_for_setup_is_looked_at_again_while_the_others_stay_parked() {
+    let needs_setup = |id| judge(&HarnessView::with_state(id, ViewState::NeedsSetup));
+    assert_eq!(needs_setup(HarnessId::Claude), Verdict::Recheck);
+    for id in HarnessId::ALL.into_iter().filter(|id| *id != HarnessId::Claude) {
+        assert_eq!(needs_setup(id), Verdict::Parked, "{id:?}");
+    }
+
+    let now = Instant::now();
+    let mut slot = armed(now);
+    slot.settle(failing(true), SIXTY, now);
+    slot.settle(Verdict::Recheck, SIXTY, now);
+    assert_eq!((delay(&slot, now), slot.failures), (120, 0), "slowly, and never as a failure");
+    slot.settle(Verdict::Recheck, secs(3600), now);
+    assert_eq!(delay(&slot, now), 3600, "never faster than the normal cadence");
+}
+
 #[tokio::test]
 async fn settling_clears_the_in_flight_marker() {
     let now = Instant::now();

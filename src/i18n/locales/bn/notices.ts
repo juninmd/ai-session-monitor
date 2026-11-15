@@ -6,8 +6,12 @@ export const noticeMessages = {
   'notice.code.claude_no_rate_limits': 'Claude Code সীমার তথ্য জানায় না (API কী বিলিং বা সীমাহীন প্ল্যান)।',
   'notice.code.claude_shim_outdated':
     'Claude Code স্ট্যাটাস লাইনে ইনস্টল করা কমান্ডটি পাওয়া যায়নি। রিডিং আবার শুরু করতে সেটি পুনরায় ইনস্টল করুন।',
+  'notice.code.claude_status_line_replaced':
+    'অন্য একটি প্রোগ্রাম Claude Code-এর settings.json-এ স্ট্যাটাস লাইনের কমান্ড বদলে দিয়েছে, তাই সীমার তথ্য আসা বন্ধ হয়েছে। আবার পড়তে কমান্ডটি পুনরায় ইনস্টল করুন।',
+  'notice.code.claude_status_line_removed':
+    'স্ট্যাটাস লাইনের কমান্ডটি আর Claude Code-এর settings.json-এ নেই, তাই সীমার তথ্য আসা বন্ধ হয়েছে। আবার পড়তে কমান্ডটি পুনরায় ইনস্টল করুন।',
   'notice.code.claude_oauth_partial':
-    'মডেল অনুযায়ী ব্যবহার (claude /usage বা অ্যাকাউন্ট ব্যবহারের API) চালু আছে, কিন্তু ব্যর্থ হয়েছে ({reason})। শুধু স্ট্যাটাস লাইনের ডেটা দেখানো হচ্ছে।',
+    'মডেল অনুযায়ী ব্যবহার (claude /usage বা অ্যাকাউন্ট ব্যবহারের API) চালু আছে, কিন্তু ব্যর্থ হয়েছে ({reason})। স্ট্যাটাস লাইনের ডেটা দেখানো হচ্ছে; মডেল অনুযায়ী সংখ্যা না-ও থাকতে পারে বা এক ঘণ্টা পর্যন্ত পুরোনো হতে পারে।',
   'notice.code.codex_rollout_fallback':
     'codex app-server সাড়া দেয়নি ({reason})। সর্বশেষ রেকর্ড করা সেশন থেকে পড়া হচ্ছে; সংখ্যাগুলো পুরোনো হতে পারে।',
   'notice.code.codex_no_limits': 'Codex অ্যাকাউন্ট সীমার তথ্য জানায় না (API কী দিয়ে লগইন)।',

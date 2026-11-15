@@ -7,8 +7,12 @@ export const noticeMessages = {
     'Claude Code 未报告额度（按 API 密钥计费，或套餐没有额度限制）。',
   'notice.code.claude_shim_outdated':
     '在 Claude Code 状态栏中找不到已安装的命令。请重新安装以恢复读取。',
+  'notice.code.claude_status_line_replaced':
+    '其他程序替换了 Claude Code 的 settings.json 中的状态栏命令，限额数据不再更新。请重新安装该命令以恢复读取。',
+  'notice.code.claude_status_line_removed':
+    'Claude Code 的 settings.json 中已没有状态栏命令，限额数据不再更新。请重新安装该命令以恢复读取。',
   'notice.code.claude_oauth_partial':
-    '已开启按模型用量（claude /usage 或账户用量 API），但读取失败（{reason}）。仅显示状态栏的数据。',
+    '已开启按模型用量（claude /usage 或账户用量 API），但读取失败（{reason}）。显示状态栏的数据；按模型的数字可能缺失，或是最多一小时前的。',
   'notice.code.codex_rollout_fallback':
     'codex app-server 没有响应（{reason}）。正在读取最近一次记录的会话，数字可能已过时。',
   'notice.code.codex_no_limits': 'Codex 账户未报告额度（使用 API 密钥登录）。',

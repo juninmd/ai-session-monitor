@@ -31,6 +31,8 @@ pub(crate) struct Paths {
     pub oauth_cache: PathBuf,
     /// Throttle and last answer of the `claude -p "/usage"` source.
     pub cli_cache: PathBuf,
+    /// The per-model windows as an extra source last gave them (`lastgood`).
+    pub extras_last: PathBuf,
     pub exe: PathBuf,
     /// Directories that hold only our files, deepest first; each goes once it is empty.
     pub own_dirs: [PathBuf; 3],
@@ -70,6 +72,7 @@ impl Paths {
             chain: named("chain"),
             oauth_cache: named("oauth-usage"),
             cli_cache: named("cli-usage"),
+            extras_last: named("extras-last"),
             exe: exe_dir.join(EXE_NAME),
             own_dirs: [exe_dir, bin, claude_data],
         })
