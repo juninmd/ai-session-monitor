@@ -9,6 +9,10 @@ pub(crate) const WAITING_FIRST_SESSION: &str = "claude_waiting_first_session";
 pub(crate) const NO_RATE_LIMITS: &str = "claude_no_rate_limits";
 pub(crate) const SHIM_OUTDATED: &str = "claude_shim_outdated";
 pub(crate) const OAUTH_PARTIAL: &str = "claude_oauth_partial";
+/// The command recorded here before and somebody else's command is the `statusLine` now.
+pub(crate) const STATUS_LINE_REPLACED: &str = "claude_status_line_replaced";
+/// The command recorded here before and settings.json has no `statusLine` any more.
+pub(crate) const STATUS_LINE_REMOVED: &str = "claude_status_line_removed";
 
 pub(crate) fn plain(code: &str, severity: Severity) -> Notice {
     Notice { code: code.to_owned(), severity, params: BTreeMap::new() }

@@ -24,6 +24,7 @@ export const surfacesMessages = {
   'triage.verdict.stale_age': 'পুরোনো রিডিং · {age} আগের',
   'triage.short.stale': 'পুরোনো',
   'triage.short.failed': 'ব্যর্থ',
+  'triage.short.setup': 'সংযোগ বিচ্ছিন্ন',
   'triage.short.loading': 'পড়া হচ্ছে',
   'triage.short.no_reading': 'রিডিং নেই',
   'triage.verdict.out': 'শেষ · {when} ফিরবে',

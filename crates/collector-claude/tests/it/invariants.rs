@@ -7,7 +7,7 @@ use std::path::{Path, PathBuf};
 use collector_claude::{NOTICE_CODES, collect};
 use usage_model::settings::ClaudeSettings;
 
-use crate::common::{NOW, null_limits};
+use crate::common::{NOW, null_limits, settings_foreign, settings_plain};
 use crate::setup::{installed, recording, view_of};
 
 #[tokio::test]
@@ -26,6 +26,12 @@ async fn every_declared_notice_code_is_emitted_and_every_emitted_code_is_declare
     let outdated = recording();
     std::fs::remove_file(outdated.shim_copy()).unwrap();
     note(view_of(&outdated).await);
+
+    for settings in [settings_foreign(), settings_plain()] {
+        let lost = recording();
+        lost.write_settings(settings);
+        note(view_of(&lost).await);
+    }
 
     // No login file: the option fails before any request.
     let no_login = recording();

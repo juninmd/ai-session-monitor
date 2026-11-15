@@ -12,6 +12,7 @@ import {
 import { t } from '../i18n';
 import { formatClock, formatDuration } from '../i18n/format';
 import type { HarnessView, UsageWindow } from '../lib/contract';
+import { lostSetup } from './model';
 import { quotaName } from './wording';
 
 export type HorizonKind = 'lasts' | 'short' | 'out' | 'unknown' | 'broken';
@@ -46,7 +47,7 @@ function horizonRow(view: HarnessView, ctx: ViewContext): HorizonRow {
   if (view.state === 'loading') {
     return { ...base, kind: 'unknown', label: t('surface.reading') };
   }
-  if (view.state === 'error' || view.stale) {
+  if (view.state === 'error' || view.stale || lostSetup(view)) {
     return {
       ...base,
       kind: 'broken',

@@ -5,7 +5,8 @@
 //! or fails.
 //!
 //! Each run starts a process (about five seconds of CPU, the user's global hooks may fire), so the
-//! answer is cached for ten minutes, a failure for thirty, and runs never overlap.
+//! answer is cached for ten minutes, a failure for five (doubling up to thirty while it keeps
+//! failing), and runs never overlap.
 //!
 //! `Cli` is the seam: production runs the fixed binary ([`SystemCli`]); tests hand the collector a
 //! scripted double or a throwaway script in a temp dir.

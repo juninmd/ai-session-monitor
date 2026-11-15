@@ -1,7 +1,9 @@
 //! Turns what the shim recorded into a `HarnessView`. Pure: the clock comes from the caller.
 
 use usage_model::status::is_expired;
-use usage_model::{HarnessError, HarnessId, HarnessView, Severity, Source, UsageWindow, ViewState};
+use usage_model::{
+    HarnessError, HarnessId, HarnessView, Notice, Severity, Source, UsageWindow, ViewState,
+};
 
 use crate::datafile::DataFile;
 use crate::notice;
@@ -43,11 +45,9 @@ pub(crate) fn from_data(file: DataFile, now: i64) -> HarnessView {
 }
 
 /// The shim is missing, moved or somebody else's statusLine is in the way.
-pub(crate) fn needs_setup(outdated: bool) -> HarnessView {
+pub(crate) fn needs_setup(why: Option<Notice>) -> HarnessView {
     let mut view = HarnessView::needs_setup(HarnessId::Claude);
-    if outdated {
-        view.notices.push(notice::plain(notice::SHIM_OUTDATED, Severity::Warn));
-    }
+    view.notices.extend(why);
     view
 }
 
@@ -156,8 +156,8 @@ mod tests {
 
     #[test]
     fn needs_setup_flags_an_outdated_shim_only_when_it_is_one() {
-        assert!(needs_setup(false).notices.is_empty());
-        let outdated = needs_setup(true);
+        assert!(needs_setup(None).notices.is_empty());
+        let outdated = needs_setup(Some(notice::plain(notice::SHIM_OUTDATED, Severity::Warn)));
         assert_eq!(outdated.state, ViewState::NeedsSetup);
         assert_eq!(
             (outdated.notices[0].code.as_str(), outdated.notices[0].severity),

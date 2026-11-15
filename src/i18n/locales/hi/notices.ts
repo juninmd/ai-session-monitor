@@ -8,8 +8,12 @@ export const noticeMessages = {
     'Claude Code सीमाएँ नहीं बताता (API कुंजी बिलिंग या बिना सीमा वाला प्लान)।',
   'notice.code.claude_shim_outdated':
     'Claude Code की स्टेटस लाइन में इंस्टॉल की गई कमांड नहीं मिली। रीडिंग फिर शुरू करने के लिए उसे दोबारा इंस्टॉल करें।',
+  'notice.code.claude_status_line_replaced':
+    'किसी दूसरे प्रोग्राम ने Claude Code की settings.json में स्टेटस लाइन कमांड बदल दी, इसलिए सीमाएँ आना बंद हो गईं। फिर से पढ़ने के लिए कमांड दोबारा इंस्टॉल करें।',
+  'notice.code.claude_status_line_removed':
+    'स्टेटस लाइन कमांड अब Claude Code की settings.json में नहीं है, इसलिए सीमाएँ आना बंद हो गईं। फिर से पढ़ने के लिए कमांड दोबारा इंस्टॉल करें।',
   'notice.code.claude_oauth_partial':
-    'मॉडल के अनुसार उपयोग (claude /usage या खाता उपयोग API) चालू है, पर वह विफल रहा ({reason})। केवल स्टेटस लाइन का डेटा दिख रहा है।',
+    'मॉडल के अनुसार उपयोग (claude /usage या खाता उपयोग API) चालू है, पर वह विफल रहा ({reason})। स्टेटस लाइन का डेटा दिख रहा है; मॉडल के अनुसार आँकड़े गायब या एक घंटे तक पुराने हो सकते हैं।',
   'notice.code.codex_rollout_fallback':
     'codex app-server ने जवाब नहीं दिया ({reason})। आखिरी रिकॉर्ड किया गया सत्र पढ़ा जा रहा है; आँकड़े पुराने हो सकते हैं।',
   'notice.code.codex_no_limits': 'Codex खाता सीमाएँ नहीं बताता (API कुंजी से लॉगिन)।',

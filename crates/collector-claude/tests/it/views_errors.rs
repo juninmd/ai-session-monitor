@@ -18,10 +18,11 @@ fn assert_error(view: &HarnessView, code: ErrorCode, retryable: bool) {
 
 #[tokio::test]
 async fn settings_that_cannot_be_edited_are_unreadable_and_left_as_they_were() {
+    // Retryable: the file is other programs' to rewrite, and the next tick may find it whole.
     for text in ["{ not json", "[1, 2]", "", "{\"a\":1,}", "{/* note */}"] {
         let env = recording();
         env.write_settings(text);
-        assert_error(&view_of(&env).await, ErrorCode::SettingsUnreadable, false);
+        assert_error(&view_of(&env).await, ErrorCode::SettingsUnreadable, true);
         assert_eq!(env.settings_text(), text, "collecting only ever reads");
     }
 }
@@ -98,7 +99,7 @@ async fn a_damaged_file_is_forgotten_as_soon_as_it_is_fine_again() {
     assert_eq!(view_of(&env).await.state, ViewState::Ready);
 
     env.write_settings("{ torn");
-    assert_error(&view_of(&env).await, ErrorCode::SettingsUnreadable, false);
+    assert_error(&view_of(&env).await, ErrorCode::SettingsUnreadable, true);
     env.write_settings(settings_foreign());
     assert_eq!(view_of(&env).await.state, ViewState::NeedsSetup);
 }
@@ -107,7 +108,7 @@ async fn a_damaged_file_is_forgotten_as_soon_as_it_is_fine_again() {
 async fn damaged_settings_win_over_a_good_recording() {
     let env = recording();
     env.write_settings("{ torn");
-    assert_error(&view_of(&env).await, ErrorCode::SettingsUnreadable, false);
+    assert_error(&view_of(&env).await, ErrorCode::SettingsUnreadable, true);
 }
 
 #[tokio::test]

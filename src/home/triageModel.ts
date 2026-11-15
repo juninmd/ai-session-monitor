@@ -10,11 +10,12 @@ import {
   type ViewContext,
   type WindowModel,
 } from '../app/model/windowModel';
-import { describeError } from '../app/text/errorText';
 import { t, tn } from '../i18n';
-import { formatAge, formatClock, formatDuration } from '../i18n/format';
+import { formatClock, formatDuration } from '../i18n/format';
 import type { HarnessId, HarnessView, UsageWindow } from '../lib/contract';
 import type { Pace, Status } from '../lib/usage';
+import { lostSetup } from './model';
+import { brokenShort, brokenVerdict, signInNote } from './tileNote';
 
 export type Tier = 'blocked' | 'risk' | 'broken' | 'loading' | 'watch' | 'fine' | 'unknown';
 
@@ -33,6 +34,11 @@ export interface TriageRow {
   view: HarnessView;
   /** The limiting window, when the view has a reading to stand on. */
   model: WindowModel | null;
+  /**
+   * The limiting window of a stale view as it was last read: shown muted and never as a status,
+   * so a failed refresh does not blank numbers the person was looking at a minute ago.
+   */
+  last: WindowModel | null;
   tier: Tier;
   /** One sentence, in the words a person would use. */
   verdict: string;
@@ -51,9 +57,9 @@ function windowOf(view: HarnessView, id: string | undefined): UsageWindow | null
   return view.windows.find((window) => window.id === id) ?? null;
 }
 
-/** A source that failed, or whose numbers are old, is not a source that is fine. */
+/** A source that failed, lost its setup, or whose numbers are old, is not a source that is fine. */
 function isBroken(view: HarnessView): boolean {
-  return view.state === 'error' || view.stale;
+  return view.state === 'error' || view.stale || lostSetup(view);
 }
 
 function tierOf(view: HarnessView, known: boolean, pace: Pace, status: Status | null): Tier {
@@ -93,15 +99,6 @@ function statusNote(status: Status | null): string {
   return '';
 }
 
-function brokenVerdict(view: HarnessView, ctx: ViewContext): string {
-  if (view.error === null) {
-    return view.readAt === null
-      ? t('surface.no_reading')
-      : t('triage.verdict.stale_age', { age: formatAge(ctx.nowSecs - view.readAt) });
-  }
-  return describeError(view.error, view.id).title;
-}
-
 function tierVerdict(
   view: HarnessView,
   model: WindowModel | null,
@@ -110,7 +107,7 @@ function tierVerdict(
   if (isBroken(view)) {
     return {
       verdict: brokenVerdict(view, ctx),
-      short: view.error === null ? t('triage.short.stale') : t('triage.short.failed'),
+      short: brokenShort(view),
       runsOutAt: null,
     };
   }
@@ -125,6 +122,7 @@ function tierVerdict(
     };
   }
   const fmt = durationFormat(ctx.settings);
+  const remark = statusNote(model.status) || signInNote(view);
   switch (model.pace.kind) {
     case 'out': {
       const when = model.window.resetsAt;
@@ -153,22 +151,29 @@ function tierVerdict(
     case 'fine':
       return {
         verdict: t('triage.verdict.fine'),
-        short: statusNote(model.status),
+        short: remark,
         runsOutAt: null,
       };
     case 'early':
       return {
         verdict: t('surface.too_early'),
-        short: statusNote(model.status),
+        short: remark,
         runsOutAt: null,
       };
     case 'unknown':
       return {
         verdict: t('surface.no_basis'),
-        short: statusNote(model.status),
+        short: remark,
         runsOutAt: null,
       };
   }
+}
+
+/** What a stale view last read; `summarize` refuses stale views, so the flag is lifted to ask. */
+function lastModel(view: HarnessView, ctx: ViewContext): WindowModel | null {
+  const summary = summaryOf({ ...view, stale: false }, ctx);
+  const window = summary === null ? null : windowOf(view, summary.windowId);
+  return window === null ? null : modelWindow(view.id, window, ctx);
 }
 
 export function triageRow(view: HarnessView, ctx: ViewContext): TriageRow {
@@ -182,6 +187,7 @@ export function triageRow(view: HarnessView, ctx: ViewContext): TriageRow {
   return {
     view,
     model: shown,
+    last: view.stale ? lastModel(view, ctx) : null,
     tier,
     verdict: bare.verdict,
     short: bare.short,

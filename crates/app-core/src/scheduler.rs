@@ -194,7 +194,7 @@ impl Scheduler {
         match verdict {
             Verdict::Healthy => self.stretch(idx, &settings, base, changed, now),
             Verdict::Limited { .. } => self.announce_cooldown(idx, now),
-            Verdict::Parked | Verdict::Failed { .. } => {}
+            Verdict::Parked | Verdict::Recheck | Verdict::Failed { .. } => {}
         }
     }
 

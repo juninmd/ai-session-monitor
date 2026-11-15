@@ -24,6 +24,7 @@ export const surfacesMessages = {
   'triage.verdict.stale_age': 'پرانی ریڈنگ · {age} پہلے',
   'triage.short.stale': 'پرانی',
   'triage.short.failed': 'ناکام',
+  'triage.short.setup': 'منقطع',
   'triage.short.loading': 'پڑھ رہا ہے',
   'triage.short.no_reading': 'ریڈنگ نہیں',
   'triage.verdict.out': 'ختم · واپسی {when}',

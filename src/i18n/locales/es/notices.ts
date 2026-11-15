@@ -7,8 +7,12 @@ export const noticeMessages = {
     'Claude Code no informa límites (facturación por clave de API o un plan sin límites).',
   'notice.code.claude_shim_outdated':
     'No se encontró el comando instalado en la línea de estado de Claude Code. Reinstálalo para retomar la lectura.',
+  'notice.code.claude_status_line_replaced':
+    'Otro programa reemplazó el comando de la línea de estado en el settings.json de Claude Code y los límites dejaron de llegar. Reinstala el comando para volver a leer.',
+  'notice.code.claude_status_line_removed':
+    'El comando de la línea de estado ya no está en el settings.json de Claude Code y los límites dejaron de llegar. Reinstala el comando para volver a leer.',
   'notice.code.claude_oauth_partial':
-    'El uso por modelo (claude /usage o la API de uso de la cuenta) está activado, pero falló ({reason}). Se muestran solo los datos de la línea de estado.',
+    'El uso por modelo (claude /usage o la API de uso de la cuenta) está activado, pero falló ({reason}). Se muestran los datos de la línea de estado; las cifras por modelo pueden faltar o tener hasta una hora.',
   'notice.code.codex_rollout_fallback':
     'El app-server de codex no respondió ({reason}). Se lee la última sesión registrada; las cifras pueden ser antiguas.',
   'notice.code.codex_no_limits':

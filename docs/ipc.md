@@ -181,7 +181,9 @@ with a generic message that includes the code, so a missing translation is visib
 | `claude_waiting_first_session` | info | Shim installed, no Claude Code session has reported yet. |
 | `claude_no_rate_limits` | warn | Claude Code reports no `rate_limits` (API-key billing or a plan without limits). |
 | `claude_shim_outdated` | warn | The configured shim executable is missing; reinstall. |
-| `claude_oauth_partial` | info | Per-model usage is on but both the CLI and the OAuth API failed; showing statusLine data only (`reason` param, the API's). |
+| `claude_oauth_partial` | info | Per-model usage is on but both the CLI and the OAuth API failed (`reason` param, the API's). The statusLine data is shown, with the per-model windows of the last successful read for up to an hour. |
+| `claude_status_line_replaced` | warn | The command recorded here before, and settings.json now runs another `statusLine` command. The view is `needs_setup`; the scheduler looks again every two minutes. |
+| `claude_status_line_removed` | warn | The command recorded here before, and settings.json has no `statusLine` any more. Same view and re-check. |
 | `codex_rollout_fallback` | info | `codex app-server` unavailable; reading the newest rollout (may be old). `reason` param: the snake_case error code that stopped the app-server (`binary_not_found`, `timeout`, ...). |
 | `codex_no_limits` | warn | The signed-in Codex account reports no limits (API-key auth). |
 | `antigravity_pool_unknown` | warn | A quota pool returned no data (`pool` param); unknown, not zero. |
@@ -234,12 +236,19 @@ OpenRouter (`key_credits`) and DeepSeek (`user_balance`) are official and docume
 
 - `general.intervalSecs` (30..3600, default 60) is the base cadence; it drives local sources (Claude shim file, Codex,
   Antigravity, OpenCode local database) and also Claude when per-model usage is on: the collector itself
-  runs `claude -p "/usage"` no more than once per 600 s (failures 1800 s) and asks the OAuth endpoint, its
+  runs `claude -p "/usage"` no more than once per 600 s (after a failure 300 s, doubling up to 1800 s
+  while it keeps failing) and asks the OAuth endpoint, its
   fallback, no more than once per 300 s. LiteLLM uses `litellm.pollIntervalSecs`
   (>= 60, default 300). Scheduled OpenCode polls, which reach its Go endpoint, never run faster
   than 300 s; a manual refresh can (see the 10 s gap above).
 - Failures back off exponentially per harness up to 15 minutes; a successful read resets it. A Codex
   rollout fallback counts as a success (no error on the view), so it does not back off.
+- `needs_consent` and `needs_setup` are not polled: only a settings or secret change reads them
+  again. Claude's `needs_setup` is the exception (`Verdict::Recheck`): its setup is a `statusLine`
+  in a settings.json that other programs rewrite, so it is looked at again every
+  `max(base, 120 s)`. The Claude collector also re-reads settings.json and the recording up to
+  three times, 60 ms apart, before it believes anything short of a healthy read, and reports a
+  settings.json that stays unreadable as a retryable `settings_unreadable`.
 - Rate-limit cool-down: an `error` view with code `rate_limited` leaves that harness alone for
   `max(retryAfterSecs or 300 s, ordinary backoff, normal cadence)`, held to 30 minutes
   (`timing::cooldown`). The hub keeps the last good view stale and sets `nextAttemptAt`. A manual

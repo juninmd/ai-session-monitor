@@ -19,6 +19,7 @@ pub(crate) const EMIT_MIN_GAP: Duration = Duration::from_millis(250);
 const COOLDOWN_DEFAULT: Duration = Duration::from_secs(5 * 60);
 const COOLDOWN_MAX: Duration = Duration::from_secs(30 * 60);
 const MAX_BACKOFF: Duration = Duration::from_secs(15 * 60);
+const SETUP_RECHECK: Duration = Duration::from_secs(2 * 60);
 /// The Cursor, Copilot, OpenCode, Kimi, z.ai and every key-based balance endpoint are remote and rate-sensitive, and their
 /// collectors leave the pacing to the caller. (The Claude OAuth endpoint paces itself in its collector, so Claude is not slowed.)
 const REMOTE_MIN_CADENCE: Duration = Duration::from_secs(300);
@@ -49,6 +50,12 @@ pub(crate) fn cadence(id: HarnessId, settings: &Settings) -> Duration {
             settings.litellm.poll_interval_secs.max(MIN_LITELLM_POLL_SECS),
         )),
     }
+}
+
+/// How long a source that needs setup waits before it is looked at again (see `Verdict::Recheck`):
+/// a cheap local check, but nobody is waiting on it. Never faster than the normal cadence.
+pub(crate) fn setup_recheck(cadence: Duration) -> Duration {
+    cadence.max(SETUP_RECHECK)
 }
 
 /// The wait after the `failures`-th failure in a row: double per failure up to 15 minutes, straight

@@ -28,20 +28,23 @@ export function gridQuotas(view: HarnessView) {
 export function compactQuota(view: HarnessView, window: UsageWindow, ctx: ViewContext) {
   const model = modelWindow(view.id, window, ctx);
   const name = window.kind === 'other' ? model.title : rowTitle(window);
-  const shown = model.expired || view.stale ? null : model.shown;
+  // A stale view keeps the number it last read, shown as old: no status, no colour, no pace.
+  const old = view.stale && !model.expired;
+  const shown = model.expired ? null : model.shown;
   return {
     name,
     shown,
+    old,
     reading: model.expired
       ? t('quota.reading.expired')
-      : view.stale
-        ? t('quota.reading.stale')
-        : shown === null
-          ? '—'
-          : formatPercent(shown),
-    status: shown === null ? undefined : (model.status ?? undefined),
+      : shown === null
+        ? view.stale
+          ? t('quota.reading.stale')
+          : '—'
+        : formatPercent(shown),
+    status: shown === null || old ? undefined : (model.status ?? undefined),
     spoken: view.stale ? t('quota.spoken_stale', { name }) : gaugeLabel(model, name),
-    renewal: model.expired || view.stale ? '—' : (leftText(model, ctx) ?? '—'),
+    renewal: model.expired ? '—' : (leftText(model, ctx) ?? '—'),
     model,
   };
 }

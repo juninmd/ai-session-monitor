@@ -7,8 +7,12 @@ export const noticeMessages = {
     'Claude Code does not report limits (API key billing or a plan without limits).',
   'notice.code.claude_shim_outdated':
     'The command installed in the Claude Code status line was not found. Reinstall it to resume reading.',
+  'notice.code.claude_status_line_replaced':
+    "Another program replaced the status line command in Claude Code's settings.json, so the limits stopped arriving. Reinstall the command to resume reading.",
+  'notice.code.claude_status_line_removed':
+    "The status line command is no longer in Claude Code's settings.json, so the limits stopped arriving. Reinstall the command to resume reading.",
   'notice.code.claude_oauth_partial':
-    'Per-model usage (claude /usage or the account usage API) is on, but it failed ({reason}). Showing only the status line data.',
+    'Per-model usage (claude /usage or the account usage API) is on, but it failed ({reason}). Showing the status line data; per-model numbers may be missing or up to an hour old.',
   'notice.code.codex_rollout_fallback':
     'The codex app-server did not respond ({reason}). Reading the last recorded session; the numbers may be old.',
   'notice.code.codex_no_limits': 'The Codex account does not report limits (API key login).',
