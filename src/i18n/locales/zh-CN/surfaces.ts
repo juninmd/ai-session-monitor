@@ -24,6 +24,7 @@ export const surfacesMessages = {
   'triage.verdict.stale_age': '读数已旧 · {age}前',
   'triage.short.stale': '已旧',
   'triage.short.failed': '失败',
+  'triage.short.setup': '已断开',
   'triage.short.loading': '读取中',
   'triage.short.no_reading': '无读数',
   'triage.verdict.out': '已用完 · {when}恢复',

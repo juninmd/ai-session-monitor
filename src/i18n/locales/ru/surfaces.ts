@@ -24,6 +24,7 @@ export const surfacesMessages = {
   'triage.verdict.stale_age': 'Старые данные · {age} назад',
   'triage.short.stale': 'старые',
   'triage.short.failed': 'сбой',
+  'triage.short.setup': 'отключено',
   'triage.short.loading': 'чтение',
   'triage.short.no_reading': 'нет данных',
   'triage.verdict.out': 'Исчерпано · вернётся {when}',

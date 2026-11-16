@@ -2,8 +2,8 @@
 // the available line and the pace sentence the current interface already shows, so the numbers and
 // their rules are identical — only the layout is new.
 //
-// A stale or expired window has no current number and no pace: the percentage, the amount and the
-// projection belong to a reading, and an old reading has none. The card says so and stops there.
+// An expired window has no number at all. A stale one keeps the number it last read, marked as old
+// and without a status: the amount and the projection belong to a current reading, so they go.
 import { tq } from '../app/model/quota';
 import {
   durationFormat,
@@ -92,19 +92,23 @@ function WindowCard({
   /** 3 above a pool, 4 inside one, so the document never skips a level. */
   depth: 3 | 4;
 }) {
-  // A stale reading cannot be printed as a current one, and an expired window has no status.
+  // A stale reading is printed as an old one, never as a status; an expired window has no number.
   const silent = stale || model.expired;
-  const display: WindowModel = silent ? { ...model, shown: null, status: null, over: null } : model;
+  const old = stale && !model.expired && model.shown !== null;
+  const display: WindowModel = silent
+    ? { ...model, shown: old ? model.shown : null, status: null, over: null }
+    : model;
   const status = display.status ?? null;
   const Heading = depth === 4 ? 'h4' : 'h3';
   return (
-    <article className="nx-chip" data-status={status ?? 'none'}>
+    <article className="nx-chip" data-status={status ?? 'none'} data-old={old || undefined}>
       <header className="nx-chip-head">
         <Heading className="nx-chip-title">
           {model.cadenceGuessed && <EstimateMark />}
           {label}
         </Heading>
         {status !== null && <span className="nx-chip-status">{t(`quota.status.${status}`)}</span>}
+        {old && <span className="nx-chip-status">{t('quota.reading.stale')}</span>}
         <span className="nx-chip-pct" data-status={status ?? 'none'}>
           {formatPercent(display.shown)}
         </span>

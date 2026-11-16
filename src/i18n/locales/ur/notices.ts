@@ -7,8 +7,12 @@ export const noticeMessages = {
     'Claude Code حدود رپورٹ نہیں کرتا (API key بلنگ یا ایسا پلان جس میں حدود نہیں)۔',
   'notice.code.claude_shim_outdated':
     'Claude Code کی اسٹیٹس لائن میں انسٹال کی گئی کمانڈ نہیں ملی۔ ریڈنگ دوبارہ شروع کرنے کے لیے اسے دوبارہ انسٹال کریں۔',
+  'notice.code.claude_status_line_replaced':
+    'کسی اور پروگرام نے Claude Code کی settings.json میں اسٹیٹس لائن کی کمانڈ بدل دی، اس لیے حدود آنا بند ہو گئیں۔ دوبارہ پڑھنے کے لیے کمانڈ پھر سے انسٹال کریں۔',
+  'notice.code.claude_status_line_removed':
+    'اسٹیٹس لائن کی کمانڈ اب Claude Code کی settings.json میں نہیں رہی، اس لیے حدود آنا بند ہو گئیں۔ دوبارہ پڑھنے کے لیے کمانڈ پھر سے انسٹال کریں۔',
   'notice.code.claude_oauth_partial':
-    'ہر ماڈل کا استعمال (claude /usage یا اکاؤنٹ استعمال API) آن ہے مگر ناکام رہا ({reason})۔ صرف اسٹیٹس لائن کا ڈیٹا دکھایا جا رہا ہے۔',
+    'ہر ماڈل کا استعمال (claude /usage یا اکاؤنٹ استعمال API) آن ہے مگر ناکام رہا ({reason})۔ اسٹیٹس لائن کا ڈیٹا دکھایا جا رہا ہے؛ ہر ماڈل کے اعداد غائب یا ایک گھنٹے تک پرانے ہو سکتے ہیں۔',
   'notice.code.codex_rollout_fallback':
     'codex app-server نے جواب نہیں دیا ({reason})۔ آخری ریکارڈ شدہ سیشن پڑھا جا رہا ہے؛ اعداد پرانے ہو سکتے ہیں۔',
   'notice.code.codex_no_limits': 'Codex اکاؤنٹ حدود رپورٹ نہیں کرتا (API key سے لاگ اِن)۔',

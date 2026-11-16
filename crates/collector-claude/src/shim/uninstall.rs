@@ -66,6 +66,7 @@ fn remove_own_files(paths: &Paths) {
         &paths.rate_limits,
         &paths.oauth_cache,
         &paths.cli_cache,
+        &paths.extras_last,
         &paths.exe,
     ];
     for file in files {

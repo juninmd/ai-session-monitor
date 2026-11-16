@@ -24,6 +24,7 @@ export const surfacesMessages = {
   'triage.verdict.stale_age': 'Leitura antiga · há {age}',
   'triage.short.stale': 'antigo',
   'triage.short.failed': 'falha',
+  'triage.short.setup': 'desconectado',
   'triage.short.loading': 'lendo',
   'triage.short.no_reading': 'sem leitura',
   'triage.verdict.out': 'Esgotado · volta {when}',

@@ -104,9 +104,19 @@
   min-inline-size: 0;
 }
 
-.nx-tile-head > .nx-name {
+/* The name gets the whole line; the plan sits under it instead of squeezing it to "Clau…". */
+.nx-tile-id {
+  display: grid;
   flex: 1 1 auto;
   min-inline-size: 0;
+}
+
+.nx-tile-id > .nx-plan {
+  max-inline-size: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  line-height: 1.2;
 }
 
 .nx-pct {
@@ -226,6 +236,24 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Why a source is broken and what to do about it: the catalog's sentence, held to three lines. */
+.nx-tile-hint {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--ink-2);
+  font-size: var(--fs-xs);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  text-wrap: pretty;
+}
+
+.nx-tile-age {
+  margin-block-start: auto;
+  color: var(--ink-3);
+  font-size: var(--fs-xs);
+}
+
 .nx-tile-more {
   margin-block-start: auto;
   color: var(--ink-3);
@@ -332,4 +360,17 @@
       stroke-dasharray: 0 100;
     }
   }
+}
+
+/* The last numbers of a stale view: readable, but in the quiet ink, never a status colour. */
+.nx-tile[data-old] .nx-pct,
+.nx-q[data-old] .nx-q-pct,
+.nx-q[data-old][data-limiting] .nx-q-pct {
+  color: var(--ink-3);
+  font-weight: 500;
+}
+
+.nx-q[data-old] .nx-bar > i,
+.nx-tile[data-old] .nx-ring-fill {
+  opacity: 0.45;
 }

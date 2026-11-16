@@ -7,8 +7,12 @@ export const noticeMessages = {
     'لا يُبلغ Claude Code عن الحدود (فوترة بمفتاح API أو باقة بلا حدود).',
   'notice.code.claude_shim_outdated':
     'لم يُعثر على الأمر المثبّت في شريط حالة Claude Code. أعد تثبيته لاستئناف القراءة.',
+  'notice.code.claude_status_line_replaced':
+    'استبدل برنامج آخر أمر شريط الحالة في ملف settings.json الخاص بـ Claude Code، فتوقف وصول الحدود. أعد تثبيت الأمر لاستئناف القراءة.',
+  'notice.code.claude_status_line_removed':
+    'لم يعد أمر شريط الحالة موجودًا في ملف settings.json الخاص بـ Claude Code، فتوقف وصول الحدود. أعد تثبيت الأمر لاستئناف القراءة.',
   'notice.code.claude_oauth_partial':
-    'الاستخدام لكل نموذج (claude /usage أو واجهة استخدام الحساب) مفعّل لكنه فشل ({reason}). يُعرض فقط ما يأتي من شريط الحالة.',
+    'الاستخدام لكل نموذج (claude /usage أو واجهة استخدام الحساب) مفعّل لكنه فشل ({reason}). تُعرض بيانات شريط الحالة؛ أرقام كل نموذج قد تكون مفقودة أو قديمة حتى ساعة.',
   'notice.code.codex_rollout_fallback':
     'لم يستجب codex app-server ({reason}). تتم قراءة آخر جلسة مسجّلة؛ قد تكون الأرقام قديمة.',
   'notice.code.codex_no_limits': 'حساب Codex لا يُبلغ عن الحدود (تسجيل دخول بمفتاح API).',

@@ -24,6 +24,8 @@ export const NOTICE_SAMPLES: Readonly<Record<string, readonly Params[]>> = {
   claude_waiting_first_session: [{}],
   claude_no_rate_limits: [{}],
   claude_shim_outdated: [{}],
+  claude_status_line_replaced: [{}],
+  claude_status_line_removed: [{}],
   claude_oauth_partial: reasons(...ERROR_CODES),
   codex_rollout_fallback: reasons(...ERROR_CODES),
   codex_no_limits: [{}],

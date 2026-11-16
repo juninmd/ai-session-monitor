@@ -16,7 +16,8 @@ pub(super) struct Slot {
     pub(super) collector: Option<Arc<dyn Collector>>,
     pub(super) enabled: bool,
     /// When the next scheduled collection starts. `None` while one runs, when the source waits
-    /// for consent or setup (nothing to poll until a setting or secret changes), or when disabled.
+    /// for consent or setup (nothing to poll until a setting or secret changes; Claude's setup is
+    /// the exception, see `Verdict::Recheck`), or when disabled.
     pub(super) due: Option<Instant>,
     pub(super) failures: u32,
     pub(super) last_start: Option<Instant>,
@@ -33,6 +34,9 @@ pub(super) enum Verdict {
     Healthy,
     /// Needs consent or setup: only the user can change that, so polling would be noise.
     Parked,
+    /// Claude's setup lives in a settings.json that other programs rewrite, so it can come back
+    /// (or only have looked gone) without the user touching this app: looked at again, slowly.
+    Recheck,
     Failed {
         retryable: bool,
     },
@@ -53,6 +57,7 @@ pub(super) fn judge(view: &HarnessView) -> Verdict {
         ViewState::Error => {
             Verdict::Failed { retryable: view.error.as_ref().is_none_or(|e| e.retryable) }
         }
+        ViewState::NeedsSetup if view.id == HarnessId::Claude => Verdict::Recheck,
         ViewState::NeedsConsent | ViewState::NeedsSetup | ViewState::Disabled => Verdict::Parked,
         ViewState::Loading | ViewState::Ready | ViewState::NoData => Verdict::Healthy,
     }
@@ -109,6 +114,10 @@ impl Slot {
             Verdict::Parked => {
                 self.failures = 0;
                 self.due = None;
+            }
+            Verdict::Recheck => {
+                self.failures = 0;
+                self.due = Some(now + timing::setup_recheck(cadence));
             }
             Verdict::Failed { retryable } => {
                 self.failures = self.failures.saturating_add(1);
