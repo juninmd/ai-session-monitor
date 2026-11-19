@@ -81,7 +81,9 @@ export const surfacesMessages = {
   'horizon.tip.covers_next':
     '{covers} de {total} cubren todo el período · próxima renovación en {left}',
   'horizon.trend_toggle': 'Mostrar tendencia (consulta el historial de cada proveedor)',
-  'horizon.by_renewal': 'Por tiempo hasta la renovación',
+  'horizon.by_urgency': 'Por urgencia',
+  'horizon.renewals': 'Próximas renovaciones',
+  'horizon.no_renewals': 'No se han indicado próximas renovaciones.',
   'horizon.empty': 'Aún no se lee nada.',
   'horizon.label.stale': 'Lectura antigua',
   'horizon.label.unavailable': 'Sin lectura por ahora',

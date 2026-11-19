@@ -76,7 +76,9 @@ export const surfacesMessages = {
   'horizon.tip.covers_next':
     '{total} میں سے {covers} پوری مدت کو پورا کرتا ہے · اگلی تجدید {left} میں',
   'horizon.trend_toggle': 'رجحان دکھائیں (ہر فراہم کنندہ کی ہسٹری لاتا ہے)',
-  'horizon.by_renewal': 'تجدید تک کے وقت کے مطابق',
+  'horizon.by_urgency': 'فوری ضرورت کے مطابق',
+  'horizon.renewals': 'آنے والی تجدیدیں',
+  'horizon.no_renewals': 'کسی آنے والی تجدید کی اطلاع نہیں ہے۔',
   'horizon.empty': 'ابھی کچھ نہیں پڑھا جا رہا۔',
   'horizon.label.stale': 'پرانی ریڈنگ',
   'horizon.label.unavailable': 'ابھی کوئی ریڈنگ نہیں',

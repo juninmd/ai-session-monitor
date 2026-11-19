@@ -11,7 +11,8 @@ import {
 } from '../app/model/windowModel';
 import { t } from '../i18n';
 import { formatClock, formatDuration } from '../i18n/format';
-import type { HarnessView, UsageWindow } from '../lib/contract';
+import type { HarnessId, HarnessView, UsageWindow } from '../lib/contract';
+import { isExpired, paceOf } from '../lib/usage';
 import { lostSetup } from './model';
 import { quotaName } from './wording';
 
@@ -34,15 +35,21 @@ export interface HorizonRow {
 
 export interface Horizon {
   rows: HorizonRow[];
-  /** The row whose window renews first, when there is one. */
-  soonest: HorizonRow | null;
+  renewals: Renewal[];
 }
 
-function found(view: HarnessView, id: string | undefined): UsageWindow | null {
-  return view.windows.find((window) => window.id === id) ?? null;
+export interface Renewal {
+  id: HarnessId;
+  window: UsageWindow;
+  resetsAt: number;
 }
 
-function horizonRow(view: HarnessView, ctx: ViewContext): HorizonRow {
+function runway(model: WindowModel | null): number {
+  if (model?.status === 'out') return 0;
+  return model?.pace.kind === 'risk' ? model.pace.runwayMin : Number.POSITIVE_INFINITY;
+}
+
+function horizonRow(view: HarnessView, ctx: ViewContext, model: WindowModel | null): HorizonRow {
   const base = { view, model: null, windowName: null, cover: null, leftMin: null, darkMin: 0 };
   if (view.state === 'loading') {
     return { ...base, kind: 'unknown', label: t('surface.reading') };
@@ -54,12 +61,21 @@ function horizonRow(view: HarnessView, ctx: ViewContext): HorizonRow {
       label: view.stale ? t('horizon.label.stale') : t('horizon.label.unavailable'),
     };
   }
-  const summary = summaryOf(view, ctx);
-  const window = summary === null ? null : found(view, summary.windowId);
-  if (window === null) return { ...base, kind: 'unknown', label: t('surface.no_reading') };
-  const model = modelWindow(view.id, window, ctx);
-  const name = quotaName(window);
-  if (model.expired || model.leftMin === null) {
+  if (model === null) return { ...base, kind: 'unknown', label: t('surface.no_reading') };
+  const name = quotaName(model.window);
+  if (model.status === 'out') {
+    return {
+      ...base,
+      model,
+      windowName: name,
+      cover: model.leftMin === null ? null : 0,
+      leftMin: model.leftMin,
+      darkMin: model.leftMin ?? 0,
+      kind: 'out',
+      label: t(model.leftMin === null ? 'window.out' : 'horizon.label.out'),
+    };
+  }
+  if (model.leftMin === null) {
     return {
       ...base,
       model,
@@ -71,17 +87,6 @@ function horizonRow(view: HarnessView, ctx: ViewContext): HorizonRow {
   const fmt = durationFormat(ctx.settings);
   const pace = model.pace;
   switch (pace.kind) {
-    case 'out':
-      return {
-        ...base,
-        model,
-        windowName: name,
-        cover: 0,
-        leftMin: model.leftMin,
-        darkMin: model.leftMin,
-        kind: 'out',
-        label: t('horizon.label.out'),
-      };
     case 'risk': {
       const cover = model.leftMin <= 0 ? 0 : pace.runwayMin / model.leftMin;
       return {
@@ -119,6 +124,7 @@ function horizonRow(view: HarnessView, ctx: ViewContext): HorizonRow {
         label: t('surface.too_early'),
       };
     case 'unknown':
+    case 'out':
       return {
         ...base,
         model,
@@ -130,21 +136,33 @@ function horizonRow(view: HarnessView, ctx: ViewContext): HorizonRow {
   }
 }
 
-/** Rows ordered the way the eye should read them: the longest uncovered stretch first. */
+/** Blocked windows lead, followed by the closest projected exhaustion. */
 export function horizonOf(views: readonly HarnessView[], ctx: ViewContext): Horizon {
-  const rows = views
-    .map((view) => horizonRow(view, ctx))
-    .sort((a, b) => {
-      const weight = (row: HorizonRow) => (row.kind === 'out' ? 2 : row.kind === 'short' ? 1 : 0);
-      const byKind = weight(b) - weight(a);
-      return byKind !== 0 ? byKind : b.darkMin - a.darkMin;
-    });
-  const dated = rows.filter((row) => row.leftMin !== null);
-  const soonest =
-    dated.length === 0
-      ? null
-      : dated.reduce((best, row) => ((row.leftMin ?? 0) < (best.leftMin ?? 0) ? row : best));
-  return { rows, soonest };
+  const renewals: Renewal[] = [];
+  const rows = views.map((view) => {
+    if (view.state !== 'ready' || view.stale) return horizonRow(view, ctx, null);
+    const summary = summaryOf(view, ctx);
+    let selected = view.windows.find((window) => window.id === summary?.windowId);
+    let shortest = summary?.status === 'out' ? 0 : Number.POSITIVE_INFINITY;
+    for (const window of view.windows) {
+      if (isExpired(window, ctx.nowSecs)) continue;
+      if (window.resetsAt !== null && Number.isFinite(new Date(window.resetsAt * 1000).getTime())) {
+        renewals.push({ id: view.id, window, resetsAt: window.resetsAt });
+      }
+      const pace = paceOf(window, ctx.nowSecs);
+      if (pace.kind === 'risk' && pace.runwayMin < shortest) {
+        selected = window;
+        shortest = pace.runwayMin;
+      }
+    }
+    return horizonRow(view, ctx, selected ? modelWindow(view.id, selected, ctx) : null);
+  });
+  rows.sort((a, b) => {
+    const first = runway(a.model);
+    const second = runway(b.model);
+    return first === second ? b.darkMin - a.darkMin : first - second;
+  });
+  return { rows, renewals: renewals.sort((a, b) => a.resetsAt - b.resetsAt) };
 }
 
 /** "esgota às 18:40" for a row that will not reach its renewal; null when it will. */

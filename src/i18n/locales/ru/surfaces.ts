@@ -86,7 +86,9 @@ export const surfacesMessages = {
   'horizon.tip.covers_next':
     '{covers} из {total} покрывают весь период · следующее обновление через {left}',
   'horizon.trend_toggle': 'Показать тренд (загружает историю каждого провайдера)',
-  'horizon.by_renewal': 'По времени до обновления',
+  'horizon.by_urgency': 'По срочности',
+  'horizon.renewals': 'Ближайшие обновления лимитов',
+  'horizon.no_renewals': 'Нет данных о предстоящих обновлениях лимитов.',
   'horizon.empty': 'Пока ничего не читается.',
   'horizon.label.stale': 'Старые данные',
   'horizon.label.unavailable': 'Сейчас нет данных',

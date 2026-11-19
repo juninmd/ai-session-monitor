@@ -110,11 +110,10 @@ export const flyoutMessages = {
   'history.board.loading': 'Carregando as leituras…',
   'history.board.empty': 'Ainda não há leituras guardadas para esta cota.',
   'history.trend.none': 'Sem leitura nesta janela.',
-  'history.trend.first': 'Pico de {peak} até agora, sem renovação anterior para comparar.',
-  'history.trend.compare.one':
-    'Pico de {peak} até agora · a renovação anterior fechou em média em {avg}.',
-  'history.trend.compare.other':
-    'Pico de {peak} até agora · as {count} renovações anteriores fecharam em média em {avg}.',
+  'history.trend.same_stage':
+    'O uso na última leitura foi de {used}. A mediana estimada no mesmo ponto dos ciclos anteriores foi de {median}.',
+  'history.trend.no_comparison':
+    'O uso na última leitura foi de {used}. Nenhuma leitura anterior cobre o mesmo ponto do ciclo.',
   'history.trend.projection_desc': 'A projeção segue o ritmo atual até acabar em {duration}.',
 
   // Quota sheet
