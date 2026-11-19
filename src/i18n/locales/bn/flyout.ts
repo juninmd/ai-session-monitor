@@ -106,10 +106,10 @@ export const flyoutMessages = {
   'history.board.loading': 'রিডিং লোড হচ্ছে…',
   'history.board.empty': 'এই কোটার কোনো রিডিং এখনও সংরক্ষিত নেই।',
   'history.trend.none': 'এই উইন্ডোতে কোনো রিডিং নেই।',
-  'history.trend.first': 'এখন পর্যন্ত সর্বোচ্চ {peak}, তুলনার জন্য আগের কোনো নবায়ন নেই।',
-  'history.trend.compare.one': 'এখন পর্যন্ত সর্বোচ্চ {peak} · আগের নবায়ন গড়ে {avg}-এ শেষ হয়েছে।',
-  'history.trend.compare.other':
-    'এখন পর্যন্ত সর্বোচ্চ {peak} · আগের {count}টি নবায়ন গড়ে {avg}-এ শেষ হয়েছে।',
+  'history.trend.same_stage':
+    'শেষ রিডিংয়ে ব্যবহার ছিল {used}। আগের চক্রগুলোর একই পর্যায়ে আনুমানিক মধ্যক ছিল {median}।',
+  'history.trend.no_comparison':
+    'শেষ রিডিংয়ে ব্যবহার ছিল {used}। চক্রের একই পর্যায়ের কোনো আগের রিডিং নেই।',
   'history.trend.projection_desc': 'বর্তমান গতিতে {duration} পরে শেষ হওয়া পর্যন্ত প্রজেকশন চলে।',
 
   // Quota sheet

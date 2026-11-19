@@ -53,9 +53,19 @@ describe('horizon rows', () => {
     expect(byId.get('zai')?.darkMin).toBe(60);
   });
 
-  it('sorts the long uncovered stretches first, the worst one leading', () => {
+  it('puts blocked providers first and then sorts by closest exhaustion', () => {
     const rows = horizonOf([lasts, far, short, gone], ctx).rows;
     expect(rows.map((row) => row.view.id)).toEqual(['zai', 'codex', 'claude', 'kimi']);
+    const later = reading('cursor', { usedPct: 90, resetsInMin: 90 });
+    expect(horizonOf([short, later], ctx).rows.map((row) => row.view.id)).toEqual([
+      'cursor',
+      'codex',
+    ]);
+    const longerGap = reading('cursor', { usedPct: 80, resetsInMin: 120 });
+    expect(horizonOf([longerGap, short], ctx).rows.map((row) => row.view.id)).toEqual([
+      'codex',
+      'cursor',
+    ]);
   });
 
   it('keeps the status the rest of the interface prints, so it cannot contradict the triage', () => {
@@ -73,8 +83,44 @@ describe('horizon rows', () => {
   });
 
   it('reports the window that renews first, whatever its shortfall', () => {
-    expect(horizonOf([lasts, far], ctx).soonest?.view.id).toBe('claude');
-    expect(horizonOf([short], ctx).soonest?.view.id).toBe('codex');
+    expect(horizonOf([far, lasts], ctx).renewals.map((renewal) => renewal.id)).toEqual([
+      'claude',
+      'kimi',
+    ]);
+  });
+
+  it('surfaces the urgent window even when another has less quota and renews first', () => {
+    const weekly = reading('codex', {
+      id: 'weekly',
+      kind: 'weekly',
+      windowMinutes: 10080,
+      usedPct: 95,
+      resetsInMin: 30,
+    });
+    const view = viewOf('codex', { windows: [...weekly.windows, ...short.windows] });
+    const horizon = horizonOf([view], ctx);
+    expect(horizon.rows[0]?.model?.window.id).toBe('five_hour');
+    expect(horizon.rows[0]?.kind).toBe('short');
+    expect(horizon.renewals.map(({ window }) => window.id)).toEqual(['weekly', 'five_hour']);
+  });
+
+  it('reports known exhaustion without inventing a reset or gap', () => {
+    const view = {
+      ...gone,
+      windows: gone.windows.map((window) => ({ ...window, resetsAt: null })),
+    };
+    const horizon = horizonOf([view], ctx);
+    expect(horizon.rows[0]).toMatchObject({ kind: 'out', cover: null, leftMin: null });
+    expect(horizon.renewals).toEqual([]);
+  });
+
+  it('includes a reported renewal with unknown usage and excludes stale and past times', () => {
+    const unknown = reading('copilot', { usedPct: null, resetsInMin: 20 });
+    const expired = reading('codex', { resetsInMin: -1 });
+    const stale = asStale(reading('kimi', { resetsInMin: 10 }), env, 12);
+    const horizon = horizonOf([stale, expired, unknown], ctx);
+    expect(horizon.renewals.map(({ id }) => id)).toEqual(['copilot']);
+    expect(rowFor([unknown], 'copilot').kind).toBe('unknown');
   });
 
   it('never projects from a stale, missing or barely started reading', () => {

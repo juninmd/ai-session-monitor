@@ -64,31 +64,34 @@ function burndownOfPeaks(nowPeak: number, pastPeaks: number[]): Burndown {
 }
 
 describe('the comparison with the earlier passes', () => {
-  it('states the two measured facts instead of judging a pass still running', () => {
-    const trend = trendOf(burndownOfPeaks(90, [40, 50]));
-    expect(trend.peakNow).toBeCloseTo(90, 0);
-    expect(trend.pastAverage).toBeCloseTo(45, 0);
-    expect(trend.pastCount).toBe(2);
+  it('uses the median usage at the same elapsed share, resisting an outlier', () => {
+    const trend = trendOf(burndownOfPeaks(90, [100, 40, 50]));
+    expect(trend.currentUsed).toBeCloseTo(90, 0);
+    expect(trend.pastMedian).toBeCloseTo((187 / 300) * 50, 3);
+    expect(trend.pastCount).toBe(3);
     expect(trend.label).toBe(
-      'Pico de 90% até agora · as 2 renovações anteriores fecharam em média em 45%.',
+      'O uso na última leitura foi de 90%. A mediana estimada no mesmo ponto dos ciclos anteriores foi de 31%.',
     );
   });
 
   it('carries the direction as data without colouring it as a status', () => {
     expect(trendOf(burndownOfPeaks(90, [40, 50])).kind).toBe('more');
     expect(trendOf(burndownOfPeaks(20, [80, 90])).kind).toBe('less');
-    expect(trendOf(burndownOfPeaks(50, [48, 52])).kind).toBe('similar');
+    expect(trendOf(burndownOfPeaks(31, [48, 52])).kind).toBe('similar');
   });
 
-  it('writes the singular correctly for one earlier pass', () => {
-    expect(trendOf(burndownOfPeaks(90, [40])).label).toContain('a renovação anterior fechou');
+  it('excludes earlier cycles that do not cover the current reading', () => {
+    const burndown = burndownOfPeaks(90, [40]);
+    for (const curve of burndown.past) curve.plot = curve.plot.slice(0, 2);
+    expect(trendOf(burndown).pastCount).toBe(0);
+    expect(trendOf(burndown).pastMedian).toBeNull();
   });
 
   it('says so when there is nothing to compare with', () => {
     const trend = trendOf(burndownOfPeaks(50, []));
     expect(trend.kind).toBe('first');
-    expect(trend.pastAverage).toBeNull();
-    expect(trend.label).toContain('sem renovação anterior para comparar');
+    expect(trend.pastMedian).toBeNull();
+    expect(trend.label).toContain('Nenhuma leitura anterior cobre o mesmo ponto do ciclo');
   });
 });
 
@@ -152,6 +155,10 @@ describe('the projection the chart draws', () => {
       resetsInMin: 60,
     });
     expect(nowPoint(modelWindow('codex', timeless, ctx))).toBeNull();
+  });
+
+  it('does not draw a live anchor for an expired window', () => {
+    expect(nowPoint(modelWindow('codex', fiveHour(90, -1), ctx))).toBeNull();
   });
 
   it('prints the runway it drew', () => {

@@ -108,10 +108,10 @@ export const flyoutMessages = {
   'history.board.loading': 'ریڈنگز لوڈ ہو رہی ہیں…',
   'history.board.empty': 'اس کوٹا کی ابھی کوئی ریڈنگ محفوظ نہیں۔',
   'history.trend.none': 'اس ونڈو میں کوئی ریڈنگ نہیں۔',
-  'history.trend.first': 'اب تک {peak} کی چوٹی، موازنے کے لیے پچھلی کوئی تجدید نہیں۔',
-  'history.trend.compare.one': 'اب تک {peak} کی چوٹی · پچھلی تجدید اوسطاً {avg} پر بند ہوئی۔',
-  'history.trend.compare.other':
-    'اب تک {peak} کی چوٹی · پچھلی {count} تجدیدیں اوسطاً {avg} پر بند ہوئیں۔',
+  'history.trend.same_stage':
+    'آخری ریڈنگ میں استعمال {used} تھا۔ پچھلے ادوار کے اسی مرحلے پر تخمینی درمیانی قدر {median} تھی۔',
+  'history.trend.no_comparison':
+    'آخری ریڈنگ میں استعمال {used} تھا۔ دور کے اسی مرحلے کی کوئی پچھلی ریڈنگ دستیاب نہیں ہے۔',
   'history.trend.projection_desc':
     'پیشگوئی موجودہ رفتار کی پیروی کرتی ہے جب تک یہ {duration} میں ختم نہ ہو جائے۔',
 

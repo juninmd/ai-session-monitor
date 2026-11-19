@@ -110,11 +110,10 @@ export const flyoutMessages = {
   'history.board.loading': 'Loading the readings…',
   'history.board.empty': 'No readings stored for this quota yet.',
   'history.trend.none': 'No reading in this window.',
-  'history.trend.first': 'Peak of {peak} so far, with no earlier renewal to compare against.',
-  'history.trend.compare.one':
-    'Peak of {peak} so far · the previous renewal closed at {avg} on average.',
-  'history.trend.compare.other':
-    'Peak of {peak} so far · the previous {count} renewals closed at {avg} on average.',
+  'history.trend.same_stage':
+    'Usage at the last reading was {used}. The estimated median at the same point in earlier cycles was {median}.',
+  'history.trend.no_comparison':
+    'Usage at the last reading was {used}. There are no earlier readings covering the same point in the cycle.',
   'history.trend.projection_desc':
     'The projection follows the current pace until it runs out in {duration}.',
 

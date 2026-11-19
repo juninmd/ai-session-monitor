@@ -102,8 +102,9 @@ export const flyoutMessages = {
   'history.board.loading': '正在加载读数…',
   'history.board.empty': '此额度尚未存储任何读数。',
   'history.trend.none': '此窗口内没有读数。',
-  'history.trend.first': '目前峰值为 {peak}，没有更早的刷新可供比较。',
-  'history.trend.compare.other': '目前峰值为 {peak} · 前 {count} 次刷新平均收于 {avg}。',
+  'history.trend.same_stage':
+    '最近一次读数的用量为 {used}。此前周期在同一进度的估算中位数为 {median}。',
+  'history.trend.no_comparison': '最近一次读数的用量为 {used}。此前的读数未覆盖本周期的同一进度。',
   'history.trend.projection_desc': '预测线按当前速度延伸，直到 {duration}后用完。',
 
   // Quota sheet

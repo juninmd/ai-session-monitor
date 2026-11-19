@@ -122,17 +122,10 @@ export const flyoutMessages = {
   'history.board.loading': 'جارٍ تحميل القراءات…',
   'history.board.empty': 'لا توجد قراءات محفوظة لهذه الحصة بعد.',
   'history.trend.none': 'لا توجد قراءة في هذه النافذة.',
-  'history.trend.first': 'ذروة {peak} حتى الآن، بلا تجديد سابق للمقارنة.',
-  'history.trend.compare.zero': 'ذروة {peak} حتى الآن · أُغلق التجديد السابق عند {avg} في المتوسط.',
-  'history.trend.compare.one': 'ذروة {peak} حتى الآن · أُغلق التجديد السابق عند {avg} في المتوسط.',
-  'history.trend.compare.two':
-    'ذروة {peak} حتى الآن · أُغلق التجديدان السابقان عند {avg} في المتوسط.',
-  'history.trend.compare.few':
-    'ذروة {peak} حتى الآن · أُغلقت التجديدات السابقة ({count}) عند {avg} في المتوسط.',
-  'history.trend.compare.many':
-    'ذروة {peak} حتى الآن · أُغلقت التجديدات السابقة ({count}) عند {avg} في المتوسط.',
-  'history.trend.compare.other':
-    'ذروة {peak} حتى الآن · أُغلقت التجديدات السابقة ({count}) عند {avg} في المتوسط.',
+  'history.trend.same_stage':
+    'بلغ الاستخدام في آخر قراءة {used}، وكان الوسيط التقديري عند النقطة نفسها من الدورات السابقة {median}.',
+  'history.trend.no_comparison':
+    'بلغ الاستخدام في آخر قراءة {used}، ولا توجد قراءات سابقة تغطي النقطة نفسها من الدورة.',
   'history.trend.projection_desc': 'يتبع التوقّع الوتيرة الحالية حتى تنفد الحصة بعد {duration}.',
 
   // Quota sheet

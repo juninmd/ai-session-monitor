@@ -3,13 +3,14 @@
 import { type KeyboardEvent, useId, useMemo } from 'react';
 import { harnessName } from '../app/model/harness';
 import { nxNameId, nxTabId } from '../app/model/homeIds';
-import { durationFormat, leftText, type ViewContext } from '../app/model/windowModel';
+import { durationFormat, isLongWindow, type ViewContext } from '../app/model/windowModel';
 import { Icon } from '../components/icons';
 import { t } from '../i18n';
 import { formatDuration } from '../i18n/format';
 import type { HarnessId, HarnessView } from '../lib/contract';
 import { GroupHead, Logo, ShareBar, type Tone } from './Bits';
 import { exhaustionLabel, type HorizonRow, horizonOf } from './horizonModel';
+import { RenewalSchedule } from './RenewalSchedule';
 import { Spark } from './Spark';
 import { useRovingTabs } from './useRovingTabs';
 import { renewalText } from './wording';
@@ -119,8 +120,14 @@ export function Horizon({ views, ctx, selected, onSelect, onOpen, trend, onTrend
     onSelect,
   );
   const covers = horizon.rows.filter((row) => row.kind === 'lasts').length;
-  const next = horizon.soonest?.model;
-  const nextLeft = next ? leftText(next, ctx) : null;
+  const next = horizon.renewals[0];
+  const nextLeft = next
+    ? formatDuration(
+        (next.resetsAt - ctx.nowSecs) / 60,
+        durationFormat(ctx.settings),
+        isLongWindow(next.window),
+      )
+    : null;
   const total = horizon.rows.length;
   // The per-row trend costs one history request per provider, so it also waits for the setting.
   const showTrend = trend && ctx.settings.general.historyEnabled;
@@ -150,14 +157,16 @@ export function Horizon({ views, ctx, selected, onSelect, onOpen, trend, onTrend
           <input
             type="checkbox"
             checked={showTrend}
+            disabled={!ctx.settings.general.historyEnabled}
             onChange={(event) => onTrend(event.target.checked)}
           />
           {t('horizon.trend_toggle')}
         </label>
       </div>
+      <RenewalSchedule renewals={horizon.renewals} nowSecs={ctx.nowSecs} />
       <div className="nx-rows">
         <section className="nx-section">
-          <GroupHead title={t('horizon.by_renewal')} count={total} />
+          <GroupHead title={t('horizon.by_urgency')} count={total} />
           <ul className="nx-list">
             {horizon.rows.map((row) => (
               <HorizonOption

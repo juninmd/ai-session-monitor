@@ -71,7 +71,9 @@ export const surfacesMessages = {
   'horizon.tip.covers_next':
     '总共 {total}，额度可覆盖 {covers}，撑满整个周期 · 下次刷新在 {left}后',
   'horizon.trend_toggle': '显示趋势（会获取各服务商的历史）',
-  'horizon.by_renewal': '按距刷新时间',
+  'horizon.by_urgency': '按紧急程度',
+  'horizon.renewals': '即将刷新的配额',
+  'horizon.no_renewals': '未报告即将到来的配额刷新。',
   'horizon.empty': '尚未读取任何内容。',
   'horizon.label.stale': '读数已旧',
   'horizon.label.unavailable': '暂无读数',

@@ -120,15 +120,10 @@ export const flyoutMessages = {
   'history.board.loading': 'Загрузка данных…',
   'history.board.empty': 'Для этой квоты пока нет сохранённых данных.',
   'history.trend.none': 'В этом окне нет данных.',
-  'history.trend.first': 'Пик на данный момент: {peak}; прошлых обновлений для сравнения нет.',
-  'history.trend.compare.one':
-    'Пик на данный момент: {peak} · предыдущих обновлений: {count}, в среднем они закрывались на {avg}.',
-  'history.trend.compare.few':
-    'Пик на данный момент: {peak} · предыдущих обновлений: {count}, в среднем они закрывались на {avg}.',
-  'history.trend.compare.many':
-    'Пик на данный момент: {peak} · предыдущих обновлений: {count}, в среднем они закрывались на {avg}.',
-  'history.trend.compare.other':
-    'Пик на данный момент: {peak} · предыдущих обновлений: {count}, в среднем они закрывались на {avg}.',
+  'history.trend.same_stage':
+    'По последнему измерению использовано {used}. Оценочная медиана на том же этапе прошлых циклов составила {median}.',
+  'history.trend.no_comparison':
+    'По последнему измерению использовано {used}. Прошлые измерения не охватывают тот же этап цикла.',
   'history.trend.projection_desc':
     'Прогноз следует текущему темпу, пока квота не закончится через {duration}.',
 
