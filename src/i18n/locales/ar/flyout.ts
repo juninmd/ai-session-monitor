@@ -126,6 +126,11 @@ export const flyoutMessages = {
     'بلغ الاستخدام في آخر قراءة {used}، وكان الوسيط التقديري عند النقطة نفسها من الدورات السابقة {median}.',
   'history.trend.no_comparison':
     'بلغ الاستخدام في آخر قراءة {used}، ولا توجد قراءات سابقة تغطي النقطة نفسها من الدورة.',
+  'history.forecast.single': 'وفقًا لمعدلات الاستخدام الأخيرة، قد تنفد الحصة خلال نحو {early}.',
+  'history.forecast.range':
+    'وفقًا لمعدلات الاستخدام الأخيرة، قد تنفد الحصة خلال مدة تتراوح بين {early} و{late}.',
+  'history.forecast.until_reset':
+    'وفقًا لمعدلات الاستخدام الأخيرة، قد تنفد الحصة خلال {early} أو تستمر حتى التجديد.',
   'history.trend.projection_desc': 'يتبع التوقّع الوتيرة الحالية حتى تنفد الحصة بعد {duration}.',
 
   // Quota sheet

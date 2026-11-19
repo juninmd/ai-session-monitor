@@ -122,6 +122,12 @@ export const flyoutMessages = {
     'La dernière mesure indique {used} d’utilisation. La médiane estimée au même stade des cycles précédents était de {median}.',
   'history.trend.no_comparison':
     'La dernière mesure indique {used} d’utilisation. Aucun relevé antérieur ne couvre le même stade du cycle.',
+  'history.forecast.single':
+    'Aux rythmes récents, le quota pourrait s’épuiser dans environ {early}.',
+  'history.forecast.range':
+    'Aux rythmes récents, le quota pourrait s’épuiser entre {early} et {late}.',
+  'history.forecast.until_reset':
+    'Aux rythmes récents, le quota pourrait s’épuiser dans {early} ou durer jusqu’au renouvellement.',
   'history.trend.projection_desc':
     'La projection suit le rythme actuel jusqu’à l’épuisement dans {duration}.',
 

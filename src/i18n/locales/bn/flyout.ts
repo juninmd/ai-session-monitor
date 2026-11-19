@@ -110,6 +110,9 @@ export const flyoutMessages = {
     'শেষ রিডিংয়ে ব্যবহার ছিল {used}। আগের চক্রগুলোর একই পর্যায়ে আনুমানিক মধ্যক ছিল {median}।',
   'history.trend.no_comparison':
     'শেষ রিডিংয়ে ব্যবহার ছিল {used}। চক্রের একই পর্যায়ের কোনো আগের রিডিং নেই।',
+  'history.forecast.single': 'সাম্প্রতিক হারে কোটা প্রায় {early} পরে ফুরিয়ে যেতে পারে।',
+  'history.forecast.range': 'সাম্প্রতিক হারে কোটা {early} থেকে {late} এর মধ্যে ফুরিয়ে যেতে পারে।',
+  'history.forecast.until_reset': 'সাম্প্রতিক হারে কোটা {early} পরে ফুরাতে পারে অথবা নবায়ন পর্যন্ত চলতে পারে।',
   'history.trend.projection_desc': 'বর্তমান গতিতে {duration} পরে শেষ হওয়া পর্যন্ত প্রজেকশন চলে।',
 
   // Quota sheet

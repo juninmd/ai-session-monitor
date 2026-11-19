@@ -114,6 +114,10 @@ export const flyoutMessages = {
     'Usage at the last reading was {used}. The estimated median at the same point in earlier cycles was {median}.',
   'history.trend.no_comparison':
     'Usage at the last reading was {used}. There are no earlier readings covering the same point in the cycle.',
+  'history.forecast.single': 'At recent rates, quota could run out in about {early}.',
+  'history.forecast.range': 'At recent rates, quota could run out in {early}–{late}.',
+  'history.forecast.until_reset':
+    'At recent rates, quota could run out in {early} or last until renewal.',
   'history.trend.projection_desc':
     'The projection follows the current pace until it runs out in {duration}.',
 

@@ -46,6 +46,8 @@ O calendário no Horizonte ordena as renovações futuras por horário e identif
 
 O Histórico compara o último ponto armazenado com a mediana estimada dos ciclos anteriores no mesmo estágio. A estimativa interpola entre duas leituras e exclui ciclos que não cobrem aquele ponto. A mediana reduz o peso de um ciclo atípico.
 
+O Histórico também apresenta cenários de esgotamento quando o ritmo recente indica risco. A estimativa usa duas taxas observadas na última hora do mesmo ciclo, com pelo menos cinco minutos em cada intervalo, leitura final de até 15 minutos e concordância com a cota atual. Se a taxa mais lenta chegar à renovação, o texto indica essa possibilidade. As [capturas no Chromium](evidence/quota-forecast/README.md) mostram os cenários de calendário e de aceleração.
+
 | Cenário reproduzível com dados sintéticos | Base `0a2c619` | Candidato |
 | --- | --- | --- |
 | Janela semanal com 5% e renovação em 30 min. Janela de cinco horas com 10%, renovação em 60 min e esgotamento projetado em 26,7 min. | Exibe a semanal como suficiente e oculta o risco da janela de cinco horas. | Exibe a janela de cinco horas como risco e informa a renovação semanal em 30 min. |
@@ -60,7 +62,7 @@ Reprodução dos cenários de cota e histórico: `pnpm exec vitest run src/home/
 ## Lacunas com evidência
 
 1. **Cobertura e contas.** Os catálogos Windows acima são maiores e alguns monitores exibem contas lado a lado. A comparação de cobertura deve usar uma lista de provedores com coleta verificada e distinguir conta, plano e pool.
-2. **Previsão.** O Horizonte mostra uma estimativa pontual do ritmo médio da janela. Faixa de previsão, confiança e reação a picos são áreas de vantagem documentada dos monitores especializados. A comparação exige reproduzir as mesmas séries de consumo e medir erro e antecedência do aviso.
+2. **Previsão.** O Horizonte mostra uma estimativa pontual pelo ritmo médio da janela. O Histórico agora exibe cenários pelo ritmo recente. A confiança estatística e a detecção de picos seguem como lacunas frente aos monitores especializados. A comparação exige reproduzir as mesmas séries de consumo e medir erro e antecedência do aviso.
 3. **Custos e consumo.** O histórico atual guarda percentuais de cota. Produtos com ingestão de logs mostram tokens, custo equivalente e atribuição. Esses valores precisam ser comparados separadamente da fatura real e da cota da assinatura.
 4. **Acesso e desempenho.** Widgets e overlays oferecem leitura persistente. Uma comparação de desempenho exige as versões instaladas, o mesmo hardware Windows, a mesma cadência de consulta e cargas equivalentes. Medir inicialização fria, fluidez ao abrir a bandeja e CPU/memória de toda a árvore de processos em repouso. O [benchmark de arquitetura](architecture-review.md) mede duas versões do próprio frontend.
 
