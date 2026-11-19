@@ -175,6 +175,12 @@ describe('triage surface', () => {
     expect(copied).toMatch(/^harness,window,resets_at,read_at,used_pct/);
   });
 
+  it('shows a recent-rate exhaustion range alongside the current quota history', async () => {
+    const { user } = mount('critical');
+    await openDetail(user, 'Codex');
+    expect(await screen.findByText(/Nos ritmos recentes, a cota pode acabar entre/)).toBeVisible();
+  });
+
   it('offers a jump to every provider the headline names', async () => {
     mount();
     await rows('data-tier');

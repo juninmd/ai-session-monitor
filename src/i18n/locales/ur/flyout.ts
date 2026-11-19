@@ -112,6 +112,10 @@ export const flyoutMessages = {
     'آخری ریڈنگ میں استعمال {used} تھا۔ پچھلے ادوار کے اسی مرحلے پر تخمینی درمیانی قدر {median} تھی۔',
   'history.trend.no_comparison':
     'آخری ریڈنگ میں استعمال {used} تھا۔ دور کے اسی مرحلے کی کوئی پچھلی ریڈنگ دستیاب نہیں ہے۔',
+  'history.forecast.single': 'حالیہ رفتار کے مطابق کوٹا تقریباً {early} میں ختم ہو سکتا ہے۔',
+  'history.forecast.range': 'حالیہ رفتار کے مطابق کوٹا {early} سے {late} کے درمیان ختم ہو سکتا ہے۔',
+  'history.forecast.until_reset':
+    'حالیہ رفتار کے مطابق کوٹا {early} میں ختم ہو سکتا ہے یا تجدید تک چل سکتا ہے۔',
   'history.trend.projection_desc':
     'پیشگوئی موجودہ رفتار کی پیروی کرتی ہے جب تک یہ {duration} میں ختم نہ ہو جائے۔',
 

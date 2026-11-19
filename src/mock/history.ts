@@ -34,7 +34,7 @@ function epochOf(
   const current = age === 0;
   const reach = current ? Math.min(1, Math.max(0.04, (nowSecs - start) / lengthSecs)) : 1;
   const peak = current ? window.usedPct : window.usedPct * (PAST_SHARE[age - 1] ?? 0.5);
-  const shape = SHAPES[age % SHAPES.length] ?? 1;
+  const shape = current && window.kind === 'five_hour' && peak >= 90 ? 4 : (SHAPES[age] ?? 1);
   const points = Array.from({ length: POINTS }, (_, i) => {
     const x = i / (POINTS - 1);
     return {

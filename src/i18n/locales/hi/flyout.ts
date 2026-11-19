@@ -110,6 +110,10 @@ export const flyoutMessages = {
     'पिछली रीडिंग में इस्तेमाल {used} था। पिछले चक्रों के इसी चरण में अनुमानित माध्यिका {median} थी।',
   'history.trend.no_comparison':
     'पिछली रीडिंग में इस्तेमाल {used} था। चक्र के इसी चरण की कोई पुरानी रीडिंग उपलब्ध नहीं है।',
+  'history.forecast.single': 'हाल की दरों पर कोटा लगभग {early} में खत्म हो सकता है।',
+  'history.forecast.range': 'हाल की दरों पर कोटा {early} से {late} के बीच खत्म हो सकता है।',
+  'history.forecast.until_reset':
+    'हाल की दरों पर कोटा {early} में खत्म हो सकता है या नवीनीकरण तक चल सकता है।',
   'history.trend.projection_desc':
     'अनुमान मौजूदा गति पर चलता है, जब तक कि {duration} में कोटा खत्म नहीं हो जाता।',
 

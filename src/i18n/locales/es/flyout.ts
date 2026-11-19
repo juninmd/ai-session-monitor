@@ -122,6 +122,10 @@ export const flyoutMessages = {
     'El uso en la última lectura fue del {used}. La mediana estimada en el mismo punto de ciclos anteriores fue del {median}.',
   'history.trend.no_comparison':
     'El uso en la última lectura fue del {used}. No hay lecturas anteriores que cubran el mismo punto del ciclo.',
+  'history.forecast.single': 'Al ritmo reciente, la cuota podría agotarse en unos {early}.',
+  'history.forecast.range': 'Al ritmo reciente, la cuota podría agotarse entre {early} y {late}.',
+  'history.forecast.until_reset':
+    'Al ritmo reciente, la cuota podría agotarse en {early} o durar hasta la renovación.',
   'history.trend.projection_desc':
     'La proyección sigue el ritmo actual hasta que se agote en {duration}.',
 

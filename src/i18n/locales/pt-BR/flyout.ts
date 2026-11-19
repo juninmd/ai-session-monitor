@@ -114,6 +114,10 @@ export const flyoutMessages = {
     'O uso na última leitura foi de {used}. A mediana estimada no mesmo ponto dos ciclos anteriores foi de {median}.',
   'history.trend.no_comparison':
     'O uso na última leitura foi de {used}. Nenhuma leitura anterior cobre o mesmo ponto do ciclo.',
+  'history.forecast.single': 'Nos ritmos recentes, a cota pode acabar em cerca de {early}.',
+  'history.forecast.range': 'Nos ritmos recentes, a cota pode acabar entre {early} e {late}.',
+  'history.forecast.until_reset':
+    'Nos ritmos recentes, a cota pode acabar em {early} ou durar até a renovação.',
   'history.trend.projection_desc': 'A projeção segue o ritmo atual até acabar em {duration}.',
 
   // Quota sheet

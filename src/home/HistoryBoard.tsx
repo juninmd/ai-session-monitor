@@ -5,17 +5,23 @@ import { useMemo, useState } from 'react';
 import { useHistory } from '../app/hooks/useHistory';
 import { burndownOf } from '../app/model/burndown';
 import { sharePct, showsUsed } from '../app/model/quota';
-import { modelWindow, type ViewContext, windowTitle } from '../app/model/windowModel';
+import {
+  durationFormat,
+  modelWindow,
+  type ViewContext,
+  windowTitle,
+} from '../app/model/windowModel';
 import { summarySentences } from '../app/text/burndownText';
 import { Icon } from '../components/icons';
 import { HistoryTable } from '../components/panel/history/HistoryTable';
 import { t } from '../i18n';
-import { formatPercent } from '../i18n/format';
+import { formatDuration, formatPercent } from '../i18n/format';
 import type { HarnessView } from '../lib/contract';
 import { availablePct } from '../lib/usage';
 import { historyCsv } from './historyCsv';
 import { trendOf } from './historyModel';
 import { readableWindows } from './quotas';
+import { recentForecast } from './recentForecast';
 import { TrendChart } from './TrendChart';
 import { windowLabel } from './wording';
 
@@ -44,6 +50,14 @@ export function HistoryBoard({ view, ctx }: { view: HarnessView; ctx: ViewContex
     state.status === 'ready' && fresh ? burndownOf(active, state.history.epochs) : null;
   const trend = burndown === null ? null : trendOf(burndown);
   const title = windowTitle(view.id, active);
+  const forecast =
+    state.status === 'ready' && fresh && view.state === 'ready' && !view.stale
+      ? recentForecast(active, state.history.epochs, ctx.nowSecs)
+      : null;
+  const duration = (minutes: number) =>
+    formatDuration(minutes, durationFormat(ctx.settings), model.long);
+  const early = forecast === null ? null : duration(forecast.earliestMin);
+  const late = forecast?.latestMin == null ? null : duration(forecast.latestMin);
 
   const copyCsv = () => {
     if (state.status !== 'ready') return;
@@ -114,6 +128,18 @@ export function HistoryBoard({ view, ctx }: { view: HarnessView; ctx: ViewContex
             title={title}
             live={!view.stale}
           />
+          {early !== null && (
+            <p className="nx-trend-line" data-forecast="recent">
+              <Icon name="clock" />
+              <span>
+                {late === null
+                  ? t('history.forecast.until_reset', { early })
+                  : late === early
+                    ? t('history.forecast.single', { early })
+                    : t('history.forecast.range', { early, late })}
+              </span>
+            </p>
+          )}
           <p className="nx-meta">{summarySentences(burndown, ctx.nowSecs).join(' ')}</p>
           <HistoryTable burndown={burndown} nowSecs={ctx.nowSecs} />
         </>

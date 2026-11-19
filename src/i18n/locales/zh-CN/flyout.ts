@@ -105,6 +105,9 @@ export const flyoutMessages = {
   'history.trend.same_stage':
     '最近一次读数的用量为 {used}。此前周期在同一进度的估算中位数为 {median}。',
   'history.trend.no_comparison': '最近一次读数的用量为 {used}。此前的读数未覆盖本周期的同一进度。',
+  'history.forecast.single': '按近期用量变化，配额可能在约 {early} 后耗尽。',
+  'history.forecast.range': '按近期用量变化，配额可能在 {early} 至 {late} 后耗尽。',
+  'history.forecast.until_reset': '按近期用量变化，配额可能在 {early} 后耗尽，也可能持续至刷新。',
   'history.trend.projection_desc': '预测线按当前速度延伸，直到 {duration}后用完。',
 
   // Quota sheet
