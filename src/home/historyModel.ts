@@ -1,56 +1,63 @@
 // What the history board says about a window: how this pass compares with the earlier ones, and
 // where the current burn is heading. Pure, so the sentences and the chart come from one place.
 //
-// Two honesty rules live here. The comparison states two measured facts (this pass's peak so far,
-// and the mean of the passes that closed) instead of calling a still-running pass above or below
-// them, because an unfinished pass has necessarily peaked lower than a finished one. And the
-// projection is anchored at the live reading, not at the last stored one, so the line the chart
-// draws is the line `paceOf` decided.
+// Compare readings at the same elapsed share of the quota window. The projection stays anchored
+// at the live reading so the line the chart draws is the line `paceOf` decided.
 import type { Burndown } from '../app/model/burndown';
 import { durationFormat, type ViewContext, type WindowModel } from '../app/model/windowModel';
-import { t, tn } from '../i18n';
+import { t } from '../i18n';
 import { formatDuration, formatPercent } from '../i18n/format';
+import { valueAt } from './trendChartModel';
 
 export type TrendKind = 'more' | 'less' | 'similar' | 'first';
 
 export interface Trend {
   kind: TrendKind;
-  /** The peak of the pass still running, when it has one. */
-  peakNow: number | null;
-  /** Mean peak of the passes that already closed; null with none. */
-  pastAverage: number | null;
+  currentUsed: number | null;
+  /** Median estimated usage at the same elapsed share, in percent. */
+  pastMedian: number | null;
   pastCount: number;
   label: string;
 }
 
-function mean(values: readonly number[]): number | null {
-  if (values.length === 0) return null;
-  return values.reduce((total, value) => total + value, 0) / values.length;
-}
-
 export function trendOf(burndown: Burndown): Trend {
-  const peakNow = burndown.current?.peakPct ?? null;
-  const past = burndown.past.map((curve) => curve.peakPct);
-  const pastAverage = mean(past);
-  const base = { peakNow, pastAverage, pastCount: past.length };
-  if (peakNow === null) {
-    return { ...base, kind: 'first', label: t('history.trend.none') };
-  }
-  if (pastAverage === null) {
+  const now = lastPoint(burndown);
+  if (now === null) {
     return {
-      ...base,
+      currentUsed: null,
+      pastMedian: null,
+      pastCount: 0,
       kind: 'first',
-      label: t('history.trend.first', { peak: formatPercent(peakNow) }),
+      label: t('history.trend.none'),
     };
   }
-  const delta = peakNow - pastAverage;
+  const past = burndown.past
+    .flatMap((curve) => valueAt(curve.plot, now.x) ?? [])
+    .sort((a, b) => a - b);
+  const currentUsed = now.y * 100;
+  const middle = Math.floor(past.length / 2);
+  const upper = past[middle];
+  if (upper === undefined) {
+    return {
+      currentUsed,
+      pastMedian: null,
+      pastCount: 0,
+      kind: 'first',
+      label: t('history.trend.no_comparison', { used: formatPercent(currentUsed) }),
+    };
+  }
+  const lower = past.length % 2 === 0 ? (past[middle - 1] ?? upper) : upper;
+  const pastMedian = (lower + upper) * 50;
+  const delta = currentUsed - pastMedian;
   const kind: TrendKind = Math.abs(delta) < 5 ? 'similar' : delta > 0 ? 'more' : 'less';
   return {
-    ...base,
+    currentUsed,
+    pastMedian,
+    pastCount: past.length,
     kind,
-    label: tn('history.trend.compare', past.length, {
-      peak: formatPercent(peakNow),
-      avg: formatPercent(pastAverage),
+    label: t('history.trend.same_stage', {
+      used: formatPercent(currentUsed),
+      median: formatPercent(pastMedian),
     }),
   };
 }
@@ -68,6 +75,7 @@ export function lastPoint(burndown: Burndown): Segment | null {
 
 /** Where the live reading sits: the share of the window already elapsed, and the used share. */
 export function nowPoint(model: WindowModel): Segment | null {
+  if (model.expired) return null;
   const { usedPct, windowMinutes } = model.window;
   if (usedPct === null || windowMinutes === null || windowMinutes <= 0) return null;
   if (model.leftMin === null) return null;

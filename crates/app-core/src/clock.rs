@@ -3,7 +3,7 @@
 
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use chrono::Local;
+use time::UtcOffset;
 
 pub trait Clock: Send + Sync {
     /// Seconds since the Unix epoch (UTC).
@@ -27,7 +27,7 @@ impl Clock for SystemClock {
     }
 
     fn utc_offset_secs(&self) -> i32 {
-        Local::now().offset().local_minus_utc()
+        UtcOffset::current_local_offset().map_or(0, UtcOffset::whole_seconds)
     }
 }
 

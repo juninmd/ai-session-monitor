@@ -33,6 +33,35 @@ describe('horizon surface', () => {
       ),
     );
   });
+
+  it('disables trends when local history is off', async () => {
+    const { backend, user } = mount('demo', {
+      settings: (draft) => {
+        draft.general.historyEnabled = false;
+      },
+    });
+    await rows('data-tier');
+    await user.click(screen.getByRole('button', { name: /^Horizonte/ }));
+    await rows('data-kind');
+    expect(screen.getByRole('checkbox', { name: /Mostrar tendência/ })).toBeDisabled();
+    expect(backend.calls).not.toContain('get_history');
+  });
+
+  it('shows upcoming renewals in chronological order without querying history', async () => {
+    const { backend, user } = mount();
+    await rows('data-tier');
+    await user.click(screen.getByRole('button', { name: /^Horizonte/ }));
+    await rows('data-kind');
+    const historyReads = backend.calls.filter((call) => call === 'get_history');
+    const summary = screen.getByText('Próximas renovações', { selector: 'summary' });
+    await user.click(summary);
+    const schedule = summary.closest('details');
+    expect(schedule).toHaveAttribute('open');
+    const dates = [...(schedule?.querySelectorAll('time') ?? [])].map((time) => time.dateTime);
+    expect(dates.length).toBeGreaterThan(1);
+    expect(dates).toEqual(dates.toSorted());
+    expect(backend.calls.filter((call) => call === 'get_history')).toEqual(historyReads);
+  });
 });
 
 describe('density setting', () => {

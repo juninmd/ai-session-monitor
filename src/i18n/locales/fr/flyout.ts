@@ -118,13 +118,10 @@ export const flyoutMessages = {
   'history.board.loading': 'Chargement des relevés…',
   'history.board.empty': 'Aucun relevé enregistré pour ce quota pour l’instant.',
   'history.trend.none': 'Aucun relevé dans cette fenêtre.',
-  'history.trend.first': 'Pic de {peak} jusqu’ici, sans renouvellement antérieur auquel comparer.',
-  'history.trend.compare.one':
-    'Pic de {peak} jusqu’ici · le renouvellement précédent s’est terminé à {avg} en moyenne.',
-  'history.trend.compare.many':
-    'Pic de {peak} jusqu’ici · les {count} de renouvellements précédents se sont terminés à {avg} en moyenne.',
-  'history.trend.compare.other':
-    'Pic de {peak} jusqu’ici · les {count} renouvellements précédents se sont terminés à {avg} en moyenne.',
+  'history.trend.same_stage':
+    'La dernière mesure indique {used} d’utilisation. La médiane estimée au même stade des cycles précédents était de {median}.',
+  'history.trend.no_comparison':
+    'La dernière mesure indique {used} d’utilisation. Aucun relevé antérieur ne couvre le même stade du cycle.',
   'history.trend.projection_desc':
     'La projection suit le rythme actuel jusqu’à l’épuisement dans {duration}.',
 

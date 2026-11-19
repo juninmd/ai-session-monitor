@@ -118,14 +118,10 @@ export const flyoutMessages = {
   'history.board.loading': 'Cargando las lecturas…',
   'history.board.empty': 'Aún no hay lecturas guardadas para esta cuota.',
   'history.trend.none': 'Ninguna lectura en esta ventana.',
-  'history.trend.first':
-    'Pico de {peak} hasta ahora, sin una renovación anterior con la que comparar.',
-  'history.trend.compare.one':
-    'Pico de {peak} hasta ahora · la renovación anterior cerró en {avg} de media.',
-  'history.trend.compare.many':
-    'Pico de {peak} hasta ahora · las {count} de renovaciones anteriores cerraron en {avg} de media.',
-  'history.trend.compare.other':
-    'Pico de {peak} hasta ahora · las {count} renovaciones anteriores cerraron en {avg} de media.',
+  'history.trend.same_stage':
+    'El uso en la última lectura fue del {used}. La mediana estimada en el mismo punto de ciclos anteriores fue del {median}.',
+  'history.trend.no_comparison':
+    'El uso en la última lectura fue del {used}. No hay lecturas anteriores que cubran el mismo punto del ciclo.',
   'history.trend.projection_desc':
     'La proyección sigue el ritmo actual hasta que se agote en {duration}.',
 

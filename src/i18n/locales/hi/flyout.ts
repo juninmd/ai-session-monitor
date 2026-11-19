@@ -106,10 +106,10 @@ export const flyoutMessages = {
   'history.board.loading': 'रीडिंग लोड हो रही हैं…',
   'history.board.empty': 'इस कोटा की अभी कोई रीडिंग सहेजी नहीं है।',
   'history.trend.none': 'इस विंडो में कोई रीडिंग नहीं।',
-  'history.trend.first': 'अब तक {peak} का शिखर, तुलना के लिए पहले का कोई नवीनीकरण नहीं।',
-  'history.trend.compare.one': 'अब तक {peak} का शिखर · पिछले {count} नवीनीकरण औसतन {avg} पर बंद हुए।',
-  'history.trend.compare.other':
-    'अब तक {peak} का शिखर · पिछले {count} नवीनीकरण औसतन {avg} पर बंद हुए।',
+  'history.trend.same_stage':
+    'पिछली रीडिंग में इस्तेमाल {used} था। पिछले चक्रों के इसी चरण में अनुमानित माध्यिका {median} थी।',
+  'history.trend.no_comparison':
+    'पिछली रीडिंग में इस्तेमाल {used} था। चक्र के इसी चरण की कोई पुरानी रीडिंग उपलब्ध नहीं है।',
   'history.trend.projection_desc':
     'अनुमान मौजूदा गति पर चलता है, जब तक कि {duration} में कोटा खत्म नहीं हो जाता।',
 

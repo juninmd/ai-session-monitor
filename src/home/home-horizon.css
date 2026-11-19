@@ -4,6 +4,41 @@
   gap: 0.6rem;
 }
 
+.nx-renewals {
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: var(--raise);
+}
+
+.nx-renewals summary {
+  cursor: pointer;
+}
+
+.nx-renewals ol {
+  margin-block: 0.35rem 0;
+  padding: 0;
+}
+
+.nx-renewals li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding-block: 0.35rem;
+  border-block-start: 1px solid var(--line);
+}
+
+.nx-renewals li .nx-meta {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.nx-renewals time {
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+}
+
 .nx-h-row {
   appearance: none;
   display: grid;
@@ -76,16 +111,14 @@
   white-space: nowrap;
 }
 
-/* The unfilled part of the track is time with no quota: it reads red when there is a shortfall,
-   and a hatch when nothing can be projected. The fill keeps the status colour the rest of the
-   interface prints, so a provider can never be "fine" here and "critical" in the triage. */
+/* The track shows a red shortfall when the reset is known and a hatch for unknown duration.
+   The fill uses the status colour of the displayed window. */
 .nx-h-row[data-kind="short"] .nx-bar,
 .nx-h-row[data-kind="out"] .nx-bar {
   background: color-mix(in oklab, var(--crit) 24%, var(--raise-2));
 }
 
-.nx-h-row[data-kind="unknown"] .nx-bar,
-.nx-h-row[data-kind="broken"] .nx-bar {
+.nx-h-row .nx-bar.off {
   background:
     repeating-linear-gradient(135deg, var(--line-2) 0 3px, transparent 3px 7px), var(--raise-2);
 }
