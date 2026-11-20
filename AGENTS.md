@@ -51,7 +51,8 @@ node scripts/bench-boot.mjs before=<old dist> after=dist   # boot benchmark of b
 ```
 
 CI gates (`.github/workflows`): `ci.yml` runs `web` (`pnpm verify`), `desktop` (Windows: `pnpm build`,
-`cargo fmt`, `clippy -D warnings`, `cargo test --workspace --locked`, `pnpm tauri build --no-bundle`) and `audit`
+`cargo fmt`, `clippy -D warnings`, `cargo test --workspace --locked`), `desktop-release` (Windows, in parallel:
+`pnpm tauri build --no-bundle`) and `audit`
 (RustSec, cargo-deny, `pnpm audit --audit-level high`); `security.yml` is the reusable security scan;
 `release.yml` + `release-commit.yml` verify and publish signed releases. Run the same commands locally before a PR.
 
