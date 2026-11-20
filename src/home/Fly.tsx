@@ -172,7 +172,7 @@ export function Fly(props: FlyProps) {
               <button
                 key={item.id}
                 type="button"
-                aria-pressed={surface === item.id}
+                aria-current={surface === item.id ? 'page' : undefined}
                 aria-label={item.label}
                 aria-keyshortcuts={`Alt+${index + 1}`}
                 onClick={() => onSurface(item.id)}
