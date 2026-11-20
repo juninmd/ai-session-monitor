@@ -1,6 +1,7 @@
 // Which surface the list shows, and the two ways to change it: the vertical tabs and Alt+1..3.
 import { useCallback, useEffect, useState } from 'react';
 import { SURFACES, type Surface } from './Fly';
+import { surfaceFromKey } from './surfaceKey';
 
 export interface SurfaceOptions {
   /** Leaving a form with unsaved edits asks first. */
@@ -26,8 +27,8 @@ export function useSurface({ guarded, hideDetail, toTop, shortcutsOff }: Surface
   // The digit maps to the surface's position in the vertical tab list.
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if (!event.altKey || event.ctrlKey || event.metaKey || shortcutsOff) return;
-      const target = SURFACES[Number(event.key) - 1];
+      if (shortcutsOff) return;
+      const target = surfaceFromKey(event, SURFACES);
       if (target === undefined) return;
       event.preventDefault();
       changeSurface(target.id);

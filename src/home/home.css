@@ -100,7 +100,7 @@
   color: var(--ink-2);
 }
 
-.nx-surfaces > button[aria-pressed="true"] {
+.nx-surfaces > button[aria-current="page"] {
   background: var(--raise-2);
   color: var(--ink);
 }

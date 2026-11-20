@@ -46,13 +46,13 @@ describe('surface shortcuts', () => {
     await ready();
     await user.keyboard('{Alt>}2{/Alt}');
     expect(screen.getByRole('button', { name: /^Horizonte/ })).toHaveAttribute(
-      'aria-pressed',
-      'true',
+      'aria-current',
+      'page',
     );
     await user.keyboard('{Alt>}1{/Alt}');
     expect(screen.getByRole('button', { name: /^Triagem/ })).toHaveAttribute(
-      'aria-pressed',
-      'true',
+      'aria-current',
+      'page',
     );
   });
 });

@@ -36,8 +36,8 @@ describe('the shell', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'AI Session Monitor' })).toBeVisible();
     // The switch only appears once the stored settings say what is being monitored.
     expect(await screen.findByRole('button', { name: /^Triagem/ })).toHaveAttribute(
-      'aria-pressed',
-      'true',
+      'aria-current',
+      'page',
     );
     expect(nav('Horizonte')).toBeVisible();
     expect(nav('Canais de cota')).toBeVisible();
@@ -89,6 +89,16 @@ describe('moving between surfaces', () => {
     expect(screen.getByRole('heading', { name: 'O que ainda dá para ler' })).toBeVisible();
     await user.click(nav('Triagem'));
     expect(await ready()).toBeVisible();
+  });
+
+  it('marks the current surface with aria-current, not as a toggle', async () => {
+    const { user } = renderApp();
+    await ready();
+    expect(nav('Triagem')).toHaveAttribute('aria-current', 'page');
+    await user.click(nav('Horizonte'));
+    expect(nav('Horizonte')).toHaveAttribute('aria-current', 'page');
+    expect(nav('Triagem')).not.toHaveAttribute('aria-current');
+    expect(nav('Horizonte')).not.toHaveAttribute('aria-pressed');
   });
 
   it('shows the failure of a tool in its own drawer, with one way forward', async () => {
