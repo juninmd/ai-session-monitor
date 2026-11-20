@@ -1,18 +1,7 @@
-// bn catalog: the flyout surfaces (triage, horizon, quota channels) and the wording they
-// share. The channels text lives in surfacesChannels.ts to keep files short.
-import { channelsMessages } from './surfacesChannels';
+// Flyout catalog: the triage, the horizon of a detail and the wording they share.
 
 export const surfacesMessages = {
-  ...channelsMessages,
-
-  'surface.triage.label': 'অগ্রাধিকার',
-  'surface.triage.hint': 'কিছু করতে হবে কি?',
   'surface.horizon.label': 'দিগন্ত',
-  'surface.horizon.hint': 'নবায়ন পর্যন্ত চলবে কি?',
-  'surface.channels.label': 'কোটা চ্যানেল',
-  'surface.channels.hint': 'যা এখনও পড়া সম্ভব',
-  'surface.nav': 'মনিটর প্যানেল',
-  'surface.tab_title': '{label}: {hint} (Alt+{n})',
   'surface.loading_sources': 'সোর্স পড়া হচ্ছে…',
   'surface.reading': 'পড়া হচ্ছে…',
   'surface.no_reading': 'রিডিং নেই',
@@ -63,6 +52,9 @@ export const surfacesMessages = {
   'triage.filter.watch': 'নজর রাখুন',
   'triage.filter.fine': 'ঠিক আছে',
   'triage.filter.idle': 'রিডিং নেই',
+  'triage.view.label': 'ভিউ',
+  'triage.view.list': 'তালিকা',
+  'triage.view.cards': 'কার্ড',
 
   'horizon.figure.out': 'শেষ',
   'horizon.figure.short': '{duration} কোটা ছাড়া',

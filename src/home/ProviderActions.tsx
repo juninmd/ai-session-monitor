@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { type CSSProperties, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useAsyncAction } from '../app/hooks/useAsyncAction';
 import type { ViewContext } from '../app/model/windowModel';
 import { t, tn } from '../i18n';
@@ -20,6 +20,35 @@ function LowPriorityHint() {
       <code>/low-priority</code>
       {after}
     </p>
+  );
+}
+
+const CONFETTI = 26;
+const COLORS = ['var(--accent)', 'var(--warn-fill)', 'var(--crit)', 'var(--btn-bg)'];
+
+/** A burst after a reset goes through: pure decoration, so it stays out of the accessibility tree. */
+function Confetti() {
+  const bits = useMemo(
+    () =>
+      Array.from({ length: CONFETTI }, (_, index) => {
+        const angle = Math.random() * Math.PI * 2;
+        const reach = 60 + Math.random() * 110;
+        return {
+          background: COLORS[index % COLORS.length],
+          '--dx': `${Math.round(Math.cos(angle) * reach)}px`,
+          '--dy': `${Math.round(Math.sin(angle) * reach - 40)}px`,
+          '--r': `${Math.round(Math.random() * 720 - 360)}deg`,
+        } as CSSProperties;
+      }),
+    [],
+  );
+  return (
+    <span className="nx-confetti" aria-hidden="true">
+      {bits.map((style, index) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: the pieces are anonymous and never reorder.
+        <i key={index} className="nx-confetti-bit" style={style} />
+      ))}
+    </span>
   );
 }
 
@@ -57,6 +86,7 @@ export function ProviderActions({ view, ctx }: { view: HarnessView; ctx: ViewCon
   if (!canReset && !canCopy && result === null) return null;
   return (
     <div className="preview-provider-actions">
+      {result === 'reset' && <Confetti />}
       {canReset && (
         <div className="preview-action-row">
           <span>{tn('provider_actions.resets', count)}</span>

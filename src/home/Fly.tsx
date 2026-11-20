@@ -1,10 +1,10 @@
-// The flyout frame of the home: header, the switch between surfaces, the scrolling body with the
-// selected surface (or the settings screen), the lateral detail drawer and the Ctrl+K palette.
+// The flyout frame of the home: header, the scrolling body with the triage (or the settings
+// screen), the detail sheet over the cards and the Ctrl+K palette.
 // Everything it shows arrives as props; the state and the backend wiring live in App.
 import type { RefObject } from 'react';
+import type { ViewMode } from '../app/hooks/useViewMode';
 import type { SettingsSection } from '../app/model/harness';
 import type { ViewContext } from '../app/model/windowModel';
-import { Icon, type IconName } from '../components/icons';
 import { Banner } from '../components/panel/Banner';
 import { ActionError } from '../components/panel/ErrorActions';
 import { SettingsView } from '../components/settings/SettingsView';
@@ -15,36 +15,10 @@ import type { HarnessError, HarnessId, HarnessView } from '../lib/contract';
 import type { Status } from '../lib/usage';
 import { CommandPalette } from './CommandPalette';
 import { DetailDrawer } from './Drawer';
-import { Horizon } from './Horizon';
 import { Onboarding } from './Onboarding';
 import type { PaletteCommand } from './paletteModel';
 import { SettingsDrawer } from './SettingsDrawer';
-import { Sources } from './Sources';
 import { Triage } from './Triage';
-
-/** The surfaces the user navigates between. The first run is not one of them: it replaces them. */
-export type Surface = 'triage' | 'horizon' | 'channels';
-
-/** The tabs in order, with no wording: callers that only need the id (Alt+digit) read this. */
-export const SURFACES: readonly { id: Surface; icon: IconName }[] = [
-  { id: 'triage', icon: 'triage' },
-  { id: 'horizon', icon: 'horizon' },
-  { id: 'channels', icon: 'channels' },
-];
-
-/** The tabs with their label and hint in the active language; read it at render time. */
-export function surfaceTabs(): readonly {
-  id: Surface;
-  label: string;
-  hint: string;
-  icon: IconName;
-}[] {
-  return SURFACES.map((item) => ({
-    ...item,
-    label: t(`surface.${item.id}.label`),
-    hint: t(`surface.${item.id}.hint`),
-  }));
-}
 
 export type Screen = { kind: 'surface' } | { kind: 'settings'; section: SettingsSection | null };
 
@@ -54,7 +28,6 @@ export interface FlyProps {
   scrollRef: RefObject<HTMLDivElement | null>;
   /** Bumped when the empty panel asks for the wizard again: a new run starts at step one. */
   wizardRun: number;
-  surface: Surface;
   screen: Screen;
   views: readonly HarnessView[];
   active: readonly HarnessView[];
@@ -76,16 +49,16 @@ export interface FlyProps {
   eventsFailed: boolean;
   notice: string;
   paletteOpen: boolean;
-  trend: boolean;
+  /** Cards (two per row) or one provider per line. */
+  viewMode: ViewMode;
   /** The lateral detail is open for the selected provider. */
   detailOpen: boolean;
   commands: PaletteCommand[];
-  onTrend: (on: boolean) => void;
+  onViewMode: (mode: ViewMode) => void;
   /** Move the highlight, as an arrow key does. */
   onSelect: (id: HarnessId) => void;
   /** Activate one provider and open its lateral detail. */
   onOpen: (id: HarnessId) => void;
-  onSurface: (surface: Surface) => void;
   onRefresh: () => void;
   onRefreshView: (id: HarnessId) => void;
   onRetry: () => void;
@@ -106,7 +79,6 @@ export function Fly(props: FlyProps) {
     rootRef,
     scrollRef,
     wizardRun,
-    surface,
     screen,
     views,
     active,
@@ -124,13 +96,12 @@ export function Fly(props: FlyProps) {
     eventsFailed,
     notice,
     paletteOpen,
-    trend,
+    viewMode,
     detailOpen,
     commands,
-    onTrend,
+    onViewMode,
     onSelect,
     onOpen,
-    onSurface,
     onRefresh,
     onRefreshView,
     onRetry,
@@ -146,13 +117,11 @@ export function Fly(props: FlyProps) {
   } = props;
   const inSettings = screen.kind === 'settings';
   const surfaces = loaded && !inSettings && !firstRun && failure === null;
-  const listSurface = surfaces && (surface === 'triage' || surface === 'horizon');
   return (
     <div
       ref={rootRef}
       className="flyout nx-fly"
       data-loaded={(settled ?? loaded) || undefined}
-      data-surface={surface}
       data-detail={detailOpen || undefined}
       data-density={ctx.settings.general.compact ? 'compact' : undefined}
       data-section={(inSettings && screen.section !== null) || undefined}
@@ -166,27 +135,6 @@ export function Fly(props: FlyProps) {
         onQuit={onQuit}
       />
       <div className="nx-main">
-        {surfaces && (
-          <nav className="nx-surfaces" aria-label={t('surface.nav')}>
-            {surfaceTabs().map((item, index) => (
-              <button
-                key={item.id}
-                type="button"
-                aria-current={surface === item.id ? 'page' : undefined}
-                aria-label={item.label}
-                aria-keyshortcuts={`Alt+${index + 1}`}
-                onClick={() => onSurface(item.id)}
-              >
-                <Icon name={item.icon} />
-                <span className="nx-surf-tip" aria-hidden="true">
-                  <b>{item.label}</b>
-                  <span>{item.hint}</span>
-                  <kbd>Alt+{index + 1}</kbd>
-                </span>
-              </button>
-            ))}
-          </nav>
-        )}
         <div
           ref={scrollRef}
           className="fly-body"
@@ -225,28 +173,20 @@ export function Fly(props: FlyProps) {
                 </div>
               </section>
             )}
-            {surfaces && surface === 'triage' && (
+            {surfaces && (
               <Triage
                 views={active}
                 ctx={ctx}
                 selected={selected}
+                detailOpen={detailOpen}
+                viewMode={viewMode}
+                onViewMode={onViewMode}
                 onSelect={onSelect}
                 onOpen={onOpen}
+                onRefreshView={onRefreshView}
                 onConfigure={onConfigure}
               />
             )}
-            {surfaces && surface === 'horizon' && (
-              <Horizon
-                views={active}
-                ctx={ctx}
-                selected={selected}
-                onSelect={onSelect}
-                onOpen={onOpen}
-                trend={trend}
-                onTrend={onTrend}
-              />
-            )}
-            {surfaces && surface === 'channels' && <Sources />}
             {/* Kept mounted whichever surface is on screen: opening a source's settings from the
                 wizard would otherwise throw the picked list and the step away. */}
             <div className="nx-slot" hidden={inSettings || !firstRun || failure !== null}>
@@ -261,7 +201,7 @@ export function Fly(props: FlyProps) {
           </div>
         </div>
       </div>
-      {listSurface && detailOpen && view !== undefined && (
+      {surfaces && viewMode === 'cards' && detailOpen && view !== undefined && (
         <DetailDrawer
           view={view}
           ctx={ctx}

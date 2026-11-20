@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { tq } from '../../app/model/quota';
-import { applySkin, loadSkin, SKIN_IDS, skinOptions } from '../../app/model/skin';
 import { t } from '../../i18n';
 import { formatPercent } from '../../i18n/format';
 import type { Status } from '../../lib/usage';
 import { Icon } from '../icons';
+import { ThemeMenu } from './ThemeMenu';
 import { TrayRing } from './TrayRing';
 
 interface HeaderProps {
@@ -28,9 +28,6 @@ export function Header({
 }: HeaderProps) {
   // A new key restarts the spin on every press, even while the previous turn is still running.
   const [spins, setSpins] = useState(0);
-  const [skin, setSkin] = useState(loadSkin);
-  const skinLabel = skinOptions().find((option) => option.id === skin)?.label ?? '';
-  const themeLabel = t('header.theme', { name: skinLabel });
   const trayLabel = tray
     ? tq('header.tray', tray.showUsed, { pct: formatPercent(tray.pct) })
     : t('header.tray_none');
@@ -57,19 +54,7 @@ export function Header({
         >
           <Icon key={spins} name="refresh" />
         </button>
-        <button
-          type="button"
-          className="icon-btn"
-          aria-label={themeLabel}
-          title={themeLabel}
-          onClick={() => {
-            const next = SKIN_IDS[(SKIN_IDS.indexOf(skin) + 1) % SKIN_IDS.length] ?? 'sistema';
-            setSkin(next);
-            applySkin(next);
-          }}
-        >
-          <Icon name="palette" />
-        </button>
+        <ThemeMenu />
         <button
           type="button"
           className="icon-btn"

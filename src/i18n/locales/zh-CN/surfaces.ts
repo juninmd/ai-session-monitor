@@ -1,18 +1,7 @@
-// zh-CN catalog: the flyout surfaces (triage, horizon, quota channels) and the wording they
-// share. The channels text lives in surfacesChannels.ts to keep files short.
-import { channelsMessages } from './surfacesChannels';
+// Flyout catalog: the triage, the horizon of a detail and the wording they share.
 
 export const surfacesMessages = {
-  ...channelsMessages,
-
-  'surface.triage.label': '优先处理',
-  'surface.triage.hint': '需要我处理吗？',
   'surface.horizon.label': '续航',
-  'surface.horizon.hint': '能撑到刷新吗？',
-  'surface.channels.label': '额度渠道',
-  'surface.channels.hint': '还能读到什么',
-  'surface.nav': '监视器面板',
-  'surface.tab_title': '{label}：{hint}（Alt+{n}）',
   'surface.loading_sources': '正在读取数据源…',
   'surface.reading': '读取中…',
   'surface.no_reading': '无读数',
@@ -58,6 +47,9 @@ export const surfacesMessages = {
   'triage.filter.watch': '留意',
   'triage.filter.fine': '正常',
   'triage.filter.idle': '无读数',
+  'triage.view.label': '视图',
+  'triage.view.list': '列表',
+  'triage.view.cards': '卡片',
 
   'horizon.figure.out': '已用完',
   'horizon.figure.short': '{duration}无额度',

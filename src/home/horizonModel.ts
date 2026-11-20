@@ -172,3 +172,11 @@ export function exhaustionLabel(row: HorizonRow, ctx: ViewContext): string | nul
   const at = Math.round(ctx.nowSecs + row.model.pace.runwayMin * 60);
   return t('horizon.exhausts', { at: formatClock(at, ctx.nowSecs).label });
 }
+
+/** One row per live window of a single provider: the horizon as the detail shows it. */
+export function windowRows(view: HarnessView, ctx: ViewContext): HorizonRow[] {
+  if (view.state !== 'ready' || view.stale) return [];
+  return view.windows
+    .filter((window) => !isExpired(window, ctx.nowSecs))
+    .map((window) => horizonRow(view, ctx, modelWindow(view.id, window, ctx)));
+}

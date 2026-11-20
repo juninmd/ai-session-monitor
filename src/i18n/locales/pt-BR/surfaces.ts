@@ -1,18 +1,7 @@
-// Portuguese (Brazil) catalog: the flyout surfaces (triagem, horizonte, canais de cota) and the
-// wording they share. The channels text lives in surfacesChannels.ts to keep files short.
-import { channelsMessages } from './surfacesChannels';
+// Flyout catalog: the triage, the horizon of a detail and the wording they share.
 
 export const surfacesMessages = {
-  ...channelsMessages,
-
-  'surface.triage.label': 'Triagem',
-  'surface.triage.hint': 'preciso agir?',
   'surface.horizon.label': 'Horizonte',
-  'surface.horizon.hint': 'chego até a renovação?',
-  'surface.channels.label': 'Canais de cota',
-  'surface.channels.hint': 'o que ainda dá para ler',
-  'surface.nav': 'Painéis do monitor',
-  'surface.tab_title': '{label}: {hint} (Alt+{n})',
   'surface.loading_sources': 'Lendo as fontes…',
   'surface.reading': 'Lendo…',
   'surface.no_reading': 'Sem leitura',
@@ -59,10 +48,13 @@ export const surfacesMessages = {
   'triage.by_urgency': 'Por urgência',
   'triage.filter.label': 'Filtrar por estado',
   'triage.filter.all': 'Todos',
-  'triage.filter.act': 'Agir agora',
-  'triage.filter.watch': 'Atenção',
+  'triage.filter.act': 'Atenção',
+  'triage.filter.watch': 'Acompanhar',
   'triage.filter.fine': 'Tranquilos',
   'triage.filter.idle': 'Sem leitura',
+  'triage.view.label': 'Visualização',
+  'triage.view.list': 'Lista',
+  'triage.view.cards': 'Cards',
 
   'horizon.figure.out': 'esgotado',
   'horizon.figure.short': '{duration} sem cota',

@@ -18,8 +18,8 @@ export interface DrawerShellProps {
   /** The close button's id, when something outside has to find it. */
   closeId?: string;
   closeLabel: string;
-  /** `wide` leaves a narrow reveal of the content behind a 20 px scrim instead of a column. */
-  size?: 'wide';
+  /** `wide` leaves a narrow reveal of the content behind a 20 px scrim; `sheet` rises from the bottom edge. */
+  size?: 'wide' | 'sheet';
   onClose: () => void;
   /** Controls of the bar, after the title. */
   actions?: ReactNode;
@@ -41,7 +41,7 @@ export function DrawerShell({
   const panelRef = useRef<HTMLElement>(null);
   // Focus moves into the drawer on open; the stage puts it back where it came from.
   useEffect(() => {
-    closeRef.current?.focus();
+    closeRef.current?.focus({ preventScroll: true });
   }, []);
   // The scrim covers the flyout but leaves its controls in the tab order; Tab wraps inside the drawer.
   const trapTab = (event: KeyboardEvent<HTMLElement>) => {

@@ -226,7 +226,7 @@ describe('triage surface', () => {
       await screen.findByRole('heading', { name: /O que você quer acompanhar\?/ }),
     ).toBeVisible();
     expect(screen.getByRole('button', { name: /^Continuar com/ })).toBeVisible();
-    expect(screen.queryByRole('button', { name: /^Triagem/ })).toBeNull();
+    expect(screen.queryByRole('group', { name: 'Visualização' })).toBeNull();
   });
 
   it('says why the first-run choice was not saved and stays on the choice', async () => {
