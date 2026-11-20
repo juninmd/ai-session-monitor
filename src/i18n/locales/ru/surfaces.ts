@@ -1,18 +1,7 @@
-// ru catalog: the flyout surfaces (triage, horizon, quota channels) and the wording they
-// share. The channels text lives in surfacesChannels.ts to keep files short.
-import { channelsMessages } from './surfacesChannels';
+// Flyout catalog: the triage, the horizon of a detail and the wording they share.
 
 export const surfacesMessages = {
-  ...channelsMessages,
-
-  'surface.triage.label': 'Сводка',
-  'surface.triage.hint': 'нужны ли действия?',
   'surface.horizon.label': 'Горизонт',
-  'surface.horizon.hint': 'хватит ли до обновления?',
-  'surface.channels.label': 'Каналы квот',
-  'surface.channels.hint': 'что ещё можно прочитать',
-  'surface.nav': 'Панели монитора',
-  'surface.tab_title': '{label}: {hint} (Alt+{n})',
   'surface.loading_sources': 'Чтение источников…',
   'surface.reading': 'Чтение…',
   'surface.no_reading': 'Нет данных',
@@ -73,6 +62,9 @@ export const surfacesMessages = {
   'triage.filter.watch': 'Под наблюдением',
   'triage.filter.fine': 'В норме',
   'triage.filter.idle': 'Нет данных',
+  'triage.view.label': 'Вид',
+  'triage.view.list': 'Список',
+  'triage.view.cards': 'Карточки',
 
   'horizon.figure.out': 'исчерпано',
   'horizon.figure.short': '{duration} без квоты',

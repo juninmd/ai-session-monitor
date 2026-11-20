@@ -6,6 +6,16 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Added
 
+- List or cards on the triage: a switch beside the section title chooses between the two-per-row
+  cards and one provider per line, and the choice is remembered. In the list a provider opens its
+  detail under its own row; over the cards it opens as a sheet from the bottom edge.
+- Badges: every quota window prints its renewal as a pill (accent-coloured under three hours), and
+  a provider that holds reset credits (Codex) shows a filled ⚡ badge with the count.
+- Theme menu: the header's theme icon opens a dropdown with every theme instead of cycling, and a
+  new theme washes over the frame from the icon.
+- Motion: cards spring in one after another, rings and bars fill, critical dots and the reset badge
+  pulse and shine, the detail unfolds, and a successful reset throws confetti. All of it is off
+  under `prefers-reduced-motion`.
 - State filter on the triage: a segmented bar shows how many providers need action, are worth
   watching, are fine or have no reading, and the same states are chips that filter the grid. It
   appears only when there are two states to tell apart, and a filter whose state emptied out falls
@@ -106,6 +116,12 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ### Changed
 
+- The flyout is a third taller (48 rem minimum, was 37), has no vertical tabs and keeps the four
+  header icons only. The Horizon is now a section of each provider's detail, one bar per window.
+- The status bar auto-hides: it rests below the frame and rises on the bottom edge, with the
+  keyboard on it, and for three seconds after each fresh read.
+- The triage filter "Act now" is now "Attention" (pt-BR "Agir agora" → "Atenção"; the former
+  "Atenção" bucket is "Acompanhar").
 - The flyout starts faster: only the language in use is loaded, instead of all ten (entry script
   1 384 kB → 560 kB; time to the first settled frame −28 % in the benchmark,
   `docs/architecture-review.md`).
@@ -134,6 +150,11 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 - The reset toast no longer covers LiteLLM.
 - An empty tray icon rectangle no longer positions the flyout.
 - `scripts/soak.mjs` prints its usage and exits 2 on a missing or invalid argument.
+
+### Removed
+
+- The Horizon and Quota channels surfaces, the Alt+1..3 shortcuts and the vertical tab rail. The
+  sources' state stays in Settings → Sources.
 
 ### Fixed
 

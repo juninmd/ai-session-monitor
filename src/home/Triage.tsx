@@ -1,7 +1,8 @@
-// Triage: the proposed home. One headline answers "do I need to act?"; below it every provider sits
-// in one grid of two per row, ordered by urgency rather than by registration. The card itself is in
+// Triage: the home. One headline answers "do I need to act?"; below it every provider sits in a
+// grid of two per row or in a list, as the person chose, ordered by urgency rather than by registration. The card itself is in
 // TriageTile.tsx; the alarm stays in the headline and the card only states the facts.
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
+import type { ViewMode } from '../app/hooks/useViewMode';
 import { harnessName } from '../app/model/harness';
 import { showsUsed } from '../app/model/quota';
 import type { ViewContext } from '../app/model/windowModel';
@@ -10,6 +11,7 @@ import { t, tn } from '../i18n';
 import type { HarnessId, HarnessView } from '../lib/contract';
 import { GroupHead } from './Bits';
 import { HealthStrip } from './HealthStrip';
+import { InlineDetail } from './InlineDetail';
 import { Tile } from './TriageTile';
 import {
   effectiveFilter,
@@ -20,6 +22,7 @@ import {
 } from './triageFilter';
 import { headlineOf, type TriageBoard, triageOf } from './triageModel';
 import { useRovingTabs } from './useRovingTabs';
+import { ViewToggle } from './ViewToggle';
 
 /**
  * The headline names the count; the grid below already lists every provider in the same order.
@@ -31,14 +34,30 @@ export interface TriageProps {
   views: readonly HarnessView[];
   ctx: ViewContext;
   selected: HarnessId;
+  /** The selected provider's detail is open: inline in the list, as a sheet over the cards. */
+  detailOpen: boolean;
+  viewMode: ViewMode;
+  onViewMode: (mode: ViewMode) => void;
   /** Move the highlight, as an arrow key does. */
   onSelect: (id: HarnessId) => void;
   /** Activate one provider and open its lateral detail. */
   onOpen: (id: HarnessId) => void;
+  onRefreshView: (id: HarnessId) => void;
   onConfigure: () => void;
 }
 
-export function Triage({ views, ctx, selected, onSelect, onOpen, onConfigure }: TriageProps) {
+export function Triage({
+  views,
+  ctx,
+  selected,
+  detailOpen,
+  viewMode,
+  onViewMode,
+  onSelect,
+  onOpen,
+  onRefreshView,
+  onConfigure,
+}: TriageProps) {
   const triage: TriageBoard = useMemo(() => triageOf(views, ctx), [views, ctx]);
   const headline = useMemo(() => headlineOf(triage), [triage]);
   const health = useMemo(() => healthOf(triage.rows), [triage]);
@@ -91,7 +110,10 @@ export function Triage({ views, ctx, selected, onSelect, onOpen, onConfigure }: 
         </div>
       </section>
       <section className="nx-section">
-        <GroupHead title={t('triage.by_urgency')} count={rows.length} />
+        <div className="nx-section-bar">
+          <GroupHead title={t('triage.by_urgency')} count={rows.length} />
+          <ViewToggle mode={viewMode} onChange={onViewMode} />
+        </div>
         {showsHealth(health) && (
           <HealthStrip
             health={health}
@@ -100,17 +122,26 @@ export function Triage({ views, ctx, selected, onSelect, onOpen, onConfigure }: 
             onFilter={setWanted}
           />
         )}
-        <div className="nx-tiles" key={filter}>
-          {rows.map((row) => (
-            <Tile
-              key={row.view.id}
-              row={row}
-              ctx={ctx}
-              selected={row.view.id === selected}
-              tabStop={row.view.id === tabStop}
-              onOpen={onOpen}
-              onKeyDown={onKeyDown}
-            />
+        <div className="nx-tiles" key={filter} data-view={viewMode}>
+          {rows.map((row, index) => (
+            <Fragment key={row.view.id}>
+              <Tile
+                row={row}
+                ctx={ctx}
+                index={index}
+                selected={row.view.id === selected}
+                tabStop={row.view.id === tabStop}
+                onOpen={onOpen}
+                onKeyDown={onKeyDown}
+              />
+              {viewMode === 'list' && detailOpen && row.view.id === selected && (
+                <InlineDetail
+                  view={row.view}
+                  ctx={ctx}
+                  onRefresh={() => onRefreshView(row.view.id)}
+                />
+              )}
+            </Fragment>
           ))}
         </div>
       </section>

@@ -23,6 +23,7 @@ export const shellMessages = {
   'header.retry': 'फिर कोशिश करें ({count} विफल)',
   'header.settings': 'सेटिंग',
   'header.theme': 'थीम: {name} (बदलने के लिए क्लिक करें)',
+  'header.theme_menu': 'थीम',
   'header.quit': 'बंद करें',
   'header.tray': 'सबसे कम उपलब्ध: {pct}',
   'header.tray_used': 'सबसे अधिक उपयोग: {pct}',

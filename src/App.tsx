@@ -1,5 +1,5 @@
-// The flyout: the home surfaces (triage, horizon, channels), the settings screen, the lateral
-// detail drawer and the Ctrl+K palette. Everything it shows comes from the Backend; this component
+// The flyout: the triage (cards or list, with each provider's detail), the settings screen and
+// the Ctrl+K palette. Everything it shows comes from the Backend; this component
 // only wires state, focus and the height protocol.
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { DraftProvider, useDraftGuard } from './app/context/draftContext';
@@ -11,6 +11,7 @@ import { useSettingsState } from './app/hooks/useSettingsState';
 import { useSnapshotState } from './app/hooks/useSnapshotState';
 import { useTimedText } from './app/hooks/useTimedText';
 import { useUpdateState } from './app/hooks/useUpdateState';
+import { useViewMode } from './app/hooks/useViewMode';
 import { cooldownLeft, waitText } from './app/model/cooldown';
 import { harnessName, TAB_ORDER } from './app/model/harness';
 import { sharePct, showsUsed } from './app/model/quota';
@@ -21,7 +22,6 @@ import { useHomeShell } from './home/useHomeShell';
 import { useHomeView } from './home/useHomeView';
 import { useOverlays } from './home/useOverlays';
 import { useSettingsScreen } from './home/useSettingsScreen';
-import { useSurface } from './home/useSurface';
 import { t } from './i18n';
 import type { Backend } from './lib/backend';
 import type { HarnessId } from './lib/contract';
@@ -42,7 +42,7 @@ function AppBody({ backend }: { backend: Backend }) {
   const locale = useLocaleSync(settingsApi.settings.general.language, settingsApi.loaded);
   const { nowSecs, sync } = useNowSecs();
   const [preferred, setPreferred] = useState<HarnessId>(TAB_ORDER[0] ?? 'claude');
-  const [trend, setTrend] = useState(false);
+  const [viewMode, setViewMode] = useViewMode();
   // The first run shows the wizard until the user finishes it once; the empty triage then keeps a
   // way back to it. Nothing is written: the flag is about this session, not about the profile.
   const [runDone, setRunDone] = useState(false);
@@ -103,22 +103,28 @@ function AppBody({ backend }: { backend: Backend }) {
     navigation,
   } = useSettingsScreen({ guarded, hideDetail, toTop });
 
-  const { surface, changeSurface, showTriage } = useSurface({
-    guarded,
-    hideDetail,
-    toTop,
-    shortcutsOff: paletteOpen,
-  });
   // Arrow keys move the highlight; activating a provider opens its lateral detail, so browsing the
   // list with the keyboard never steals focus into the drawer.
   const highlight = useCallback((id: HarnessId) => setPreferred(id), []);
   const { openDetail: rememberAndOpen, closeDetail } = overlays;
+  // In the list the detail opens under the provider, so pressing it again folds it back.
   const openDetail = useCallback(
     (id: HarnessId) => {
+      if (viewMode === 'list' && detailOpen && id === preferred) {
+        closeDetail();
+        return;
+      }
       setPreferred(id);
       rememberAndOpen();
     },
-    [rememberAndOpen],
+    [viewMode, detailOpen, preferred, rememberAndOpen, closeDetail],
+  );
+  const changeViewMode = useCallback(
+    (mode: typeof viewMode) => {
+      hideDetail();
+      setViewMode(mode);
+    },
+    [hideDetail, setViewMode],
   );
 
   // A manual refresh during a cool-down is dropped by the scheduler; say why instead of nothing.
@@ -155,7 +161,7 @@ function AppBody({ backend }: { backend: Backend }) {
     ctx,
     select: (id) => {
       setPreferred(id);
-      showTriage();
+      toTop();
       showDetail();
     },
     refresh: (id) => refreshNow(id),
@@ -194,7 +200,6 @@ function AppBody({ backend }: { backend: Backend }) {
         rootRef,
         scrollRef,
         wizardRun,
-        surface,
         screen,
         views,
         active,
@@ -218,13 +223,12 @@ function AppBody({ backend }: { backend: Backend }) {
         eventsFailed: snapshotState.eventsFailed,
         notice,
         paletteOpen,
-        trend,
+        viewMode,
         detailOpen,
         commands,
-        onTrend: setTrend,
+        onViewMode: changeViewMode,
         onSelect: highlight,
         onOpen: openDetail,
-        onSurface: changeSurface,
         onRefresh: () => refreshNow(),
         onRefreshView: refreshNow,
         onRetry: snapshotState.reload,
@@ -237,12 +241,12 @@ function AppBody({ backend }: { backend: Backend }) {
         onCloseSettings: requestCloseSettings,
         onFinishOnboarding: () => {
           setRunDone(true);
-          showTriage();
+          toTop();
         },
         onConfigure: () => {
           setRunDone(false);
           setWizardRun((run) => run + 1);
-          showTriage();
+          toTop();
         },
       }}
     />

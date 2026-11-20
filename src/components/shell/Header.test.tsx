@@ -9,7 +9,7 @@ describe('the theme icon', () => {
     delete document.documentElement.dataset.skin;
   });
 
-  it('cycles the theme in the header and remembers it', async () => {
+  it('opens a menu of every theme, applies the pick and remembers it', async () => {
     render(
       <Header
         tray={null}
@@ -22,7 +22,10 @@ describe('the theme icon', () => {
     );
     expect(document.documentElement.dataset.skin).toBeUndefined();
     await userEvent.click(screen.getByRole('button', { name: /^Tema:/ }));
+    expect(screen.getAllByRole('menuitemradio')).toHaveLength(6);
+    await userEvent.click(screen.getByRole('menuitemradio', { name: 'Padrão' }));
     expect(document.documentElement.dataset.skin).toBe('padrao');
     expect(window.localStorage.getItem('aism.skin')).toBe('padrao');
+    expect(screen.queryByRole('menu')).toBeNull();
   });
 });

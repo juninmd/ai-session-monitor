@@ -1,5 +1,5 @@
 import { act, screen, within } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { RANK } from './home/testHarness';
 import { BackendError } from './lib/backend';
 import { problem } from './mock/fixtures';
@@ -24,23 +24,19 @@ const NAMES = [
   'LiteLLM',
 ];
 const tile = (name: string) => screen.getByRole('button', { name: new RegExp(`^${name}`) });
-const nav = (name: string) => screen.getByRole('button', { name: new RegExp(`^${name}`) });
+const viewSwitch = () => screen.getByRole('group', { name: 'Visualização' });
 // The reading follows the name with no space ("Codex18%"), so the match stops at the name.
 const ready = () => screen.findByRole('button', { name: /^Codex/ });
 const gear = () => screen.getByRole('button', { name: 'Configurações' });
 const drawer = () => screen.getByRole('dialog');
 
 describe('the shell', () => {
-  it('shows the title, the surfaces and every monitored provider in urgency order', async () => {
+  it('shows the title, the view switch and every monitored provider in urgency order', async () => {
     renderApp();
     expect(screen.getByRole('heading', { level: 1, name: 'AI Session Monitor' })).toBeVisible();
-    // The switch only appears once the stored settings say what is being monitored.
-    expect(await screen.findByRole('button', { name: /^Triagem/ })).toHaveAttribute(
-      'aria-current',
-      'page',
-    );
-    expect(nav('Horizonte')).toBeVisible();
-    expect(nav('Canais de cota')).toBeVisible();
+    // The view switch only appears once the stored settings say what is being monitored.
+    expect(await screen.findByRole('group', { name: 'Visualização' })).toBeVisible();
+    expect(screen.queryByRole('navigation')).toBeNull();
     await ready();
     const tiles = [...document.querySelectorAll<HTMLElement>('button[data-tier]')];
     expect(tiles).toHaveLength(NAMES.length);
@@ -74,31 +70,44 @@ describe('the shell', () => {
   });
 });
 
-describe('moving between surfaces', () => {
-  it('shows the surface that was clicked, and starts it at the top', async () => {
-    const { user } = renderApp();
+describe('the two views', () => {
+  beforeEach(() => window.localStorage.clear());
+
+  it('has no tabs: the horizon and the channels are not surfaces any more', async () => {
+    renderApp();
     await ready();
-    const body = document.querySelector('.fly-body') as HTMLElement;
-    body.scrollTop = 160;
-    await user.click(nav('Horizonte'));
-    expect(screen.getByRole('button', { name: 'Sobre o horizonte' })).toBeVisible();
-    expect(screen.getByRole('tooltip')).toHaveTextContent('Chego até a renovação?');
-    expect(document.querySelector('button[data-tier]')).toBeNull();
-    expect(body.scrollTop).toBe(0);
-    await user.click(nav('Canais de cota'));
-    expect(screen.getByRole('heading', { name: 'O que ainda dá para ler' })).toBeVisible();
-    await user.click(nav('Triagem'));
-    expect(await ready()).toBeVisible();
+    expect(screen.queryByRole('button', { name: /^Horizonte/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /^Canais de cota/ })).toBeNull();
+    expect(screen.queryByRole('navigation')).toBeNull();
   });
 
-  it('marks the current surface with aria-current, not as a toggle', async () => {
+  it('switches between cards and list, and remembers the choice', async () => {
     const { user } = renderApp();
     await ready();
-    expect(nav('Triagem')).toHaveAttribute('aria-current', 'page');
-    await user.click(nav('Horizonte'));
-    expect(nav('Horizonte')).toHaveAttribute('aria-current', 'page');
-    expect(nav('Triagem')).not.toHaveAttribute('aria-current');
-    expect(nav('Horizonte')).not.toHaveAttribute('aria-pressed');
+    const grid = () => document.querySelector('.nx-tiles') as HTMLElement;
+    expect(grid()).toHaveAttribute('data-view', 'cards');
+    await user.click(within(viewSwitch()).getByRole('button', { name: 'Lista' }));
+    expect(grid()).toHaveAttribute('data-view', 'list');
+    expect(window.localStorage.getItem('aism.view')).toBe('list');
+  });
+
+  it('opens the detail under the provider in the list, and folds it back on a second press', async () => {
+    window.localStorage.setItem('aism.view', 'list');
+    const { user } = renderApp();
+    await ready();
+    await user.click(tile('Codex'));
+    expect(screen.queryByRole('dialog')).toBeNull();
+    const inline = document.querySelector('.nx-inline') as HTMLElement;
+    expect(within(inline).getByRole('heading', { name: 'Codex' })).toBeVisible();
+    await user.click(tile('Codex'));
+    expect(document.querySelector('.nx-inline')).toBeNull();
+  });
+
+  it('shows the horizon inside the provider detail, not as a screen of its own', async () => {
+    const { user } = renderApp();
+    await ready();
+    await user.click(tile('Codex'));
+    expect(within(drawer()).getByRole('heading', { name: 'Horizonte' })).toBeVisible();
   });
 
   it('shows the failure of a tool in its own drawer, with one way forward', async () => {
@@ -175,11 +184,11 @@ describe('settings', () => {
     expect(gear()).toHaveAttribute('aria-pressed', 'false');
     await user.click(gear());
     expect(gear()).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.queryByRole('button', { name: /^Triagem/ })).toBeNull();
+    expect(screen.queryByRole('group', { name: 'Visualização' })).toBeNull();
     expect(screen.getByRole('region', { name: 'Configurações' })).toBeVisible();
     expect(screen.getByRole('heading', { level: 2, name: 'Configurações' })).toHaveFocus();
     await user.click(gear());
-    expect(nav('Triagem')).toBeVisible();
+    expect(viewSwitch()).toBeVisible();
     expect(gear()).toHaveAttribute('aria-pressed', 'false');
   });
 
@@ -223,7 +232,7 @@ describe('settings', () => {
 
   it('open on the group of the source whose error asked for it', async () => {
     const { user } = renderApp({ scenario: 'errors' });
-    await screen.findByRole('button', { name: /^Triagem/ });
+    await screen.findByRole('group', { name: 'Visualização' });
     await user.click(tile('Codex'));
     await user.click(await within(drawer()).findByRole('button', { name: 'Abrir configurações' }));
     const group = document.getElementById('grp-codex') as HTMLDetailsElement;
@@ -256,7 +265,7 @@ describe('Escape', () => {
     await ready();
     await user.click(gear());
     await user.keyboard('{Escape}');
-    expect(nav('Triagem')).toBeVisible();
+    expect(viewSwitch()).toBeVisible();
     expect(backend.calls).not.toContain('hide_flyout');
     await user.keyboard('{Escape}');
     expect(backend.calls.filter((call) => call === 'hide_flyout')).toHaveLength(1);
@@ -271,7 +280,7 @@ describe('Escape', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(screen.getByRole('region', { name: 'Configurações' })).toBeVisible();
     await user.keyboard('{Escape}');
-    expect(nav('Triagem')).toBeVisible();
+    expect(viewSwitch()).toBeVisible();
     await user.keyboard('{Escape}');
     expect(backend.calls.filter((call) => call === 'hide_flyout')).toHaveLength(1);
   });

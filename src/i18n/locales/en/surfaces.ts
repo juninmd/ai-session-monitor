@@ -1,18 +1,7 @@
-// English catalog: the flyout surfaces (triage, horizon, quota channels) and the wording they
-// share. The channels text lives in surfacesChannels.ts to keep files short.
-import { channelsMessages } from './surfacesChannels';
+// Flyout catalog: the triage, the horizon of a detail and the wording they share.
 
 export const surfacesMessages = {
-  ...channelsMessages,
-
-  'surface.triage.label': 'Triage',
-  'surface.triage.hint': 'do I need to act?',
   'surface.horizon.label': 'Horizon',
-  'surface.horizon.hint': 'will it last until renewal?',
-  'surface.channels.label': 'Quota channels',
-  'surface.channels.hint': 'what we can still read',
-  'surface.nav': 'Monitor panels',
-  'surface.tab_title': '{label}: {hint} (Alt+{n})',
   'surface.loading_sources': 'Reading the sources…',
   'surface.reading': 'Reading…',
   'surface.no_reading': 'No reading',
@@ -59,10 +48,13 @@ export const surfacesMessages = {
   'triage.by_urgency': 'By urgency',
   'triage.filter.label': 'Filter by state',
   'triage.filter.all': 'All',
-  'triage.filter.act': 'Act now',
+  'triage.filter.act': 'Attention',
   'triage.filter.watch': 'Watch',
   'triage.filter.fine': 'Fine',
   'triage.filter.idle': 'No reading',
+  'triage.view.label': 'View',
+  'triage.view.list': 'List',
+  'triage.view.cards': 'Cards',
 
   'horizon.figure.out': 'used up',
   'horizon.figure.short': '{duration} without quota',
