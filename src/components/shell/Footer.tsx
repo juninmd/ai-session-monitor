@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { UpdateContext } from '../../app/hooks/useUpdateState';
 import { t } from '../../i18n';
 import { formatAge } from '../../i18n/format';
@@ -53,8 +53,28 @@ function UpdateArea({ onOpen }: { onOpen: () => void }) {
   );
 }
 
+/** How long the bar stays up after a fresh read, so the reload is seen without reaching for it. */
+const PEEK_MS = 3000;
+
+/** True for a moment each time a newer read arrives (not for the first one the page loads with). */
+function usePeek(readAt: number | null): boolean {
+  const [peek, setPeek] = useState(false);
+  const last = useRef(readAt);
+  useEffect(() => {
+    if (readAt === last.current) return;
+    const first = last.current === null;
+    last.current = readAt;
+    if (first) return;
+    setPeek(true);
+    const timer = setTimeout(() => setPeek(false), PEEK_MS);
+    return () => clearTimeout(timer);
+  }, [readAt]);
+  return peek;
+}
+
 export function Footer({ readAt, nowSecs, onOpenUpdate }: FooterProps) {
   const version = useContext(UpdateContext)?.status?.currentVersion;
+  const peek = usePeek(readAt);
   const text =
     readAt === null
       ? t('footer.never')
@@ -62,10 +82,15 @@ export function Footer({ readAt, nowSecs, onOpenUpdate }: FooterProps) {
   return (
     <>
       <UpdateArea onOpen={onOpenUpdate} />
-      <footer className="fly-foot">
-        <span>{text}</span>
-        {version && <span className="fly-version">v{version}</span>}
-      </footer>
+      {/* Auto-hide: the bar rests below the frame and rises when the pointer or the keyboard
+          reaches the bottom edge, or for a moment after each fresh read. */}
+      <div className="nx-foot" data-peek={peek || undefined}>
+        <span className="nx-foot-edge" aria-hidden="true" />
+        <footer className="fly-foot">
+          <span>{text}</span>
+          {version && <span className="fly-version">v{version}</span>}
+        </footer>
+      </div>
     </>
   );
 }

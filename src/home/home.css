@@ -7,9 +7,9 @@
 @import "./home-drawer.css";
 @import "./home-horizon.css";
 @import "./home-palette.css";
-@import "./home-sources.css";
+@import "./home-motion.css";
 
-/* The frame carries the promoted home's chrome: a rule under the header, the surface switch and a
+/* The frame carries the promoted home's chrome: a rule under the header, a
    slightly tighter body than the plain flyout. */
 .nx-fly {
   --raise: color-mix(in srgb, var(--raise-0) var(--glass-card), transparent);
@@ -56,9 +56,8 @@
   display: none;
 }
 
-/* ---------- the surface switch ---------- */
+/* ---------- the body ---------- */
 
-/* Three words of chrome, not three cards: a surface is a mode, not the content. */
 .nx-main {
   display: flex;
   flex: 1 1 auto;
@@ -67,111 +66,6 @@
 
 .nx-main > .fly-body {
   min-inline-size: 0;
-}
-
-/* A vertical rail of discreet icons beside the body; the name lives in aria-label and title. */
-.nx-surfaces {
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  align-items: center;
-  inline-size: 2.6rem;
-  padding: 0.7rem 0.3rem;
-  border-inline-end: 1px solid var(--line);
-}
-
-.nx-surfaces > button {
-  appearance: none;
-  display: grid;
-  place-items: center;
-  inline-size: 2rem;
-  block-size: 2rem;
-  padding: 0;
-  border: 0;
-  border-radius: var(--r-ctl);
-  background: transparent;
-  color: var(--ink-3);
-  cursor: pointer;
-}
-
-.nx-surfaces > button:hover {
-  background: var(--raise-2);
-  color: var(--ink-2);
-}
-
-.nx-surfaces > button[aria-current="page"] {
-  background: var(--raise-2);
-  color: var(--ink);
-}
-
-.nx-surfaces > button:focus-visible {
-  outline-offset: -1px;
-}
-
-/* The name, the hint and the shortcut open beside a tab on hover or keyboard focus, floating over
-   the body so the rail never changes width. The accessible name stays in aria-label. */
-.nx-surfaces > button {
-  position: relative;
-}
-
-.nx-surf-tip {
-  position: absolute;
-  inset-inline-start: calc(100% + 0.4rem);
-  inset-block-start: 50%;
-  translate: 0 -50%;
-  z-index: 5;
-  display: grid;
-  gap: 0.05rem;
-  inline-size: max-content;
-  max-inline-size: 14rem;
-  padding: 0.35rem 0.55rem;
-  border: 1px solid var(--line);
-  border-radius: var(--r-ctl);
-  background: var(--raise);
-  box-shadow: 0 6px 18px rgb(0 0 0 / 0.16);
-  color: var(--ink);
-  font-size: var(--fs-xs);
-  text-align: start;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.nx-surf-tip b {
-  font-size: var(--fs-sm);
-}
-
-.nx-surf-tip span {
-  color: var(--ink-2);
-}
-
-.nx-surf-tip kbd {
-  justify-self: start;
-  margin-block-start: 0.1rem;
-  padding: 0.02rem 0.3rem;
-  border: 1px solid var(--line-2);
-  border-radius: 4px;
-  font: inherit;
-  color: var(--ink-3);
-}
-
-.nx-surfaces > button:hover .nx-surf-tip,
-.nx-surfaces > button:focus-visible .nx-surf-tip {
-  opacity: 1;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .nx-surf-tip {
-    transition:
-      opacity 0.16s ease 0.12s,
-      translate 0.2s cubic-bezier(0.22, 1, 0.36, 1) 0.12s;
-    translate: -4px -50%;
-  }
-
-  .nx-surfaces > button:hover .nx-surf-tip,
-  .nx-surfaces > button:focus-visible .nx-surf-tip {
-    translate: 0 -50%;
-  }
 }
 
 /* The one line that answers "did that work?" for a copied summary. */
@@ -370,4 +264,79 @@
   gap: 0.35rem;
   margin: 0;
   cursor: pointer;
+}
+
+/* ---------- the status bar ---------- */
+
+/* Auto-hide: the bar rests below the frame, so the list gets its height back. It rises when the
+   pointer reaches the bottom edge, when the keyboard is on it, and for a moment after a fresh read. */
+.nx-foot {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: 20;
+  /* The resting bar sits below the box: clipped, so it adds no scrollable overflow to the frame. */
+  overflow: clip;
+  pointer-events: none;
+}
+
+.nx-foot-edge {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  block-size: 0.6rem;
+  pointer-events: auto;
+}
+
+/* A short handle says the bar is there. */
+.nx-foot-edge::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0.18rem;
+  inline-size: 2rem;
+  block-size: 3px;
+  margin-inline: auto;
+  border-radius: 2px;
+  background: var(--line-2);
+}
+
+.nx-foot .fly-foot {
+  pointer-events: auto;
+  background: color-mix(in srgb, var(--solid) 84%, transparent);
+  backdrop-filter: blur(10px);
+  translate: 0 100%;
+}
+
+.nx-foot:hover .fly-foot,
+.nx-foot:focus-within .fly-foot,
+.nx-foot[data-peek] .fly-foot,
+.nx-foot:has(.nx-foot-edge:hover) .fly-foot {
+  translate: 0 0;
+}
+
+.nx-foot:hover .nx-foot-edge::after,
+.nx-foot[data-peek] .nx-foot-edge::after {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nx-foot .fly-foot {
+    transition: translate 0.32s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No sliding: without motion the bar simply stays visible. */
+  .nx-foot {
+    position: static;
+  }
+
+  .nx-foot-edge {
+    display: none;
+  }
+
+  .nx-foot .fly-foot {
+    translate: none;
+  }
 }

@@ -22,6 +22,7 @@ export const shellMessages = {
   'header.retry': 'Повторить (сбоев: {count})',
   'header.settings': 'Настройки',
   'header.theme': 'Тема: {name} (нажмите, чтобы сменить)',
+  'header.theme_menu': 'Тема',
   'header.quit': 'Выход',
   'header.tray': 'Минимум доступно: {pct}',
   'header.tray_used': 'Максимум использовано: {pct}',

@@ -1,18 +1,7 @@
-// ar catalog: the flyout surfaces (triage, horizon, quota channels) and the wording they
-// share. The channels text lives in surfacesChannels.ts to keep files short.
-import { channelsMessages } from './surfacesChannels';
+// Flyout catalog: the triage, the horizon of a detail and the wording they share.
 
 export const surfacesMessages = {
-  ...channelsMessages,
-
-  'surface.triage.label': 'الفرز',
-  'surface.triage.hint': 'هل أحتاج إلى التصرف؟',
   'surface.horizon.label': 'الأفق',
-  'surface.horizon.hint': 'هل ستكفي حتى التجديد؟',
-  'surface.channels.label': 'قنوات الحصة',
-  'surface.channels.hint': 'ما يمكننا قراءته بعد',
-  'surface.nav': 'لوحات المراقب',
-  'surface.tab_title': '{label}: {hint} (Alt+{n})',
   'surface.loading_sources': 'جارٍ قراءة المصادر…',
   'surface.reading': 'جارٍ القراءة…',
   'surface.no_reading': 'لا توجد قراءة',
@@ -83,6 +72,9 @@ export const surfacesMessages = {
   'triage.filter.watch': 'راقب',
   'triage.filter.fine': 'جيد',
   'triage.filter.idle': 'بلا قراءة',
+  'triage.view.label': 'طريقة العرض',
+  'triage.view.list': 'قائمة',
+  'triage.view.cards': 'بطاقات',
 
   'horizon.figure.out': 'نفدت',
   'horizon.figure.short': '{duration} بلا حصة',

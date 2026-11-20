@@ -1,19 +1,7 @@
-// hi catalog: surfaces. Same keys as the English file; plural keys use this language's forms.
-// The flyout surfaces (triage, horizon, quota channels) and the wording they share.
-// The channels text lives in surfacesChannels.ts to keep files short.
-import { channelsMessages } from './surfacesChannels';
+// Flyout catalog: the triage, the horizon of a detail and the wording they share.
 
 export const surfacesMessages = {
-  ...channelsMessages,
-
-  'surface.triage.label': 'ट्राइएज',
-  'surface.triage.hint': 'क्या कुछ करना है?',
   'surface.horizon.label': 'क्षितिज',
-  'surface.horizon.hint': 'क्या नवीनीकरण तक चलेगा?',
-  'surface.channels.label': 'कोटा चैनल',
-  'surface.channels.hint': 'जो हम अब भी पढ़ सकते हैं',
-  'surface.nav': 'मॉनिटर पैनल',
-  'surface.tab_title': '{label}: {hint} (Alt+{n})',
   'surface.loading_sources': 'स्रोत पढ़े जा रहे हैं…',
   'surface.reading': 'पढ़ा जा रहा है…',
   'surface.no_reading': 'कोई रीडिंग नहीं',
@@ -64,6 +52,9 @@ export const surfacesMessages = {
   'triage.filter.watch': 'नज़र रखें',
   'triage.filter.fine': 'ठीक',
   'triage.filter.idle': 'कोई रीडिंग नहीं',
+  'triage.view.label': 'दृश्य',
+  'triage.view.list': 'सूची',
+  'triage.view.cards': 'कार्ड',
 
   'horizon.figure.out': 'खत्म',
   'horizon.figure.short': '{duration} बिना कोटा',

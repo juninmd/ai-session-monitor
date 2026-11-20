@@ -213,6 +213,77 @@
   color: var(--ink-3);
 }
 
+/* A small pill: the renewal of a window, or the reset credits a provider holds. */
+.nx-badge {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.2rem;
+  block-size: 1.05rem;
+  padding-inline: 0.4rem;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  color: var(--ink-2);
+  font-size: 0.65rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.nx-badge > svg {
+  inline-size: 0.6rem;
+  block-size: 0.6rem;
+}
+
+/* Under three hours: the news a person came for, so it takes the accent. */
+.nx-badge[data-soon] {
+  border-color: color-mix(in oklab, var(--accent) 55%, transparent);
+  background: color-mix(in oklab, var(--accent) 12%, transparent);
+  color: var(--accent);
+}
+
+/* Reset credits: a filled pill, so it never reads as one more renewal time. */
+.nx-badge-reset {
+  margin-inline-start: auto;
+  border-color: var(--btn-bg);
+  background: var(--btn-bg);
+  color: var(--btn-ink);
+  font-weight: 600;
+}
+
+.nx-section-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.nx-view-toggle {
+  display: inline-flex;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-ctl);
+  overflow: hidden;
+}
+
+.nx-view-toggle > button {
+  appearance: none;
+  display: grid;
+  place-items: center;
+  inline-size: 1.75rem;
+  block-size: 1.5rem;
+  border: 0;
+  background: transparent;
+  color: var(--ink-3);
+  cursor: pointer;
+}
+
+.nx-view-toggle > button[aria-pressed="true"] {
+  background: var(--raise-2);
+  color: var(--ink);
+}
+
 /* The row the header number comes from, so the card explains itself. */
 .nx-q[data-limiting] .nx-q-name,
 .nx-q[data-limiting] .nx-q-pct {
@@ -373,4 +444,24 @@
 .nx-q[data-old] .nx-bar > i,
 .nx-tile[data-old] .nx-ring-fill {
   opacity: 0.45;
+}
+
+/* The list: one provider per line, its windows side by side so a row stays short. */
+.nx-tiles[data-view="list"] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.nx-tiles[data-view="list"] .nx-tile {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 0.9rem;
+}
+
+.nx-tiles[data-view="list"] .nx-tile > .nx-tile-head,
+.nx-tiles[data-view="list"] .nx-tile > .nx-tile-note,
+.nx-tiles[data-view="list"] .nx-tile > .nx-tile-hint,
+.nx-tiles[data-view="list"] .nx-tile > .nx-tile-age,
+.nx-tiles[data-view="list"] .nx-tile > .nx-tile-group,
+.nx-tiles[data-view="list"] .nx-tile > .nx-meta {
+  grid-column: 1 / -1;
 }

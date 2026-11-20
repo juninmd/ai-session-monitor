@@ -1,15 +1,16 @@
 // One provider's card on the triage grid: its reading, every quota window it reports and, when the
 // source is not simply fine, the reason in words — why it failed, why it is disconnected, how old
 // the numbers are. A stale view keeps its last numbers, muted, instead of going blank.
-import { Fragment, type KeyboardEvent } from 'react';
+import { type CSSProperties, Fragment, type KeyboardEvent } from 'react';
 import { harnessName } from '../app/model/harness';
 import { nxNameId, nxTabId } from '../app/model/homeIds';
 import { summaryOf, tabChip } from '../app/model/tabModel';
-import type { ViewContext } from '../app/model/windowModel';
+import type { ViewContext, WindowModel } from '../app/model/windowModel';
 import { Icon } from '../components/icons';
-import { t } from '../i18n';
+import { t, tn } from '../i18n';
 import { formatAmountValue, formatPercent } from '../i18n/format';
 import type { HarnessId, UsageWindow } from '../lib/contract';
+import { resetCreditCount } from './actionModel';
 import { Logo, Ring, ShareBar, type Tone } from './Bits';
 import { compactQuota, gridQuotas } from './quotaModel';
 import { brokenHint, readAge } from './tileNote';
@@ -31,6 +32,22 @@ function Amount({ window }: { window: UsageWindow }) {
       {amount.limit === null
         ? used
         : t('triage.amount_of', { used, limit: formatAmountValue(amount.limit, amount.unit) })}
+    </span>
+  );
+}
+
+/** Under three hours to the renewal the badge lights up: it is the news a person came for. */
+const SOON_MIN = 180;
+const isSoon = (model: WindowModel): boolean =>
+  !model.expired && model.leftMin !== null && model.leftMin < SOON_MIN;
+
+/** The renewal of one window as a badge; a window with no renewal prints a plain dash. */
+function Renewal({ text, soon }: { text: string; soon: boolean }) {
+  if (text === '—') return <span className="nx-q-renew">{text}</span>;
+  return (
+    <span className="nx-q-renew nx-badge" data-soon={soon || undefined}>
+      <Icon name="refresh" />
+      {text}
     </span>
   );
 }
@@ -68,7 +85,7 @@ function QuotaRows({ row, ctx }: { row: TriageRow; ctx: ViewContext }) {
                   <span className="nx-q-name" title={quotaName(window)}>
                     {quota.name}
                   </span>
-                  <span className="nx-q-renew">{quota.renewal}</span>
+                  <Renewal text={quota.renewal} soon={isSoon(quota.model)} />
                   <span className="nx-q-pct" data-status={quota.status}>
                     {quota.reading}
                   </span>
@@ -87,6 +104,7 @@ function QuotaRows({ row, ctx }: { row: TriageRow; ctx: ViewContext }) {
 export function Tile({
   row,
   ctx,
+  index,
   selected,
   tabStop,
   onOpen,
@@ -94,6 +112,8 @@ export function Tile({
 }: {
   row: TriageRow;
   ctx: ViewContext;
+  /** Position in the grid: the cards come in one after the other. */
+  index: number;
   selected: boolean;
   /** The one tile Tab lands on; the arrows move between the rest. */
   tabStop: boolean;
@@ -108,6 +128,7 @@ export function Tile({
   // With quota rows on the card the reason beside the dot is enough; the detail has the rest.
   const hint = row.view.windows.length === 0 ? brokenHint(row.view) : null;
   const age = readAge(row.view, ctx);
+  const resets = resetCreditCount(row.view, ctx);
   return (
     <button
       type="button"
@@ -117,6 +138,7 @@ export function Tile({
       tabIndex={tabStop ? 0 : -1}
       data-tier={row.tier}
       data-old={row.view.stale || undefined}
+      style={{ '--i': index } as CSSProperties}
       title={row.detail}
       onKeyDown={onKeyDown}
       onClick={() => onOpen(id)}
@@ -147,10 +169,25 @@ export function Tile({
           {formatPercent(pct)}
         </span>
       </span>
-      {row.short !== '' && (
+      {(row.short !== '' || (resets ?? 0) > 0) && (
         <span className="nx-tile-note" data-tier={row.tier}>
-          <i aria-hidden="true" />
-          {row.short}
+          {row.short !== '' && (
+            <>
+              <i aria-hidden="true" />
+              {row.short}
+            </>
+          )}
+          {resets !== null && resets > 0 && (
+            <span
+              className="nx-badge nx-badge-reset"
+              role="img"
+              aria-label={tn('provider_actions.resets', resets)}
+              title={tn('provider_actions.resets', resets)}
+            >
+              <Icon name="bolt" />
+              {resets}
+            </span>
+          )}
         </span>
       )}
       <QuotaRows row={row} ctx={ctx} />

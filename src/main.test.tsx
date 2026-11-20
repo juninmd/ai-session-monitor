@@ -52,7 +52,7 @@ describe('in a browser', () => {
     await boot();
     // The first boot in a worker is cold and the mock adds real latency; 1 s starves under CPU load.
     await screen.findByRole('button', { name: /^Codex/ }, { timeout: 5000 });
-    expect(screen.getByRole('button', { name: /^Triagem/ })).toBeVisible();
+    expect(screen.getByRole('group', { name: 'Visualização' })).toBeVisible();
     expect(document.documentElement.dataset.host).toBe('browser');
     expect(bridge.invoke).not.toHaveBeenCalled();
     expect(bridge.listen).not.toHaveBeenCalled();
@@ -60,7 +60,7 @@ describe('in a browser', () => {
 
   it('picks the scenario named in the query string', async () => {
     await boot('?mock=errors');
-    await screen.findByRole('button', { name: /^Triagem/ });
+    await screen.findByRole('group', { name: 'Visualização' });
     await vi.waitFor(() =>
       expect(document.querySelector('button[data-tier="broken"]')).not.toBeNull(),
     );
@@ -106,7 +106,7 @@ describe('inside Tauri', () => {
   it('leaves one listener for every event, despite StrictMode', async () => {
     const { unlisten } = await fakeBridge();
     await boot();
-    await screen.findByRole('button', { name: /^Triagem/ });
+    await screen.findByRole('group', { name: 'Visualização' });
     await vi.waitFor(() =>
       expect(bridge.listen.mock.calls.length - unlisten.mock.calls.length).toBe(4),
     );

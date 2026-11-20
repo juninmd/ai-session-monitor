@@ -184,3 +184,78 @@ html[data-host="browser"] .flyout {
   background: var(--raise-2);
   color: var(--ink);
 }
+
+/* ---------- theme menu ---------- */
+
+.nx-theme {
+  position: relative;
+}
+
+.nx-theme-menu {
+  position: absolute;
+  inset-block-start: calc(100% + 0.25rem);
+  inset-inline-end: 0;
+  z-index: 40;
+  display: grid;
+  min-inline-size: 11rem;
+  padding: 0.25rem;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-card);
+  background: var(--solid);
+  box-shadow: var(--shadow);
+}
+
+.nx-theme-item {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  border: 0;
+  border-radius: var(--r-ctl);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--fs-sm);
+  text-align: start;
+  cursor: pointer;
+}
+
+.nx-theme-item:hover,
+.nx-theme-item:focus-visible {
+  background: var(--raise-2);
+}
+
+.nx-theme-item > i {
+  flex: none;
+  inline-size: 0.8rem;
+  block-size: 0.8rem;
+  border: 1px solid var(--line-2);
+  border-radius: 50%;
+  background: var(--swatch, linear-gradient(135deg, #fff 50%, #22252a 50%));
+}
+
+.nx-theme-item[data-skin-swatch="padrao"] {
+  --swatch: #111826;
+}
+
+.nx-theme-item[data-skin-swatch="hueco-mundo"] {
+  --swatch: #0e0e11;
+}
+
+.nx-theme-item[data-skin-swatch="dracula"] {
+  --swatch: #282a36;
+}
+
+.nx-theme-item[data-skin-swatch="glass"] {
+  --swatch: #161b26;
+}
+
+.nx-theme-item[data-skin-swatch="claro"] {
+  --swatch: #ffffff;
+}
+
+.nx-theme-check {
+  margin-inline-start: auto;
+  color: var(--accent);
+}

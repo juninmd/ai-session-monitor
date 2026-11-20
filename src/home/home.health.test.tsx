@@ -23,14 +23,14 @@ describe('triage health strip', () => {
   it('filters the grid to one state and back', async () => {
     const { user } = mount();
     const all = await rows('data-tier');
-    await user.click(chip(/^Agir agora/));
+    await user.click(chip(/^Atenção/));
     const acting = await rows('data-tier');
     expect(acting.length).toBeLessThan(all.length);
     for (const tile of acting) {
       expect(['blocked', 'risk', 'broken']).toContain(tile.getAttribute('data-tier'));
     }
     // Pressing the active chip again shows everything.
-    await user.click(chip(/^Agir agora/));
+    await user.click(chip(/^Atenção/));
     await waitFor(async () => expect(await rows('data-tier')).toHaveLength(all.length));
     expect(chip(/^Todos/)).toHaveAttribute('aria-pressed', 'true');
   });
@@ -39,7 +39,7 @@ describe('triage health strip', () => {
     const { user } = mount();
     await rows('data-tier');
     // The demo highlights a calm provider; none of those is among the ones to act on.
-    await user.click(chip(/^Agir agora/));
+    await user.click(chip(/^Atenção/));
     const acting = await rows('data-tier');
     expect(acting.every((tile) => tile.getAttribute('aria-pressed') === 'false')).toBe(true);
     expect(acting.filter((tile) => tile.tabIndex === 0)).toEqual([acting[0]]);

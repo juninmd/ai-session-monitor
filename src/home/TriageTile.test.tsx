@@ -30,8 +30,12 @@ function card(view: HarnessView): HTMLElement {
       views={activeViews([view], ctx)}
       ctx={ctx}
       selected="claude"
+      detailOpen={false}
+      viewMode="cards"
+      onViewMode={() => {}}
       onSelect={() => {}}
       onOpen={() => {}}
+      onRefreshView={() => {}}
       onConfigure={() => {}}
     />,
   );

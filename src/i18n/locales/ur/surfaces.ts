@@ -1,18 +1,7 @@
-// Urdu catalog: the flyout surfaces (triage, horizon, quota channels) and the wording they
-// share. The channels text lives in surfacesChannels.ts to keep files short.
-import { channelsMessages } from './surfacesChannels';
+// Flyout catalog: the triage, the horizon of a detail and the wording they share.
 
 export const surfacesMessages = {
-  ...channelsMessages,
-
-  'surface.triage.label': 'ترجیح',
-  'surface.triage.hint': 'کیا مجھے کچھ کرنا ہے؟',
   'surface.horizon.label': 'افق',
-  'surface.horizon.hint': 'کیا تجدید تک چلے گا؟',
-  'surface.channels.label': 'کوٹا چینلز',
-  'surface.channels.hint': 'ہم اب بھی کیا پڑھ سکتے ہیں',
-  'surface.nav': 'مانیٹر پینلز',
-  'surface.tab_title': '{label}: {hint} (Alt+{n})',
   'surface.loading_sources': 'سورسز پڑھے جا رہے ہیں…',
   'surface.reading': 'پڑھ رہا ہے…',
   'surface.no_reading': 'ریڈنگ نہیں',
@@ -63,6 +52,9 @@ export const surfacesMessages = {
   'triage.filter.watch': 'نظر رکھیں',
   'triage.filter.fine': 'ٹھیک',
   'triage.filter.idle': 'کوئی ریڈنگ نہیں',
+  'triage.view.label': 'منظر',
+  'triage.view.list': 'فہرست',
+  'triage.view.cards': 'کارڈز',
 
   'horizon.figure.out': 'ختم',
   'horizon.figure.short': '{duration} بغیر کوٹا',

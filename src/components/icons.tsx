@@ -29,6 +29,16 @@ const PATHS = {
       <path d="M5.5 8H13" />
     </>
   ),
+  list: <path d="M2.5 4h11M2.5 8h11M2.5 12h11" />,
+  cards: (
+    <>
+      <rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1" />
+      <rect x="9" y="2.5" width="4.5" height="4.5" rx="1" />
+      <rect x="2.5" y="9" width="4.5" height="4.5" rx="1" />
+      <rect x="9" y="9" width="4.5" height="4.5" rx="1" />
+    </>
+  ),
+  bolt: <path d="M9 2 3.5 9H8l-1 5L12.5 7H8z" />,
   next: <path d="m6.5 3.5 4.5 4.5-4.5 4.5" />,
   copy: (
     <>
