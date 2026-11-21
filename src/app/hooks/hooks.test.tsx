@@ -187,6 +187,19 @@ describe('useNowSecs', () => {
     expect(result.current.nowSecs).toBe(NOW + 20);
   });
 
+  it('skips ticks while the document is hidden and catches up when it shows', () => {
+    freezeClock(['setInterval', 'clearInterval']);
+    const hidden = vi.spyOn(document, 'hidden', 'get').mockReturnValue(true);
+    const { result } = renderHook(() => useNowSecs());
+    act(() => vi.advanceTimersByTime(TICK_MS * 3));
+    expect(result.current.nowSecs).toBe(NOW);
+    hidden.mockReturnValue(false);
+    act(() => {
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    expect(result.current.nowSecs).toBe(NOW + 60);
+  });
+
   it('syncs on demand and stops ticking when unmounted', () => {
     freezeClock(['setInterval', 'clearInterval']);
     const { result, unmount } = renderHook(() => useNowSecs());
