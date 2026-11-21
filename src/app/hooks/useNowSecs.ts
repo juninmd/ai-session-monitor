@@ -9,8 +9,16 @@ export function useNowSecs(intervalMs: number = TICK_MS): { nowSecs: number; syn
   const [nowSecs, setNowSecs] = useState(nowInSeconds);
   const sync = useCallback(() => setNowSecs(nowInSeconds()), []);
   useEffect(() => {
-    const id = setInterval(sync, intervalMs);
-    return () => clearInterval(id);
+    // A hidden flyout renders nothing anyone sees; skip the ticks and catch up on reveal.
+    const tick = () => {
+      if (!document.hidden) sync();
+    };
+    const id = setInterval(tick, intervalMs);
+    document.addEventListener('visibilitychange', tick);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener('visibilitychange', tick);
+    };
   }, [sync, intervalMs]);
   return { nowSecs, sync };
 }
