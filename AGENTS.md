@@ -7,7 +7,13 @@ comments and commits are English. Decisions: `docs/adr/0001-architecture.md`; th
 benchmark: `docs/architecture-review.md`. Wire contract:
 `docs/ipc.md`. Data sources and trust levels: `docs/data-sources.md`.
 
-## Layout and ownership
+## Stack
+
+- Tauri 2 desktop shell (`src-tauri`, Windows-first) on Vite, React and TypeScript (`src`, Biome lint, Vitest, Zod contract).
+- Rust workspace (`crates/`), toolchain pinned to 1.97.1 in `rust-toolchain.toml`; `unsafe` is forbidden and `unwrap` denied outside tests.
+- pnpm 10.34.5 (`packageManager`); Node `^22.22.2 || ^24.15.0 || >=26` (`engines`), CI runs Node 24. Lockfiles are authoritative: never hand-edit them.
+
+## Structure
 
 | Path | Role | Depends on |
 |---|---|---|
@@ -59,7 +65,9 @@ CI gates (`.github/workflows`): `ci.yml` runs `web` (`pnpm verify`), `desktop` (
 `src-tauri` compiles against `../dist`, so build the frontend (`pnpm build`) before `cargo clippy
 --workspace` or `cargo test --workspace` on a fresh checkout.
 
-## Changing the contract
+## Conventions
+
+### Changing the contract
 
 1. Change `crates/usage-model`, regenerate the goldens (command above), commit the JSON diff.
 2. Mirror it in `src/lib/contract/*.ts` (strict Zod: an unknown field fails parsing) and, for status
@@ -72,7 +80,7 @@ CI gates (`.github/workflows`): `ci.yml` runs `web` (`pnpm verify`), `desktop` (
 6. A changed or new status threshold needs a status vector on each side of it in
    `contract/status-vectors.json`.
 
-## Security and testing rules
+### Security and testing
 
 - Never read or write the real `~/.claude`, `~/.codex`, the OpenCode data dir, `%APPDATA%` or
   Windows Credential Manager from tests or manual runs. Use temp dirs and fabricated fixtures.
@@ -85,9 +93,9 @@ CI gates (`.github/workflows`): `ci.yml` runs `web` (`pnpm verify`), `desktop` (
 - Dependencies: direct crates and npm packages must be at least 1 day old (soak script);
   pnpm denies install scripts (`onlyBuiltDependencies: []`). Do not hand-edit lockfiles.
 - No `unsafe` (workspace-wide `forbid`). `unwrap` is denied outside tests; `expect` and `print!`
-  warn. Files stay under 300 lines.
+  warn. Files stay under 300 lines (four are over today: split one when you change it).
 
-## Languages
+### Languages
 
 - Ten locales: `en` (default and fallback), `zh-CN`, `hi`, `es`, `fr`, `ar`, `bn`, `pt-BR`, `ru`, `ur`;
   `ar` and `ur` are RTL (`dir` is set on the document, so CSS stays logical-property based).
